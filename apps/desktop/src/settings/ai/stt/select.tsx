@@ -1,13 +1,7 @@
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { arch } from "@tauri-apps/plugin-os";
-import {
-  AlertTriangle,
-  Check,
-  FolderOpen,
-  Loader2,
-  Trash2,
-} from "lucide-react";
-import { useRef } from "react";
+import { AlertTriangle, Check, FolderOpen, Loader2, Trash2 } from "lucide-react";
+import { useEffect } from "react";
 
 import {
   commands as localSttCommands,
@@ -15,8 +9,6 @@ import {
 } from "@hypr/plugin-local-stt";
 import { commands as openerCommands } from "@hypr/plugin-opener2";
 import { commands as listenerCommands } from "@hypr/plugin-transcription";
-import type { AIProviderStorage } from "@hypr/store";
-import { Input } from "@hypr/ui/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -29,99 +21,76 @@ import { cn } from "@hypr/utils";
 import { useSttSettings } from "./context";
 import { HealthStatusIndicator, useConnectionHealth } from "./health";
 import { LocalModelBackendBadge, LocalModelLabel } from "./model-icon";
-import { getPreferredProviderModel } from "./selection";
 import {
   displayModelId,
   formatModelSize,
-  type ProviderId,
-  PROVIDERS,
+  LOCAL_STT_PROVIDER_ID,
   sttModelQueries,
 } from "./shared";
 
-import { useBillingAccess } from "~/auth/billing";
 import { useNotifications } from "~/contexts/notifications";
-import { providerRowId, ProviderIconSlot } from "~/settings/ai/shared";
-import {
-  getProviderSelectionBlockers,
-  requiresEntitlement,
-} from "~/settings/ai/shared/eligibility";
 import { useConfigValues } from "~/shared/config";
 import * as settings from "~/store/tinybase/store/settings";
-import {
-  isLiveTranscriptionSupported,
-  isRealtimeLocalModel,
-} from "~/stt/capabilities";
+import { isRealtimeLocalModel } from "~/stt/capabilities";
+
+type ModelEntry = {
+  id: string;
+  isDownloaded: boolean;
+  displayName?: string;
+  sizeBytes?: number | null;
+  mode?: "realtime" | "batch";
+};
 
 export function SelectProviderAndModel() {
   const { current_stt_provider, current_stt_model } = useConfigValues([
     "current_stt_provider",
     "current_stt_model",
   ] as const);
-  const billing = useBillingAccess();
-  const configuredProviders = useConfiguredMapping(current_stt_model);
-  const { startDownload, startTrial } = useSttSettings();
+  const { startDownload } = useSttSettings();
   const health = useConnectionHealth();
+  const models = useLocalModels();
 
-  const isConfigured = !!(current_stt_provider && current_stt_model);
-  const hasError = isConfigured && health.status === "error";
-  const selectedProvider = current_stt_provider as ProviderId | undefined;
-  const selectedModels = selectedProvider
-    ? (configuredProviders[selectedProvider]?.models ?? [])
-    : [];
-  const selectedModel = selectedModels.find(
-    (model) => model.id === current_stt_model,
-  );
-
-  const handleSelectProvider = settings.UI.useSetValueCallback(
+  const setProvider = settings.UI.useSetValueCallback(
     "current_stt_provider",
     (provider: string) => provider,
     [],
     settings.STORE_ID,
   );
 
-  const handleSelectModel = settings.UI.useSetValueCallback(
+  const setModel = settings.UI.useSetValueCallback(
     "current_stt_model",
     (model: string) => model,
     [],
     settings.STORE_ID,
   );
-  const lastSelectedModelsRef = useRef<Record<string, string>>(
-    current_stt_provider && current_stt_model
-      ? { [current_stt_provider]: current_stt_model }
-      : {},
-  );
-  const rememberModel = (provider?: string, model?: string) => {
-    if (!provider || model === undefined) {
+
+  // Auto-seed the (only) provider so callers that read current_stt_provider
+  // see something consistent without making the user click anything.
+  useEffect(() => {
+    if (current_stt_provider !== LOCAL_STT_PROVIDER_ID) {
+      setProvider(LOCAL_STT_PROVIDER_ID);
+    }
+  }, [current_stt_provider, setProvider]);
+
+  // Default the model on first run: prefer a realtime Parakeet, fall back to
+  // the first downloaded model, then to the first available.
+  useEffect(() => {
+    if (current_stt_model || models.length === 0) {
       return;
     }
-
-    lastSelectedModelsRef.current[provider] = model;
-  };
-
-  const handleProviderChange = (provider: string) => {
-    rememberModel(current_stt_provider, current_stt_model);
-
-    const providerId = provider as ProviderId;
-    const nextModels = configuredProviders[providerId]?.models ?? [];
-    const nextModel = getPreferredProviderModel(
-      lastSelectedModelsRef.current[provider],
-      nextModels,
-      { allowSavedModelWithoutChoices: providerId === "custom" },
-    );
-
-    rememberModel(provider, nextModel);
-    handleSelectProvider(provider);
-    handleSelectModel(nextModel);
-  };
-
-  const handleModelChange = (model: string) => {
-    if (!current_stt_provider) {
-      return;
+    const preferred =
+      models.find((m) => m.mode === "realtime" && m.isDownloaded) ??
+      models.find((m) => m.isDownloaded) ??
+      models[0];
+    if (preferred) {
+      setModel(preferred.id);
     }
+  }, [current_stt_model, models, setModel]);
 
-    rememberModel(current_stt_provider, model);
-    handleSelectModel(model);
-  };
+  const isConfigured = !!current_stt_model;
+  const hasError = isConfigured && health.status === "error";
+  const selectedModel = models.find((m) => m.id === current_stt_model);
+
   return (
     <div className="flex flex-col gap-4">
       {!isConfigured && (
@@ -139,117 +108,38 @@ export function SelectProviderAndModel() {
         </div>
       )}
 
-      <h3 className="text-md font-sans font-semibold">Model being used</h3>
-      <div className="flex flex-row items-center gap-4">
-        <div className="min-w-0 flex-2" data-stt-provider-selector>
-          <Select
-            value={current_stt_provider || ""}
-            onValueChange={handleProviderChange}
+      <h3 className="text-md font-sans font-semibold">Transcription model</h3>
+      <div data-stt-model-selector>
+        <Select
+          value={current_stt_model || ""}
+          onValueChange={setModel}
+          disabled={models.length === 0}
+        >
+          <SelectTrigger
+            className={cn([
+              "bg-white text-left shadow-none focus:ring-0",
+              "[&>span]:flex [&>span]:w-full [&>span]:items-center [&>span]:justify-between [&>span]:gap-2",
+              isConfigured && "[&>svg:last-child]:hidden",
+            ])}
           >
-            <SelectTrigger className="bg-white shadow-none focus:ring-0">
-              <SelectValue placeholder="Select a provider" />
-            </SelectTrigger>
-            <SelectContent>
-              {PROVIDERS.filter(({ disabled }) => !disabled).map((provider) => {
-                const configured =
-                  configuredProviders[provider.id]?.configured ?? false;
-                const requiresPro = requiresEntitlement(
-                  provider.requirements,
-                  "pro",
-                );
-                const locked = requiresPro && !billing.isPaid;
-                return (
-                  <SelectItem
-                    key={provider.id}
-                    value={provider.id}
-                    disabled={provider.disabled || !configured || locked}
-                  >
-                    <div className="flex flex-col gap-0.5">
-                      <div className="flex items-center gap-2">
-                        <ProviderIconSlot>{provider.icon}</ProviderIconSlot>
-                        <span>{provider.displayName}</span>
-                        {requiresPro ? (
-                          <span className="rounded-full border border-neutral-200 px-2 py-0.5 text-[10px] tracking-wide text-neutral-500 uppercase">
-                            Pro
-                          </span>
-                        ) : null}
-                      </div>
-                      {locked ? (
-                        <span className="text-[11px] text-neutral-500">
-                          Upgrade to Pro to use this provider.
-                        </span>
-                      ) : null}
-                    </div>
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <span className="text-neutral-500">/</span>
-
-        {current_stt_provider === "custom" ? (
-          <div className="min-w-0 flex-3">
-            <Input
-              value={current_stt_model || ""}
-              onChange={(event) => handleModelChange(event.target.value)}
-              className="text-xs"
-              placeholder="Enter a model identifier"
-            />
-          </div>
-        ) : (
-          <div className="min-w-0 flex-3">
-            <Select
-              value={current_stt_model || ""}
-              onValueChange={handleModelChange}
-              disabled={selectedModels.length === 0}
-            >
-              <SelectTrigger
-                className={cn([
-                  "bg-white text-left shadow-none focus:ring-0",
-                  "[&>span]:flex [&>span]:w-full [&>span]:items-center [&>span]:justify-between [&>span]:gap-2",
-                  isConfigured && "[&>svg:last-child]:hidden",
-                ])}
-              >
-                <SelectValue placeholder="Select a model">
-                  {selectedModel ? (
-                    <ModelSelectedValue model={selectedModel} />
-                  ) : undefined}
-                </SelectValue>
-                {isConfigured && <HealthStatusIndicator />}
-                {isConfigured && health.status === "success" && (
-                  <Check className="-mr-1 h-4 w-4 shrink-0 text-green-600" />
-                )}
-              </SelectTrigger>
-              <SelectContent align="end">
-                {selectedModels.map((model, i) => {
-                  const prevCategory =
-                    i > 0 ? selectedModels[i - 1].category : null;
-                  const showHeader =
-                    model.category && model.category !== prevCategory;
-                  const categoryLabel = showHeader
-                    ? getModelCategoryLabel(model.category)
-                    : null;
-                  return (
-                    <span key={model.id}>
-                      {categoryLabel && (
-                        <div className="px-2 pt-2 pb-1 text-[11px] font-medium tracking-wide text-neutral-400 uppercase">
-                          {categoryLabel}
-                        </div>
-                      )}
-                      <ModelSelectItem
-                        model={model}
-                        onDownload={() => startDownload(model.id as LocalModel)}
-                        onStartTrial={startTrial}
-                      />
-                    </span>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
+            <SelectValue placeholder="Select a model">
+              {selectedModel ? <ModelSelectedValue model={selectedModel} /> : undefined}
+            </SelectValue>
+            {isConfigured && <HealthStatusIndicator />}
+            {isConfigured && health.status === "success" && (
+              <Check className="-mr-1 h-4 w-4 shrink-0 text-green-600" />
+            )}
+          </SelectTrigger>
+          <SelectContent align="end">
+            {models.map((model) => (
+              <ModelSelectItem
+                key={model.id}
+                model={model}
+                onDownload={() => startDownload(model.id as LocalModel)}
+              />
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );
@@ -282,19 +172,9 @@ function useHasLanguageWarning() {
   const health = useConnectionHealth();
 
   const isConfigured = !!(current_stt_provider && current_stt_model);
-  const isOnDeviceModel =
-    current_stt_provider === "hyprnote" &&
-    !!current_stt_model &&
-    current_stt_model !== "cloud";
   const useLiveOnDeviceModel =
-    isOnDeviceModel && isRealtimeLocalModel(current_stt_model);
+    !!current_stt_model && isRealtimeLocalModel(current_stt_model);
   const hasError = isConfigured && health.status === "error";
-  const liveSupport = useQuery({
-    queryKey: ["stt-live-support", current_stt_provider, current_stt_model],
-    queryFn: () =>
-      isLiveTranscriptionSupported(current_stt_provider, current_stt_model),
-    enabled: isConfigured,
-  });
 
   const languageSupport = useQuery({
     queryKey: [
@@ -302,14 +182,10 @@ function useHasLanguageWarning() {
       current_stt_provider,
       current_stt_model,
       useLiveOnDeviceModel,
-      liveSupport.data,
       spoken_languages,
     ],
     queryFn: async () => {
-      const useLiveMode = isOnDeviceModel
-        ? useLiveOnDeviceModel && liveSupport.data
-        : liveSupport.data;
-      const result = useLiveMode
+      const result = useLiveOnDeviceModel
         ? await listenerCommands.isSupportedLanguagesLive(
             current_stt_provider!,
             current_stt_model ?? null,
@@ -322,57 +198,18 @@ function useHasLanguageWarning() {
           );
       return result.status === "ok" ? result.data : true;
     },
-    enabled:
-      isConfigured &&
-      liveSupport.data !== undefined &&
-      !!spoken_languages?.length,
+    enabled: isConfigured && !!spoken_languages?.length,
   });
 
   return isConfigured && languageSupport.data === false && !hasError;
 }
 
-type ModelCategory = "latest" | "deprecated" | null;
-type ModelEntry = {
-  id: string;
-  isDownloaded: boolean;
-  displayName?: string;
-  category?: ModelCategory;
-  sizeBytes?: number | null;
-  mode?: "realtime" | "batch";
-  status?: "deprecated";
-};
-
-function getModelCategoryLabel(category?: ModelCategory) {
-  if (category === "latest") {
-    return "Recommended";
-  }
-
-  if (category === "deprecated") {
-    return "Cactus (Deprecated)";
-  }
-
-  return null;
-}
-
-function useConfiguredMapping(currentModel?: string): Record<
-  ProviderId,
-  {
-    configured: boolean;
-    models: ModelEntry[];
-  }
-> {
-  const billing = useBillingAccess();
-  const configuredProviders = settings.UI.useResultTable(
-    settings.QUERIES.sttProviders,
-    settings.STORE_ID,
-  );
-
+function useLocalModels(): ModelEntry[] {
   const targetArch = useQuery({
     queryKey: ["target-arch"],
     queryFn: () => arch(),
     staleTime: Infinity,
   });
-
   const isAppleSilicon = targetArch.data === "aarch64";
 
   const supportedModels = useQuery({
@@ -384,114 +221,35 @@ function useConfiguredMapping(currentModel?: string): Record<
     staleTime: Infinity,
   });
 
-  const localModels = supportedModels.data ?? [];
-  const cactusModels = localModels.filter((m) => m.model_type === "cactus");
-  const visibleCactusModels = cactusModels.filter(
-    (m) => m.key === currentModel,
-  );
-  const soniqoModels = localModels.filter((m) => m.model_type === "soniqo");
+  const all = supportedModels.data ?? [];
 
-  const cactusDownloaded = useQueries({
-    queries: [
-      ...visibleCactusModels.map((m) => sttModelQueries.isDownloaded(m.key)),
-    ],
-  });
-  const soniqoDownloaded = useQueries({
-    queries: [...soniqoModels.map((m) => sttModelQueries.isDownloaded(m.key))],
+  // Apple Silicon: surface the Soniqo (Parakeet streaming) backend. Other
+  // platforms get the Cactus/Whisper-CPP family. We don't show deprecated
+  // cactus models on Apple Silicon since Soniqo supersedes them there.
+  const soniqo = all.filter((m) => m.model_type === "soniqo");
+  const cactus = all.filter((m) => m.model_type === "cactus");
+  const visible = isAppleSilicon ? soniqo : cactus;
+
+  const downloaded = useQueries({
+    queries: visible.map((m) => sttModelQueries.isDownloaded(m.key)),
   });
 
-  return Object.fromEntries(
-    PROVIDERS.map((provider) => {
-      const config = configuredProviders[providerRowId("stt", provider.id)] as
-        | AIProviderStorage
-        | undefined;
-      const baseUrl = String(config?.base_url || provider.baseUrl || "").trim();
-      const apiKey = String(config?.api_key || "").trim();
-
-      const eligible =
-        getProviderSelectionBlockers(provider.requirements, {
-          isAuthenticated: true,
-          isPaid: billing.isPaid,
-          config: { base_url: baseUrl, api_key: apiKey },
-        }).length === 0;
-
-      if (!eligible) {
-        return [provider.id, { configured: false, models: [] }];
-      }
-
-      if (provider.id === "hyprnote") {
-        const models: ModelEntry[] = [
-          { id: "cloud", isDownloaded: billing.isPaid, category: "latest" },
-        ];
-
-        if (isAppleSilicon) {
-          soniqoModels.forEach((model, i) => {
-            models.push({
-              id: model.key,
-              isDownloaded: soniqoDownloaded[i]?.data ?? false,
-              displayName: model.display_name,
-              sizeBytes: model.size_bytes,
-              mode: isRealtimeLocalModel(String(model.key))
-                ? "realtime"
-                : "batch",
-              category: "latest",
-            });
-          });
-
-          const sorted = [...visibleCactusModels].sort((a) =>
-            String(a.key).includes("parakeet") ? -1 : 1,
-          );
-          sorted.forEach((model) => {
-            const i = visibleCactusModels.indexOf(model);
-            models.push({
-              id: model.key,
-              isDownloaded: cactusDownloaded[i]?.data ?? false,
-              displayName: model.display_name,
-              sizeBytes: model.size_bytes,
-              mode: "batch",
-              category: "deprecated",
-              status: "deprecated",
-            });
-          });
-        }
-
-        return [provider.id, { configured: true, models }];
-      }
-
-      if (provider.id === "custom") {
-        return [provider.id, { configured: true, models: [] }];
-      }
-
-      return [
-        provider.id,
-        {
-          configured: true,
-          models: provider.models.map((model) => ({
-            id: model,
-            isDownloaded: true,
-          })),
-        },
-      ];
-    }),
-  ) as Record<
-    ProviderId,
-    {
-      configured: boolean;
-      models: ModelEntry[];
-    }
-  >;
+  return visible.map((model, i) => ({
+    id: model.key,
+    isDownloaded: downloaded[i]?.data ?? false,
+    displayName: model.display_name,
+    sizeBytes: model.size_bytes,
+    mode: isRealtimeLocalModel(String(model.key)) ? "realtime" : "batch",
+  }));
 }
 
 function ModelSelectItem({
   model,
   onDownload,
-  onStartTrial,
 }: {
   model: ModelEntry;
   onDownload: () => void;
-  onStartTrial: () => void;
 }) {
-  const isCloud = model.id === "cloud";
   const { activeDownloads } = useNotifications();
   const downloadInfo = activeDownloads.find((d) => d.model === model.id);
   const isDownloading = !!downloadInfo;
@@ -499,14 +257,8 @@ function ModelSelectItem({
   const label = model.displayName ?? displayModelId(model.id);
   const sizeLabel = formatModelSize(model.sizeBytes);
   const showLocalActions = model.isDownloaded && isLocalModelId(model.id);
-  const isDeprecated = model.status === "deprecated";
   const content = (
-    <div
-      className={cn([
-        "flex min-w-0 flex-1 items-center justify-between gap-3",
-        isDeprecated && "opacity-60",
-      ])}
-    >
+    <div className="flex min-w-0 flex-1 items-center justify-between gap-3">
       <LocalModelLabel
         model={model.id}
         label={label}
@@ -514,11 +266,6 @@ function ModelSelectItem({
       />
       <div className="flex shrink-0 items-center gap-2 text-[11px]">
         <LocalModelBackendBadge model={model.id} />
-        {model.status === "deprecated" && (
-          <span className="rounded-md bg-amber-50 px-1.5 py-0.5 font-medium text-amber-700">
-            Deprecated
-          </span>
-        )}
         {model.mode && (
           <span
             className={cn([
@@ -544,10 +291,7 @@ function ModelSelectItem({
         <SelectItem
           key={model.id}
           value={model.id}
-          className={cn([
-            showLocalActions && "pr-20",
-            isDeprecated && "text-neutral-400 focus:text-neutral-500",
-          ])}
+          className={cn([showLocalActions && "pr-20"])}
         >
           {content}
         </SelectItem>
@@ -564,11 +308,7 @@ function ModelSelectItem({
     if (isDownloading) {
       return;
     }
-    if (isCloud) {
-      onStartTrial();
-    } else {
-      onDownload();
-    }
+    onDownload();
   };
 
   return (
@@ -599,13 +339,11 @@ function ModelSelectItem({
             "rounded-full px-2 text-[11px] font-medium",
             "opacity-0 group-hover:opacity-100",
             "transition-all duration-150",
-            isCloud
-              ? "bg-linear-to-t from-stone-600 to-stone-500 py-1 text-white shadow-xs hover:shadow-md"
-              : "bg-linear-to-t from-neutral-200 to-neutral-100 py-0.5 text-neutral-900 shadow-xs hover:shadow-md",
+            "bg-linear-to-t from-neutral-200 to-neutral-100 py-0.5 text-neutral-900 shadow-xs hover:shadow-md",
           ])}
           onClick={handleAction}
         >
-          {isCloud ? "Upgrade to use" : "Download"}
+          Download
         </button>
       )}
     </div>
@@ -617,11 +355,7 @@ function ModelSelectedValue({ model }: { model: ModelEntry }) {
     <LocalModelLabel
       model={model.id}
       label={model.displayName ?? displayModelId(model.id)}
-      className={cn([
-        "min-w-0 flex-1",
-        model.status === "deprecated" && "opacity-60",
-      ])}
-      labelClassName={cn([model.status === "deprecated" && "text-neutral-400"])}
+      className="min-w-0 flex-1"
     />
   );
 }
