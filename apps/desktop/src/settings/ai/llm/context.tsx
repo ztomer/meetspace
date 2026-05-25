@@ -1,24 +1,69 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+
+import { useConfigValues } from "~/shared/config";
+import { useToastAction } from "~/store/zustand/toast-action";
 
 type LlmSettingsContextType = {
   accordionValue: string;
   setAccordionValue: (value: string) => void;
+  shouldHighlight: boolean;
+  hyprAccordionRef: React.RefObject<HTMLDivElement | null>;
 };
 
 const LlmSettingsContext = createContext<LlmSettingsContextType | null>(null);
+
+const DEFAULT_PROVIDER = "osaurus";
 
 export function LlmSettingsProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [accordionValue, setAccordionValue] = useState<string>("");
+  const { current_llm_provider, current_llm_model } = useConfigValues([
+    "current_llm_provider",
+    "current_llm_model",
+  ] as const);
+  const hasLlmConfigured = !!(current_llm_provider && current_llm_model);
+
+  const [accordionValue, setAccordionValue] = useState<string>(
+    hasLlmConfigured ? "" : DEFAULT_PROVIDER,
+  );
+  const [shouldHighlight, setShouldHighlight] = useState(false);
+  const hyprAccordionRef = useRef<HTMLDivElement | null>(null);
+
+  const toastActionTarget = useToastAction((state) => state.target);
+  const clearToastActionTarget = useToastAction((state) => state.clearTarget);
+
+  useEffect(() => {
+    if (toastActionTarget === "llm") {
+      setAccordionValue(DEFAULT_PROVIDER);
+      setShouldHighlight(true);
+
+      const timer = setTimeout(() => {
+        hyprAccordionRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 100);
+
+      clearToastActionTarget();
+      return () => clearTimeout(timer);
+    }
+  }, [toastActionTarget, clearToastActionTarget]);
+
+  useEffect(() => {
+    if (hasLlmConfigured && shouldHighlight) {
+      setShouldHighlight(false);
+    }
+  }, [hasLlmConfigured, shouldHighlight]);
 
   return (
     <LlmSettingsContext.Provider
       value={{
         accordionValue,
         setAccordionValue,
+        shouldHighlight,
+        hyprAccordionRef,
       }}
     >
       {children}

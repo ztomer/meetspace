@@ -12,7 +12,7 @@ Goal: turn Anarlog into a fully local desktop app with all commercial features e
 | 1. Rip out auth/billing/Supabase | ✅ Done — backend dirs deleted, deps dropped, rebase recipe at [_REMOVED_AUTH.md](_REMOVED_AUTH.md) |
 | 2. Remove Pro/account UI | ✅ Done — account tab + profile sign-in + Pro toasts gone. Pro UI in pickers left for Phase 3/3b rewrite. |
 | 3. STT picker flatten | ✅ Done — single dropdown, local models only (Soniqo/Parakeet on Apple Silicon, Cactus/Whisper elsewhere). Auto-seeds provider + default model. |
-| 3b. LLM picker + Osaurus/Ollama | ⏳ Pending |
+| 3b. LLM picker + Osaurus/Ollama | ✅ Done — providers reduced to Osaurus (default :1337), Ollama, LM Studio, Custom (OpenAI-compatible escape hatch). useLLMConnection collapsed to a single OpenAI-compatible client with an Ollama-Origin shim. |
 | 4a. Session export | ⏳ Pending |
 | 4b. Vault export/import | ⏳ Pending |
 | 4c. Obsidian | ⏳ Pending |
