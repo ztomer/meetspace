@@ -31,7 +31,6 @@ export const isTabInputSupported = (tab: WindowsTabInput): tab is TabInput => {
 };
 
 export type SettingsTab =
-  | "account"
   | "app"
   | "data"
   | "notifications"
@@ -42,7 +41,6 @@ export type SettingsTab =
 
 const isSettingsTab = (tab: string | null | undefined): tab is SettingsTab => {
   switch (tab) {
-    case "account":
     case "app":
     case "data":
     case "notifications":
@@ -58,7 +56,7 @@ const isSettingsTab = (tab: string | null | undefined): tab is SettingsTab => {
 
 export const normalizeSettingsTab = (
   tab: string | null | undefined,
-): Exclude<SettingsTab, "account"> => {
+): SettingsTab => {
   switch (tab) {
     case "app":
     case "data":
@@ -68,7 +66,6 @@ export const normalizeSettingsTab = (
     case "intelligence":
     case "todo":
       return tab;
-    case "account":
     default:
       return "app";
   }
