@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { CalendarIcon, SettingsIcon, UsersIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useState } from "react";
@@ -124,23 +123,9 @@ function ProfileButton({
   isExpanded: boolean;
   onClick: () => void;
 }) {
-  const auth = useAuth();
-  const name = useMyName(auth?.session?.user.email);
-  const [failedAvatarUrl, setFailedAvatarUrl] = useState<string | null>(null);
-
-  const profile = useQuery({
-    queryKey: ["profile"],
-    queryFn: async () => {
-      const avatarUrl = await auth?.getAvatarUrl();
-      return avatarUrl;
-    },
-  });
+  const name = useMyName(undefined);
 
   const facehashName = name;
-  const avatarUrl = profile.data ?? null;
-  const validAvatarUrl =
-    avatarUrl && failedAvatarUrl !== avatarUrl ? avatarUrl : null;
-
   return (
     <button
       type="button"
@@ -164,21 +149,11 @@ function ProfileButton({
           "transition-transform duration-300",
         ])}
       >
-        {validAvatarUrl ? (
-          <img
-            key={validAvatarUrl}
-            src={validAvatarUrl}
-            alt="Profile"
-            className="h-full w-full rounded-md"
-            onError={() => setFailedAvatarUrl(validAvatarUrl)}
-          />
-        ) : (
-          <ProfileFacehash
-            name={facehashName}
-            size={18}
-            className="rounded-md"
-          />
-        )}
+        <ProfileFacehash
+          name={facehashName}
+          size={18}
+          className="rounded-md"
+        />
       </div>
     </button>
   );
