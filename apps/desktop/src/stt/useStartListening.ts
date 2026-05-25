@@ -13,10 +13,12 @@ import {
 import { useSTTConnection } from "./useSTTConnection";
 
 import { getEnhancerService } from "~/services/enhancer";
+import { maybeAutoExportToObsidian } from "~/services/obsidian-auto-export";
 import { getSessionEventById } from "~/session/utils";
 import { useConfigValue } from "~/shared/config";
 import { id } from "~/shared/utils";
 import * as main from "~/store/tinybase/store/main";
+import * as settings from "~/store/tinybase/store/settings";
 import type {
   LiveTranscriptPersistCallback,
   OnStoppedCallback,
@@ -48,6 +50,7 @@ export function getPostCaptureAction(
 export function useStartListening(sessionId: string) {
   const { user_id } = main.UI.useValues(main.STORE_ID);
   const store = main.UI.useStore(main.STORE_ID);
+  const settingsStore = settings.UI.useStore(settings.STORE_ID);
   const indexes = main.UI.useIndexes(main.STORE_ID);
 
   const aiLanguage = useConfigValue("ai_language");
@@ -94,11 +97,13 @@ export function useStartListening(sessionId: string) {
         }
       }
 
-      if (postCaptureAction === "none") {
-        return;
+      if (postCaptureAction !== "none") {
+        getEnhancerService()?.queueAutoEnhanceIfSummaryEmpty(sessionId);
       }
 
-      getEnhancerService()?.queueAutoEnhanceIfSummaryEmpty(sessionId);
+      if (store && settingsStore) {
+        void maybeAutoExportToObsidian(store, settingsStore, sessionId);
+      }
     };
 
     const handlePersist: LiveTranscriptPersistCallback = (delta) => {
@@ -194,6 +199,7 @@ export function useStartListening(sessionId: string) {
     aiLanguage,
     conn,
     store,
+    settingsStore,
     indexes,
     sessionId,
     start,
