@@ -9,7 +9,7 @@ Goal: turn Anarlog into a fully local desktop app with all commercial features e
 | Phase | Status |
 |---|---|
 | 0. Document commercial surface | ✅ Done |
-| 1. Rip out auth/billing/Supabase | 🟡 Step 1/2 done — synthetic stubs in place, typecheck green; backend dir deletions pending |
+| 1. Rip out auth/billing/Supabase | ✅ Done — backend dirs deleted, deps dropped, rebase recipe at [_REMOVED_AUTH.md](_REMOVED_AUTH.md) |
 | 2. Remove Pro/account UI | ⏳ Pending |
 | 3. STT picker flatten | ⏳ Pending |
 | 3b. LLM picker + Osaurus/Ollama | ⏳ Pending |
