@@ -19,10 +19,12 @@ Goal: turn Anarlog into a fully local desktop app with all commercial features e
 | 4e. Notion | ✅ Done — BYO integration token + database id in Settings → Integrations; "Send to Notion" in session overflow menu. |
 | 4f. Linear | ✅ Done — BYO API key; first use opens a team picker dialog; "Create Linear issue" in session overflow menu. |
 | 4g. Hide OAuth-only integrations | ✅ Done — old `settings/integrations.tsx` was dead code; deleted. New panel created in 4c. |
-| 5. Workspace cleanup | ⏳ Pending |
-| 6. Rebase tooling | ⏳ Pending |
+| 5. Workspace cleanup | ✅ Done — packages/pricing deleted; @hypr/api-client retained for type-only imports (frozen). |
+| 6. Rebase tooling | ✅ Done — `scripts/rebase-on-main.sh` + CONTRIBUTING.md fork section. |
 
 **Workflow rule:** Update this Status table and commit after every milestone.
+
+**🎉 All phases complete.** The fork is local-only, typecheck-green, and rebase-tooled. Remaining manual work: re-test the desktop app end-to-end before tagging, and add a new origin remote before the first push.
 
 ---
 
