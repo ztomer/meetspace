@@ -168,6 +168,22 @@ export const SETTINGS_MAPPING = {
       path: ["general", "obsidian_auto_export"],
       default: false as boolean,
     },
+    notion_token: {
+      type: "string",
+      path: ["general", "notion_token"],
+    },
+    notion_database_id: {
+      type: "string",
+      path: ["general", "notion_database_id"],
+    },
+    linear_api_key: {
+      type: "string",
+      path: ["general", "linear_api_key"],
+    },
+    linear_team_id: {
+      type: "string",
+      path: ["general", "linear_team_id"],
+    },
   },
   tables: {
     ai_providers: {

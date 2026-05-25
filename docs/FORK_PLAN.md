@@ -16,8 +16,8 @@ Goal: turn Anarlog into a fully local desktop app with all commercial features e
 | 4a. Session export | ✅ Already shipped upstream — Export modal supports PDF/MD/Org/TXT. |
 | 4b. Vault export/import | ⏳ Pending |
 | 4c. Obsidian | ✅ Done — Settings → Integrations → Obsidian, vault picker + subfolder + auto-export toggle. Session overflow menu has "Export to Obsidian". Auto-export hook on session finalize is a TODO follow-up. |
-| 4e. Notion | ⏳ Pending |
-| 4f. Linear | ⏳ Pending |
+| 4e. Notion | ✅ Done — BYO integration token + database id in Settings → Integrations; "Send to Notion" in session overflow menu. |
+| 4f. Linear | ✅ Done — BYO API key; first use opens a team picker dialog; "Create Linear issue" in session overflow menu. |
 | 4g. Hide OAuth-only integrations | ✅ Done — old `settings/integrations.tsx` was dead code; deleted. New panel created in 4c. |
 | 5. Workspace cleanup | ⏳ Pending |
 | 6. Rebase tooling | ⏳ Pending |

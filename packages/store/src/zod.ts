@@ -292,6 +292,10 @@ export const generalSchema = z.object({
   obsidian_vault_path: z.string().optional(),
   obsidian_subfolder: z.string().default("Anarlog"),
   obsidian_auto_export: z.boolean().default(false),
+  notion_token: z.string().optional(),
+  notion_database_id: z.string().optional(),
+  linear_api_key: z.string().optional(),
+  linear_team_id: z.string().optional(),
 });
 
 export const aiProviderSchema = z
