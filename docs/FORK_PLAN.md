@@ -23,6 +23,7 @@ This is the phased plan we executed to fork [Anarlog](https://github.com/fastrep
 | 6. Rebase tooling | ✅ Done — `scripts/rebase-on-main.sh` + CONTRIBUTING.md fork section. |
 
 
+
 **Workflow rule:** Update this Status table and commit after every milestone.
 
 **🎉 Phase 0–6 complete.** The fork is local-only, typecheck-green, and rebase-tooled.
