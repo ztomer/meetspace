@@ -15,7 +15,7 @@ Goal: turn Anarlog into a fully local desktop app with all commercial features e
 | 3b. LLM picker + Osaurus/Ollama | ✅ Done — providers reduced to Osaurus (default :1337), Ollama, LM Studio, Custom (OpenAI-compatible escape hatch). useLLMConnection collapsed to a single OpenAI-compatible client with an Ollama-Origin shim. |
 | 4a. Session export | ✅ Already shipped upstream — Export modal supports PDF/MD/Org/TXT. |
 | 4b. Vault export/import | ✅ Done — Storage settings already exposed move/switch upstream; added "Backup now" button that calls existing `copy_vault` Rust command into a user-chosen folder. Restore = Customize dialog with Move unchecked. |
-| 4c. Obsidian | ✅ Done — Settings → Integrations → Obsidian, vault picker + subfolder + auto-export toggle. Session overflow menu has "Export to Obsidian". Auto-export hook on session finalize is a TODO follow-up. |
+| 4c. Obsidian | ✅ Done — Settings → Integrations → Obsidian, vault picker + subfolder + auto-export toggle. Session overflow menu has "Export to Obsidian". Auto-export now fires on session stop via `services/obsidian-auto-export.ts`. |
 | 4e. Notion | ✅ Done — BYO integration token + database id in Settings → Integrations; "Send to Notion" in session overflow menu. |
 | 4f. Linear | ✅ Done — BYO API key; first use opens a team picker dialog; "Create Linear issue" in session overflow menu. |
 | 4g. Hide OAuth-only integrations | ✅ Done — old `settings/integrations.tsx` was dead code; deleted. New panel created in 4c. |
