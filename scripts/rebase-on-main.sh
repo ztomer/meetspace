@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
-# Rebase this local-only fork on upstream main, then validate.
+# Rebase this local-only fork onto the latest upstream stable release tag
+# (`desktop_vX.Y.Z`, no `-nightly` suffix), then validate.
 #
-# Assumes the current `origin` remote points at upstream anarlog. We do NOT
-# push from this script — a new origin will be added later by the maintainer.
-# See docs/FORK_PLAN.md and docs/_REMOVED_AUTH.md for context.
+# Falls back to `origin/main` if --on-main is passed, or if no stable tag
+# newer than HEAD's most recent ancestor tag can be found.
+#
+# We do NOT push from this script — a new origin will be added later by
+# the maintainer. See docs/FORK_PLAN.md and docs/_REMOVED_AUTH.md for context.
 
 set -euo pipefail
 
@@ -12,6 +15,28 @@ cd "$REPO_ROOT"
 
 UPSTREAM_REMOTE="${UPSTREAM_REMOTE:-origin}"
 UPSTREAM_BRANCH="${UPSTREAM_BRANCH:-main}"
+STABLE_TAG_PATTERN='^desktop_v[0-9]+\.[0-9]+\.[0-9]+$'
+
+USE_MAIN=0
+for arg in "$@"; do
+  case "$arg" in
+    --on-main) USE_MAIN=1 ;;
+    -h|--help)
+      cat <<EOF
+Usage: $0 [--on-main]
+
+  (default) Rebase onto the latest upstream stable release tag
+            (desktop_vX.Y.Z). Skips if HEAD already includes it.
+  --on-main Rebase onto $UPSTREAM_REMOTE/$UPSTREAM_BRANCH instead.
+
+Environment:
+  UPSTREAM_REMOTE  remote to fetch from (default: origin)
+  UPSTREAM_BRANCH  main branch name (default: main)
+EOF
+      exit 0
+      ;;
+  esac
+done
 
 red()    { printf '\033[31m%s\033[0m\n' "$*"; }
 green()  { printf '\033[32m%s\033[0m\n' "$*"; }
@@ -28,14 +53,42 @@ fi
 
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 green "On branch: $CURRENT_BRANCH"
-green "Fetching $UPSTREAM_REMOTE/$UPSTREAM_BRANCH"
-git fetch "$UPSTREAM_REMOTE" "$UPSTREAM_BRANCH"
 
-bold "==> Rebasing on $UPSTREAM_REMOTE/$UPSTREAM_BRANCH"
-if ! git rebase "$UPSTREAM_REMOTE/$UPSTREAM_BRANCH"; then
+bold "==> Fetching $UPSTREAM_REMOTE (branches + tags)"
+git fetch --tags --prune "$UPSTREAM_REMOTE" "$UPSTREAM_BRANCH"
+
+# Pick the rebase target.
+TARGET=""
+TARGET_LABEL=""
+
+if [ "$USE_MAIN" = "1" ]; then
+  TARGET="$UPSTREAM_REMOTE/$UPSTREAM_BRANCH"
+  TARGET_LABEL="$TARGET (forced via --on-main)"
+else
+  # Most recent stable tag by creation date.
+  LATEST_TAG=$(git tag --sort=-creatordate | grep -E "$STABLE_TAG_PATTERN" | head -n 1 || true)
+
+  if [ -z "$LATEST_TAG" ]; then
+    yellow "No stable desktop_vX.Y.Z tag found; falling back to $UPSTREAM_REMOTE/$UPSTREAM_BRANCH"
+    TARGET="$UPSTREAM_REMOTE/$UPSTREAM_BRANCH"
+    TARGET_LABEL="$TARGET (no stable tag)"
+  else
+    # Check whether HEAD already contains this tag's commit.
+    if git merge-base --is-ancestor "$LATEST_TAG" HEAD 2>/dev/null; then
+      green "Latest stable tag $LATEST_TAG is already in HEAD. Nothing to do."
+      yellow "Pass --on-main to rebase onto $UPSTREAM_REMOTE/$UPSTREAM_BRANCH anyway."
+      exit 0
+    fi
+    TARGET="$LATEST_TAG"
+    TARGET_LABEL="$LATEST_TAG (latest stable)"
+  fi
+fi
+
+bold "==> Rebasing onto $TARGET_LABEL"
+if ! git rebase "$TARGET"; then
   red "Rebase has conflicts."
   yellow "Check docs/_REMOVED_AUTH.md — most conflicts are upstream resurrecting files we deleted."
-  yellow "Resolve them, then run: $0 --continue"
+  yellow "Resolve them, then run: git rebase --continue"
   exit 1
 fi
 
@@ -89,8 +142,8 @@ for f in "${REMOVED_FILES[@]}"; do
 done
 
 if [ "$resurrected" = "1" ]; then
-  yellow "Some deletions were re-applied. Review and commit them."
-  git status --short
+  yellow "Some deletions were re-applied. Review them, then commit:"
+  yellow "  git commit -m 'chore(fork): re-remove auth/billing files after rebase on $TARGET'"
 fi
 
 bold "==> pnpm install"
@@ -102,5 +155,6 @@ pnpm -F desktop typecheck
 bold "==> cargo check"
 cargo check
 
-green "==> Rebase verified. Inspect with: git log --oneline $UPSTREAM_REMOTE/$UPSTREAM_BRANCH..HEAD"
+green "==> Rebase verified against $TARGET."
+yellow "Inspect with: git log --oneline $TARGET..HEAD"
 yellow "Reminder: do NOT push to $UPSTREAM_REMOTE. Add a new remote first."
