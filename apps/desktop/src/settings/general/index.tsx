@@ -5,7 +5,6 @@ import { disable, enable } from "@tauri-apps/plugin-autostart";
 import { commands as analyticsCommands } from "@hypr/plugin-analytics";
 import type { General, GeneralStorage } from "@hypr/store";
 
-export { SettingsAccount } from "./account";
 import { AppSettingsView } from "./app-settings";
 import {
   CORE_TRANSCRIPTION_LANGUAGE_CODES,
