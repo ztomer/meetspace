@@ -9,7 +9,6 @@ import {
   LockIcon,
   SmartphoneIcon,
   SparklesIcon,
-  UserIcon,
 } from "lucide-react";
 import { useCallback } from "react";
 
@@ -44,7 +43,6 @@ function getBaseGroups(): SettingsNavGroup[] {
       items: [
         { id: "app", label: "App", icon: SmartphoneIcon },
         { id: "data", label: "Data", icon: DatabaseIcon },
-        { id: "account", label: "Account", icon: UserIcon },
         { id: "notifications", label: "Notifications", icon: BellIcon },
       ],
     },

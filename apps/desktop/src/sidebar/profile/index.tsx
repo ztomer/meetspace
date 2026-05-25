@@ -5,7 +5,6 @@ import { useCallback, useState } from "react";
 import { Kbd } from "@hypr/ui/components/ui/kbd";
 import { cn } from "@hypr/utils";
 
-import { AuthSection } from "./auth";
 import { MenuItem, ProfileFacehash } from "./shared";
 
 import { useAuth } from "~/auth";
@@ -102,11 +101,6 @@ export function ProfileMenu() {
                 {menuItems.map((item) => (
                   <MenuItem key={item.label} {...item} />
                 ))}
-
-                <AuthSection
-                  isAuthenticated={isAuthenticated}
-                  onClose={closeMenu}
-                />
               </div>
             </div>
           </motion.div>

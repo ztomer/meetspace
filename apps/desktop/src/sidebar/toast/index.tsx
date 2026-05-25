@@ -7,14 +7,12 @@ import { Toast } from "./component";
 import { createToastRegistry, getToastToShow } from "./registry";
 import { useDismissedToasts } from "./useDismissedToasts";
 
-import { useAuth } from "~/auth";
 import { useNotifications } from "~/contexts/notifications";
 import { useConfigValues } from "~/shared/config";
 import { useTabs } from "~/store/zustand/tabs";
 import { useToastAction } from "~/store/zustand/toast-action";
 
 export function ToastArea() {
-  const auth = useAuth();
   const { dismissToast, isDismissed } = useDismissedToasts();
   const shouldShowToast = useShouldShowToast();
   const {
@@ -26,8 +24,6 @@ export function ToastArea() {
     isLocalSttModel,
   } = useNotifications();
 
-  const isAuthenticated = !!auth?.session;
-  const isAuthLoading = auth.session === undefined;
   const {
     current_llm_provider,
     current_llm_model,
@@ -41,9 +37,6 @@ export function ToastArea() {
   ] as const);
   const hasLLMConfigured = !!(current_llm_provider && current_llm_model);
   const hasSttConfigured = !!(current_stt_provider && current_stt_model);
-  const hasProSttConfigured =
-    current_stt_provider === "hyprnote" && current_stt_model === "cloud";
-  const hasProLlmConfigured = current_llm_provider === "hyprnote";
 
   const currentTab = useTabs((state) => state.currentTab);
   const isAiTranscriptionTabActive =
@@ -57,10 +50,6 @@ export function ToastArea() {
     (state) => state.updateSettingsTabState,
   );
   const setToastActionTarget = useToastAction((state) => state.setTarget);
-
-  const handleSignIn = useCallback(async () => {
-    await auth?.signIn();
-  }, [auth]);
 
   const openAiTab = useCallback(
     (tab: "intelligence" | "transcription") => {
@@ -86,12 +75,8 @@ export function ToastArea() {
   const registry = useMemo(
     () =>
       createToastRegistry({
-        isAuthenticated,
-        isAuthLoading,
         hasLLMConfigured,
         hasSttConfigured,
-        hasProSttConfigured,
-        hasProLlmConfigured,
         isAiTranscriptionTabActive,
         isAiIntelligenceTabActive,
         hasActiveDownload,
@@ -100,17 +85,12 @@ export function ToastArea() {
         activeDownloads,
         localSttStatus,
         isLocalSttModel,
-        onSignIn: handleSignIn,
         onOpenLLMSettings: handleOpenLLMSettings,
         onOpenSTTSettings: handleOpenSTTSettings,
       }),
     [
-      isAuthenticated,
-      isAuthLoading,
       hasLLMConfigured,
       hasSttConfigured,
-      hasProSttConfigured,
-      hasProLlmConfigured,
       isAiTranscriptionTabActive,
       isAiIntelligenceTabActive,
       hasActiveDownload,
@@ -119,7 +99,6 @@ export function ToastArea() {
       activeDownloads,
       localSttStatus,
       isLocalSttModel,
-      handleSignIn,
       handleOpenLLMSettings,
       handleOpenSTTSettings,
     ],
