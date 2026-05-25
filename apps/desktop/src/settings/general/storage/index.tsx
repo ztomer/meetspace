@@ -1,6 +1,13 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { homeDir } from "@tauri-apps/api/path";
-import { FolderIcon, type LucideIcon, Settings2Icon } from "lucide-react";
+import { open as selectFolder } from "@tauri-apps/plugin-dialog";
+import {
+  ArchiveIcon,
+  FolderIcon,
+  Loader2Icon,
+  type LucideIcon,
+  Settings2Icon,
+} from "lucide-react";
 import { type ReactNode } from "react";
 import { useState } from "react";
 
@@ -125,6 +132,7 @@ export function StorageSettingsView() {
           path={othersBase}
           home={home}
         />
+        <BackupRow currentPath={contentBase} />
       </div>
       <ChangeContentPathDialog
         open={showDialog}
@@ -371,6 +379,86 @@ function ChangeContentPathDialog({
         )}
       </DialogContent>
     </Dialog>
+  );
+}
+
+function BackupRow({ currentPath }: { currentPath: string | undefined }) {
+  const [lastBackupPath, setLastBackupPath] = useState<string | null>(null);
+
+  const backup = useMutation({
+    mutationFn: async () => {
+      const dest = await selectFolder({
+        title: "Choose a backup destination",
+        directory: true,
+        multiple: false,
+      });
+      if (typeof dest !== "string") {
+        return null;
+      }
+      const result = await settingsCommands.copyVault(dest);
+      if (result.status === "error") {
+        throw new Error(result.error);
+      }
+      return dest;
+    },
+    onSuccess: (dest) => {
+      if (dest) setLastBackupPath(dest);
+    },
+  });
+
+  return (
+    <div className="flex items-center gap-3">
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>
+          <div className="flex w-24 shrink-0 cursor-default items-center gap-2">
+            <ArchiveIcon className="size-4 text-neutral-500" />
+            <span className="text-sm font-medium">Backup</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="top">
+          <p className="text-xs">
+            Copy a snapshot of notes, recordings, and session data into a
+            folder you can sync via Dropbox, iCloud, git, etc.
+          </p>
+        </TooltipContent>
+      </Tooltip>
+      <div className="min-w-0 flex-1">
+        {lastBackupPath ? (
+          <button
+            onClick={() => openerCommands.openPath(lastBackupPath, null)}
+            className="cursor-pointer truncate text-left text-sm text-green-700 hover:underline"
+          >
+            Backed up to {lastBackupPath}
+          </button>
+        ) : (
+          <p className="truncate text-sm text-neutral-500">
+            Copy your vault to another folder. To restore, use Content →
+            Customize and pick the backup folder.
+          </p>
+        )}
+        {backup.error && (
+          <p className="mt-1 text-xs text-red-600">
+            {(backup.error as Error).message}
+          </p>
+        )}
+      </div>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => backup.mutate()}
+        disabled={!currentPath || backup.isPending}
+        className="shrink-0"
+      >
+        {backup.isPending ? (
+          <>
+            <Loader2Icon className="mr-1 size-3 animate-spin" />
+            Backing up…
+          </>
+        ) : (
+          "Backup now"
+        )}
+      </Button>
+    </div>
   );
 }
 
