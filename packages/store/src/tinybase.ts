@@ -177,4 +177,7 @@ export const valueSchemaForTinybase = {
   current_stt_provider: { type: "string" },
   current_stt_model: { type: "string" },
   on_device_transcription_mode: { type: "string" },
+  obsidian_vault_path: { type: "string" },
+  obsidian_subfolder: { type: "string" },
+  obsidian_auto_export: { type: "boolean" },
 } as const satisfies InferTinyBaseSchema<typeof generalSchema>;

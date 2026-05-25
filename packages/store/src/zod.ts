@@ -288,6 +288,9 @@ export const generalSchema = z.object({
   on_device_transcription_mode: z.string().default("realtime"),
   timezone: z.string().optional(),
   week_start: z.string().optional(),
+  obsidian_vault_path: z.string().optional(),
+  obsidian_subfolder: z.string().default("Anarlog"),
+  obsidian_auto_export: z.boolean().default(false),
 });
 
 export const aiProviderSchema = z
