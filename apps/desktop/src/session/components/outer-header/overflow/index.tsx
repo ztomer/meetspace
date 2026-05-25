@@ -19,6 +19,7 @@ import { DeleteNote, DeleteRecording } from "./delete";
 import { ExportModal } from "./export-modal";
 import { Listening } from "./listening";
 import { Copy, ShowInFinder } from "./misc";
+import { ExportToObsidian } from "./obsidian";
 
 import { useAudioPlayer } from "~/audio-player";
 import { openFloatingMeetingPanel } from "~/meeting-float/host";
@@ -77,6 +78,7 @@ export function OverflowButton({
               <FileTextIcon />
               <span>Export</span>
             </DropdownMenuItem>
+            <ExportToObsidian sessionId={sessionId} />
             <DropdownMenuSeparator />
             <Listening sessionId={sessionId} hasTranscript={hasTranscript} />
             {canOpenFloatingPanel && (

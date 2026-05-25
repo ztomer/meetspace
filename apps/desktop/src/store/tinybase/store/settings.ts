@@ -149,6 +149,20 @@ export const SETTINGS_MAPPING = {
       path: ["todo", "github_repository"],
       default: "" as string,
     },
+    obsidian_vault_path: {
+      type: "string",
+      path: ["general", "obsidian_vault_path"],
+    },
+    obsidian_subfolder: {
+      type: "string",
+      path: ["general", "obsidian_subfolder"],
+      default: "Anarlog" as string,
+    },
+    obsidian_auto_export: {
+      type: "boolean",
+      path: ["general", "obsidian_auto_export"],
+      default: false as boolean,
+    },
   },
   tables: {
     ai_providers: {
