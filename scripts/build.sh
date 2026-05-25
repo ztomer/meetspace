@@ -20,6 +20,9 @@ bold() { printf '\033[1m%s\033[0m\n' "$*"; }
 bold "==> pnpm install"
 pnpm install
 
+bold "==> pnpm -F @hypr/ui build (prebuild Tailwind css for desktop)"
+pnpm -F @hypr/ui build
+
 bold "==> pnpm -r typecheck"
 pnpm -r typecheck
 
