@@ -38,6 +38,7 @@ const LOCAL_AUTH: AuthContextType = {
   setSessionFromTokens: noop,
   getHeaders: () => null,
   getAvatarUrl: nullAsync,
+
 };
 
 const AuthContext = createContext<AuthContextType>(LOCAL_AUTH);

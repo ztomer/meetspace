@@ -142,3 +142,4 @@ From [apps/desktop/env.ts](../apps/desktop/env.ts) and `.env*`:
 - [docs/FORK_PLAN.md](FORK_PLAN.md) — the plan.
 - `docs/_REMOVED_AUTH.md` — created in Phase 1, lists every file/import we removed so re-applying after an upstream auth refactor is mechanical.
 - `scripts/rebase-on-main.sh` — re-runs the deletions and validates with typecheck + cargo check.
+
