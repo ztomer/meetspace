@@ -88,6 +88,7 @@
     "@meetspace/tiptap": "workspace:^",
     "@meetspace/ui": "workspace:^",
     "@meetspace/utils": "workspace:^",
+
     "@iconify-icon/react": "^3.0.3",
     "@lezer/highlight": "^1.2.3",
     "@lingui/core": "^6.0.1",
