@@ -119,7 +119,7 @@ export function SettingsAccount() {
     );
   }
 
-  const currentTier = plan === "trial" ? "pro" : plan;
+  const currentTier = (plan as string) === "trial" ? "pro" : plan;
 
   return (
     <div className="flex flex-col gap-8">
