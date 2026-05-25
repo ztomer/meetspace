@@ -7,43 +7,26 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@hypr/ui/components/ui/select";
+} from "@meetspace/ui/components/ui/select";
+import { cn } from "@meetspace/utils";
 
 import { useLlmSettings } from "./context";
 import { HealthStatusIndicator, useConnectionHealth } from "./health";
 import { getPreferredProviderModel } from "./selection";
 import { PROVIDERS } from "./shared";
 
-import { useAuth } from "~/auth";
-import { useBillingAccess } from "~/auth/billing";
 import { providerRowId, ProviderIconSlot } from "~/settings/ai/shared";
-import {
-  getProviderSelectionBlockers,
-  requiresEntitlement,
-} from "~/settings/ai/shared/eligibility";
-import { listAnthropicModels } from "~/settings/ai/shared/list-anthropic";
-import { listAzureAIModels } from "~/settings/ai/shared/list-azure-ai";
-import { listAzureOpenAIModels } from "~/settings/ai/shared/list-azure-openai";
-import {
-  type InputModality,
-  type ListModelsResult,
-} from "~/settings/ai/shared/list-common";
-import { listGoogleModels } from "~/settings/ai/shared/list-google";
+import { getProviderSelectionBlockers } from "~/settings/ai/shared/eligibility";
+import { type ListModelsResult } from "~/settings/ai/shared/list-common";
 import { listLMStudioModels } from "~/settings/ai/shared/list-lmstudio";
-import { listMistralModels } from "~/settings/ai/shared/list-mistral";
 import { listOllamaModels } from "~/settings/ai/shared/list-ollama";
-import {
-  listGenericModels,
-  listOpenAIModels,
-} from "~/settings/ai/shared/list-openai";
-import { listOpenRouterModels } from "~/settings/ai/shared/list-openrouter";
+import { listGenericModels } from "~/settings/ai/shared/list-openai";
 import { ModelCombobox } from "~/settings/ai/shared/model-combobox";
 import { useConfigValues } from "~/shared/config";
 import * as settings from "~/store/tinybase/store/settings";
 
 export function SelectProviderAndModel() {
   const configuredProviders = useConfiguredMapping();
-  const billing = useBillingAccess();
   const queryClient = useQueryClient();
   const { setAccordionValue } = useLlmSettings();
 
@@ -117,11 +100,6 @@ export function SelectProviderAndModel() {
   };
 
   const handleProviderChange = (provider: string) => {
-    if (provider === "hyprnote" && !billing.isPaid) {
-      billing.upgradeToPro();
-      return;
-    }
-
     const status = configuredProviders[provider];
     if (!status?.listModels) {
       setAccordionValue(provider);
@@ -167,86 +145,75 @@ export function SelectProviderAndModel() {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      {!isConfigured && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3">
-          <span className="text-sm text-red-600">
-            <strong className="font-medium">Language model</strong> is needed to
-            make Anarlog summarize and chat about your conversations.
-          </span>
-        </div>
-      )}
-
-      {hasError && health.message && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3">
-          <span className="text-sm text-red-600">{health.message}</span>
-        </div>
-      )}
-
+    <div className="flex flex-col gap-3">
       <h3 className="text-md font-sans font-semibold">Model being used</h3>
-      <div className="flex flex-row items-center gap-4">
-        <div className="min-w-0 flex-2" data-llm-provider-selector>
-          <Select
-            value={current_llm_provider || ""}
-            onValueChange={handleProviderChange}
-          >
-            <SelectTrigger className="bg-white shadow-none focus:ring-0">
-              <SelectValue placeholder="Select a provider" />
-            </SelectTrigger>
-            <SelectContent>
-              {PROVIDERS.map((provider) => {
-                const requiresPro = requiresEntitlement(
-                  provider.requirements,
-                  "pro",
-                );
-                const locked = requiresPro && !billing.isPaid;
-
-                return (
-                  <SelectItem
-                    key={provider.id}
-                    value={provider.id}
-                    disabled={locked}
-                  >
-                    <div className="flex flex-col gap-0.5">
-                      <div className="flex items-center gap-2">
-                        <ProviderIconSlot>{provider.icon}</ProviderIconSlot>
-                        <span>{provider.displayName}</span>
-                        {requiresPro ? (
-                          <span className="rounded-full border border-neutral-200 px-2 py-0.5 text-[10px] tracking-wide text-neutral-500 uppercase">
-                            Pro
-                          </span>
-                        ) : null}
-                      </div>
-                      {locked ? (
-                        <span className="text-[11px] text-neutral-500">
-                          Upgrade to Pro to use this provider.
+      <div
+        className={cn([
+          "flex flex-col gap-4",
+          "border-border rounded-xl border p-4",
+          !isConfigured || hasError ? "bg-destructive-bg" : "bg-muted",
+        ])}
+      >
+        <div className="flex flex-row items-center gap-4">
+          <div className="min-w-0 flex-2" data-llm-provider-selector>
+            <Select
+              value={current_llm_provider || ""}
+              onValueChange={handleProviderChange}
+            >
+              <SelectTrigger className="bg-background shadow-none focus:ring-0">
+                <SelectValue placeholder="Select a provider" />
+              </SelectTrigger>
+              <SelectContent>
+                {PROVIDERS.map((provider) => (
+                  <SelectItem key={provider.id} value={provider.id}>
+                    <div className="flex items-center gap-2">
+                      <ProviderIconSlot>{provider.icon}</ProviderIconSlot>
+                      <span>{provider.displayName}</span>
+                      {provider.badge ? (
+                        <span className="border-border text-muted-foreground rounded-full border px-2 py-0.5 text-[10px] tracking-wide uppercase">
+                          {provider.badge}
                         </span>
                       ) : null}
                     </div>
                   </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <span className="text-muted-foreground">/</span>
+
+          <div className="min-w-0 flex-3">
+            <ModelCombobox
+              providerId={current_llm_provider || ""}
+              value={current_llm_model || ""}
+              onChange={handleModelChange}
+              disabled={!current_llm_provider}
+              listModels={
+                current_llm_provider
+                  ? configuredProviders[current_llm_provider]?.listModels
+                  : undefined
+              }
+              isConfigured={isConfigured}
+              suffix={isConfigured ? <HealthStatusIndicator /> : undefined}
+            />
+          </div>
         </div>
 
-        <span className="text-neutral-500">/</span>
+        {!isConfigured && (
+          <div className="border-destructive/30 flex items-center gap-2 border-t pt-2">
+            <span className="text-destructive text-sm">
+              <strong className="font-medium">Language model</strong> is needed
+              to make Meetspace summarize and chat about your conversations.
+            </span>
+          </div>
+        )}
 
-        <div className="min-w-0 flex-3">
-          <ModelCombobox
-            providerId={current_llm_provider || ""}
-            value={current_llm_model || ""}
-            onChange={handleModelChange}
-            disabled={!current_llm_provider}
-            listModels={
-              current_llm_provider
-                ? configuredProviders[current_llm_provider]?.listModels
-                : undefined
-            }
-            isConfigured={isConfigured}
-            suffix={isConfigured ? <HealthStatusIndicator /> : undefined}
-          />
-        </div>
+        {hasError && health.message && (
+          <div className="border-destructive/30 flex items-center gap-2 border-t pt-2">
+            <span className="text-destructive text-sm">{health.message}</span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -257,8 +224,6 @@ type ProviderStatus = {
 };
 
 function useConfiguredMapping(): Record<string, ProviderStatus> {
-  const auth = useAuth();
-  const billing = useBillingAccess();
   const configuredProviders = settings.UI.useResultTable(
     settings.QUERIES.llmProviders,
     settings.STORE_ID,
@@ -275,8 +240,8 @@ function useConfiguredMapping(): Record<string, ProviderStatus> {
 
         const eligible =
           getProviderSelectionBlockers(provider.requirements, {
-            isAuthenticated: !!auth?.session,
-            isPaid: billing.isPaid,
+            isAuthenticated: true,
+            isPaid: true,
             config: { base_url: baseUrl, api_key: apiKey },
           }).length === 0;
 
@@ -284,60 +249,26 @@ function useConfiguredMapping(): Record<string, ProviderStatus> {
           return [provider.id, { listModels: undefined }];
         }
 
-        if (provider.id === "hyprnote") {
-          const result: ListModelsResult = {
-            models: ["Auto"],
-            ignored: [],
-            metadata: {
-              Auto: {
-                input_modalities: ["text", "image"] as InputModality[],
-              },
-            },
-          };
-          return [provider.id, { listModels: async () => result }];
-        }
-
         let listModelsFunc: () => Promise<ListModelsResult>;
 
         switch (provider.id) {
-          case "openai":
-            listModelsFunc = () => listOpenAIModels(baseUrl, apiKey);
-            break;
-          case "anthropic":
-            listModelsFunc = () => listAnthropicModels(baseUrl, apiKey);
-            break;
-          case "openrouter":
-            listModelsFunc = () => listOpenRouterModels(baseUrl, apiKey);
-            break;
-          case "google_generative_ai":
-            listModelsFunc = () => listGoogleModels(baseUrl, apiKey);
-            break;
-          case "mistral":
-            listModelsFunc = () => listMistralModels(baseUrl, apiKey);
-            break;
-          case "azure_openai":
-            listModelsFunc = () => listAzureOpenAIModels(baseUrl, apiKey);
-            break;
-          case "azure_ai":
-            listModelsFunc = () => listAzureAIModels(baseUrl, apiKey);
-            break;
           case "ollama":
             listModelsFunc = () => listOllamaModels(baseUrl, apiKey);
             break;
           case "lmstudio":
             listModelsFunc = () => listLMStudioModels(baseUrl, apiKey);
             break;
+          case "osaurus":
           case "custom":
-            listModelsFunc = () => listGenericModels(baseUrl, apiKey);
-            break;
           default:
+            // Osaurus, Custom, and any other OpenAI-compatible endpoint hit /v1/models.
             listModelsFunc = () => listGenericModels(baseUrl, apiKey);
         }
 
         return [provider.id, { listModels: listModelsFunc }];
       }),
     ) as Record<string, ProviderStatus>;
-  }, [configuredProviders, auth, billing]);
+  }, [configuredProviders]);
 
   return mapping;
 }
