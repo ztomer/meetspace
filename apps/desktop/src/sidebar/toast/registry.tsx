@@ -2,20 +2,14 @@ import type { ServerStatus } from "@hypr/plugin-local-stt";
 
 import type { DownloadProgress, ToastCondition, ToastType } from "./types";
 
-const ANARLOG_ICON_SRC = "/assets/anarlog-icon.png";
-
 type ToastRegistryEntry = {
   toast: ToastType;
   condition: ToastCondition;
 };
 
 type ToastRegistryParams = {
-  isAuthenticated: boolean;
-  isAuthLoading: boolean;
   hasLLMConfigured: boolean;
   hasSttConfigured: boolean;
-  hasProSttConfigured: boolean;
-  hasProLlmConfigured: boolean;
   isAiTranscriptionTabActive: boolean;
   isAiIntelligenceTabActive: boolean;
   hasActiveDownload: boolean;
@@ -24,18 +18,13 @@ type ToastRegistryParams = {
   activeDownloads: DownloadProgress[];
   localSttStatus: ServerStatus | null;
   isLocalSttModel: boolean;
-  onSignIn: () => void | Promise<void>;
   onOpenLLMSettings: () => void;
   onOpenSTTSettings: () => void;
 };
 
 export function createToastRegistry({
-  isAuthenticated,
-  isAuthLoading,
   hasLLMConfigured,
   hasSttConfigured,
-  hasProSttConfigured,
-  hasProLlmConfigured,
   isAiTranscriptionTabActive,
   isAiIntelligenceTabActive,
   hasActiveDownload,
@@ -44,7 +33,6 @@ export function createToastRegistry({
   activeDownloads,
   localSttStatus,
   isLocalSttModel,
-  onSignIn,
   onOpenLLMSettings,
   onOpenSTTSettings,
 }: ToastRegistryParams): ToastRegistryEntry[] {
@@ -137,59 +125,6 @@ export function createToastRegistry({
       },
       condition: () =>
         hasSttConfigured && !hasLLMConfigured && !isAiIntelligenceTabActive,
-    },
-    {
-      toast: {
-        id: "pro-requires-login",
-        icon: (
-          <img
-            src={ANARLOG_ICON_SRC}
-            alt="Anarlog Pro"
-            className="size-5 object-contain object-center"
-          />
-        ),
-        title: "Sign in required",
-        description:
-          "You have Anarlog Pro models configured. Please sign in to use them.",
-        primaryAction: {
-          label: "Sign in",
-          onClick: onSignIn,
-        },
-        dismissible: true,
-      },
-      // suppress until auth resolves to avoid flash on startup
-      condition: () =>
-        !isAuthLoading &&
-        !isAuthenticated &&
-        (hasProSttConfigured || hasProLlmConfigured),
-    },
-    {
-      toast: {
-        id: "upgrade-to-pro",
-        icon: (
-          <img
-            src={ANARLOG_ICON_SRC}
-            alt="Anarlog Pro"
-            className="size-5 object-contain object-center"
-          />
-        ),
-        title: "Keep the magic going",
-        description:
-          "Transcription stays free. Pro unlocks other magic you'll love.",
-        primaryAction: {
-          label: "Upgrade to Pro",
-          onClick: onSignIn,
-        },
-        dismissible: true,
-      },
-      // suppress until auth resolves to avoid flash on startup
-      condition: () =>
-        !isAuthLoading &&
-        !isAuthenticated &&
-        hasLLMConfigured &&
-        hasSttConfigured &&
-        !hasProSttConfigured &&
-        !hasProLlmConfigured,
     },
   ];
 }

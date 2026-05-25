@@ -4,7 +4,6 @@ import { SettingsIcon } from "lucide-react";
 import { cn } from "@hypr/utils";
 
 import {
-  SettingsAccount,
   SettingsApp,
   SettingsData,
   SettingsNotifications,
@@ -64,8 +63,6 @@ function SettingsView({ tab }: { tab: Extract<Tab, { type: "settings" }> }) {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "account":
-        return <SettingsAccount />;
       case "app":
         return <SettingsApp />;
       case "data":

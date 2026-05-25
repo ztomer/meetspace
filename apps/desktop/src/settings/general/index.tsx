@@ -7,7 +7,6 @@ import { commands as analyticsCommands } from "@hypr/plugin-analytics";
 import { commands as listenerCommands } from "@hypr/plugin-transcription";
 import type { General, GeneralStorage } from "@hypr/store";
 
-export { SettingsAccount } from "./account";
 import { AppSettingsView } from "./app-settings";
 import { getAdditionalSpokenLanguages } from "./language";
 import { MainLanguageView } from "./main-language";

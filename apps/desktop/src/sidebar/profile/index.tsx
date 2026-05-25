@@ -11,7 +11,6 @@ import { useResizeObserver } from "usehooks-ts";
 import { Kbd } from "@hypr/ui/components/ui/kbd";
 import { cn } from "@hypr/utils";
 
-import { AuthSection } from "./auth";
 import { NotificationsMenuContent } from "./notification";
 import { MenuItem, ProfileFacehash } from "./shared";
 
@@ -183,10 +182,6 @@ export function ProfileSection({ onExpandChange }: ProfileSectionProps = {}) {
                         </div>
                       ))}
 
-                      <AuthSection
-                        isAuthenticated={isAuthenticated}
-                        onClose={closeMenu}
-                      />
                     </motion.div>
                   ) : (
                     <motion.div
