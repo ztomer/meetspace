@@ -34,10 +34,7 @@ export const Enhanced = forwardRef<
 
   const isConfigError =
     llmStatus.status === "pending" ||
-    (llmStatus.status === "error" &&
-      (llmStatus.reason === "missing_config" ||
-        llmStatus.reason === "not_pro" ||
-        llmStatus.reason === "unauthenticated"));
+    (llmStatus.status === "error" && llmStatus.reason === "missing_config");
 
   if (status === "idle" && isConfigError && !hasContent) {
     return <ConfigError status={llmStatus} />;
