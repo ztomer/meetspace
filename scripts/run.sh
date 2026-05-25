@@ -18,4 +18,11 @@ if [ ! -d node_modules ]; then
   pnpm install
 fi
 
+# Vite needs @hypr/ui's compiled globals.css to resolve the import in
+# main.tsx. The file is in .gitignore'd dist/, so build it if missing.
+if [ ! -f packages/ui/dist/globals.css ]; then
+  echo "==> Prebuilding @hypr/ui (Tailwind globals.css)"
+  pnpm -F @hypr/ui build
+fi
+
 exec pnpm -F @hypr/desktop tauri:dev
