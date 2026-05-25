@@ -17,8 +17,10 @@ import {
 
 import { DeleteNote, DeleteRecording } from "./delete";
 import { ExportModal } from "./export-modal";
+import { CreateLinearIssue } from "./linear";
 import { Listening } from "./listening";
 import { Copy, ShowInFinder } from "./misc";
+import { ExportToNotion } from "./notion";
 import { ExportToObsidian } from "./obsidian";
 
 import { useAudioPlayer } from "~/audio-player";
@@ -79,6 +81,8 @@ export function OverflowButton({
               <span>Export</span>
             </DropdownMenuItem>
             <ExportToObsidian sessionId={sessionId} />
+            <ExportToNotion sessionId={sessionId} />
+            <CreateLinearIssue sessionId={sessionId} />
             <DropdownMenuSeparator />
             <Listening sessionId={sessionId} hasTranscript={hasTranscript} />
             {canOpenFloatingPanel && (
