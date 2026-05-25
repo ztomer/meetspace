@@ -4,7 +4,22 @@ import type { DownloadProgress, ToastCondition, ToastType } from "./types";
 
 import type { DevtoolsToastPreview } from "~/store/zustand/devtools-toast-preview";
 
+type ToastRegistryEntry = {
+  toast: ToastType;
+  condition: ToastCondition;
+};
 
+type ToastRegistryParams = {
+  hasLLMConfigured: boolean;
+  hasSttConfigured: boolean;
+  isAiTranscriptionTabActive: boolean;
+  isAiIntelligenceTabActive: boolean;
+  hasActiveDownload: boolean;
+  downloadProgress: number | null;
+  downloadingModel: string | null;
+  activeDownloads: DownloadProgress[];
+  localSttStatus: ServerStatus | null;
+  isLocalSttModel: boolean;
   onOpenLLMSettings: () => void;
   onOpenSTTSettings: () => void;
 };
@@ -112,54 +127,7 @@ export function createToastRegistry({
       },
       condition: () =>
         hasSttConfigured && !hasLLMConfigured && !isAiIntelligenceTabActive,
-<<<<<<< HEAD
     },
-||||||| parent of 09c4da108 (fork(phase 2): remove account tab, profile sign-in, Pro toasts)
-    },
-    {
-      toast: {
-        id: "pro-requires-login",
-        icon: (
-          <img
-            src={ANARLOG_ICON_SRC}
-            alt="Anarlog Pro"
-            className="size-5 object-contain object-center"
-          />
-        ),
-        description: "Sign in required",
-        primaryAction: {
-          label: "Sign in",
-          onClick: onSignIn,
-        },
-        dismissible: true,
-      },
-      // suppress until auth resolves to avoid flash on startup
-      condition: () =>
-        !isAuthLoading &&
-        !isAuthenticated &&
-        (hasProSttConfigured || hasProLlmConfigured),
-    },
-    {
-      toast: {
-        id: "upgrade-to-pro",
-        description: "Pro features available",
-        primaryAction: {
-          label: "Upgrade",
-          onClick: onSignIn,
-        },
-        dismissible: true,
-      },
-      // suppress until auth resolves to avoid flash on startup
-      condition: () =>
-        !isAuthLoading &&
-        !isAuthenticated &&
-        hasLLMConfigured &&
-        hasSttConfigured &&
-        !hasProSttConfigured &&
-        !hasProLlmConfigured,
-    },
-=======
->>>>>>> 09c4da108 (fork(phase 2): remove account tab, profile sign-in, Pro toasts)
   ];
 }
 

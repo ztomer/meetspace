@@ -37,10 +37,7 @@ import {
 import { useNotifications } from "~/contexts/notifications";
 import { useConfigValues } from "~/shared/config";
 import * as settings from "~/store/tinybase/store/settings";
-import {
-  isRealtimeLocalModel,
-  isSupportedLocalSttModel,
-} from "~/stt/capabilities";
+import { isRealtimeLocalModel } from "~/stt/capabilities";
 
 type ModelEntry = {
   id: string;
@@ -373,7 +370,12 @@ function ModelSelectedValue({ model }: { model: ModelEntry }) {
 }
 
 function isLocalModelId(model: string): model is LocalModel {
-  return isSupportedLocalSttModel(model);
+  return (
+    model.startsWith("soniqo-") ||
+    model.startsWith("cactus-") ||
+    model.startsWith("am-") ||
+    model.startsWith("Quantized")
+  );
 }
 
 function LocalModelDropdownActions({ model }: { model: LocalModel }) {
