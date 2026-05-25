@@ -37,6 +37,7 @@ export type SettingsTab =
   | "permissions"
   | "transcription"
   | "intelligence"
+  | "integrations"
   | "todo";
 
 const isSettingsTab = (tab: string | null | undefined): tab is SettingsTab => {
@@ -47,6 +48,7 @@ const isSettingsTab = (tab: string | null | undefined): tab is SettingsTab => {
     case "permissions":
     case "transcription":
     case "intelligence":
+    case "integrations":
     case "todo":
       return true;
     default:
@@ -64,6 +66,7 @@ export const normalizeSettingsTab = (
     case "permissions":
     case "transcription":
     case "intelligence":
+    case "integrations":
     case "todo":
       return tab;
     default:

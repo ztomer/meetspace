@@ -7,6 +7,7 @@ import {
   CalendarIcon,
   DatabaseIcon,
   LockIcon,
+  PuzzleIcon,
   SmartphoneIcon,
   SparklesIcon,
 } from "lucide-react";
@@ -49,6 +50,12 @@ function getBaseGroups(): SettingsNavGroup[] {
     {
       label: "AI",
       items: aiItems,
+    },
+    {
+      label: "Integrations",
+      items: [
+        { id: "integrations", label: "Integrations", icon: PuzzleIcon },
+      ],
     },
   ];
 }
