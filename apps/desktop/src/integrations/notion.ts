@@ -93,10 +93,7 @@ export async function exportSessionToNotion(
     body.push("## Transcript", input.transcriptText.trim(), "");
   }
 
-  // Notion API rejects pages with more than 100 child blocks per create call.
-  // We send the first 100 here and ignore the overflow for now — long
-  // transcripts will get truncated. Pagination can come later if needed.
-  const children = mdToBlocks(body.join("\n")).slice(0, 100);
+  const children = mdToBlocks(body.join("\n"));
 
   const payload = {
     parent: { database_id: input.databaseId },
