@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import {
   CalendarIcon,
   ChevronUpIcon,
@@ -230,25 +229,9 @@ function ProfileButton({
   isExpanded: boolean;
   onClick: () => void;
 }) {
-  const auth = useAuth();
-  const name = useMyName(auth?.session?.user.email);
-  const [imgError, setImgError] = useState(false);
-
-  const profile = useQuery({
-    queryKey: ["profile"],
-    queryFn: async () => {
-      const avatarUrl = await auth?.getAvatarUrl();
-      return avatarUrl;
-    },
-  });
+  const name = useMyName(undefined);
 
   const facehashName = name;
-
-  useEffect(() => {
-    setImgError(false);
-  }, [profile.data]);
-
-  const showFacehash = !profile.data || imgError;
 
   return (
     <button
@@ -270,16 +253,7 @@ function ProfileButton({
           "transition-transform duration-300",
         ])}
       >
-        {showFacehash ? (
-          <ProfileFacehash name={facehashName} size={32} />
-        ) : (
-          <img
-            src={profile.data!}
-            alt="Profile"
-            className="h-full w-full rounded-full"
-            onError={() => setImgError(true)}
-          />
-        )}
+        <ProfileFacehash name={facehashName} size={32} />
       </div>
       <div className="min-w-0 flex-1 truncate text-sm text-black">{name}</div>
       <ChevronUpIcon

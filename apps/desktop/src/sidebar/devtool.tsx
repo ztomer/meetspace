@@ -7,9 +7,6 @@ import {
 } from "@hypr/plugin-windows";
 import { cn } from "@hypr/utils";
 
-import { useBillingAccess } from "~/auth/billing";
-import { TrialEndedDialog } from "~/billing/trial-ended-dialog";
-import { TrialStartedDialog } from "~/billing/trial-started-dialog";
 import { getLatestVersion } from "~/changelog";
 import * as main from "~/store/tinybase/store/main";
 import { showBatchCompletedNotification } from "~/store/zustand/listener/general-batch";
@@ -25,7 +22,6 @@ export function DevtoolView() {
         <NavigationCard />
         <ToastsCard />
         <NotificationsCard />
-        <BillingCard />
         <CountdownTestCard />
         <ErrorTestCard />
       </div>
@@ -388,51 +384,6 @@ function NotificationsCard() {
           Clear notifications
         </button>
       </div>
-    </DevtoolCard>
-  );
-}
-
-function BillingCard() {
-  const { trialDaysRemaining, upgradeToPro } = useBillingAccess();
-  const [trialStartedOpen, setTrialStartedOpen] = useState(false);
-  const [trialEndedOpen, setTrialEndedOpen] = useState(false);
-
-  const btnClass = cn([
-    "w-full rounded-md px-2.5 py-1.5",
-    "text-left text-xs font-medium",
-    "border border-neutral-200 text-neutral-700",
-    "cursor-pointer transition-colors",
-    "hover:border-neutral-300 hover:bg-neutral-50",
-  ]);
-
-  return (
-    <DevtoolCard title="Billing">
-      <div className="flex flex-col gap-1.5">
-        <button
-          type="button"
-          onClick={() => setTrialStartedOpen(true)}
-          className={btnClass}
-        >
-          Pro trial started modal
-        </button>
-        <button
-          type="button"
-          onClick={() => setTrialEndedOpen(true)}
-          className={btnClass}
-        >
-          Pro trial ended modal
-        </button>
-      </div>
-      <TrialStartedDialog
-        open={trialStartedOpen}
-        onOpenChange={setTrialStartedOpen}
-        trialDaysRemaining={trialDaysRemaining}
-      />
-      <TrialEndedDialog
-        open={trialEndedOpen}
-        onOpenChange={setTrialEndedOpen}
-        onUpgrade={upgradeToPro}
-      />
     </DevtoolCard>
   );
 }
