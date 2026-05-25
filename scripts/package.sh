@@ -29,6 +29,9 @@ if [ ! -d node_modules ]; then
   pnpm install
 fi
 
+bold "==> Prebuild @hypr/ui (Tailwind globals.css)"
+pnpm -F @hypr/ui build
+
 bold "==> Tauri build"
 if [ "$#" -gt 0 ]; then
   pnpm -F @hypr/desktop tauri build --bundles "$@"
