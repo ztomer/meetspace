@@ -15,12 +15,25 @@ For the original project's developer docs see https://char.com/docs/developers.
 
 ## Local dev
 
+Convenience scripts in `scripts/`:
+
+```
+./scripts/run.sh        # launch the app in dev mode (vite + tauri dev)
+./scripts/build.sh      # install + typecheck + cargo check + vite bundle (no installer)
+./scripts/package.sh    # produce a distributable .dmg / .app / .deb / .msi
+```
+
+Pass `package.sh dmg` (or `app`, `deb`, `msi`, `nsis`, `appimage`) to limit
+the bundle targets. Binaries are unsigned — Gatekeeper will warn on first
+launch unless you configure signing.
+
+Day-to-day raw commands:
+
 ```
 pnpm install
 pnpm -F desktop typecheck         # always run this after TS changes
 cargo check                       # after Rust changes
 pnpm exec dprint fmt              # before committing
-pnpm -F @hypr/desktop tauri:dev   # run the app
 ```
 
 ## Maintaining the fork
@@ -28,14 +41,20 @@ pnpm -F @hypr/desktop tauri:dev   # run the app
 To pull in upstream Anarlog changes:
 
 ```
-./scripts/rebase-on-main.sh
+./scripts/rebase-on-main.sh           # rebase onto latest stable desktop_vX.Y.Z tag
+./scripts/rebase-on-main.sh --on-main # rebase onto origin/main instead
 ```
 
 The script:
-1. Fetches `origin/main` (assumed = upstream).
-2. Rebases the current branch on it.
-3. Re-applies our deletions of auth/billing/Supabase files using the list in `docs/_REMOVED_AUTH.md`.
-4. Runs `pnpm install`, `pnpm -F desktop typecheck`, and `cargo check`.
+1. Fetches `origin` branches + tags (assumed = upstream).
+2. Picks the rebase target:
+   - Default: the most recent stable tag matching `desktop_vX.Y.Z`
+     (skipping `…-nightly.N` prereleases). Exits early if HEAD already
+     contains it.
+   - `--on-main`: forces rebase onto `origin/main` regardless of tags.
+3. Rebases the current branch onto the target.
+4. Re-applies our deletions of auth/billing/Supabase files using the list in `docs/_REMOVED_AUTH.md`.
+5. Runs `pnpm install`, `pnpm -F desktop typecheck`, and `cargo check`.
 
 **Do NOT push to the existing `origin` remote.** It points at the upstream Anarlog repo. A new origin will be added later. The script never pushes.
 
