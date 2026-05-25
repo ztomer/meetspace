@@ -1,3 +1,5 @@
+import { LinearIntegration } from "./linear";
+import { NotionIntegration } from "./notion";
 import { ObsidianIntegration } from "./obsidian";
 
 export function SettingsIntegrations() {
@@ -11,6 +13,8 @@ export function SettingsIntegrations() {
         </p>
       </div>
       <ObsidianIntegration />
+      <NotionIntegration />
+      <LinearIntegration />
     </div>
   );
 }

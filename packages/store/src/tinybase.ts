@@ -180,4 +180,8 @@ export const valueSchemaForTinybase = {
   obsidian_vault_path: { type: "string" },
   obsidian_subfolder: { type: "string" },
   obsidian_auto_export: { type: "boolean" },
+  notion_token: { type: "string" },
+  notion_database_id: { type: "string" },
+  linear_api_key: { type: "string" },
+  linear_team_id: { type: "string" },
 } as const satisfies InferTinyBaseSchema<typeof generalSchema>;
