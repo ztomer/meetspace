@@ -7,6 +7,7 @@ import {
   CalendarIcon,
   DatabaseIcon,
   LockIcon,
+  PuzzleIcon,
   SmartphoneIcon,
   SparklesIcon,
   UsersIcon,
@@ -52,6 +53,12 @@ function getBaseGroups(): SettingsNavGroup[] {
     {
       label: "AI",
       items: aiItems,
+    },
+    {
+      label: "Integrations",
+      items: [
+        { id: "integrations", label: "Integrations", icon: PuzzleIcon },
+      ],
     },
   ];
 }
