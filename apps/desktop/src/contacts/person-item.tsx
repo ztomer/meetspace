@@ -90,7 +90,7 @@ export function PersonItem({
       }}
       className={cn([
         "group flex w-full items-center gap-2 overflow-hidden rounded-lg px-3 py-2 text-left text-sm transition-colors select-none",
-        active ? "bg-neutral-200" : "hover:bg-neutral-200/50",
+        active ? "bg-accent" : "hover:bg-accent/50",
       ])}
     >
       <div className={cn(["shrink-0 rounded-full", bgClass])}>
@@ -107,7 +107,7 @@ export function PersonItem({
           {personName || personEmail || "Unnamed"}
         </div>
         {personEmail && personName && (
-          <div className="truncate text-xs text-neutral-500">{personEmail}</div>
+          <div className="truncate text-xs text-muted-foreground">{personEmail}</div>
         )}
       </div>
       <button
@@ -116,7 +116,7 @@ export function PersonItem({
           "shrink-0 rounded-xs p-1 transition-colors",
           isPinned
             ? "text-blue-600 hover:text-blue-700"
-            : "text-neutral-300 opacity-0 group-hover:opacity-100 hover:text-neutral-500",
+            : "text-muted-foreground/60 opacity-0 group-hover:opacity-100 hover:text-muted-foreground",
         ])}
         aria-label={isPinned ? "Unpin contact" : "Pin contact"}
       >

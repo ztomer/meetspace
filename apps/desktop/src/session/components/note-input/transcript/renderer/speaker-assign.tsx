@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 
 import {
-  AppFloatingPanel,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -11,6 +10,8 @@ import { cn } from "@meetspace/utils";
 import * as main from "~/store/tinybase/store/main";
 import type { Segment } from "~/stt/live-segment";
 import { upsertSpeakerAssignment } from "~/stt/utils";
+
+import { AppFloatingPanel } from "@meetspace/ui/components/ui/popover";
 
 export function SpeakerAssignPopover({
   segment,
@@ -62,7 +63,7 @@ export function SpeakerAssignPopover({
           type="button"
           className={cn([
             "-ml-1 cursor-pointer rounded-xs px-1",
-            "transition-colors hover:bg-neutral-100",
+            "transition-colors hover:bg-muted",
           ])}
           style={{ color }}
         >
@@ -320,13 +321,13 @@ function ParticipantList({
 
   return (
     <AppFloatingPanel className="overflow-hidden">
-      <div className="border-b border-neutral-100 p-2">
+      <div className="border-b border-border p-2">
         <input
           autoFocus
           type="search"
           className={cn([
-            "h-8 w-full rounded-md border border-neutral-200 bg-white px-2 text-sm outline-hidden",
-            "placeholder:text-neutral-400 focus:border-neutral-300",
+            "h-8 w-full rounded-md border border-input bg-background px-2 text-sm outline-hidden",
+            "placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring",
           ])}
           placeholder="Search contacts"
           value={query}
@@ -343,7 +344,7 @@ function ParticipantList({
 
         {groups.map((group) => (
           <div key={group.title}>
-            <div className="px-3 pt-2 pb-1 text-[11px] font-medium text-neutral-400 uppercase">
+            <div className="px-3 pt-2 pb-1 text-[11px] font-medium text-muted-foreground uppercase">
               {group.title}
             </div>
             {group.options.map((option) => (
@@ -357,7 +358,7 @@ function ParticipantList({
         ))}
 
         {!createOption && groups.length === 0 && (
-          <p className="px-3 py-2 text-xs text-neutral-400">
+          <p className="px-3 py-2 text-xs text-muted-foreground">
             {query.trim() ? "No matching contacts" : "No contacts"}
           </p>
         )}
@@ -378,7 +379,7 @@ function ParticipantOptionButton({
       type="button"
       className={cn([
         "w-full px-3 py-1.5 text-left text-sm",
-        "hover:bg-neutral-100",
+        "hover:bg-muted",
       ])}
       onClick={() => onSelect(option)}
     >
@@ -386,7 +387,7 @@ function ParticipantOptionButton({
         {option.isNew ? `Add "${option.name}"` : option.name}
       </span>
       {!option.isNew && option.email && (
-        <span className="block truncate text-xs text-neutral-400">
+        <span className="block truncate text-xs text-muted-foreground">
           {option.email}
         </span>
       )}

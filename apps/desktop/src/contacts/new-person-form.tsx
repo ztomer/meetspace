@@ -61,20 +61,20 @@ export function NewPersonForm({
   return (
     <div className="px-2 py-2">
       <form onSubmit={handleSubmit}>
-        <div className="flex h-8 w-full items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-200/50 px-3 transition-colors focus-within:bg-neutral-200">
+        <div className="flex h-8 w-full items-center gap-2 rounded-lg border border-border bg-accent/50 px-3 transition-colors focus-within:bg-accent">
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Add person"
-            className="w-full bg-transparent text-sm placeholder:text-neutral-400 focus:outline-hidden"
+            className="w-full bg-transparent text-sm placeholder:text-muted-foreground focus:outline-hidden"
             autoFocus
           />
           {name.trim() && (
             <button
               type="submit"
-              className="shrink-0 text-neutral-500 transition-colors hover:text-neutral-700"
+              className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
               aria-label="Add person"
             >
               <CornerDownLeft className="size-4" />

@@ -1,12 +1,41 @@
+import { AppWindowIcon } from "lucide-react";
 import { useCallback } from "react";
 
 import { Kbd } from "@meetspace/ui/components/ui/kbd";
 import { cn } from "@meetspace/utils";
 
-import { FloatingChatCTA } from "~/shared/chat-cta";
 import { StandardTabWrapper } from "~/shared/main";
+import { type TabItem, TabItemBase } from "~/shared/tabs";
 import { useNewNote, useNewNoteAndListen } from "~/shared/useNewNote";
 import { type Tab, useTabs } from "~/store/zustand/tabs";
+
+export const TabItemEmpty: TabItem<Extract<Tab, { type: "empty" }>> = ({
+  tab,
+  tabIndex,
+  handleCloseThis,
+  handleSelectThis,
+  handleCloseOthers,
+  handleCloseAll,
+  handlePinThis,
+  handleUnpinThis,
+}) => {
+  return (
+    <TabItemBase
+      icon={<AppWindowIcon className="h-4 w-4" />}
+      title="New tab"
+      selected={tab.active}
+      allowPin={false}
+      isEmptyTab
+      tabIndex={tabIndex}
+      handleCloseThis={() => handleCloseThis(tab)}
+      handleSelectThis={() => handleSelectThis(tab)}
+      handleCloseOthers={handleCloseOthers}
+      handleCloseAll={handleCloseAll}
+      handlePinThis={() => handlePinThis(tab)}
+      handleUnpinThis={() => handleUnpinThis(tab)}
+    />
+  );
+};
 
 export function TabContentEmpty({
   tab: _tab,
@@ -14,7 +43,7 @@ export function TabContentEmpty({
   tab: Extract<Tab, { type: "empty" }>;
 }) {
   return (
-    <StandardTabWrapper floatingButton={<FloatingChatCTA />}>
+    <StandardTabWrapper>
       <EmptyView />
     </StandardTabWrapper>
   );
@@ -25,16 +54,21 @@ function EmptyView() {
   const newNoteAndListen = useNewNoteAndListen({ behavior: "current" });
   const openCurrent = useTabs((state) => state.openCurrent);
 
+  const openCalendar = useCallback(
+    () => openCurrent({ type: "calendar" }),
+    [openCurrent],
+  );
+  const openContacts = useCallback(
+    () => openCurrent({ type: "contacts" }),
+    [openCurrent],
+  );
   const openSettings = useCallback(
     () => openCurrent({ type: "settings" }),
     [openCurrent],
   );
 
   return (
-    <div
-      data-tauri-drag-region
-      className="flex h-full flex-col items-center justify-center gap-6 text-neutral-600"
-    >
+    <div className="text-muted-foreground mb-12 flex h-full flex-col items-center justify-center gap-6">
       <div className="flex min-w-[280px] flex-col gap-1 text-center">
         <ActionItem label="New Note" shortcut={["⌘", "N"]} onClick={newNote} />
         <ActionItem
@@ -42,7 +76,18 @@ function EmptyView() {
           shortcut={["⌘", "⇧", "N"]}
           onClick={newNoteAndListen}
         />
-        <div className="my-1 h-px bg-neutral-200" />
+        <div className="bg-accent my-1 h-px" />
+        <ActionItem
+          label="Contacts"
+          shortcut={["⌘", "⇧", "O"]}
+          onClick={openContacts}
+        />
+        <ActionItem
+          label="Calendar"
+          shortcut={["⌘", "⇧", "C"]}
+          onClick={openCalendar}
+        />
+        <div className="bg-accent my-1 h-px" />
         <ActionItem
           label="Settings"
           shortcut={["⌘", ","]}
@@ -67,13 +112,12 @@ function ActionItem({
   return (
     <button
       onClick={onClick}
-      data-tauri-drag-region="false"
       className={cn([
         "group",
         "flex items-center justify-between gap-8",
         "text-sm",
-        "rounded-full px-4 py-2",
-        "cursor-pointer transition-colors hover:bg-neutral-100",
+        "rounded-md px-4 py-2",
+        "hover:bg-muted cursor-pointer transition-colors",
       ])}
     >
       <span>{label}</span>

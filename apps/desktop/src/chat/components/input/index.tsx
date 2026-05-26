@@ -37,7 +37,7 @@ export function ChatMessageInput({
   const editorRef = useRef<ChatEditorHandle>(null);
   const disabled =
     typeof disabledProp === "object" ? disabledProp.disabled : disabledProp;
-  const shouldFocus = chat.mode !== "FloatingClosed";
+  const shouldFocus = chat.mode === "RightPanelOpen";
 
   const { hasContent, initialContent, handleEditorUpdate } = useDraftState({
     draftKey,
@@ -54,15 +54,17 @@ export function ChatMessageInput({
   useAutoFocusEditor({ editorRef, disabled, shouldFocus });
   const mentionConfig = useMentionConfig();
   const isSendDisabled = Boolean(disabled) || !hasContent;
-  const isRightPanel = chat.mode === "RightPanelOpen";
 
   return (
-    <Container hasContextBar={hasContextBar} isRightPanel={isRightPanel}>
+    <Container
+      hasContextBar={hasContextBar}
+      isRightPanel={chat.mode === "RightPanelOpen"}
+    >
       <div data-chat-message-input className="flex flex-col px-2 pt-3 pb-2">
         <div className="mb-1 min-h-0 flex-1">
           <ChatEditor
             ref={editorRef}
-            className="max-h-[40vh] overflow-y-auto overscroll-contain text-sm text-neutral-900"
+            className="max-h-[40vh] overflow-y-auto overscroll-contain text-sm"
             initialContent={initialContent}
             mentionConfig={mentionConfig}
             placeholder={chatPlaceholder}
@@ -90,11 +92,11 @@ export function ChatMessageInput({
                 "inline-flex h-7 items-center gap-1.5 rounded-lg pr-1.5 pl-2.5 text-xs font-medium transition-all duration-100",
                 "border",
                 isSendDisabled
-                  ? "cursor-default border-neutral-200 text-neutral-300"
+                  ? "border-border text-muted-foreground/60 cursor-default"
                   : [
-                      "border-stone-600 bg-stone-800 text-white",
-                      "hover:bg-stone-700",
-                      "active:scale-[0.97] active:bg-stone-600",
+                      "border-border bg-primary text-primary-foreground",
+                      "hover:bg-primary",
+                      "active:bg-primary active:scale-[0.97]",
                     ],
               ])}
             >
@@ -102,7 +104,9 @@ export function ChatMessageInput({
               <span
                 className={cn([
                   "font-mono text-xs",
-                  isSendDisabled ? "text-neutral-300" : "text-stone-400",
+                  isSendDisabled
+                    ? "text-muted-foreground/60"
+                    : "text-muted-foreground",
                 ])}
               >
                 ⌘ ↩
@@ -118,23 +122,29 @@ export function ChatMessageInput({
 function Container({
   children,
   hasContextBar,
-  isRightPanel,
+  isRightPanel = false,
 }: {
   children: React.ReactNode;
   hasContextBar?: boolean;
-  isRightPanel: boolean;
+  isRightPanel?: boolean;
 }) {
   return (
     <div
       className={cn([
         "relative min-w-0 shrink-0",
-        isRightPanel ? "px-3 pb-5" : "px-2 pb-2",
+        !isRightPanel && "px-2 pb-2",
       ])}
     >
       <div
         className={cn([
-          "flex max-h-full flex-col border border-neutral-200 bg-white",
-          hasContextBar ? "rounded-t-none rounded-b-xl" : "rounded-xl",
+          "border-border bg-background flex max-h-full flex-col border",
+          isRightPanel
+            ? hasContextBar
+              ? "rounded-t-none rounded-b-none"
+              : "rounded-t-xl rounded-b-none"
+            : hasContextBar
+              ? "rounded-t-none rounded-b-xl"
+              : "rounded-xl",
           hasContextBar && "border-t-0",
         ])}
       >

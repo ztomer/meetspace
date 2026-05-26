@@ -34,7 +34,7 @@ export function WordSpan(props: WordSpanProps) {
   const className = useMemo(
     () =>
       cn([
-        canSeek && "cursor-pointer hover:bg-neutral-200/60",
+        canSeek && "cursor-pointer hover:bg-accent/60",
         !props.word.is_final && ["opacity-60", "italic"],
       ]),
     [canSeek, props.word.is_final],

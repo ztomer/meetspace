@@ -30,7 +30,7 @@ export const ToolUpdatePromptTemplate = defineTool({
   renderBody: (input) =>
     typeof input?.content === "string" ? (
       <ToolCardBody>
-        <pre className="max-h-48 overflow-auto rounded-md border border-neutral-200 bg-neutral-50 p-3 font-mono text-[11px] whitespace-pre-wrap text-neutral-700">
+        <pre className="max-h-48 overflow-auto rounded-md border border-border bg-muted p-3 font-mono text-[11px] whitespace-pre-wrap text-foreground">
           {input.content}
         </pre>
       </ToolCardBody>
@@ -40,7 +40,7 @@ export const ToolUpdatePromptTemplate = defineTool({
       {parsed?.status === "error" ? (
         <ToolCardFooterError text={parsed.message ?? "Unknown error"} />
       ) : parsed?.message ? (
-        <p className="text-xs text-neutral-600">{parsed.message}</p>
+        <p className="text-xs text-muted-foreground">{parsed.message}</p>
       ) : null}
     </ToolCardFooters>
   ),

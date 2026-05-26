@@ -133,7 +133,7 @@ export function EventChip({ eventId }: { eventId: string }) {
             />
             <span className="truncate">{title}</span>
             {startedAt && (
-              <span className="ml-auto shrink-0 font-mono text-neutral-400">
+              <span className="ml-auto shrink-0 font-mono text-muted-foreground">
                 {startedAt}
               </span>
             )}
