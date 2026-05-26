@@ -221,6 +221,11 @@ export const SETTINGS_MAPPING = {
       type: "number",
       path: ["general", "outlook_token_expires_at"],
     },
+    diarize_auto: {
+      type: "boolean",
+      path: ["general", "diarize_auto"],
+      default: false as boolean,
+    },
   },
   tables: {
     ai_providers: {
