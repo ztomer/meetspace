@@ -1,6 +1,5 @@
 import { platform } from "@tauri-apps/plugin-os";
 import {
-  AudioLinesIcon,
   ArrowUpRightIcon,
   BellIcon,
   BookText,
@@ -29,7 +28,6 @@ type SettingsNavGroup = { label: string; items: SettingsNavItem[] };
 
 function getBaseGroups(): SettingsNavGroup[] {
   const aiItems: SettingsNavItem[] = [
-    { id: "transcription", label: "Transcription", icon: AudioLinesIcon },
     { id: "intelligence", label: "Intelligence", icon: SparklesIcon },
     {
       action: "open-templates",
