@@ -151,7 +151,7 @@ export function SelectProviderAndModel() {
         className={cn([
           "flex flex-col gap-4",
           "rounded-xl border border-border p-4",
-          !isConfigured || hasError ? "bg-red-50" : "bg-muted",
+          !isConfigured || hasError ? "bg-destructive-bg" : "bg-muted",
         ])}
       >
         <div className="flex flex-row items-center gap-4">

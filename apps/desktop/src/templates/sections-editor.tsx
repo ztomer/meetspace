@@ -305,7 +305,7 @@ function SectionItem({
             disabled
               ? "bg-muted"
               : isFocused
-                ? "ring-primary/20 border-blue-500 ring-2"
+                ? "ring-primary/20 border-info ring-2"
                 : "border-input",
           ])}
         />

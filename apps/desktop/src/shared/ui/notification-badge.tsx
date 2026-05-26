@@ -30,7 +30,7 @@ export function NotificationBadge({
               exit={{ scale: 0, opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
               className={cn([
-                "absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75",
+                "absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75",
               ])}
             />
             <motion.span
@@ -39,7 +39,7 @@ export function NotificationBadge({
               exit={{ scale: 0, opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
               className={cn([
-                "relative inline-flex rounded-full bg-red-500",
+                "relative inline-flex rounded-full bg-destructive",
                 sizeClasses[size],
                 className,
               ])}

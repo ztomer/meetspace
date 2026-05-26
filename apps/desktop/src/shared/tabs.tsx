@@ -56,27 +56,27 @@ const accentColors: Record<
     },
   },
   red: {
-    selected: ["bg-red-50", "text-destructive", "border-red-400"],
-    unselected: ["bg-red-50", "text-destructive", "border-transparent"],
+    selected: ["bg-destructive-bg", "text-destructive", "border-destructive"],
+    unselected: ["bg-destructive-bg", "text-destructive", "border-transparent"],
     hover: {
       selected: "text-destructive hover:text-destructive",
       unselected: "text-destructive hover:text-destructive",
     },
   },
   amber: {
-    selected: ["bg-amber-50", "text-amber-600", "border-amber-400"],
-    unselected: ["bg-amber-50", "text-amber-500", "border-transparent"],
+    selected: ["bg-warning-bg", "text-warning-fg", "border-warning"],
+    unselected: ["bg-warning-bg", "text-warning", "border-transparent"],
     hover: {
-      selected: "text-amber-600 hover:text-amber-700",
-      unselected: "text-amber-600 hover:text-amber-700",
+      selected: "text-warning-fg hover:text-warning-fg",
+      unselected: "text-warning-fg hover:text-warning-fg",
     },
   },
   blue: {
-    selected: ["bg-sky-50", "text-sky-700", "border-sky-400"],
-    unselected: ["bg-sky-50", "text-sky-500", "border-transparent"],
+    selected: ["bg-info-bg", "text-info-fg", "border-info"],
+    unselected: ["bg-info-bg", "text-info", "border-transparent"],
     hover: {
-      selected: "text-sky-500 hover:text-sky-700",
-      unselected: "text-sky-400 hover:text-sky-600",
+      selected: "text-info hover:text-info-fg",
+      unselected: "text-info hover:text-info-fg",
     },
   },
 };
@@ -276,11 +276,11 @@ export function TabItemBase({
   const indicatorDot =
     status === "listening" ? (
       <div className="relative size-2">
-        <div className="absolute inset-0 rounded-full bg-red-600"></div>
-        <div className="absolute inset-0 animate-ping rounded-full bg-red-300"></div>
+        <div className="absolute inset-0 rounded-full bg-destructive"></div>
+        <div className="absolute inset-0 animate-ping rounded-full bg-destructive/40"></div>
       </div>
     ) : status === "listening-degraded" ? (
-      <AlertCircleIcon className="size-4 text-amber-500" />
+      <AlertCircleIcon className="size-4 text-warning" />
     ) : null;
 
   return (
@@ -427,7 +427,7 @@ export function TabItemBase({
               <Kbd
                 className={cn([
                   "absolute right-2",
-                  "border-destructive/30/30 bg-red-200/20 text-red-100",
+                  "border-destructive/30/30 bg-destructive-bg/20 text-destructive-bg",
                   "transition-all duration-100",
                   "group-hover:-translate-y-0.5 group-hover:shadow-[0_2px_0_0_rgba(0,0,0,0.15),inset_0_1px_0_0_rgba(255,255,255,0.8)]",
                   "group-active:translate-y-0.5 group-active:shadow-none",

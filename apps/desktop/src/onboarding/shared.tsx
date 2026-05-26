@@ -64,7 +64,7 @@ export function OnboardingSection({
       >
         {isCompleted && (
           <CheckIcon
-            className="size-4 shrink-0 text-green-600"
+            className="size-4 shrink-0 text-success-fg"
             strokeWidth={2.5}
           />
         )}
@@ -198,7 +198,7 @@ export function StepRow({
       {status === "active" && (
         <Loader2Icon className="size-4 animate-spin text-muted-foreground" />
       )}
-      {status === "failed" && <XCircleIcon className="size-4 text-red-400" />}
+      {status === "failed" && <XCircleIcon className="size-4 text-destructive" />}
       <span
         className={status === "failed" ? "text-destructive" : "text-muted-foreground"}
       >

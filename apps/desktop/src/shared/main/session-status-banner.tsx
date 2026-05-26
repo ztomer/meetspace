@@ -88,7 +88,7 @@ export function MainSessionStatusBannerHost() {
         className={cn([
           "fixed z-50 -translate-x-1/2",
           "text-center text-xs whitespace-nowrap",
-          "text-red-400",
+          "text-destructive",
           hasUndoDeleteToast
             ? "bottom-1"
             : banner.bottomAccessoryState?.expanded

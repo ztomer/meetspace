@@ -209,12 +209,12 @@ export function DetailsColumn({
 
           <div className="flex-1 overflow-y-auto">
             {duplicatesWithData.length > 0 && (
-              <div className="border-b border-border bg-red-50 px-6 py-4">
-                <h4 className="mb-1 text-sm font-semibold text-red-900">
+              <div className="border-b border-border bg-destructive-bg px-6 py-4">
+                <h4 className="mb-1 text-sm font-semibold text-destructive-fg">
                   Duplicate Contact
                   {duplicatesWithData.length > 1 ? "s" : ""} Found
                 </h4>
-                <p className="mb-3 text-sm text-red-800">
+                <p className="mb-3 text-sm text-destructive-fg">
                   {duplicatesWithData.length > 1
                     ? `${duplicatesWithData.length} contacts`
                     : "Another contact"}{" "}

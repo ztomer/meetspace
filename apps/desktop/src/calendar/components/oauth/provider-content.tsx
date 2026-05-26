@@ -156,7 +156,7 @@ function ReconnectRequiredContent({
 }) {
   return (
     <div className="flex flex-col gap-2 pb-2">
-      <div className="flex items-center gap-2 text-xs text-amber-700">
+      <div className="flex items-center gap-2 text-xs text-warning-fg">
         <ReconnectRequiredIndicator />
         <span>Reconnect required for {config.displayName} Calendar</span>
       </div>

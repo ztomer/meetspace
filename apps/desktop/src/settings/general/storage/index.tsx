@@ -271,7 +271,7 @@ function ChangeContentPathDialog({
               className={cn([
                 "flex items-center gap-3 rounded-lg border px-3 py-2",
                 isNewPathChosen && isNewPathEmpty === false
-                  ? "border-yellow-400 bg-muted"
+                  ? "border-warning bg-muted"
                   : "border-foreground",
               ])}
             >
@@ -282,7 +282,7 @@ function ChangeContentPathDialog({
                     : displayPath(currentPath, home)}
                 </p>
                 {isNewPathChosen && isNewPathEmpty === false && (
-                  <p className="mt-1 text-xs text-yellow-600">
+                  <p className="mt-1 text-xs text-warning-fg">
                     Folder is not empty. Uncheck Move to use it as-is, or pick a
                     dedicated empty folder (for example "meetings") for a full
                     migration.
@@ -419,7 +419,7 @@ function BackupRow({ currentPath }: { currentPath: string | undefined }) {
         {lastBackupPath ? (
           <button
             onClick={() => openerCommands.openPath(lastBackupPath, null)}
-            className="cursor-pointer truncate text-left text-sm text-green-700 hover:underline"
+            className="cursor-pointer truncate text-left text-sm text-success-fg hover:underline"
           >
             Backed up to {lastBackupPath}
           </button>

@@ -97,7 +97,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
         "px-4 py-2.5",
         "text-left",
         "transition-colors hover:bg-muted",
-        !notification.read && "bg-blue-50/50",
+        !notification.read && "bg-info-bg/50",
       ])}
     >
       <div
@@ -105,16 +105,16 @@ function NotificationItem({ notification }: { notification: Notification }) {
           "h-8 w-8 shrink-0 rounded-full",
           "flex items-center justify-center",
           notification.type === "message" && "bg-purple-100",
-          notification.type === "success" && "bg-green-100",
-          notification.type === "info" && "bg-blue-100",
+          notification.type === "success" && "bg-success-bg",
+          notification.type === "info" && "bg-info-bg",
         ])}
       >
         <Icon
           className={cn([
             "h-4 w-4",
             notification.type === "message" && "text-purple-600",
-            notification.type === "success" && "text-green-600",
-            notification.type === "info" && "text-blue-600",
+            notification.type === "success" && "text-success-fg",
+            notification.type === "info" && "text-info-fg",
           ])}
         />
       </div>
@@ -130,7 +130,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
             {notification.title}
           </p>
           {!notification.read && (
-            <span className="h-2 w-2 shrink-0 rounded-full bg-blue-500" />
+            <span className="h-2 w-2 shrink-0 rounded-full bg-info" />
           )}
         </div>
         <p className="mb-1 line-clamp-2 text-xs text-muted-foreground">

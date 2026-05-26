@@ -36,11 +36,11 @@ export function MessageBubble({
       className={cn([
         "select-text-deep text-sm",
         variant === "user" &&
-          "w-fit max-w-full rounded-2xl bg-blue-100 px-3 py-1 text-foreground [&_p]:[text-wrap:wrap]",
+          "w-fit max-w-full rounded-2xl bg-info-bg px-3 py-1 text-foreground [&_p]:[text-wrap:wrap]",
         variant === "assistant" && "text-foreground",
         variant === "loading" && "text-foreground",
         variant === "error" &&
-          "rounded-2xl border border-destructive/30 bg-red-50 px-3 py-1 text-destructive",
+          "rounded-2xl border border-destructive/30 bg-destructive-bg px-3 py-1 text-destructive",
         withActionButton && "group relative",
       ])}
     >
@@ -74,8 +74,8 @@ export function ActionButton({
           "text-muted-foreground hover:text-foreground",
         ],
         variant === "error" && [
-          "bg-red-100 hover:bg-red-200",
-          "text-destructive hover:text-red-800",
+          "bg-destructive-bg hover:bg-destructive-bg",
+          "text-destructive hover:text-destructive-fg",
         ],
       ])}
     >

@@ -84,7 +84,7 @@ function LinkAttachmentCard({
         href={attachment.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="truncate text-xs text-blue-600 underline hover:text-blue-700"
+        className="truncate text-xs text-info-fg underline hover:text-info-fg"
       >
         {attachment.url}
       </a>

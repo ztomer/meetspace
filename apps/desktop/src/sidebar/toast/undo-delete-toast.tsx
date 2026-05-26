@@ -301,8 +301,8 @@ function ToastPill({
           className={cn([
             "rounded-full px-3 py-1.5 text-xs font-medium",
             "whitespace-nowrap",
-            "bg-red-50 text-destructive",
-            "hover:bg-red-100 hover:text-destructive",
+            "bg-destructive-bg text-destructive",
+            "hover:bg-destructive-bg hover:text-destructive",
             "transition-colors",
           ])}
         >

@@ -18,10 +18,10 @@ export function ConnectionHealth(props: Props) {
 
   const color =
     props.status === "pending"
-      ? "text-yellow-500"
+      ? "text-warning"
       : props.status === "error"
         ? "text-destructive"
-        : "text-green-500";
+        : "text-success";
 
   return (
     <Tooltip delayDuration={0}>
@@ -54,7 +54,7 @@ export function AvailabilityHealth({ message }: { message: string }) {
     <div
       className={cn([
         "flex items-center justify-center gap-2 text-center",
-        "border-b border-destructive/30 bg-red-50/70",
+        "border-b border-destructive/30 bg-destructive-bg/70",
         "-mx-6 -mt-6 px-4 py-3",
         "text-sm text-destructive",
       ])}

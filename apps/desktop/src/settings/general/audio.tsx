@@ -162,20 +162,20 @@ function DeviceItem({
         "flex cursor-grab items-center gap-2 rounded-lg px-3 py-2 active:cursor-grabbing",
         "border transition-colors",
         isTop
-          ? "border-green-200 bg-green-50"
+          ? "border-success-border bg-success-bg"
           : "border-border bg-muted hover:bg-muted",
       ])}
     >
       <GripVertical
         className={cn([
           "h-4 w-4 shrink-0",
-          isTop ? "text-green-500" : "text-muted-foreground",
+          isTop ? "text-success" : "text-muted-foreground",
         ])}
       />
       <span
         className={cn([
           "w-4 text-xs",
-          isTop ? "text-green-500" : "text-muted-foreground",
+          isTop ? "text-success" : "text-muted-foreground",
         ])}
       >
         {rank}
@@ -183,12 +183,12 @@ function DeviceItem({
       <span
         className={cn([
           "flex-1 truncate text-sm",
-          isTop && "font-medium text-green-950",
+          isTop && "font-medium text-success-fg",
         ])}
       >
         {device.name}
       </span>
-      {isTop && <span className="text-xs text-green-700">Active</span>}
+      {isTop && <span className="text-xs text-success-fg">Active</span>}
     </Reorder.Item>
   );
 }

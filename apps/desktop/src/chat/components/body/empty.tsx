@@ -124,7 +124,7 @@ export function ChatBodyEmpty({
 
 function BetaChip() {
   return (
-    <span className="rounded-full bg-sky-100 px-1.5 py-0.5 text-[10px] font-medium text-sky-900">
+    <span className="rounded-full bg-info-bg px-1.5 py-0.5 text-[10px] font-medium text-info-fg">
       Beta
     </span>
   );
