@@ -376,7 +376,7 @@ function HeaderTabEnhanced({
         className={cn([
           "group/tab relative my-2 shrink-0 cursor-pointer border-b-2 px-1 py-0.5 text-xs font-medium transition-all duration-200 select-none",
           isActive
-            ? ["text-foreground", "border-neutral-900"]
+            ? ["text-foreground", "border-foreground"]
             : [
                 "text-muted-foreground",
                 "border-transparent",
@@ -930,7 +930,7 @@ function CreateOtherFormatButton({
             <div className="border-b border-border py-2">
               <div
                 className={cn([
-                  "flex h-9 items-center gap-2 rounded-md bg-white px-3",
+                  "flex h-9 items-center gap-2 rounded-md bg-background px-3",
                 ])}
               >
                 <SearchIcon className="h-4 w-4 text-muted-foreground" />

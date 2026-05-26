@@ -39,7 +39,7 @@ function ToggleButton({
           className={cn([
             "rounded-sm p-0.5 transition-colors",
             active
-              ? "bg-neutral-300 text-foreground"
+              ? "bg-accent text-foreground"
               : "text-muted-foreground hover:bg-accent hover:text-muted-foreground",
           ])}
         >

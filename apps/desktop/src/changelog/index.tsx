@@ -187,7 +187,7 @@ function ChangelogHeader({
           <Button
             size="sm"
             variant="ghost"
-            className="gap-1.5 text-muted-foreground hover:text-black"
+            className="gap-1.5 text-muted-foreground hover:text-foreground"
             onClick={() => openerCommands.openUrl(webUrl, null)}
           >
             <ExternalLinkIcon size={14} />

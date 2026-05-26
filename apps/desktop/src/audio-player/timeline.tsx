@@ -100,7 +100,7 @@ export function Timeline() {
           className={cn([
             "flex items-center justify-center",
             "h-7 w-7 rounded-full",
-            "border border-border bg-white",
+            "border border-border bg-background",
             "transition-all hover:scale-110 hover:bg-muted",
             "shrink-0 shadow-xs select-none",
           ])}
@@ -132,7 +132,7 @@ export function Timeline() {
                 className={cn([
                   "flex items-center justify-center",
                   "h-6 rounded-md px-1.5",
-                  "border border-border bg-white",
+                  "border border-border bg-background",
                   "transition-colors hover:bg-muted",
                   "font-mono text-xs text-foreground select-none",
                   "shadow-xs",
@@ -144,7 +144,7 @@ export function Timeline() {
                 <div
                   className={cn([
                     "absolute right-0 bottom-full mb-1",
-                    "rounded-lg border border-border bg-white shadow-md",
+                    "rounded-lg border border-border bg-background shadow-md",
                     "z-50 py-1",
                   ])}
                 >

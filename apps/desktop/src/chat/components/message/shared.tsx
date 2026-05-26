@@ -70,7 +70,7 @@ export function ActionButton({
         "transition-opacity",
         "rounded-full p-1",
         variant === "default" && [
-          "bg-accent hover:bg-neutral-300",
+          "bg-accent hover:bg-accent",
           "text-muted-foreground hover:text-foreground",
         ],
         variant === "error" && [

@@ -176,7 +176,7 @@ function AudioRetentionRow() {
         <p className="text-xs text-muted-foreground">{selectedOption.description}</p>
       </div>
       <Select value={audioRetention} onValueChange={setAudioRetention}>
-        <SelectTrigger className="w-36 bg-white shadow-none focus:ring-0">
+        <SelectTrigger className="w-36 bg-background shadow-none focus:ring-0">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -279,7 +279,7 @@ function ChangeContentPathDialog({
                 "flex items-center gap-3 rounded-lg border px-3 py-2",
                 isNewPathChosen && isNewPathEmpty === false
                   ? "border-yellow-400 bg-muted"
-                  : "border-neutral-900",
+                  : "border-foreground",
               ])}
             >
               <div className="min-w-0 flex-1">

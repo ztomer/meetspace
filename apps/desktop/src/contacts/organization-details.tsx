@@ -75,7 +75,7 @@ export function OrganizationDetailsColumn({
                       return (
                         <div
                           key={humanId}
-                          className="cursor-pointer rounded-lg border border-border bg-white p-4 transition-all hover:shadow-xs"
+                          className="cursor-pointer rounded-lg border border-border bg-background p-4 transition-all hover:shadow-xs"
                           onClick={() => onPersonClick?.(humanId)}
                         >
                           <div className="flex flex-col items-center gap-3 text-center">

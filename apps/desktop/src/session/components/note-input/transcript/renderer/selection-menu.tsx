@@ -14,7 +14,7 @@ import { useAutoCloser } from "~/shared/hooks/useAutoCloser";
 const MENU_CONTAINER_CLASSES = [
   "pointer-events-auto",
   "flex gap-1",
-  "bg-white shadow-lg rounded-md border border-border p-1",
+  "bg-background shadow-lg rounded-md border border-border p-1",
 ];
 
 const MENU_BUTTON_CLASSES = [

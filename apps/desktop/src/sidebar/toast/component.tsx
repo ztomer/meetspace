@@ -39,7 +39,7 @@ export function Toast({
       <div
         className={cn([
           "group relative z-50 overflow-visible rounded-lg",
-          "bg-white p-4",
+          "bg-background p-4",
           toast.variant === "error"
             ? "border border-destructive/40 shadow-xl shadow-red-200"
             : "border border-border shadow-xl",
@@ -118,7 +118,7 @@ export function Toast({
                         className={cn([
                           "flex w-full items-center justify-center gap-2",
                           "rounded-full bg-accent py-2 text-sm font-medium text-foreground",
-                          "duration-150 hover:scale-[1.01] hover:bg-neutral-300 active:scale-[0.99]",
+                          "duration-150 hover:scale-[1.01] hover:bg-accent active:scale-[0.99]",
                         ])}
                       >
                         {action.icon}
@@ -130,7 +130,7 @@ export function Toast({
                       {toast.primaryAction && (
                         <button
                           onClick={toast.primaryAction.onClick}
-                          className="flex h-11 w-full items-center justify-center rounded-full border-2 border-stone-600 bg-stone-800 px-4 text-sm font-medium text-white shadow-[0_2px_6px_rgba(87,83,78,0.22),0_10px_18px_-10px_rgba(87,83,78,0.65)] transition-all duration-200 hover:bg-stone-700"
+                          className="flex h-11 w-full items-center justify-center rounded-full border-2 border-border bg-primary px-4 text-sm font-medium text-white shadow-[0_2px_6px_rgba(87,83,78,0.22),0_10px_18px_-10px_rgba(87,83,78,0.65)] transition-all duration-200 hover:bg-primary"
                         >
                           {toast.primaryAction.label}
                         </button>

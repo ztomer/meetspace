@@ -368,7 +368,7 @@ export function TimelineView() {
               onClick={handleOpenCalendar}
               size="sm"
               className={cn([
-                "rounded-full bg-white hover:bg-muted",
+                "rounded-full bg-background hover:bg-muted",
                 "border border-border text-foreground",
                 "flex items-center gap-1",
                 "px-3",
@@ -385,7 +385,7 @@ export function TimelineView() {
               onClick={scrollToToday}
               size="sm"
               className={cn([
-                "rounded-full bg-white hover:bg-muted",
+                "rounded-full bg-background hover:bg-muted",
                 "border border-border text-foreground",
                 "flex items-center gap-1",
                 "shadow-xs",
@@ -405,7 +405,7 @@ export function TimelineView() {
           size="sm"
           className={cn([
             "absolute bottom-2 left-1/2 -translate-x-1/2 transform",
-            "rounded-full bg-white hover:bg-muted",
+            "rounded-full bg-background hover:bg-muted",
             "border border-border text-foreground",
             "z-20 flex items-center gap-1",
             "shadow-xs",

@@ -38,7 +38,7 @@ function AppleCalendarList() {
       onRefresh={handleRefresh}
       isLoading={isLoading}
       disableHoverTone
-      className="rounded-xl border border-white/45 bg-white/28 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_8px_24px_-20px_rgba(87,83,78,0.35)] backdrop-blur-md backdrop-saturate-150"
+      className="rounded-xl border border-white/45 bg-background/28 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_8px_24px_-20px_rgba(87,83,78,0.35)] backdrop-blur-md backdrop-saturate-150"
     />
   );
 }
@@ -65,7 +65,7 @@ function AppleCalendarProvider({
             onRequest();
           }}
           disabled={isPending}
-          className="flex h-full w-full items-center justify-center gap-3 border border-border bg-white px-12 text-foreground shadow-[0_2px_6px_rgba(87,83,78,0.08),0_10px_18px_-10px_rgba(87,83,78,0.22)] transition-all duration-150 hover:bg-muted"
+          className="flex h-full w-full items-center justify-center gap-3 border border-border bg-background px-12 text-foreground shadow-[0_2px_6px_rgba(87,83,78,0.08),0_10px_18px_-10px_rgba(87,83,78,0.22)] transition-all duration-150 hover:bg-muted"
         >
           <img
             src="/assets/apple-calendar.png"

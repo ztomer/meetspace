@@ -71,7 +71,7 @@ const TriggerInner = forwardRef<
       variant="ghost"
       size="sm"
       className={cn([
-        "text-muted-foreground hover:text-black",
+        "text-muted-foreground hover:text-foreground",
         open && "bg-muted",
         hasEvent && "max-w-50",
       ])}

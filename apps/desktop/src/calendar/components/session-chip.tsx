@@ -92,7 +92,7 @@ function SessionPopoverContent({ sessionId }: { sessionId: string }) {
       {createdAt && <div className="text-sm text-foreground">{createdAt}</div>}
       <Button
         size="sm"
-        className="min-h-8 w-full bg-stone-800 text-white hover:bg-stone-700"
+        className="min-h-8 w-full bg-primary text-white hover:bg-primary"
         onClick={handleOpen}
       >
         Open note

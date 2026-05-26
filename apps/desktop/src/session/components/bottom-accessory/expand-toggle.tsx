@@ -30,8 +30,8 @@ export function ExpandToggle({
         "rounded-t-[10px] rounded-b-none border-x border-t border-border",
         "text-muted-foreground",
         isExpanded
-          ? (expandedClassName ?? "bg-white")
-          : (collapsedClassName ?? "bg-white"),
+          ? (expandedClassName ?? "bg-background")
+          : (collapsedClassName ?? "bg-background"),
         "transition-colors hover:bg-muted hover:text-muted-foreground",
         "hover:cursor-pointer",
       ])}

@@ -160,7 +160,7 @@ export function SelectProviderAndModel() {
               value={current_llm_provider || ""}
               onValueChange={handleProviderChange}
             >
-              <SelectTrigger className="bg-white shadow-none focus:ring-0">
+              <SelectTrigger className="bg-background shadow-none focus:ring-0">
                 <SelectValue placeholder="Select a provider" />
               </SelectTrigger>
               <SelectContent>

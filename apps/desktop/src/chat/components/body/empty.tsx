@@ -74,8 +74,8 @@ export function ChatBodyEmpty({
           <button
             onClick={handleGoToSettings}
             className={cn([
-              "inline-flex w-fit items-center gap-1.5 rounded-full border border-stone-600 bg-stone-800 px-3 py-1.5 text-xs font-medium text-white",
-              "shadow-[0_4px_14px_rgba(87,83,78,0.18)] transition-colors hover:bg-stone-700",
+              "inline-flex w-fit items-center gap-1.5 rounded-full border border-border bg-primary px-3 py-1.5 text-xs font-medium text-white",
+              "shadow-[0_4px_14px_rgba(87,83,78,0.18)] transition-colors hover:bg-primary",
             ])}
           >
             <SparklesIcon size={12} />
@@ -107,7 +107,7 @@ export function ChatBodyEmpty({
                 key={label}
                 onClick={() => handleSuggestionClick(prompt)}
                 className={cn([
-                  "inline-flex items-center gap-1 rounded-full border border-border bg-white px-2 py-1 text-[11px] text-foreground",
+                  "inline-flex items-center gap-1 rounded-full border border-border bg-background px-2 py-1 text-[11px] text-foreground",
                   "transition-colors hover:bg-muted",
                 ])}
               >

@@ -80,7 +80,7 @@ export function SearchableSelect({
           role="combobox"
           aria-expanded={open}
           className={cn([
-            "justify-between bg-white font-normal shadow-none focus-visible:ring-0",
+            "justify-between bg-background font-normal shadow-none focus-visible:ring-0",
             "rounded-lg px-3",
             className,
           ])}
