@@ -1,5 +1,5 @@
 use async_openai::types::AudioInput;
-use async_openai::{types::CreateTranscriptionRequestArgs, Client};
+use async_openai::{Client, types::CreateTranscriptionRequestArgs};
 use std::error::Error;
 use std::fs;
 

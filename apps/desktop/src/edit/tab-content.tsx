@@ -48,7 +48,7 @@ export function TabContentEdit({ tab }: { tab: EditTab }) {
   if (!edit) {
     return (
       <StandardTabWrapper>
-        <div className="flex h-full items-center justify-center text-muted-foreground">
+        <div className="text-muted-foreground flex h-full items-center justify-center">
           This edit is no longer pending.
         </div>
       </StandardTabWrapper>
@@ -58,18 +58,18 @@ export function TabContentEdit({ tab }: { tab: EditTab }) {
   return (
     <StandardTabWrapper>
       <div className="flex h-full flex-col">
-        <div className="flex items-start justify-between gap-3 border-b border-border px-4 py-3">
+        <div className="border-border flex items-start justify-between gap-3 border-b px-4 py-3">
           <div className="min-w-0 flex-1">
-            <div className="text-[13px] font-medium text-foreground">
+            <div className="text-foreground text-[13px] font-medium">
               {sessionTitle ?? "Untitled session"}
             </div>
-            <div className="text-[12px] text-muted-foreground">
+            <div className="text-muted-foreground text-[12px]">
               {summaryTitle ?? "Summary"}
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <button
-              className="rounded-md border border-border bg-background px-4 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-muted"
+              className="border-border bg-background text-muted-foreground hover:bg-muted rounded-md border px-4 py-1.5 text-[13px] transition-colors"
               onClick={() => {
                 resolveEdit(tab.requestId, false);
                 useTabs.getState().close(tab);
@@ -78,7 +78,7 @@ export function TabContentEdit({ tab }: { tab: EditTab }) {
               Decline
             </button>
             <button
-              className="rounded-md bg-primary px-4 py-1.5 text-[13px] text-white transition-colors hover:bg-primary"
+              className="bg-primary hover:bg-primary rounded-md px-4 py-1.5 text-[13px] text-white transition-colors"
               onClick={() => {
                 resolveEdit(tab.requestId, true);
                 useTabs.getState().close(tab);

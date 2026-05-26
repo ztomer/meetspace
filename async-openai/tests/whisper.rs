@@ -1,5 +1,5 @@
 use async_openai::types::CreateTranslationRequestArgs;
-use async_openai::{types::CreateTranscriptionRequestArgs, Client};
+use async_openai::{Client, types::CreateTranscriptionRequestArgs};
 use tokio_test::assert_err;
 
 #[tokio::test]

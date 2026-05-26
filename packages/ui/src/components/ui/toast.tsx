@@ -28,7 +28,7 @@ export function CustomToast(props: CustomToastProps) {
       {dismissible && (
         <button
           onClick={() => sonnerToast.dismiss(id)}
-          className="absolute top-2 right-2 cursor-pointer rounded-full p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted"
+          className="hover:bg-muted absolute top-2 right-2 cursor-pointer rounded-full p-1 opacity-0 transition-opacity group-hover:opacity-100"
           aria-label="Dismiss"
         >
           <X size={16} />
@@ -37,7 +37,9 @@ export function CustomToast(props: CustomToastProps) {
 
       <div className="font-medium">{title}</div>
 
-      {content && <div className="text-sm text-muted-foreground">{content}</div>}
+      {content && (
+        <div className="text-muted-foreground text-sm">{content}</div>
+      )}
 
       {children}
 
@@ -52,8 +54,8 @@ export function CustomToast(props: CustomToastProps) {
               }}
               className={
                 button.primary
-                  ? "rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:bg-primary/90"
-                  : "rounded-md bg-accent px-3 py-1.5 text-sm text-foreground hover:bg-accent/80"
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-3 py-1.5 text-sm"
+                  : "bg-accent text-foreground hover:bg-accent/80 rounded-md px-3 py-1.5 text-sm"
               }
             >
               {button.label}

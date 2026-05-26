@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::io::{stdout, Write};
+use std::io::{Write, stdout};
 
 use async_openai::types::{
     ChatCompletionMessageToolCall, ChatCompletionRequestAssistantMessageArgs,
@@ -7,11 +7,11 @@ use async_openai::types::{
     ChatCompletionRequestUserMessageArgs, ChatCompletionToolArgs, ChatCompletionToolType,
     FunctionObjectArgs,
 };
-use async_openai::{types::CreateChatCompletionRequestArgs, Client};
+use async_openai::{Client, types::CreateChatCompletionRequestArgs};
 use futures::StreamExt;
 use rand::seq::SliceRandom;
-use rand::{thread_rng, Rng};
-use serde_json::{json, Value};
+use rand::{Rng, thread_rng};
+use serde_json::{Value, json};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -25,26 +25,28 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .content(user_prompt)
             .build()?
             .into()])
-        .tools(vec![ChatCompletionToolArgs::default()
-            .r#type(ChatCompletionToolType::Function)
-            .function(
-                FunctionObjectArgs::default()
-                    .name("get_current_weather")
-                    .description("Get the current weather in a given location")
-                    .parameters(json!({
-                        "type": "object",
-                        "properties": {
-                            "location": {
-                                "type": "string",
-                                "description": "The city and state, e.g. San Francisco, CA",
+        .tools(vec![
+            ChatCompletionToolArgs::default()
+                .r#type(ChatCompletionToolType::Function)
+                .function(
+                    FunctionObjectArgs::default()
+                        .name("get_current_weather")
+                        .description("Get the current weather in a given location")
+                        .parameters(json!({
+                            "type": "object",
+                            "properties": {
+                                "location": {
+                                    "type": "string",
+                                    "description": "The city and state, e.g. San Francisco, CA",
+                                },
+                                "unit": { "type": "string", "enum": ["celsius", "fahrenheit"] },
                             },
-                            "unit": { "type": "string", "enum": ["celsius", "fahrenheit"] },
-                        },
-                        "required": ["location"],
-                    }))
-                    .build()?,
-            )
-            .build()?])
+                            "required": ["location"],
+                        }))
+                        .build()?,
+                )
+                .build()?,
+        ])
         .build()?;
 
     let response_message = client
@@ -77,11 +79,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
 
-        let mut messages: Vec<ChatCompletionRequestMessage> =
-            vec![ChatCompletionRequestUserMessageArgs::default()
+        let mut messages: Vec<ChatCompletionRequestMessage> = vec![
+            ChatCompletionRequestUserMessageArgs::default()
                 .content(user_prompt)
                 .build()?
-                .into()];
+                .into(),
+        ];
 
         let tool_calls: Vec<ChatCompletionMessageToolCall> = function_responses
             .iter()

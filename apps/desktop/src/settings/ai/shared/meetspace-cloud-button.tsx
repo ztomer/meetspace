@@ -5,7 +5,7 @@ export function HyprProviderRow({ children }: { children: React.ReactNode }) {
     <div
       className={cn([
         "flex flex-col gap-3",
-        "rounded-md border bg-background px-3 py-2",
+        "bg-background rounded-md border px-3 py-2",
       ])}
     >
       {children}
@@ -40,7 +40,7 @@ export function HyprCloudCTAButton({
         "rounded-full px-4 text-center font-mono text-xs",
         "transition-all duration-150",
         isPaid
-          ? "bg-linear-to-t from-neutral-200 to-neutral-100 text-foreground shadow-xs hover:shadow-md"
+          ? "text-foreground bg-linear-to-t from-neutral-200 to-neutral-100 shadow-xs hover:shadow-md"
           : "bg-linear-to-t from-stone-600 to-stone-500 text-white shadow-md hover:scale-[102%] hover:shadow-lg active:scale-[98%]",
       ])}
     >

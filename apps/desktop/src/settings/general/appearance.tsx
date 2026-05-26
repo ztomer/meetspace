@@ -29,10 +29,10 @@ export function AppearanceSettings() {
     <div>
       <h2 className="mb-4 font-sans text-lg font-semibold">Appearance</h2>
       <div className="flex flex-col gap-2">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Choose how Meetspace looks. System follows your OS preference.
         </p>
-        <div className="inline-flex w-fit rounded-lg border border-border bg-card p-1">
+        <div className="border-border bg-card inline-flex w-fit rounded-lg border p-1">
           {OPTIONS.map(({ value, label, icon: Icon }) => {
             const selected = theme === value;
             return (

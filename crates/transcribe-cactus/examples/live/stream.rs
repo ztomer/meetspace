@@ -9,7 +9,9 @@ use crate::display::{ChannelKind, DisplayMode, Transcript};
 
 pub async fn process<S, H>(response_stream: S, handle: H, mode: DisplayMode)
 where
-    S: futures_util::Stream<Item = Result<StreamResponse, owhisper_client::meetspace_ws_client::Error>>,
+    S: futures_util::Stream<
+            Item = Result<StreamResponse, owhisper_client::meetspace_ws_client::Error>,
+        >,
     H: FinalizeHandle,
 {
     futures_util::pin_mut!(response_stream);

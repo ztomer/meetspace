@@ -10,13 +10,17 @@ use meetspace_cactus::CloudConfig;
 use transcribe_cactus::CactusConfig;
 
 fn load_english_10_mono_pcm() -> Vec<u8> {
-    let mic = meetspace_audio_utils::source_from_path(meetspace_data::english_10::AUDIO_MIC_MP3_PATH)
-        .expect("failed to open mic audio");
-    let mic_f32 = meetspace_audio_utils::resample_audio(mic, 16_000).expect("failed to resample mic");
+    let mic =
+        meetspace_audio_utils::source_from_path(meetspace_data::english_10::AUDIO_MIC_MP3_PATH)
+            .expect("failed to open mic audio");
+    let mic_f32 =
+        meetspace_audio_utils::resample_audio(mic, 16_000).expect("failed to resample mic");
 
-    let spk = meetspace_audio_utils::source_from_path(meetspace_data::english_10::AUDIO_SPK_MP3_PATH)
-        .expect("failed to open spk audio");
-    let spk_f32 = meetspace_audio_utils::resample_audio(spk, 16_000).expect("failed to resample spk");
+    let spk =
+        meetspace_audio_utils::source_from_path(meetspace_data::english_10::AUDIO_SPK_MP3_PATH)
+            .expect("failed to open spk audio");
+    let spk_f32 =
+        meetspace_audio_utils::resample_audio(spk, 16_000).expect("failed to resample spk");
 
     let mixed = meetspace_audio_utils::mix_audio_f32(&mic_f32, &spk_f32);
 

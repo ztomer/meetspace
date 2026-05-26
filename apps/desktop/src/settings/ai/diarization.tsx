@@ -23,12 +23,12 @@ export function DiarizationSetting() {
   return (
     <section className="flex flex-col gap-3">
       <h2 className="text-md font-sans font-semibold">Speaker diarization</h2>
-      <div className="flex items-center justify-between gap-4 rounded-lg border border-border p-4">
+      <div className="border-border flex items-center justify-between gap-4 rounded-lg border p-4">
         <div className="flex-1">
           <h3 className="mb-1 text-sm font-medium">
             Detect speakers after each meeting
           </h3>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Runs a local Pyannote model on the saved audio when a session ends
             and tags transcript segments with Speaker 1 / Speaker 2 / … labels.
             Adds CPU work per meeting; safe to leave off if you only record

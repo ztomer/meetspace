@@ -49,11 +49,11 @@ export function ObsidianIntegration() {
   }, [obsidian_vault_path, setVaultPath]);
 
   return (
-    <section className="rounded-lg border border-border p-5">
+    <section className="border-border rounded-lg border p-5">
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h3 className="text-sm font-semibold">Obsidian</h3>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Export sessions as markdown files into your Obsidian vault.
           </p>
         </div>
@@ -82,9 +82,9 @@ export function ObsidianIntegration() {
               Choose…
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             The root of your Obsidian vault (the folder containing
-            <code className="mx-1 rounded bg-muted px-1 py-0.5 text-[10px]">
+            <code className="bg-muted mx-1 rounded px-1 py-0.5 text-[10px]">
               .obsidian/
             </code>
             ).
@@ -102,16 +102,16 @@ export function ObsidianIntegration() {
             placeholder="Meetspace"
             className="shadow-none"
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Files are written to{" "}
-            <code className="rounded bg-muted px-1 py-0.5 text-[10px]">
+            <code className="bg-muted rounded px-1 py-0.5 text-[10px]">
               vault/{obsidian_subfolder || "Meetspace"}/YYYY-MM-DD-title.md
             </code>
             .
           </p>
         </div>
 
-        <div className="flex items-center justify-between rounded-md border border-border px-3 py-2">
+        <div className="border-border flex items-center justify-between rounded-md border px-3 py-2">
           <div>
             <label
               htmlFor="obsidian-auto-export"
@@ -119,7 +119,7 @@ export function ObsidianIntegration() {
             >
               Auto-export new sessions
             </label>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               When a session finishes, write it to the vault automatically.
             </p>
           </div>

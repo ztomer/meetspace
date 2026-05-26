@@ -29,8 +29,8 @@ url = { workspace = true }
 
 [dev-dependencies]
 criterion = { workspace = true }
-meetspace-data = { workspace = true }
 insta = { workspace = true }
+meetspace-data = { workspace = true }
 
 [[bench]]
 name = "vad"

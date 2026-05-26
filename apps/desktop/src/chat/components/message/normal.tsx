@@ -85,7 +85,7 @@ export function NormalMessage({
             {handleReload && (
               <button
                 onClick={handleReload}
-                className="p-1 text-muted-foreground transition-colors hover:text-muted-foreground"
+                className="text-muted-foreground hover:text-muted-foreground p-1 transition-colors"
                 aria-label="Regenerate message"
               >
                 <RotateCcwIcon size={14} />
@@ -137,7 +137,7 @@ function Reasoning({ part }: { part: Extract<Part, { type: "reasoning" }> }) {
       title={title}
       disabled={streaming}
     >
-      <div className="text-sm whitespace-pre-wrap text-muted-foreground">
+      <div className="text-muted-foreground text-sm whitespace-pre-wrap">
         {part.text}
       </div>
     </Disclosure>

@@ -98,8 +98,8 @@ export function OrganizationItem({
         active ? "bg-accent" : "hover:bg-accent/50",
       ])}
     >
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
-        <Building2 className="h-4 w-4 text-muted-foreground" />
+      <div className="bg-muted flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+        <Building2 className="text-muted-foreground h-4 w-4" />
       </div>
       <div className="min-w-0 flex-1">
         <div className="truncate font-medium">{organization.name}</div>
@@ -110,7 +110,7 @@ export function OrganizationItem({
           "shrink-0 rounded-xs p-1 transition-colors",
           isPinned
             ? "text-info-fg hover:text-info-fg"
-            : "text-muted-foreground/60 opacity-0 group-hover:opacity-100 hover:text-muted-foreground",
+            : "text-muted-foreground/60 hover:text-muted-foreground opacity-0 group-hover:opacity-100",
         ])}
         aria-label={isPinned ? "Unpin organization" : "Pin organization"}
       >

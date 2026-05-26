@@ -1,13 +1,13 @@
 use std::collections::HashMap;
 use std::error::Error;
-use std::io::{stdout, Write};
+use std::io::{Write, stdout};
 
 use async_openai::types::{
     ChatCompletionRequestFunctionMessageArgs, ChatCompletionRequestUserMessageArgs, FinishReason,
 };
 use async_openai::{
-    types::{ChatCompletionFunctionsArgs, CreateChatCompletionRequestArgs},
     Client,
+    types::{ChatCompletionFunctionsArgs, CreateChatCompletionRequestArgs},
 };
 
 use async_openai::config::OpenAIConfig;

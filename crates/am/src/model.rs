@@ -135,7 +135,8 @@ impl AmModel {
         output_path: impl AsRef<std::path::Path>,
         progress_callback: F,
     ) -> Result<(), crate::Error> {
-        meetspace_file::download_file_parallel(self.tar_url(), output_path, progress_callback).await?;
+        meetspace_file::download_file_parallel(self.tar_url(), output_path, progress_callback)
+            .await?;
         Ok(())
     }
 }

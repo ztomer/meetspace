@@ -77,9 +77,11 @@ pub fn is_supported_languages_batch(
     }
 
     if provider == "meetspace" {
-        if let Some(model) =
-            model.and_then(|model| model.parse::<meetspace_transcribe_soniqo::SoniqoModel>().ok())
-        {
+        if let Some(model) = model.and_then(|model| {
+            model
+                .parse::<meetspace_transcribe_soniqo::SoniqoModel>()
+                .ok()
+        }) {
             return Ok(model.supports_languages(languages));
         }
 
@@ -92,7 +94,9 @@ pub fn is_supported_languages_batch(
     Ok(adapter_kind.is_supported_languages_batch(languages, model))
 }
 
-pub fn suggest_providers_for_languages_batch(languages: &[meetspace_language::Language]) -> Vec<String> {
+pub fn suggest_providers_for_languages_batch(
+    languages: &[meetspace_language::Language],
+) -> Vec<String> {
     let all_providers = [
         AdapterKind::Argmax,
         AdapterKind::Soniox,

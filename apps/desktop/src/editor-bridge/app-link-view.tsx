@@ -135,15 +135,15 @@ export const AppLinkView = forwardRef<HTMLSpanElement, NodeViewComponentProps>(
           }}
           className={cn([
             "inline-flex max-w-full items-center gap-2.5 rounded-lg px-2 py-1 text-left align-middle",
-            "transition-colors hover:bg-muted",
+            "hover:bg-muted transition-colors",
           ])}
         >
           {showCheckbox ? (
             <Checkbox checked={checked} />
           ) : attrs.provider === "slack" ? (
-            <SlackIcon className="size-4 shrink-0 text-muted-foreground" />
+            <SlackIcon className="text-muted-foreground size-4 shrink-0" />
           ) : attrs.provider === "discord" ? (
-            <DiscordIcon className="size-4 shrink-0 text-muted-foreground" />
+            <DiscordIcon className="text-muted-foreground size-4 shrink-0" />
           ) : (
             <img
               src="/assets/github-icon.svg"
@@ -152,10 +152,10 @@ export const AppLinkView = forwardRef<HTMLSpanElement, NodeViewComponentProps>(
             />
           )}
           <span className="min-w-0">
-            <span className="block truncate text-sm font-medium text-foreground">
+            <span className="text-foreground block truncate text-sm font-medium">
               {header}
             </span>
-            <span className="block truncate text-xs text-muted-foreground">
+            <span className="text-muted-foreground block truncate text-xs">
               {subline}
             </span>
           </span>

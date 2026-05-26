@@ -170,6 +170,12 @@ mod tests {
         };
     }
 
-    test_segmentation!(test_segmentation_english_1, meetspace_data::english_1::AUDIO);
-    test_segmentation!(test_segmentation_english_2, meetspace_data::english_2::AUDIO);
+    test_segmentation!(
+        test_segmentation_english_1,
+        meetspace_data::english_1::AUDIO
+    );
+    test_segmentation!(
+        test_segmentation_english_2,
+        meetspace_data::english_2::AUDIO
+    );
 }

@@ -174,8 +174,8 @@ mod tests {
 
     #[test]
     fn test_auth_state_with_required_entitlement() {
-        let state =
-            AuthState::new("https://example.supabase.co").with_required_entitlement("meetspace_pro");
+        let state = AuthState::new("https://example.supabase.co")
+            .with_required_entitlement("meetspace_pro");
         assert_eq!(
             state.required_entitlements,
             Some(vec!["meetspace_pro".to_string()])

@@ -20,7 +20,10 @@ impl PublicGitHubHttpClient {
             reqwest::header::ACCEPT,
             "application/vnd.github+json".parse().unwrap(),
         );
-        headers.insert(reqwest::header::USER_AGENT, "meetspace-desktop".parse().unwrap());
+        headers.insert(
+            reqwest::header::USER_AGENT,
+            "meetspace-desktop".parse().unwrap(),
+        );
 
         let client = reqwest::Client::builder()
             .default_headers(headers)

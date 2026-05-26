@@ -218,7 +218,7 @@ function ComposerInput({
             className={cn([
               "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium",
               "bg-background/7 text-white/76",
-              "transition-colors hover:bg-background/12 hover:text-white",
+              "hover:bg-background/12 transition-colors hover:text-white",
             ])}
           >
             <ArrowUpRightIcon className="size-3.5" />
@@ -255,10 +255,12 @@ function ComposerInput({
 
       <div className="mt-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-[11px] text-white/40">
-          <span className="rounded-full bg-background/6 px-2 py-1">
+          <span className="bg-background/6 rounded-full px-2 py-1">
             Esc to dismiss
           </span>
-          <span className="rounded-full bg-background/6 px-2 py-1">⌘ ↩ to send</span>
+          <span className="bg-background/6 rounded-full px-2 py-1">
+            ⌘ ↩ to send
+          </span>
         </div>
 
         {isStreaming ? (
@@ -282,7 +284,7 @@ function ComposerInput({
             className={cn([
               "inline-flex size-10 items-center justify-center rounded-full",
               disabled
-                ? "cursor-default bg-background/8 text-white/25"
+                ? "bg-background/8 cursor-default text-white/25"
                 : [
                     "bg-background text-[#111318]",
                     "transition-transform hover:scale-[1.02]",

@@ -8,7 +8,6 @@
  */
 
 import { generateText, type wrapLanguageModel } from "ai";
-
 import type { Store } from "tinybase/with-schemas";
 
 // Mirror the type alias from useLLMConnection.ts — the ai SDK doesn't
@@ -63,7 +62,11 @@ export async function maybeResolveSpeakerNames(
   );
   if (!transcriptId) return;
 
-  const hintsRaw = mainStore.getCell("transcripts", transcriptId, "speaker_hints");
+  const hintsRaw = mainStore.getCell(
+    "transcripts",
+    transcriptId,
+    "speaker_hints",
+  );
   const wordsRaw = mainStore.getCell("transcripts", transcriptId, "words");
   if (typeof hintsRaw !== "string" || typeof wordsRaw !== "string") return;
 
@@ -118,7 +121,8 @@ export async function maybeResolveSpeakerNames(
   // the speaker we currently assigned and emit short lines, keeping payload
   // bounded.
   const wordSpeaker = new Map<number, number>();
-  for (const h of providerHints) wordSpeaker.set(h.wordIndex, h.data.speaker_index);
+  for (const h of providerHints)
+    wordSpeaker.set(h.wordIndex, h.data.speaker_index);
 
   const lines: string[] = [];
   let buf: string[] = [];
@@ -176,7 +180,10 @@ Reply with the JSON mapping now. No other text.`;
 
   const mapping = parseMapping(raw);
   if (!mapping) {
-    console.warn("[name-resolve] could not parse LLM reply", { sessionId, raw });
+    console.warn("[name-resolve] could not parse LLM reply", {
+      sessionId,
+      raw,
+    });
     return;
   }
 

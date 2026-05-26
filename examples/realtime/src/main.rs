@@ -3,7 +3,7 @@ use std::process::exit;
 use async_openai::types::realtime::{
     ConversationItemCreateEvent, Item, ResponseCreateEvent, ServerEvent,
 };
-use futures_util::{future, pin_mut, StreamExt};
+use futures_util::{StreamExt, future, pin_mut};
 
 use tokio::io::AsyncReadExt;
 use tokio_tungstenite::{

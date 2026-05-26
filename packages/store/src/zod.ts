@@ -308,6 +308,15 @@ export const generalSchema = z.object({
   outlook_token_expires_at: z.number().optional(),
   // Phase 9 — local diarization. Off by default (per-session CPU cost).
   diarize_auto: z.boolean().default(false),
+  // Phase 10.4 — JSON-encoded ordered list of CalendarProvider values.
+  // Higher index = lower priority. Same logical event coming from multiple
+  // providers shows the version from the highest-priority one. Default
+  // matches what most users expect on macOS where Apple Calendar already
+  // aggregates Google/Outlook accounts: prefer the native one to avoid
+  // double-counts.
+  calendar_provider_precedence: z
+    .string()
+    .default(JSON.stringify(["apple", "google", "outlook"])),
 });
 
 export const aiProviderSchema = z
