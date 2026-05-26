@@ -49,7 +49,7 @@ const previewCardComponents: typeof streamdownComponents = {
         {...props}
         title={title}
         className={cn([
-          "block max-h-32 w-full rounded-md bg-white object-contain",
+          "block max-h-32 w-full rounded-md bg-background object-contain",
           props.className,
         ])}
         style={{

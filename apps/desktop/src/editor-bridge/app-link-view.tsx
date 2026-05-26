@@ -75,8 +75,8 @@ function Checkbox({ checked }: { checked: boolean }) {
       className={cn([
         "flex size-5 shrink-0 items-center justify-center rounded-md border-2",
         checked
-          ? "border-neutral-400 bg-neutral-400"
-          : "border-border bg-white",
+          ? "border-border bg-muted-foreground/40"
+          : "border-border bg-background",
       ])}
     >
       {checked && <CheckIcon className="size-3.5 text-white" strokeWidth={3} />}

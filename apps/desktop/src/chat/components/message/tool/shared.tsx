@@ -129,9 +129,10 @@ export function ToolCardFooters({
 }
 
 
+
 export function MarkdownPreview({ children }: { children: string }) {
   return (
-    <div className="rounded-lg border border-border/80 bg-white">
+    <div className="rounded-lg border border-border/80 bg-background">
       <div className="max-h-64 overflow-y-auto px-3 py-2.5">
         <Streamdown
           className="text-[13px] leading-relaxed text-foreground"

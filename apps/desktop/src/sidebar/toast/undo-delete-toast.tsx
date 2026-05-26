@@ -288,7 +288,7 @@ function ToastPill({
       <div
         className={cn([
           "flex items-center gap-3 py-1.5 pr-1.5 pl-4",
-          "rounded-full bg-white",
+          "rounded-full bg-background",
           "border border-border shadow-lg",
         ])}
       >
@@ -314,7 +314,7 @@ function ToastPill({
           className={cn([
             "rounded-full px-3 py-1.5 text-xs font-medium",
             "whitespace-nowrap",
-            "border border-border bg-white text-foreground",
+            "border border-border bg-background text-foreground",
             "hover:bg-muted",
             "transition-colors",
           ])}

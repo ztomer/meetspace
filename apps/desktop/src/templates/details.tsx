@@ -132,7 +132,7 @@ function WebTemplatePreview({
               size="sm"
               variant="ghost"
               onClick={() => onSetDefault(nextTemplate)}
-              className="shrink-0 text-muted-foreground hover:text-black"
+              className="shrink-0 text-muted-foreground hover:text-foreground"
             >
               Set as default
             </Button>

@@ -179,7 +179,7 @@ export function SectionsList({
         <Button
           variant="outline"
           size="sm"
-          className="h-auto w-fit rounded-full border-border bg-white px-4 py-2.5 text-sm text-foreground shadow-[0_2px_6px_rgba(87,83,78,0.08),0_10px_18px_-10px_rgba(87,83,78,0.22)] hover:bg-muted"
+          className="h-auto w-fit rounded-full border-border bg-background px-4 py-2.5 text-sm text-foreground shadow-[0_2px_6px_rgba(87,83,78,0.08),0_10px_18px_-10px_rgba(87,83,78,0.22)] hover:bg-muted"
           onClick={addSection}
           disabled={disabled}
         >
@@ -217,7 +217,7 @@ function SectionItem({
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <div className="group relative bg-white">
+    <div className="group relative bg-background">
       {!disabled && (
         <button
           type="button"

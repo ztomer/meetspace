@@ -49,7 +49,7 @@ function InstructionShell({
           type="button"
           onClick={onBack}
           className={cn([
-            "flex h-9 items-center gap-1.5 rounded-full px-3 text-stone-400 transition-colors hover:bg-muted/70 hover:text-foreground",
+            "flex h-9 items-center gap-1.5 rounded-full px-3 text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground",
           ])}
         >
           <ChevronLeft className="h-4 w-4" />
@@ -62,7 +62,7 @@ function InstructionShell({
         className="relative z-10 flex flex-1 items-center justify-center p-6"
       >
         <div className="flex w-full max-w-sm flex-col items-center gap-6 px-10 pb-10 text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-[20px] border border-border/70 bg-white/90 shadow-[0_6px_18px_rgba(28,25,23,0.05)]">
+          <div className="flex h-14 w-14 items-center justify-center rounded-[20px] border border-border/70 bg-background/90 shadow-[0_6px_18px_rgba(28,25,23,0.05)]">
             <img
               src="/assets/meetspace-icon.png"
               alt=""
@@ -71,19 +71,19 @@ function InstructionShell({
           </div>
 
           <div className="flex max-w-[17rem] flex-col gap-3">
-            <div className="text-[10px] font-medium tracking-[0.22em] text-stone-400 uppercase">
+            <div className="text-[10px] font-medium tracking-[0.22em] text-muted-foreground uppercase">
               Browser step required
             </div>
-            <h2 className="font-sans text-[22px] leading-[1.15] font-semibold text-stone-900 sm:text-[28px]">
+            <h2 className="font-sans text-[22px] leading-[1.15] font-semibold text-foreground sm:text-[28px]">
               {title}
             </h2>
             <p className="text-sm leading-6 text-muted-foreground">{description}</p>
           </div>
 
           <div className="flex items-center gap-2.5 pt-1">
-            <div className="h-1.5 w-1.5 rounded-full bg-stone-400/75" />
-            <div className="h-1.5 w-1.5 rounded-full bg-stone-300" />
-            <div className="h-1.5 w-1.5 rounded-full bg-stone-300" />
+            <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
+            <div className="h-1.5 w-1.5 rounded-full bg-accent" />
+            <div className="h-1.5 w-1.5 rounded-full bg-accent" />
           </div>
 
           {action ? <div className="w-full">{action}</div> : null}
@@ -121,7 +121,7 @@ function ExternalInstruction({
           <Button
             variant="outline"
             className={cn([
-              "h-10 w-full border-stone-300 bg-white text-foreground hover:bg-muted",
+              "h-10 w-full border-border bg-background text-foreground hover:bg-muted",
             ])}
             onClick={() => void openerCommands.openUrl(url, null)}
           >
