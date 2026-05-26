@@ -240,6 +240,27 @@
     --kbd-shadow-outer: rgba(0, 0, 0, 0.1);
     --kbd-shadow-inset: rgba(255, 255, 255, 0.8);
     --kbd-shadow-outer-hover: rgba(0, 0, 0, 0.15);
+
+    /* Alert tokens — light mode. Tints match Tailwind's red/amber/green/sky
+       50/200/700 ramps. */
+    --destructive-bg: 0 86% 97%;
+    --destructive-fg: 0 62% 41%;
+    --destructive-border: 0 88% 90%;
+
+    --warning: 38 92% 50%;
+    --warning-bg: 48 100% 96%;
+    --warning-fg: 26 82% 33%;
+    --warning-border: 43 96% 84%;
+
+    --success: 142 71% 45%;
+    --success-bg: 138 76% 97%;
+    --success-fg: 142 64% 24%;
+    --success-border: 141 84% 88%;
+
+    --info: 214 95% 56%;
+    --info-bg: 214 100% 97%;
+    --info-fg: 217 80% 35%;
+    --info-border: 213 97% 87%;
   }
 
   .dark {
@@ -277,6 +298,26 @@
     --kbd-shadow-outer: rgba(0, 0, 0, 0.35);
     --kbd-shadow-inset: rgba(255, 255, 255, 0.08);
     --kbd-shadow-outer-hover: rgba(0, 0, 0, 0.5);
+
+    /* Alert tokens — dark mode. Same hues, darker bg / lighter fg. */
+    --destructive-bg: 0 55% 14%;
+    --destructive-fg: 0 95% 78%;
+    --destructive-border: 0 60% 28%;
+
+    --warning: 38 92% 55%;
+    --warning-bg: 32 60% 11%;
+    --warning-fg: 38 95% 72%;
+    --warning-border: 32 60% 30%;
+
+    --success: 142 71% 50%;
+    --success-bg: 142 50% 10%;
+    --success-fg: 142 65% 72%;
+    --success-border: 142 50% 28%;
+
+    --info: 214 95% 65%;
+    --info-bg: 214 50% 12%;
+    --info-fg: 214 90% 75%;
+    --info-border: 214 50% 30%;
   }
 
   .theme {
