@@ -153,7 +153,7 @@ function MainPanel({
         data-main-has-after-border={afterBorder ? "" : undefined}
         data-main-show-after-border-divider={afterBorder ? "" : undefined}
         className={cn([
-          "relative flex min-h-0 flex-1 flex-col overflow-hidden bg-white",
+          "relative flex min-h-0 flex-1 flex-col overflow-hidden bg-background",
           mergeAfterBorder && afterBorder
             ? "rounded-t-xl rounded-b-none"
             : "rounded-xl",
