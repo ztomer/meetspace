@@ -10,6 +10,8 @@ A local-only AI meeting notetaker. Your audio, transcripts, and notes never leav
 - **Bring your own LLM.** Osaurus (default, `localhost:1337`), Ollama, LM Studio, or any OpenAI-compatible endpoint.
 - **Notes as markdown on disk.** `cat` them, grep them, sync via Dropbox / iCloud / Syncthing / git. No cloud, no accounts, no tracking.
 - **Integrations that respect locality.** Obsidian (write to your vault), Notion (your token), Linear (your key). OAuth-only services are deliberately out of scope.
+- **Calendars without a middleman.** Google and Outlook via localhost OAuth (PKCE); tokens stay on this device. Apple Calendar through the system bridge. Same meeting showing up from multiple providers gets deduped automatically — pick the winner in Settings → Integrations → Calendar source precedence.
+- **Speaker diarization on-device.** Pyannote segmentation + ECAPA embeddings bundled in the binary tag each turn after the meeting ends. When an LLM is configured, anonymous "Speaker 2" labels are resolved against the meeting's participant roster automatically.
 - **Light and dark mode.** Theme toggle in Settings → App → Appearance; follows your OS by default.
 
 ## Run it
