@@ -5,7 +5,7 @@ export function HyprProviderRow({ children }: { children: React.ReactNode }) {
     <div
       className={cn([
         "flex flex-col gap-3",
-        "rounded-md border bg-white px-3 py-2",
+        "rounded-md border bg-background px-3 py-2",
       ])}
     >
       {children}

@@ -229,9 +229,9 @@ export function TemplateForm({
               onClick={setSelectedTemplateId}
               title={isDefault ? "Remove as default" : "Set as default"}
               className={cn([
-                "shrink-0 text-muted-foreground hover:text-black",
+                "shrink-0 text-muted-foreground hover:text-foreground",
                 isDefault
-                  ? "bg-muted text-black hover:bg-muted"
+                  ? "bg-muted text-foreground hover:bg-muted"
                   : null,
               ])}
             >

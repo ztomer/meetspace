@@ -1,7 +1,7 @@
 import { cn } from "@meetspace/utils";
 
 export const appFloatingContentClassName =
-  "overflow-hidden rounded-2xl border border-neutral-200 bg-stone-50 p-1 shadow-lg";
+  "overflow-hidden rounded-2xl border border-border bg-popover p-1 shadow-lg";
 
 export type FloatingContentVariant = "default" | "app";
 
@@ -11,10 +11,7 @@ export function AppFloatingPanel({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn([
-        "rounded-2xl border border-neutral-200 bg-white",
-        className,
-      ])}
+      className={cn(["border-border bg-popover rounded-xl border", className])}
       {...props}
     />
   );

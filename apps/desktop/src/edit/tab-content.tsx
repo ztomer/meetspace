@@ -69,7 +69,7 @@ export function TabContentEdit({ tab }: { tab: EditTab }) {
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <button
-              className="rounded-md border border-border bg-white px-4 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-muted"
+              className="rounded-md border border-border bg-background px-4 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-muted"
               onClick={() => {
                 resolveEdit(tab.requestId, false);
                 useTabs.getState().close(tab);
@@ -78,7 +78,7 @@ export function TabContentEdit({ tab }: { tab: EditTab }) {
               Decline
             </button>
             <button
-              className="rounded-md bg-neutral-800 px-4 py-1.5 text-[13px] text-white transition-colors hover:bg-neutral-700"
+              className="rounded-md bg-primary px-4 py-1.5 text-[13px] text-white transition-colors hover:bg-primary"
               onClick={() => {
                 resolveEdit(tab.requestId, true);
                 useTabs.getState().close(tab);

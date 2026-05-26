@@ -18,7 +18,7 @@ export function getLocalModelIcon(model: string): ModelIconSpec | null {
     return {
       label: "A",
       title: "Meetspace Pro",
-      className: "border-border bg-white text-foreground",
+      className: "border-border bg-background text-foreground",
       imageSrc: MEETSPACE_ICON_SRC,
       imageClassName: "size-4 object-contain",
     };
@@ -28,7 +28,7 @@ export function getLocalModelIcon(model: string): ModelIconSpec | null {
     return {
       label: "Q",
       title: "Qwen",
-      className: "border-border bg-white text-foreground",
+      className: "border-border bg-background text-foreground",
       imageSrc: `${MODEL_ICON_ASSET_BASE}/qwen-logo.svg`,
       imageClassName: "size-4 object-contain",
     };
@@ -38,7 +38,7 @@ export function getLocalModelIcon(model: string): ModelIconSpec | null {
     return {
       label: "O",
       title: "Meta Omnilingual",
-      className: "border-border bg-white text-foreground",
+      className: "border-border bg-background text-foreground",
       imageSrc: `${MODEL_ICON_ASSET_BASE}/meta-logo.svg`,
       imageClassName: "size-4 object-contain",
     };
@@ -48,7 +48,7 @@ export function getLocalModelIcon(model: string): ModelIconSpec | null {
     return {
       label: "W",
       title: "OpenAI Whisper",
-      className: "border-border bg-white text-foreground",
+      className: "border-border bg-background text-foreground",
       imageSrc: `${MODEL_ICON_ASSET_BASE}/openai-logo.svg`,
       imageClassName: "size-4 object-contain",
     };
@@ -58,7 +58,7 @@ export function getLocalModelIcon(model: string): ModelIconSpec | null {
     return {
       label: "P",
       title: "NVIDIA Parakeet",
-      className: "border-border bg-white text-foreground",
+      className: "border-border bg-background text-foreground",
       imageSrc: `${MODEL_ICON_ASSET_BASE}/nvidia-logo.svg`,
       imageClassName: "size-4 object-cover object-left",
     };

@@ -129,7 +129,7 @@ export function FolderLocationSection({
         <button
           onClick={onContinue}
           disabled={isPending}
-          className="shrink-0 rounded-full bg-stone-600 px-3 py-1 text-sm font-medium text-white duration-150 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
+          className="shrink-0 rounded-full bg-primary px-3 py-1 text-sm font-medium text-white duration-150 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
         >
           Confirm
         </button>
