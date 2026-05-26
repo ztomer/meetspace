@@ -78,7 +78,7 @@ export function TabContentEdit({ tab }: { tab: EditTab }) {
               Decline
             </button>
             <button
-              className="bg-primary hover:bg-primary rounded-md px-4 py-1.5 text-[13px] text-white transition-colors"
+              className="bg-primary hover:bg-primary text-primary-foreground rounded-md px-4 py-1.5 text-[13px] transition-colors"
               onClick={() => {
                 resolveEdit(tab.requestId, true);
                 useTabs.getState().close(tab);

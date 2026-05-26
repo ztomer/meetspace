@@ -337,7 +337,7 @@ function ModelSelectItem({
           className={cn([
             "rounded-full px-2 py-0.5 text-[11px] font-medium",
             "flex items-center gap-1",
-            "text-muted-foreground bg-linear-to-t from-neutral-200 to-neutral-100",
+            "bg-secondary text-secondary-foreground border-border border",
           ])}
         >
           <Loader2 className="size-3 animate-spin" />
@@ -349,7 +349,7 @@ function ModelSelectItem({
             "rounded-full px-2 text-[11px] font-medium",
             "opacity-0 group-hover:opacity-100",
             "transition-all duration-150",
-            "text-foreground bg-linear-to-t from-neutral-200 to-neutral-100 py-0.5 shadow-xs hover:shadow-md",
+            "bg-secondary text-secondary-foreground border-border border py-0.5 shadow-xs hover:shadow-md",
           ])}
           onClick={handleAction}
         >

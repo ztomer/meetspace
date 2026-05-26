@@ -74,7 +74,7 @@ export function ChatBodyEmpty({
           <button
             onClick={handleGoToSettings}
             className={cn([
-              "border-border bg-primary inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium text-white",
+              "border-border bg-primary text-primary-foreground inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium",
               "hover:bg-primary shadow-[0_4px_14px_rgba(87,83,78,0.18)] transition-colors",
             ])}
           >

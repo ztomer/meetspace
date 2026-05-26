@@ -94,7 +94,7 @@ export function ChatMessageInput({
                 isSendDisabled
                   ? "cursor-default border-border text-muted-foreground/60"
                   : [
-                      "border-border bg-primary text-white",
+                      "border-border bg-primary text-primary-foreground",
                       "hover:bg-primary",
                       "active:scale-[0.97] active:bg-primary",
                     ],
