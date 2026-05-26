@@ -132,7 +132,7 @@ function NavigationCard() {
             Empty Tab
           </button>
         )}
-        {["sign-in", "billing", "integration"].map((type) => (
+        {["billing", "integration"].map((type) => (
           <button
             key={type}
             type="button"

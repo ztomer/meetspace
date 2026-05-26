@@ -1,14 +1,15 @@
 import { ChevronLeft, ExternalLink } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import { commands as openerCommands } from "@meetspace/plugin-opener2";
 import { Button } from "@meetspace/ui/components/ui/button";
-import { Input } from "@meetspace/ui/components/ui/input";
 import { cn } from "@meetspace/utils";
 
-import { useAuth } from "~/auth";
-
-export type InstructionType = "sign-in" | "billing" | "integration";
+// Meetspace is local-only — the upstream "sign-in" instruction screen
+// (account-creation handoff) is gone. Only the browser-handoff prompts for
+// "integration" (and "billing", retained as a no-op for deeplink parity)
+// remain.
+export type InstructionType = "billing" | "integration";
 
 function useInstructionCleanup(onCleanup?: () => void) {
   const cleanupRef = useRef(onCleanup);
@@ -38,8 +39,8 @@ function InstructionShell({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="relative flex h-full flex-col overflow-hidden bg-[linear-gradient(180deg,_rgba(250,250,249,0.92)_0%,_rgba(255,255,255,1)_24%,_rgba(255,255,255,1)_100%)] select-none">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-linear-to-b from-stone-100/40 to-transparent" />
+    <div className="bg-background relative flex h-full flex-col overflow-hidden select-none">
+      <div className="from-muted/40 pointer-events-none absolute inset-x-0 top-0 h-32 bg-linear-to-b to-transparent" />
 
       <div
         data-tauri-drag-region
@@ -149,10 +150,6 @@ export function InstructionScreen({
 }) {
   useInstructionCleanup(onCleanup);
 
-  if (type === "sign-in") {
-    return <SignInInstruction onBack={onBack} />;
-  }
-
   if (type === "billing") {
     return (
       <ExternalInstruction
@@ -173,62 +170,5 @@ export function InstructionScreen({
       onBack={onBack}
       url={url}
     />
-  );
-}
-
-function SignInInstruction({ onBack }: { onBack: () => void }) {
-  const auth = useAuth();
-  const [callbackUrl, setCallbackUrl] = useState("");
-  const [showCallbackInput, setShowCallbackInput] = useState(false);
-
-  useEffect(() => {
-    if (!auth?.session) {
-      return;
-    }
-
-    onBack();
-  }, [auth?.session, onBack]);
-
-  return (
-    <InstructionShell
-      title="Sign in to your account"
-      description="Complete sign-in in your browser, then return to Meetspace."
-      onBack={onBack}
-    >
-      {showCallbackInput ? (
-        <>
-          <div className="flex w-full flex-col gap-2">
-            <Input
-              type="text"
-              className="h-10 font-mono text-xs"
-              placeholder="meetspace://deeplink/auth?access_token=..."
-              value={callbackUrl}
-              onChange={(e) => setCallbackUrl(e.target.value)}
-            />
-            <Button
-              className="h-10"
-              onClick={() => void auth.handleAuthCallback(callbackUrl)}
-              disabled={!callbackUrl}
-            >
-              Submit callback URL
-            </Button>
-          </div>
-          <p className="text-muted-foreground text-xs leading-5">
-            Paste the browser URL here if the browser button did not reopen
-            Meetspace.
-          </p>
-        </>
-      ) : (
-        <button
-          type="button"
-          onClick={() => setShowCallbackInput(true)}
-          className={cn([
-            "text-muted-foreground hover:text-foreground text-xs font-medium underline underline-offset-4 transition-colors",
-          ])}
-        >
-          Browser handoff not working? Paste the callback link instead
-        </button>
-      )}
-    </InstructionShell>
   );
 }
