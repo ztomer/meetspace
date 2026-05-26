@@ -101,11 +101,11 @@ function ContextChip({
           className={cn([
             "group max-w-48 min-w-0 rounded-md px-1.5 py-0.5 text-xs",
             pending
-              ? "bg-neutral-500/5 text-muted-foreground"
-              : "bg-white text-muted-foreground shadow-xs",
+              ? "bg-muted-foreground/5 text-muted-foreground"
+              : "bg-background text-muted-foreground shadow-xs",
             "inline-flex shrink items-center gap-1",
             isClickable
-              ? "cursor-pointer hover:bg-neutral-500/20"
+              ? "cursor-pointer hover:bg-muted-foreground/20"
               : "cursor-default",
           ])}
         >
@@ -118,7 +118,7 @@ function ContextChip({
                 e.stopPropagation();
                 onRemove(chip.key);
               }}
-              className="ml-0.5 hidden items-center justify-center rounded-sm group-hover:inline-flex hover:bg-neutral-500/20"
+              className="ml-0.5 hidden items-center justify-center rounded-sm group-hover:inline-flex hover:bg-muted-foreground/20"
             >
               <XIcon className="size-2.5" />
             </button>
@@ -172,7 +172,7 @@ function ChipList({
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className="inline-flex shrink-0 items-center gap-0.5 rounded-md bg-neutral-500/10 px-1 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-neutral-500/20 hover:text-muted-foreground"
+          className="inline-flex shrink-0 items-center gap-0.5 rounded-md bg-muted-foreground/10 px-1 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-muted-foreground/20 hover:text-muted-foreground"
         >
           {!expanded && hiddenCount > 0 && <span>+{hiddenCount}</span>}
           <ChevronDownIcon
@@ -220,7 +220,7 @@ function SessionPicker({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search sessions..."
-        className="w-full rounded-md border border-border bg-white px-2.5 py-1.5 text-xs outline-none focus:border-neutral-400"
+        className="w-full rounded-md border border-border bg-background px-2.5 py-1.5 text-xs outline-none focus:border-border"
       />
       <div className="flex max-h-48 flex-col gap-0.5 overflow-y-auto">
         {results.map((result) => (
@@ -259,7 +259,7 @@ function AddSessionButton({ onAdd }: { onAdd: (sessionId: string) => void }) {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="inline-flex shrink-0 items-center justify-center rounded-md bg-neutral-500/10 p-0.5 text-muted-foreground transition-colors hover:bg-neutral-500/20 hover:text-muted-foreground"
+          className="inline-flex shrink-0 items-center justify-center rounded-md bg-muted-foreground/10 p-0.5 text-muted-foreground transition-colors hover:bg-muted-foreground/20 hover:text-muted-foreground"
         >
           <PlusIcon className="size-3.5" />
         </button>
@@ -304,7 +304,7 @@ export function ContextBar({
   return (
     <div
       className={cn([
-        "shrink-0 rounded-t-xl border-t border-r border-l border-border bg-white",
+        "shrink-0 rounded-t-xl border-t border-r border-l border-border bg-background",
         chat.mode !== "RightPanelOpen" && "mx-2",
       ])}
     >

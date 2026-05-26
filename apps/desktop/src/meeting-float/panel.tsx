@@ -96,7 +96,7 @@ function LiveWaveform({ className }: { className?: string }) {
       data-tauri-drag-region="false"
       className={cn([
         "group relative h-5 w-16 shrink-0 overflow-hidden rounded-[6px] p-0",
-        "text-white/90 transition-colors hover:bg-white/12 hover:text-white",
+        "text-white/90 transition-colors hover:bg-background/12 hover:text-white",
         className,
       ])}
     >

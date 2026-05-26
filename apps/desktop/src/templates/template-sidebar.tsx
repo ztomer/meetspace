@@ -301,7 +301,7 @@ export function TemplatesSidebarContent({
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="text-muted-foreground hover:text-black"
+                    className="text-muted-foreground hover:text-foreground"
                   >
                     <ArrowDownUp size={16} />
                   </Button>
@@ -326,7 +326,7 @@ export function TemplatesSidebarContent({
             <Button
               size="icon"
               variant="ghost"
-              className="text-muted-foreground hover:text-black"
+              className="text-muted-foreground hover:text-foreground"
               onClick={createDefaultTemplate}
             >
               <Plus size={16} />

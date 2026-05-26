@@ -123,7 +123,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
         <div className="mb-0.5 flex items-start justify-between gap-2">
           <p
             className={clsx(
-              "truncate text-sm font-medium text-black",
+              "truncate text-sm font-medium text-foreground",
               !notification.read && "font-semibold",
             )}
           >

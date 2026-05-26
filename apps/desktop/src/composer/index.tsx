@@ -134,8 +134,8 @@ function ComposerSettingsCard() {
           data-tauri-drag-region="false"
           className={cn([
             "inline-flex size-8 items-center justify-center rounded-full",
-            "bg-white/7 text-white/65 transition-colors",
-            "hover:bg-white/12 hover:text-white",
+            "bg-background/7 text-white/65 transition-colors",
+            "hover:bg-background/12 hover:text-white",
           ])}
         >
           <XIcon className="size-4" />
@@ -147,8 +147,8 @@ function ComposerSettingsCard() {
         onClick={() => void openSettingsInMainWindow()}
         className={cn([
           "inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-medium",
-          "bg-white/7 text-white/85 transition-colors",
-          "hover:bg-white/10 hover:text-white",
+          "bg-background/7 text-white/85 transition-colors",
+          "hover:bg-background/10 hover:text-white",
         ])}
       >
         <Settings2Icon className="size-4" />
@@ -217,8 +217,8 @@ function ComposerInput({
             data-tauri-drag-region="false"
             className={cn([
               "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium",
-              "bg-white/7 text-white/76",
-              "transition-colors hover:bg-white/12 hover:text-white",
+              "bg-background/7 text-white/76",
+              "transition-colors hover:bg-background/12 hover:text-white",
             ])}
           >
             <ArrowUpRightIcon className="size-3.5" />
@@ -230,8 +230,8 @@ function ComposerInput({
             data-tauri-drag-region="false"
             className={cn([
               "inline-flex size-8 items-center justify-center rounded-full",
-              "bg-white/7 text-white/65 transition-colors",
-              "hover:bg-white/12 hover:text-white",
+              "bg-background/7 text-white/65 transition-colors",
+              "hover:bg-background/12 hover:text-white",
             ])}
           >
             <XIcon className="size-4" />
@@ -255,10 +255,10 @@ function ComposerInput({
 
       <div className="mt-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-[11px] text-white/40">
-          <span className="rounded-full bg-white/6 px-2 py-1">
+          <span className="rounded-full bg-background/6 px-2 py-1">
             Esc to dismiss
           </span>
-          <span className="rounded-full bg-white/6 px-2 py-1">⌘ ↩ to send</span>
+          <span className="rounded-full bg-background/6 px-2 py-1">⌘ ↩ to send</span>
         </div>
 
         {isStreaming ? (
@@ -267,8 +267,8 @@ function ComposerInput({
             onClick={onStop}
             className={cn([
               "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium",
-              "bg-white/8 text-white/82 transition-colors",
-              "hover:bg-white/12 hover:text-white",
+              "bg-background/8 text-white/82 transition-colors",
+              "hover:bg-background/12 hover:text-white",
             ])}
           >
             <SparklesIcon className="size-3.5" />
@@ -282,9 +282,9 @@ function ComposerInput({
             className={cn([
               "inline-flex size-10 items-center justify-center rounded-full",
               disabled
-                ? "cursor-default bg-white/8 text-white/25"
+                ? "cursor-default bg-background/8 text-white/25"
                 : [
-                    "bg-white text-[#111318]",
+                    "bg-background text-[#111318]",
                     "transition-transform hover:scale-[1.02]",
                   ],
               !hasContent && !disabled && "opacity-55",

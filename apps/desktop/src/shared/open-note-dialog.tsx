@@ -158,7 +158,7 @@ export function OpenNoteDialog({ open, onOpenChange }: OpenNoteDialogProps) {
                 className={cn([
                   "h-5 w-5 rounded-full",
                   "flex items-center justify-center",
-                  "bg-accent/80 hover:bg-neutral-300/80",
+                  "bg-accent/80 hover:bg-accent/80",
                   "text-xs text-muted-foreground",
                   "transition-colors",
                 ])}

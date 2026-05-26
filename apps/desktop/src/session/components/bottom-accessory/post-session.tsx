@@ -291,7 +291,7 @@ function BatchProgressTimeline({
         <div
           className={cn([
             "flex h-8 w-8 items-center justify-center rounded-full",
-            "border border-border bg-white shadow-xs",
+            "border border-border bg-background shadow-xs",
             "shrink-0",
           ])}
         >
@@ -310,7 +310,7 @@ function BatchProgressTimeline({
         <div className="flex h-[30px] items-center">
           <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-accent/80">
             <div
-              className="absolute inset-y-0 left-0 rounded-full bg-neutral-400 transition-[width] duration-300 ease-out"
+              className="absolute inset-y-0 left-0 rounded-full bg-muted-foreground/40 transition-[width] duration-300 ease-out"
               style={{ width: `${Math.max(progress * 100, 8)}%` }}
             />
             <div className="absolute inset-0 flex items-center justify-center">
@@ -524,7 +524,7 @@ function TranscriptCard({
   return (
     <div
       className={cn([
-        "min-h-[96px] overflow-hidden rounded-b-xl border-x border-b border-border bg-white",
+        "min-h-[96px] overflow-hidden rounded-b-xl border-x border-b border-border bg-background",
         fillHeight && "flex flex-1 flex-col",
       ])}
     >

@@ -196,7 +196,7 @@ function ExpandedSearch({ onBlur }: { onBlur?: () => void }) {
             className={cn([
               "absolute right-9",
               "px-2 py-0.5",
-              "rounded-full bg-neutral-400",
+              "rounded-full bg-muted-foreground/40",
               "text-xs font-semibold text-white",
               "pointer-events-none",
             ])}

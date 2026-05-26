@@ -154,7 +154,7 @@ export function ProfileSection({ onExpandChange }: ProfileSectionProps = {}) {
             transition={{ duration: 0.2, ease: "easeInOut" }}
             className="absolute right-0 bottom-full left-0 mb-1"
           >
-            <div className="overflow-hidden rounded-xl border bg-white shadow-xs">
+            <div className="overflow-hidden rounded-xl border bg-background shadow-xs">
               <div className="py-1">
                 <AnimatePresence mode="wait">
                   {currentView === "main" ? (
@@ -250,7 +250,7 @@ function ProfileButton({
       >
         <ProfileFacehash name={facehashName} size={32} />
       </div>
-      <div className="min-w-0 flex-1 truncate text-sm text-black">{name}</div>
+      <div className="min-w-0 flex-1 truncate text-sm text-foreground">{name}</div>
       <ChevronUpIcon
         className={cn([
           "h-4 w-4",

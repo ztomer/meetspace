@@ -373,7 +373,7 @@ function FormField({
   return (
     <div className="flex flex-col gap-2">
       <label className="block text-xs font-medium">{label}</label>
-      <InputGroup className="bg-white">
+      <InputGroup className="bg-background">
         <InputGroupInput
           name={field.name}
           type={type}

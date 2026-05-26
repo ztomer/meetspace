@@ -147,7 +147,7 @@ export function ModelCombobox({
           disabled={disabled || isLoadingModels}
           aria-expanded={open}
           className={cn([
-            "w-full justify-between bg-white font-normal shadow-none focus-visible:ring-0",
+            "w-full justify-between bg-background font-normal shadow-none focus-visible:ring-0",
             "rounded-md px-3",
           ])}
         >

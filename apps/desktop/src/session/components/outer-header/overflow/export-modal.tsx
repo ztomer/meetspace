@@ -525,7 +525,7 @@ export function ExportModal({
             disabled={
               isPending || isTranscriptPending || !hasAnyContentSelected
             }
-            className="h-10 w-full rounded-full border-2 border-stone-600 bg-stone-800 text-sm font-medium text-white shadow-[0_4px_14px_rgba(87,83,78,0.4)] transition-all duration-200 hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="h-10 w-full rounded-full border-2 border-border bg-primary text-sm font-medium text-white shadow-[0_4px_14px_rgba(87,83,78,0.4)] transition-all duration-200 hover:bg-primary disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isPending
               ? "Exporting..."

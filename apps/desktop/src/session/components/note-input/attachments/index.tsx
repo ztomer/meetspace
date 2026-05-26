@@ -58,12 +58,12 @@ function LinkAttachmentCard({
   const addedLabel = formatAttachmentTimestamp(attachment.addedAt);
 
   return (
-    <div className="relative flex flex-col gap-3 rounded-lg border border-border bg-white p-4 transition-colors hover:bg-muted">
+    <div className="relative flex flex-col gap-3 rounded-lg border border-border bg-background p-4 transition-colors hover:bg-muted">
       {onRemove && (
         <button
           type="button"
           onClick={() => onRemove(attachment.attachmentId)}
-          className="absolute top-2 right-2 rounded-full border border-border bg-white/80 p-1 transition-colors hover:bg-white"
+          className="absolute top-2 right-2 rounded-full border border-border bg-background/80 p-1 transition-colors hover:bg-background"
           aria-label="Remove attachment"
         >
           <X className="h-3 w-3 text-muted-foreground" />
@@ -140,13 +140,13 @@ function ImageAttachmentCard({
   return (
     <div
       onContextMenu={showContextMenu}
-      className="relative flex flex-col gap-3 rounded-lg border border-border bg-white p-4 transition-colors hover:bg-muted"
+      className="relative flex flex-col gap-3 rounded-lg border border-border bg-background p-4 transition-colors hover:bg-muted"
     >
       {onRemove && (
         <button
           type="button"
           onClick={() => onRemove(attachment.attachmentId)}
-          className="absolute top-2 right-2 z-10 rounded-full border border-border bg-white/80 p-1 transition-colors hover:bg-white"
+          className="absolute top-2 right-2 z-10 rounded-full border border-border bg-background/80 p-1 transition-colors hover:bg-background"
           aria-label="Remove attachment"
         >
           <X className="h-3 w-3 text-muted-foreground" />
@@ -165,7 +165,7 @@ function ImageAttachmentCard({
           </div>
         )}
         {!attachment.isPersisted && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/60">
+          <div className="absolute inset-0 flex items-center justify-center bg-background/60">
             <span className="text-xs font-medium text-muted-foreground">
               Saving...
             </span>

@@ -277,7 +277,7 @@ function ProviderAccordionItem({
           <button
             type="button"
             onClick={handleUpgradeToPro}
-            className="pointer-events-none absolute top-1/2 right-1 z-10 shrink-0 translate-x-1 -translate-y-1/2 rounded-full border-2 border-stone-600 bg-stone-800 px-3 py-1 text-xs font-medium text-white opacity-0 shadow-[0_4px_14px_rgba(87,83,78,0.18)] transition-all duration-150 group-focus-within/row:pointer-events-auto group-focus-within/row:translate-x-0 group-focus-within/row:opacity-100 group-hover/row:pointer-events-auto group-hover/row:translate-x-0 group-hover/row:opacity-100 hover:bg-stone-700 focus-visible:ring-2 focus-visible:ring-stone-500 focus-visible:outline-none"
+            className="pointer-events-none absolute top-1/2 right-1 z-10 shrink-0 translate-x-1 -translate-y-1/2 rounded-full border-2 border-border bg-primary px-3 py-1 text-xs font-medium text-white opacity-0 shadow-[0_4px_14px_rgba(87,83,78,0.18)] transition-all duration-150 group-focus-within/row:pointer-events-auto group-focus-within/row:translate-x-0 group-focus-within/row:opacity-100 group-hover/row:pointer-events-auto group-hover/row:translate-x-0 group-hover/row:opacity-100 hover:bg-primary focus-visible:ring-2 focus-visible:ring-stone-500 focus-visible:outline-none"
             aria-label={`Upgrade to Pro for ${provider.displayName}`}
           >
             Upgrade to Pro

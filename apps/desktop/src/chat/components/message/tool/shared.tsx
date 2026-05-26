@@ -176,13 +176,13 @@ export function ToolCardApproval() {
         {pending.message}
       </span>
       <button
-        className="rounded-md border border-border bg-white px-3 py-1 text-[13px] text-muted-foreground transition-colors hover:bg-muted"
+        className="rounded-md border border-border bg-background px-3 py-1 text-[13px] text-muted-foreground transition-colors hover:bg-muted"
         onClick={() => respond(false)}
       >
         Decline
       </button>
       <button
-        className="rounded-md bg-neutral-800 px-3 py-1 text-[13px] text-white transition-colors hover:bg-neutral-700"
+        className="rounded-md bg-primary px-3 py-1 text-[13px] text-white transition-colors hover:bg-primary"
         onClick={() => respond(true)}
         autoFocus
       >
@@ -199,7 +199,7 @@ export function useToolApproval(running: boolean) {
 
 export function MarkdownPreview({ children }: { children: string }) {
   return (
-    <div className="rounded-lg border border-border/80 bg-white">
+    <div className="rounded-lg border border-border/80 bg-background">
       <div className="max-h-64 overflow-y-auto px-3 py-2.5">
         <Streamdown
           className="text-[13px] leading-relaxed text-foreground"
