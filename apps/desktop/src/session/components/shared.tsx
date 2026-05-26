@@ -46,7 +46,7 @@ export function useCurrentNoteTab(
 }
 
 export function RecordingIcon() {
-  return <div className="size-3 rounded-full bg-red-500" />;
+  return <div className="size-3 rounded-full bg-destructive" />;
 }
 
 export function useListenButtonState(sessionId: string) {

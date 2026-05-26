@@ -5,10 +5,6 @@ import { TZDate, format, safeParseDate } from "@meetspace/utils";
 import type { TimelineEventsTable, TimelineSessionsTable } from "./utils";
 
 import { getSessionEvent } from "~/session/utils";
-import { useMountEffect } from "~/shared/hooks/useMountEffect";
-
-const MINUTE_MS = 60_000;
-const CURRENT_TIME_TICK_OFFSET_MS = 100;
 
 export const CurrentTimeIndicator = forwardRef<
   HTMLDivElement,
@@ -37,10 +33,10 @@ export const CurrentTimeIndicator = forwardRef<
       }
       style={variant === "inside" ? { top: insideOffset } : undefined}
     >
-      <div className="absolute inset-x-0 top-0 -translate-y-1/2">
-        <div className="absolute top-1/2 right-0 left-0 h-px -translate-y-1/2 bg-red-400/90 mix-blend-multiply" />
+      <div className="absolute top-0 right-3 left-3 -translate-y-1/2">
+        <div className="bg-destructive/90 absolute top-1/2 right-0 left-0 h-px -translate-y-1/2 mix-blend-multiply" />
         <div className="relative flex h-5 items-center justify-center">
-          <div className="rounded-full bg-red-500 px-2 py-0.5 font-mono text-[11px] font-semibold text-white opacity-0 shadow-xs transition-opacity group-hover:opacity-100">
+          <div className="bg-destructive rounded-full px-2 py-0.5 font-mono text-[11px] font-semibold text-white opacity-0 shadow-xs transition-opacity group-hover:opacity-100">
             {label}
           </div>
         </div>
@@ -52,53 +48,19 @@ export const CurrentTimeIndicator = forwardRef<
 export function useCurrentTimeMs() {
   const [now, setNow] = useState(() => new Date().getTime());
 
-  useMountEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
-
-    const clearUpdate = () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-        timeoutId = undefined;
-      }
-    };
-
-    const scheduleUpdate = () => {
-      clearUpdate();
-      timeoutId = setTimeout(update, getCurrentTimeTickDelay(Date.now()));
-    };
-
+  useEffect(() => {
     const update = () => {
-      setNow(Date.now());
-      scheduleUpdate();
+      const now = new Date().getTime();
+      setNow(now);
     };
 
-    const sync = () => {
-      update();
-    };
+    update();
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        sync();
-      }
-    };
-
-    sync();
-    window.addEventListener("focus", sync);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      clearUpdate();
-      window.removeEventListener("focus", sync);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  });
+    const interval = setInterval(update, 60_000);
+    return () => clearInterval(interval);
+  }, []);
 
   return now;
-}
-
-function getCurrentTimeTickDelay(nowMs: number): number {
-  const msIntoMinute = nowMs % MINUTE_MS;
-  return MINUTE_MS - msIntoMinute + CURRENT_TIME_TICK_OFFSET_MS;
 }
 
 export function useSmartCurrentTime(

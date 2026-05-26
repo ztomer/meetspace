@@ -59,7 +59,7 @@ export function FloatingActionButton({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="max-w-full translate-y-0 text-center text-sm whitespace-nowrap text-red-400"
+            className="max-w-full translate-y-0 text-center text-sm whitespace-nowrap text-destructive"
           >
             {skipReason}
           </motion.div>

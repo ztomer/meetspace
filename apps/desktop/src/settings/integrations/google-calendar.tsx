@@ -102,7 +102,7 @@ export function GoogleCalendarIntegration() {
           </p>
         </div>
         {connected ? (
-          <div className="flex items-center gap-1.5 text-xs text-green-700">
+          <div className="flex items-center gap-1.5 text-xs text-success-fg">
             <CheckCircle2Icon size={14} />
             Connected
           </div>

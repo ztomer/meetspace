@@ -171,7 +171,7 @@ function ConnectionActions({
               "todo",
             )
           }
-          className="cursor-pointer text-xs text-amber-700 underline transition-colors hover:text-amber-900"
+          className="cursor-pointer text-xs text-warning-fg underline transition-colors hover:text-warning-fg"
         >
           Reconnect required
         </button>

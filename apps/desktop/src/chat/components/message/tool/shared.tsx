@@ -42,7 +42,7 @@ export function ToolCardHeader({
     <div
       className={cn([
         "flex items-center gap-2.5 px-3.5 py-2 text-[13px]",
-        failed ? "bg-red-50 text-destructive" : "bg-muted/80 text-muted-foreground",
+        failed ? "bg-destructive-bg text-destructive" : "bg-muted/80 text-muted-foreground",
       ])}
     >
       {running ? (
@@ -73,7 +73,7 @@ export function ToolCardBody({ children }: { children: ReactNode }) {
 
 export function ToolCardFooterError({ text }: { text: string }) {
   return (
-    <div className="flex items-center gap-2 border-t border-destructive/30 bg-red-50 px-3.5 py-2.5">
+    <div className="flex items-center gap-2 border-t border-destructive/30 bg-destructive-bg px-3.5 py-2.5">
       <XCircleIcon className="h-4 w-4 shrink-0 text-destructive" />
       <p className="text-[13px] text-destructive">{text}</p>
     </div>
