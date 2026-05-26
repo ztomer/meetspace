@@ -305,6 +305,8 @@ export const generalSchema = z.object({
   outlook_refresh_token: z.string().optional(),
   outlook_access_token: z.string().optional(),
   outlook_token_expires_at: z.number().optional(),
+  // Phase 9 — local diarization. Off by default (per-session CPU cost).
+  diarize_auto: z.boolean().default(false),
 });
 
 export const aiProviderSchema = z

@@ -1,3 +1,4 @@
+import { DiarizationSetting } from "./diarization";
 import { ConfigureProviders as LlmConfigureProviders } from "./llm/configure";
 import { LlmSettingsProvider } from "./llm/context";
 import { SelectProviderAndModel as LlmSelectProviderAndModel } from "./llm/select";
@@ -31,6 +32,8 @@ export function Intelligence() {
             <SttSelectProviderAndModel />
             <SttConfigureProviders />
           </section>
+
+          <DiarizationSetting />
 
           <section className="flex flex-col gap-6">
             <h2 className="text-md font-sans font-semibold">

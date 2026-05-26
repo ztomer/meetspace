@@ -217,3 +217,14 @@ Surfaced during visual QA of the dark-mode foundation.
 ### Open after Phase 8
 
 - **Full calendar runtime wiring** — the smoke-test fetcher proves tokens work, but the sidebar agenda widget + event sync still go through `crates/calendar/src/{lib,fetch,runtime}.rs` (calls the deleted upstream API). Route Google Calendar API / MS Graph through the runtime, replace the `connection_id`-keyed sync model with per-provider tokens, update `services/calendar/ctx.ts`. ~4–6h per provider.
+
+---
+
+## Phase 9 — Local speaker diarization + LLM name resolution
+
+Upstream gated "speaker identification" behind the Lite tier and used cloud Pyannote. Cactus already ships local Pyannote FFI bindings in `crates/cactus/src/pyannote.rs` — fully unwired. The desktop transcript UI already has per-segment speaker headers and a manual `SpeakerAssignPopover`. We just need to fill the gap automatically.
+
+| # | Item | Status |
+|---|---|---|
+| 9.1 | **Local Pyannote diarization** wired into the post-stop pipeline. New Tauri command(s) on `plugin-local-stt` (or a new `plugin-diarize`) that take an audio file path and return speaker turns `[{start_ms, end_ms, speaker_index}]`. Model download via the same `ModelDownloadManager` used for STT. Setting: "Auto-diarize finished meetings" (off by default; needs explicit opt-in because of the per-session cost). On session-stop, after STT batch completes, run diarization on the audio and write speaker turns into `transcripts.speaker_hints`. Existing transcript UI lights up with `Speaker 1 / Speaker 2 / …` labels for free. | ⏳ Pending |
+| 9.2 | **LLM-driven name resolution** on top of 9.1. After diarization fills `Speaker N` labels, ask the configured LLM (Osaurus / Ollama / etc.) to map `Speaker N` → known human names using (a) the session's participant list from the `mapping_session_participant` table and (b) in-transcript signals like "thanks Sarah". Returns a `{ "Speaker 1": "Sarah Chen", "Speaker 2": null }` mapping which we rewrite into `speaker_hints`. Falls back to the anonymous labels on low confidence. Pure post-processing — runs once per session, results cached. | ⏳ Pending |
