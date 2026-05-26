@@ -505,9 +505,9 @@ function ErrorTestCard() {
           className={cn([
             "w-full rounded-md px-2.5 py-1.5",
             "text-left text-xs font-medium",
-            "border border-destructive/30 bg-red-50 text-destructive",
+            "border border-destructive/30 bg-destructive-bg text-destructive",
             "cursor-pointer transition-colors",
-            "hover:border-destructive/40 hover:bg-red-100",
+            "hover:border-destructive/40 hover:bg-destructive-bg",
           ])}
         >
           Trigger Error

@@ -264,12 +264,12 @@ function StateBadge({
   } else if (isClosed) {
     label = "Closed";
     colorClass = isPR
-      ? "bg-red-100 text-destructive"
+      ? "bg-destructive-bg text-destructive"
       : "bg-purple-100 text-purple-700";
     Icon = XCircleIcon;
   } else {
     label = "Open";
-    colorClass = "bg-green-100 text-green-700";
+    colorClass = "bg-success-bg text-success-fg";
     Icon = isPR ? GitPullRequestIcon : CircleDotIcon;
   }
 

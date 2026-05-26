@@ -144,7 +144,7 @@ describe("FloatingActionButton", () => {
     const status = screen.getByRole("status");
 
     expect(status.textContent).toBe("Not enough words recorded (3/5 minimum)");
-    expect(status.className).toContain("text-red-400");
+    expect(status.className).toContain("text-destructive");
     expect(status.parentElement?.className).toContain("pb-4");
     expect(
       screen.queryByRole("button", { name: "Ask about this session" }),

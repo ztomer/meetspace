@@ -88,7 +88,7 @@ function HumanSearchResultItem({
         isSelected && "bg-muted",
       ])}
     >
-      <div className="shrink-0 rounded-full bg-amber-50">
+      <div className="shrink-0 rounded-full bg-warning-bg">
         <Facehash
           name={result.title || result.id}
           size={32}
@@ -99,7 +99,7 @@ function HumanSearchResultItem({
       <div className={cn(["min-w-0 flex-1"])}>
         <div
           className={cn([
-            "truncate text-sm font-normal [&_mark]:bg-yellow-200 [&_mark]:font-semibold [&_mark]:text-foreground",
+            "truncate text-sm font-normal [&_mark]:bg-warning-bg [&_mark]:font-semibold [&_mark]:text-foreground",
           ])}
           dangerouslySetInnerHTML={{ __html: sanitizedTitle }}
         />
@@ -151,7 +151,7 @@ function OrganizationSearchResultItem({
       <div className={cn(["min-w-0 flex-1"])}>
         <div
           className={cn([
-            "truncate text-sm font-normal [&_mark]:bg-yellow-200 [&_mark]:font-semibold [&_mark]:text-foreground",
+            "truncate text-sm font-normal [&_mark]:bg-warning-bg [&_mark]:font-semibold [&_mark]:text-foreground",
           ])}
           dangerouslySetInnerHTML={{ __html: sanitizedTitle }}
         />
@@ -257,7 +257,7 @@ function SessionSearchResultItem({
     >
       <div
         className={cn([
-          "truncate text-sm font-medium text-foreground [&_mark]:bg-yellow-200 [&_mark]:font-semibold",
+          "truncate text-sm font-medium text-foreground [&_mark]:bg-warning-bg [&_mark]:font-semibold",
           "w-full",
         ])}
         dangerouslySetInnerHTML={{ __html: displayTitle }}
@@ -265,7 +265,7 @@ function SessionSearchResultItem({
       {snippet && (
         <div
           className={cn([
-            "line-clamp-2 text-xs text-muted-foreground [&_mark]:bg-yellow-200 [&_mark]:font-semibold [&_mark]:text-foreground",
+            "line-clamp-2 text-xs text-muted-foreground [&_mark]:bg-warning-bg [&_mark]:font-semibold [&_mark]:text-foreground",
           ])}
           dangerouslySetInnerHTML={{ __html: snippet }}
         />

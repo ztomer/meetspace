@@ -94,7 +94,7 @@ export function SelectProviderAndModel() {
   return (
     <div className="flex flex-col gap-4">
       {!isConfigured && (
-        <div className="rounded-lg border border-destructive/30 bg-red-50 px-4 py-3">
+        <div className="rounded-lg border border-destructive/30 bg-destructive-bg px-4 py-3">
           <span className="text-sm text-destructive">
             <strong className="font-medium">Transcription model</strong> is
             needed to make Meetspace listen to your conversations.
@@ -103,7 +103,7 @@ export function SelectProviderAndModel() {
       )}
 
       {hasError && health.message && (
-        <div className="rounded-lg border border-destructive/30 bg-red-50 px-4 py-3">
+        <div className="rounded-lg border border-destructive/30 bg-destructive-bg px-4 py-3">
           <span className="text-sm text-destructive">{health.message}</span>
         </div>
       )}
@@ -127,7 +127,7 @@ export function SelectProviderAndModel() {
             </SelectValue>
             {isConfigured && <HealthStatusIndicator />}
             {isConfigured && health.status === "success" && (
-              <Check className="-mr-1 h-4 w-4 shrink-0 text-green-600" />
+              <Check className="-mr-1 h-4 w-4 shrink-0 text-success-fg" />
             )}
           </SelectTrigger>
           <SelectContent align="end">
@@ -153,8 +153,8 @@ export function TranscriptionLanguageWarningBanner() {
   }
 
   return (
-    <div className="-mx-6 -mt-3 mb-6 border-b border-amber-200 bg-amber-50 px-6 py-3">
-      <span className="flex items-center justify-center gap-2 text-center text-sm text-amber-600">
+    <div className="-mx-6 -mt-3 mb-6 border-b border-warning-border bg-warning-bg px-6 py-3">
+      <span className="flex items-center justify-center gap-2 text-center text-sm text-warning-fg">
         <AlertTriangle className="size-4 shrink-0" />
         Selected model may not support all your spoken languages.
       </span>
@@ -273,7 +273,7 @@ function ModelSelectItem({
             className={cn([
               "rounded-md px-1.5 py-0.5 font-medium",
               model.mode === "realtime"
-                ? "bg-sky-50 text-sky-700"
+                ? "bg-info-bg text-info-fg"
                 : "bg-muted text-muted-foreground",
             ])}
           >

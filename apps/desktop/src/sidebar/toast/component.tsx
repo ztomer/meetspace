@@ -130,7 +130,7 @@ export function Toast({
                       {toast.primaryAction && (
                         <button
                           onClick={toast.primaryAction.onClick}
-                          className="flex h-11 w-full items-center justify-center rounded-full border-2 border-border bg-primary px-4 text-sm font-medium text-white shadow-[0_2px_6px_rgba(87,83,78,0.22),0_10px_18px_-10px_rgba(87,83,78,0.65)] transition-all duration-200 hover:bg-primary"
+                          className="flex h-11 w-full items-center justify-center rounded-full border-2 border-border bg-primary px-4 text-sm font-medium text-primary-foreground shadow-[0_2px_6px_rgba(87,83,78,0.22),0_10px_18px_-10px_rgba(87,83,78,0.65)] transition-all duration-200 hover:bg-primary"
                         >
                           {toast.primaryAction.label}
                         </button>

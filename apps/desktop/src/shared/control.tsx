@@ -41,7 +41,7 @@ export const ErrorComponent: ErrorRouteComponent = ({ error }) => {
           <div className="rounded-xl border border-border bg-background p-6 shadow-xs">
             <div className="flex flex-col items-center gap-4 text-center">
               <motion.div
-                className="flex h-12 w-12 items-center justify-center rounded-full bg-red-50"
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive-bg"
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
                 transition={{

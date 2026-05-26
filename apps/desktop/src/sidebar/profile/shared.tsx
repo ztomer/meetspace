@@ -36,7 +36,7 @@ export function MenuItem({
               className={cn(
                 "rounded-full",
                 "px-2 py-0.5",
-                "bg-red-500",
+                "bg-destructive",
                 "text-xs font-semibold text-white",
               )}
             >
@@ -65,7 +65,7 @@ export function ProfileFacehash({
   className?: string;
 }) {
   return (
-    <div className={cn(["rounded-full bg-amber-50", className])}>
+    <div className={cn(["rounded-full bg-warning-bg", className])}>
       <Facehash
         name={name}
         size={size}

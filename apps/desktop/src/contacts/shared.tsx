@@ -13,16 +13,16 @@ import {
 } from "@meetspace/ui/components/ui/dropdown-menu";
 
 const COLOR_PALETTES = [
-  "bg-amber-50",
+  "bg-warning-bg",
   "bg-rose-50",
   "bg-violet-50",
-  "bg-blue-50",
+  "bg-info-bg",
   "bg-teal-50",
-  "bg-green-50",
+  "bg-success-bg",
   "bg-cyan-50",
   "bg-fuchsia-50",
   "bg-indigo-50",
-  "bg-yellow-50",
+  "bg-warning-bg",
 ];
 
 export function getContactBgClass(name: string) {

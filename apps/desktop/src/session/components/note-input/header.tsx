@@ -421,7 +421,7 @@ function HeaderTabEnhanced({
         "group relative inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded-xs transition-colors",
         isError
           ? [
-              "text-destructive hover:bg-red-50 hover:text-foreground focus-visible:bg-red-50 focus-visible:text-foreground",
+              "text-destructive hover:bg-destructive-bg hover:text-foreground focus-visible:bg-destructive-bg focus-visible:text-foreground",
             ]
           : ["hover:bg-accent focus-visible:bg-accent"],
       ])}
@@ -809,7 +809,7 @@ function CreateOtherFormatButton({
       {
         key: "create",
         title: "Create new template",
-        icon: <PlusIcon className="h-3.5 w-3.5 text-blue-500" />,
+        icon: <PlusIcon className="h-3.5 w-3.5 text-info" />,
         uppercase: false,
         items: [
           {
@@ -1421,7 +1421,7 @@ function TemplateSection({
       <div className="flex items-center gap-2 px-2">
         {icon ??
           (title === "Suggested templates" ? (
-            <LightbulbIcon className="h-3.5 w-3.5 text-amber-500" />
+            <LightbulbIcon className="h-3.5 w-3.5 text-warning" />
           ) : title === "Favorite templates" ? (
             <HeartIcon className="h-3.5 w-3.5 text-rose-500" />
           ) : null)}
