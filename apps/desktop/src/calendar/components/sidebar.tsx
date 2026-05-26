@@ -2,7 +2,6 @@ import { platform } from "@tauri-apps/plugin-os";
 import { ChevronDown, PlusIcon } from "lucide-react";
 import { useCallback, useMemo, type MouseEvent } from "react";
 
-import type { ConnectionItem } from "~/shared/api-types";
 import {
   Accordion,
   AccordionContent,
@@ -20,6 +19,7 @@ import { type CalendarProvider, PROVIDERS } from "./shared";
 import { useAuth } from "~/auth";
 import { useBillingAccess } from "~/auth/billing";
 import { useConnections } from "~/auth/useConnections";
+import type { ConnectionItem } from "~/shared/api-types";
 import { useNativeContextMenu } from "~/shared/hooks/useNativeContextMenu";
 import { usePermission } from "~/shared/hooks/usePermissions";
 import { openIntegrationUrl } from "~/shared/integration";
@@ -116,7 +116,7 @@ export function CalendarSidebarContent({
         provider.disabled ? (
           <div
             key={provider.id}
-            className="flex items-center gap-2 border-b border-border py-3 opacity-50 last:border-none"
+            className="border-border flex items-center gap-2 border-b py-3 opacity-50 last:border-none"
           >
             {provider.icon}
             <span className="text-sm font-medium">{provider.displayName}</span>
@@ -236,13 +236,13 @@ function ProviderAccordionItem({
   return (
     <AccordionItem
       value={provider.id}
-      className="group/provider border-b border-border last:border-none"
+      className="group/provider border-border border-b last:border-none"
     >
       <div
         onContextMenu={
           providerMenuItems.length > 0 ? showProviderMenu : undefined
         }
-        className="group/row relative grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1 rounded-md hover:bg-muted"
+        className="group/row hover:bg-muted relative grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1 rounded-md"
       >
         <AccordionHeader
           className={cn(["min-w-0", requiresPro && "opacity-60"])}
@@ -277,7 +277,7 @@ function ProviderAccordionItem({
           <button
             type="button"
             onClick={handleUpgradeToPro}
-            className="pointer-events-none absolute top-1/2 right-1 z-10 shrink-0 translate-x-1 -translate-y-1/2 rounded-full border-2 border-border bg-primary px-3 py-1 text-xs font-medium text-white opacity-0 shadow-[0_4px_14px_rgba(87,83,78,0.18)] transition-all duration-150 group-focus-within/row:pointer-events-auto group-focus-within/row:translate-x-0 group-focus-within/row:opacity-100 group-hover/row:pointer-events-auto group-hover/row:translate-x-0 group-hover/row:opacity-100 hover:bg-primary focus-visible:ring-2 focus-visible:ring-stone-500 focus-visible:outline-none"
+            className="border-border bg-primary hover:bg-primary pointer-events-none absolute top-1/2 right-1 z-10 shrink-0 translate-x-1 -translate-y-1/2 rounded-full border-2 px-3 py-1 text-xs font-medium text-white opacity-0 shadow-[0_4px_14px_rgba(87,83,78,0.18)] transition-all duration-150 group-focus-within/row:pointer-events-auto group-focus-within/row:translate-x-0 group-focus-within/row:opacity-100 group-hover/row:pointer-events-auto group-hover/row:translate-x-0 group-hover/row:opacity-100 focus-visible:ring-2 focus-visible:ring-stone-500 focus-visible:outline-none"
             aria-label={`Upgrade to Pro for ${provider.displayName}`}
           >
             Upgrade to Pro
@@ -286,7 +286,7 @@ function ProviderAccordionItem({
           <button
             type="button"
             onClick={handleAddAccount}
-            className="shrink-0 rounded p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            className="text-muted-foreground hover:bg-accent hover:text-foreground shrink-0 rounded p-1 transition-colors"
             aria-label={`Add ${provider.displayName} account`}
           >
             <PlusIcon className="size-4" />
@@ -296,7 +296,7 @@ function ProviderAccordionItem({
         {!requiresPro && (
           <ChevronDown
             className={cn([
-              "size-4 shrink-0 text-muted-foreground opacity-0 transition-all duration-200 group-focus-within/row:opacity-100 group-hover/row:opacity-100",
+              "text-muted-foreground size-4 shrink-0 opacity-0 transition-all duration-200 group-focus-within/row:opacity-100 group-hover/row:opacity-100",
               "group-data-[state=open]/provider:rotate-180",
             ])}
           />

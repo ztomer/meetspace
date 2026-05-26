@@ -26,6 +26,9 @@ exclude = [
 ]
 
 [workspace.dependencies]
+legacy-db-core = { path = "legacy/db-core", package = "legacy-db-core" }
+legacy-db-parser = { path = "legacy/db-parser", package = "db-parser" }
+legacy-db-user = { path = "legacy/db-user", package = "db-user" }
 meetspace-aec = { path = "crates/aec", package = "aec" }
 meetspace-afconvert = { path = "crates/afconvert", package = "afconvert" }
 meetspace-agc = { path = "crates/agc", package = "agc" }
@@ -190,9 +193,6 @@ meetspace-whisper-local = { path = "crates/whisper-local", package = "whisper-lo
 meetspace-whisper-local-model = { path = "crates/whisper-local-model", package = "whisper-local-model" }
 meetspace-ws-client = { path = "crates/ws-client", package = "ws-client" }
 meetspace-ws-utils = { path = "crates/ws-utils", package = "ws-utils" }
-legacy-db-core = { path = "legacy/db-core", package = "legacy-db-core" }
-legacy-db-parser = { path = "legacy/db-parser", package = "db-parser" }
-legacy-db-user = { path = "legacy/db-user", package = "db-user" }
 posthog-rs = "0.5"
 progenitor-client = "0.13"
 
@@ -230,6 +230,7 @@ tauri-plugin-calendar = { path = "plugins/calendar" }
 tauri-plugin-db = { path = "plugins/db" }
 tauri-plugin-deeplink2 = { path = "plugins/deeplink2" }
 tauri-plugin-detect = { path = "plugins/detect" }
+tauri-plugin-diarize = { path = "plugins/diarize" }
 tauri-plugin-dictation = { path = "plugins/dictation" }
 tauri-plugin-dock = { path = "plugins/dock" }
 tauri-plugin-export = { path = "plugins/export" }
@@ -249,9 +250,8 @@ tauri-plugin-misc = { path = "plugins/misc" }
 tauri-plugin-network = { path = "plugins/network" }
 tauri-plugin-notification = { path = "plugins/notification" }
 tauri-plugin-notify = { path = "plugins/notify" }
-tauri-plugin-opener2 = { path = "plugins/opener2" }
 tauri-plugin-oauth = { path = "plugins/oauth" }
-tauri-plugin-diarize = { path = "plugins/diarize" }
+tauri-plugin-opener2 = { path = "plugins/opener2" }
 tauri-plugin-overlay = { path = "plugins/overlay" }
 tauri-plugin-path2 = { path = "plugins/path2" }
 tauri-plugin-permissions = { path = "plugins/permissions" }

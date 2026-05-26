@@ -88,7 +88,7 @@ function HumanSearchResultItem({
         isSelected && "bg-muted",
       ])}
     >
-      <div className="shrink-0 rounded-full bg-warning-bg">
+      <div className="bg-warning-bg shrink-0 rounded-full">
         <Facehash
           name={result.title || result.id}
           size={32}
@@ -99,7 +99,7 @@ function HumanSearchResultItem({
       <div className={cn(["min-w-0 flex-1"])}>
         <div
           className={cn([
-            "truncate text-sm font-normal [&_mark]:bg-warning-bg [&_mark]:font-semibold [&_mark]:text-foreground",
+            "[&_mark]:bg-warning-bg [&_mark]:text-foreground truncate text-sm font-normal [&_mark]:font-semibold",
           ])}
           dangerouslySetInnerHTML={{ __html: sanitizedTitle }}
         />
@@ -151,11 +151,11 @@ function OrganizationSearchResultItem({
       <div className={cn(["min-w-0 flex-1"])}>
         <div
           className={cn([
-            "truncate text-sm font-normal [&_mark]:bg-warning-bg [&_mark]:font-semibold [&_mark]:text-foreground",
+            "[&_mark]:bg-warning-bg [&_mark]:text-foreground truncate text-sm font-normal [&_mark]:font-semibold",
           ])}
           dangerouslySetInnerHTML={{ __html: sanitizedTitle }}
         />
-        <div className={cn(["mt-0.5 truncate text-xs text-muted-foreground"])}>
+        <div className={cn(["text-muted-foreground mt-0.5 truncate text-xs"])}>
           {memberText}
         </div>
       </div>
@@ -257,7 +257,7 @@ function SessionSearchResultItem({
     >
       <div
         className={cn([
-          "truncate text-sm font-medium text-foreground [&_mark]:bg-warning-bg [&_mark]:font-semibold",
+          "text-foreground [&_mark]:bg-warning-bg truncate text-sm font-medium [&_mark]:font-semibold",
           "w-full",
         ])}
         dangerouslySetInnerHTML={{ __html: displayTitle }}
@@ -265,12 +265,12 @@ function SessionSearchResultItem({
       {snippet && (
         <div
           className={cn([
-            "line-clamp-2 text-xs text-muted-foreground [&_mark]:bg-warning-bg [&_mark]:font-semibold [&_mark]:text-foreground",
+            "text-muted-foreground [&_mark]:bg-warning-bg [&_mark]:text-foreground line-clamp-2 text-xs [&_mark]:font-semibold",
           ])}
           dangerouslySetInnerHTML={{ __html: snippet }}
         />
       )}
-      <div className={cn(["text-xs text-muted-foreground"])}>{timeAgo}</div>
+      <div className={cn(["text-muted-foreground text-xs"])}>{timeAgo}</div>
     </button>
   );
 }

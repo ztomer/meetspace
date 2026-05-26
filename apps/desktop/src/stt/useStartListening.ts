@@ -121,7 +121,11 @@ export function useStartListening(sessionId: string) {
           details.audioPath ?? null,
         )
           .then(() =>
-            maybeResolveSpeakerNames(store, sessionId, languageModelRef.current),
+            maybeResolveSpeakerNames(
+              store,
+              sessionId,
+              languageModelRef.current,
+            ),
           )
           .finally(() => {
             void maybeAutoExportToObsidian(store, settingsStore, sessionId);

@@ -154,7 +154,7 @@ export function ProfileSection({ onExpandChange }: ProfileSectionProps = {}) {
             transition={{ duration: 0.2, ease: "easeInOut" }}
             className="absolute right-0 bottom-full left-0 mb-1"
           >
-            <div className="overflow-hidden rounded-xl border bg-background shadow-xs">
+            <div className="bg-background overflow-hidden rounded-xl border shadow-xs">
               <div className="py-1">
                 <AnimatePresence mode="wait">
                   {currentView === "main" ? (
@@ -177,11 +177,10 @@ export function ProfileSection({ onExpandChange }: ProfileSectionProps = {}) {
                         <div key={item.label}>
                           <MenuItem {...item} />
                           {sectionBreakAfter && (
-                            <div className="my-1 border-t border-border" />
+                            <div className="border-border my-1 border-t" />
                           )}
                         </div>
                       ))}
-
                     </motion.div>
                   ) : (
                     <motion.div
@@ -250,12 +249,16 @@ function ProfileButton({
       >
         <ProfileFacehash name={facehashName} size={32} />
       </div>
-      <div className="min-w-0 flex-1 truncate text-sm text-foreground">{name}</div>
+      <div className="text-foreground min-w-0 flex-1 truncate text-sm">
+        {name}
+      </div>
       <ChevronUpIcon
         className={cn([
           "h-4 w-4",
           "transition-transform duration-300",
-          isExpanded ? "rotate-180 text-muted-foreground" : "text-muted-foreground",
+          isExpanded
+            ? "text-muted-foreground rotate-180"
+            : "text-muted-foreground",
         ])}
       />
     </button>

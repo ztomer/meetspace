@@ -91,11 +91,11 @@ export function ChatMessageInput({
                 "inline-flex h-7 items-center gap-1.5 rounded-lg pr-1.5 pl-2.5 text-xs font-medium transition-all duration-100",
                 "border",
                 disabled
-                  ? "cursor-default border-border text-muted-foreground/60"
+                  ? "border-border text-muted-foreground/60 cursor-default"
                   : [
                       "border-border bg-primary text-white",
                       "hover:bg-primary",
-                      "active:scale-[0.97] active:bg-primary",
+                      "active:bg-primary active:scale-[0.97]",
                     ],
                 !hasContent && !disabled && "opacity-50",
               ])}
@@ -104,7 +104,9 @@ export function ChatMessageInput({
               <span
                 className={cn([
                   "font-mono text-xs",
-                  disabled ? "text-muted-foreground/60" : "text-muted-foreground",
+                  disabled
+                    ? "text-muted-foreground/60"
+                    : "text-muted-foreground",
                 ])}
               >
                 ⌘ ↩
@@ -135,7 +137,7 @@ function Container({
     >
       <div
         className={cn([
-          "flex max-h-full flex-col border border-border bg-background",
+          "border-border bg-background flex max-h-full flex-col border",
           isRightPanel
             ? hasContextBar
               ? "rounded-t-none rounded-b-none"

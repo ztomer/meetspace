@@ -68,14 +68,8 @@ export function ExportToObsidian({ sessionId }: { sessionId: string }) {
       disabled={disabled}
       className={disabled ? "cursor-not-allowed" : "cursor-pointer"}
     >
-      {isPending ? (
-        <Loader2Icon className="animate-spin" />
-      ) : (
-        <BookOpenIcon />
-      )}
-      <span>
-        {isPending ? "Exporting…" : "Export to Obsidian"}
-      </span>
+      {isPending ? <Loader2Icon className="animate-spin" /> : <BookOpenIcon />}
+      <span>{isPending ? "Exporting…" : "Export to Obsidian"}</span>
     </DropdownMenuItem>
   );
 

@@ -21,8 +21,11 @@ pub struct LocalSttServer {
 impl LocalSttServer {
     #[cfg(feature = "cactus")]
     pub async fn start_cactus(model_path: PathBuf) -> std::io::Result<Self> {
-        Self::start_cactus_with_config(model_path, meetspace_transcribe_cactus::CactusConfig::default())
-            .await
+        Self::start_cactus_with_config(
+            model_path,
+            meetspace_transcribe_cactus::CactusConfig::default(),
+        )
+        .await
     }
 
     #[cfg(feature = "cactus")]

@@ -149,9 +149,15 @@ export function ClassicMainTabChrome({ tabs }: { tabs: Tab[] }) {
                 onClick={leftsidebar.toggleExpanded}
               >
                 {leftsidebar.expanded ? (
-                  <PanelLeftCloseIcon size={16} className="text-muted-foreground" />
+                  <PanelLeftCloseIcon
+                    size={16}
+                    className="text-muted-foreground"
+                  />
                 ) : (
-                  <PanelLeftOpenIcon size={16} className="text-muted-foreground" />
+                  <PanelLeftOpenIcon
+                    size={16}
+                    className="text-muted-foreground"
+                  />
                 )}
               </Button>
             </TooltipTrigger>

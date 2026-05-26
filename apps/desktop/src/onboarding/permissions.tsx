@@ -51,8 +51,8 @@ function PermissionBlock({
       className={cn([
         "group flex min-w-0 flex-1 basis-0 items-center gap-3 rounded-xl px-3 py-3 text-left transition-all",
         isAuthorized
-          ? "border border-border bg-background"
-          : "border border-border bg-primary text-white shadow-[0_4px_14px_rgba(87,83,78,0.18)] hover:bg-primary active:scale-[0.98]",
+          ? "border-border bg-background border"
+          : "border-border bg-primary hover:bg-primary border text-white shadow-[0_4px_14px_rgba(87,83,78,0.18)] active:scale-[0.98]",
         (isPending || isAuthorized) && "cursor-default",
         isPending && "opacity-50",
       ])}

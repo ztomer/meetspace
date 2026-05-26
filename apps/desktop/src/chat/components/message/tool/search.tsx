@@ -191,7 +191,7 @@ function RenderContent({ part }: { part: Part }) {
                   key={result.id || index}
                   className="basis-full pl-1 sm:basis-1/2 lg:basis-1/3"
                 >
-                  <Card className="h-full bg-muted">
+                  <Card className="bg-muted h-full">
                     <CardContent className="px-2 py-0.5">
                       <RenderSession result={result} />
                     </CardContent>
@@ -199,8 +199,8 @@ function RenderContent({ part }: { part: Part }) {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="-left-4 h-6 w-6 bg-muted hover:bg-accent" />
-            <CarouselNext className="-right-4 h-6 w-6 bg-muted hover:bg-accent" />
+            <CarouselPrevious className="bg-muted hover:bg-accent -left-4 h-6 w-6" />
+            <CarouselNext className="bg-muted hover:bg-accent -right-4 h-6 w-6" />
           </Carousel>
         </div>
       </div>
@@ -208,7 +208,9 @@ function RenderContent({ part }: { part: Part }) {
   }
 
   if (part.state === "output-error") {
-    return <div className="text-sm text-destructive">Error: {part.errorText}</div>;
+    return (
+      <div className="text-destructive text-sm">Error: {part.errorText}</div>
+    );
   }
 
   return details.length > 0 ? (
@@ -250,7 +252,7 @@ function RenderSession({ result }: { result: SearchResult }) {
     >
       <span className="truncate font-medium">{result.title || "Untitled"}</span>
       {dateLabel && (
-        <span className="text-[11px] text-muted-foreground tabular-nums">
+        <span className="text-muted-foreground text-[11px] tabular-nums">
           {dateLabel}
         </span>
       )}

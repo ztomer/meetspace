@@ -166,8 +166,8 @@ export function NonHyprProviderCard({
       disabled={config.disabled || locked}
       value={config.id}
       className={cn([
-        "rounded-xl border-2 bg-muted",
-        isConfigured ? "border-solid border-border" : "border-dashed",
+        "bg-muted rounded-xl border-2",
+        isConfigured ? "border-border border-solid" : "border-dashed",
       ])}
     >
       <AccordionTrigger
@@ -180,7 +180,7 @@ export function NonHyprProviderCard({
           <ProviderIconSlot>{config.icon}</ProviderIconSlot>
           <span>{config.displayName}</span>
           {config.badge && (
-            <span className="rounded-full border border-border px-2 text-xs font-light text-muted-foreground">
+            <span className="border-border text-muted-foreground rounded-full border px-2 text-xs font-light">
               {config.badge}
             </span>
           )}
@@ -225,7 +225,7 @@ export function NonHyprProviderCard({
                   href={config.links.download.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-0.5 text-muted-foreground hover:text-foreground hover:underline"
+                  className="text-muted-foreground hover:text-foreground inline-flex items-center gap-0.5 hover:underline"
                 >
                   {config.links.download.label}
                   <ExternalLink size={12} />
@@ -236,7 +236,7 @@ export function NonHyprProviderCard({
                   href={config.links.models.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-0.5 text-muted-foreground hover:text-foreground hover:underline"
+                  className="text-muted-foreground hover:text-foreground inline-flex items-center gap-0.5 hover:underline"
                 >
                   {config.links.models.label}
                   <ExternalLink size={12} />
@@ -247,7 +247,7 @@ export function NonHyprProviderCard({
                   href={config.links.setup.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-0.5 text-muted-foreground hover:text-foreground hover:underline"
+                  className="text-muted-foreground hover:text-foreground inline-flex items-center gap-0.5 hover:underline"
                 >
                   {config.links.setup.label}
                   <ExternalLink size={12} />
@@ -257,7 +257,7 @@ export function NonHyprProviderCard({
           )}
           {((!showBaseUrl && config.baseUrl) || !showApiKey) && (
             <details className="flex flex-col gap-4 pt-2">
-              <summary className="cursor-pointer text-xs text-muted-foreground hover:text-foreground hover:underline">
+              <summary className="text-muted-foreground hover:text-foreground cursor-pointer text-xs hover:underline">
                 Advanced
               </summary>
               <div className="mt-4 flex flex-col gap-4">

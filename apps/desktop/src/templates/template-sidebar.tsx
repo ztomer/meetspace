@@ -337,11 +337,11 @@ export function TemplatesSidebarContent({
         <div className="px-2 pb-2">
           <div
             className={cn([
-              "flex h-8 shrink-0 items-center gap-2 rounded-lg border border-border bg-accent/50 px-3",
-              "transition-colors focus-within:bg-accent",
+              "border-border bg-accent/50 flex h-8 shrink-0 items-center gap-2 rounded-lg border px-3",
+              "focus-within:bg-accent transition-colors",
             ])}
           >
-            <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <Search className="text-muted-foreground h-4 w-4 shrink-0" />
             <input
               type="text"
               value={search}
@@ -352,7 +352,7 @@ export function TemplatesSidebarContent({
                 }
               }}
               placeholder="Search templates..."
-              className="min-w-0 flex-1 bg-transparent text-sm placeholder:text-sm placeholder:text-muted-foreground focus:outline-hidden"
+              className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-sm placeholder:text-sm focus:outline-hidden"
             />
             {search && (
               <button
@@ -376,15 +376,18 @@ export function TemplatesSidebarContent({
         className="scrollbar-hide flex-1 overflow-y-auto"
       >
         {isEmpty ? (
-          <div className="px-3 py-8 text-center text-muted-foreground">
-            <BookText size={32} className="mx-auto mb-2 text-muted-foreground/60" />
+          <div className="text-muted-foreground px-3 py-8 text-center">
+            <BookText
+              size={32}
+              className="text-muted-foreground/60 mx-auto mb-2"
+            />
             <p className="text-sm">
               {search ? "No templates found" : "No templates yet"}
             </p>
             {!search && (
               <button
                 onClick={createDefaultTemplate}
-                className="mt-3 text-sm text-muted-foreground underline hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground mt-3 text-sm underline"
               >
                 Create my first template
               </button>
@@ -412,13 +415,11 @@ export function TemplatesSidebarContent({
                       data-template-selected={item.selected}
                       className={cn([
                         "w-full rounded-lg px-3 py-2 text-left text-sm transition-colors select-none",
-                        item.selected
-                          ? "bg-accent"
-                          : "hover:bg-accent/50",
+                        item.selected ? "bg-accent" : "hover:bg-accent/50",
                       ])}
                     >
                       <div className="flex items-center gap-2">
-                        <BookText className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        <BookText className="text-muted-foreground h-4 w-4 shrink-0" />
                         <div className="min-w-0 flex-1">
                           <div className="truncate font-medium">
                             {item.title}
@@ -439,8 +440,8 @@ export function TemplatesSidebarContent({
                       key={index}
                       className="animate-pulse rounded-lg px-3 py-2"
                     >
-                      <div className="h-4 w-3/4 rounded-xs bg-accent" />
-                      <div className="mt-1.5 h-3 w-1/3 rounded-xs bg-muted" />
+                      <div className="bg-accent h-4 w-3/4 rounded-xs" />
+                      <div className="bg-muted mt-1.5 h-3 w-1/3 rounded-xs" />
                     </div>
                   ))}
                 </div>
@@ -505,7 +506,7 @@ function TemplateListItem({
       ])}
     >
       <div className="flex items-center gap-2">
-        <BookText className="h-4 w-4 shrink-0 text-muted-foreground" />
+        <BookText className="text-muted-foreground h-4 w-4 shrink-0" />
         <div className="min-w-0 flex-1">
           <div className="truncate font-medium">
             {template.title?.trim() || "Untitled"}

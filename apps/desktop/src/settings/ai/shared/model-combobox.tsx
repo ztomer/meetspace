@@ -147,7 +147,7 @@ export function ModelCombobox({
           disabled={disabled || isLoadingModels}
           aria-expanded={open}
           className={cn([
-            "w-full justify-between bg-background font-normal shadow-none focus-visible:ring-0",
+            "bg-background w-full justify-between font-normal shadow-none focus-visible:ring-0",
             "rounded-md px-3",
           ])}
         >
@@ -164,7 +164,7 @@ export function ModelCombobox({
             {suffix}
           </span>
           {isConfigured ? (
-            <Check className="-mr-1 h-4 w-4 shrink-0 text-success-fg" />
+            <Check className="text-success-fg -mr-1 h-4 w-4 shrink-0" />
           ) : (
             <ChevronDown className="-mr-1 h-4 w-4 shrink-0 opacity-50" />
           )}

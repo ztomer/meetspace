@@ -26,15 +26,15 @@ const TYPE_REPLACEMENTS: &[(&str, &str)] = &[
         "OutlookListEventsResponse",
         "meetspace_outlook_calendar::ListEventsResponse",
     ),
-    ("CollectionPage", "meetspace_ticket_interface::CollectionPage"),
+    (
+        "CollectionPage",
+        "meetspace_ticket_interface::CollectionPage",
+    ),
     ("TicketPage", "meetspace_ticket_interface::TicketPage"),
 ];
 
 fn main() {
-    let src = concat!(
-        env!("CARGO_MANIFEST_DIR"),
-        "/openapi-source.gen.json"
-    );
+    let src = concat!(env!("CARGO_MANIFEST_DIR"), "/openapi-source.gen.json");
     println!("cargo:rerun-if-changed={src}");
 
     OpenApiSpec::from_path(src)

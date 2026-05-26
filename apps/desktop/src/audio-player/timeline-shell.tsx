@@ -4,7 +4,7 @@ import { cn } from "@meetspace/utils";
 
 export function TimelineMeta({ children }: { children: ReactNode }) {
   return (
-    <div className="inline-flex shrink-0 items-center gap-1 font-mono text-xs text-muted-foreground tabular-nums select-none">
+    <div className="text-muted-foreground inline-flex shrink-0 items-center gap-1 font-mono text-xs tabular-nums select-none">
       {children}
     </div>
   );
@@ -23,7 +23,7 @@ export function TimelineShell({
 }) {
   return (
     <div
-      className="w-full rounded-xl bg-muted select-none"
+      className="bg-muted w-full rounded-xl select-none"
       onContextMenu={onContextMenu}
     >
       <div className={cn(["flex items-center gap-2 p-2", "w-full max-w-full"])}>

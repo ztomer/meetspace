@@ -64,7 +64,7 @@ export function OnboardingSection({
       >
         {isCompleted && (
           <CheckIcon
-            className="size-4 shrink-0 text-success-fg"
+            className="text-success-fg size-4 shrink-0"
             strokeWidth={2.5}
           />
         )}
@@ -74,8 +74,8 @@ export function OnboardingSection({
               className={cn([
                 "transition-all duration-300",
                 isCompleted
-                  ? "text-sm font-normal text-muted-foreground/60"
-                  : "mb-2 font-sans text-2xl font-semibold text-foreground",
+                  ? "text-muted-foreground/60 text-sm font-normal"
+                  : "text-foreground mb-2 font-sans text-2xl font-semibold",
               ])}
             >
               {isCompleted ? (completedTitle ?? title) : title}
@@ -86,7 +86,7 @@ export function OnboardingSection({
                   <button
                     onClick={onBack}
                     aria-label="Go to previous section"
-                    className="rounded p-0.5 text-muted-foreground transition-colors hover:text-muted-foreground"
+                    className="text-muted-foreground hover:text-muted-foreground rounded p-0.5 transition-colors"
                   >
                     <ChevronLeftIcon className="size-3" />
                   </button>
@@ -98,7 +98,7 @@ export function OnboardingSection({
                         onSkip?.();
                         onNext?.();
                       }}
-                      className="flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-muted-foreground"
+                      className="text-muted-foreground hover:text-muted-foreground flex items-center gap-1 text-sm transition-colors"
                     >
                       Skip
                       <ChevronRightIcon className="size-3" />
@@ -107,7 +107,7 @@ export function OnboardingSection({
                     <button
                       onClick={onNext}
                       aria-label="Go to next section"
-                      className="rounded p-0.5 text-muted-foreground transition-colors hover:text-muted-foreground"
+                      className="text-muted-foreground hover:text-muted-foreground rounded p-0.5 transition-colors"
                     >
                       <ChevronRightIcon className="size-3" />
                     </button>
@@ -116,7 +116,7 @@ export function OnboardingSection({
             )}
           </div>
           {isActive && description && (
-            <p className="text-sm text-muted-foreground">{description}</p>
+            <p className="text-muted-foreground text-sm">{description}</p>
           )}
         </div>
       </div>
@@ -152,9 +152,9 @@ export function OnboardingButton({
       className={cn([
         "w-fit rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-200",
         variant === "primary" &&
-          "border-2 border-border bg-primary text-white shadow-[0_2px_6px_rgba(87,83,78,0.22),0_10px_18px_-10px_rgba(87,83,78,0.65)] hover:bg-primary",
+          "border-border bg-primary hover:bg-primary border-2 text-white shadow-[0_2px_6px_rgba(87,83,78,0.22),0_10px_18px_-10px_rgba(87,83,78,0.65)]",
         variant === "secondary" &&
-          "border border-border text-muted-foreground hover:border-border hover:text-foreground",
+          "border-border text-muted-foreground hover:border-border hover:text-foreground border",
         variant === "ghost" && "text-muted-foreground hover:text-foreground",
         className,
       ])}
@@ -176,9 +176,9 @@ export function OnboardingMeetspaceIcon() {
 export function Divider({ text }: { text: string }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="h-px flex-1 bg-accent" />
-      <span className="text-sm text-muted-foreground">{text}</span>
-      <div className="h-px flex-1 bg-accent" />
+      <div className="bg-accent h-px flex-1" />
+      <span className="text-muted-foreground text-sm">{text}</span>
+      <div className="bg-accent h-px flex-1" />
     </div>
   );
 }
@@ -196,11 +196,15 @@ export function StepRow({
         <CheckCircle2Icon className="size-4 text-emerald-600" />
       )}
       {status === "active" && (
-        <Loader2Icon className="size-4 animate-spin text-muted-foreground" />
+        <Loader2Icon className="text-muted-foreground size-4 animate-spin" />
       )}
-      {status === "failed" && <XCircleIcon className="size-4 text-destructive" />}
+      {status === "failed" && (
+        <XCircleIcon className="text-destructive size-4" />
+      )}
       <span
-        className={status === "failed" ? "text-destructive" : "text-muted-foreground"}
+        className={
+          status === "failed" ? "text-destructive" : "text-muted-foreground"
+        }
       >
         {label}
       </span>

@@ -41,14 +41,14 @@ function DevtoolCard({
   return (
     <div
       className={cn([
-        "rounded-lg border border-border bg-background",
+        "border-border bg-background rounded-lg border",
         "shadow-xs",
         "overflow-hidden",
         "shrink-0",
       ])}
     >
-      <div className="border-b border-border bg-muted px-2 py-1.5">
-        <h2 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+      <div className="border-border bg-muted border-b px-2 py-1.5">
+        <h2 className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
           {title}
         </h2>
       </div>
@@ -110,7 +110,7 @@ function NavigationCard() {
           className={cn([
             "w-full rounded-md px-2.5 py-1.5",
             "text-left text-xs font-medium",
-            "border border-border text-foreground",
+            "border-border text-foreground border",
             "cursor-pointer transition-colors",
             "hover:border-border hover:bg-muted",
           ])}
@@ -124,7 +124,7 @@ function NavigationCard() {
             className={cn([
               "w-full rounded-md px-2.5 py-1.5",
               "text-left text-xs font-medium",
-              "border border-border text-foreground",
+              "border-border text-foreground border",
               "cursor-pointer transition-colors",
               "hover:border-border hover:bg-muted",
             ])}
@@ -140,7 +140,7 @@ function NavigationCard() {
             className={cn([
               "w-full rounded-md px-2.5 py-1.5",
               "text-left text-xs font-medium",
-              "border border-border text-foreground",
+              "border-border text-foreground border",
               "cursor-pointer transition-colors",
               "hover:border-border hover:bg-muted",
             ])}
@@ -154,7 +154,7 @@ function NavigationCard() {
           className={cn([
             "w-full rounded-md px-2.5 py-1.5",
             "text-left text-xs font-medium",
-            "border border-border text-foreground",
+            "border-border text-foreground border",
             "cursor-pointer transition-colors",
             "hover:border-border hover:bg-muted",
           ])}
@@ -180,7 +180,7 @@ function ToastsCard() {
           className={cn([
             "w-full rounded-md px-2.5 py-1.5",
             "text-left text-xs font-medium",
-            "border border-border text-foreground",
+            "border-border text-foreground border",
             "cursor-pointer transition-colors",
             "hover:border-border hover:bg-muted",
           ])}
@@ -333,7 +333,7 @@ function NotificationsCard() {
   const btnClass = cn([
     "w-full rounded-md px-2.5 py-1.5",
     "text-left text-xs font-medium",
-    "border border-border text-foreground",
+    "border-border text-foreground border",
     "cursor-pointer transition-colors",
     "hover:border-border hover:bg-muted",
   ]);
@@ -426,7 +426,7 @@ function CountdownTestCard() {
   const btnClass = cn([
     "w-full rounded-md px-2.5 py-1.5",
     "text-left text-xs font-medium",
-    "border border-border text-foreground",
+    "border-border text-foreground border",
     "cursor-pointer transition-colors",
     "hover:border-border hover:bg-muted",
     "disabled:cursor-not-allowed disabled:opacity-40",
@@ -505,7 +505,7 @@ function ErrorTestCard() {
           className={cn([
             "w-full rounded-md px-2.5 py-1.5",
             "text-left text-xs font-medium",
-            "border border-destructive/30 bg-destructive-bg text-destructive",
+            "border-destructive/30 bg-destructive-bg text-destructive border",
             "cursor-pointer transition-colors",
             "hover:border-destructive/40 hover:bg-destructive-bg",
           ])}

@@ -93,16 +93,16 @@ export function GoogleCalendarIntegration() {
   });
 
   return (
-    <section className="rounded-lg border border-border p-5">
+    <section className="border-border rounded-lg border p-5">
       <div className="mb-4 flex items-start justify-between gap-4">
         <div>
           <h3 className="text-sm font-semibold">{cfg.displayName} Calendar</h3>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Sign in with OAuth (PKCE). Your tokens never leave this device.
           </p>
         </div>
         {connected ? (
-          <div className="flex items-center gap-1.5 text-xs text-success-fg">
+          <div className="text-success-fg flex items-center gap-1.5 text-xs">
             <CheckCircle2Icon size={14} />
             Connected
           </div>
@@ -121,14 +121,12 @@ export function GoogleCalendarIntegration() {
             placeholder="123456789-abc.apps.googleusercontent.com"
             className="shadow-none"
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Create a <strong>Desktop app</strong> OAuth client at{" "}
             <button
               type="button"
-              onClick={() =>
-                void openerCommands.openUrl(cfg.consoleUrl, null)
-              }
-              className="inline-flex items-center gap-0.5 underline hover:text-foreground"
+              onClick={() => void openerCommands.openUrl(cfg.consoleUrl, null)}
+              className="hover:text-foreground inline-flex items-center gap-0.5 underline"
             >
               Google Cloud Console <ExternalLinkIcon size={11} />
             </button>
@@ -167,30 +165,30 @@ export function GoogleCalendarIntegration() {
         </div>
 
         {connect.error ? (
-          <p className="text-xs text-destructive">
+          <p className="text-destructive text-xs">
             {(connect.error as Error).message}
           </p>
         ) : null}
 
         {connected ? (
-          <div className="mt-2 flex flex-col gap-1.5 border-t border-border pt-3">
-            <p className="text-xs font-medium text-muted-foreground">
+          <div className="border-border mt-2 flex flex-col gap-1.5 border-t pt-3">
+            <p className="text-muted-foreground text-xs font-medium">
               Your calendars
             </p>
             {calendarsQuery.isPending ? (
-              <p className="text-xs text-muted-foreground">Loading…</p>
+              <p className="text-muted-foreground text-xs">Loading…</p>
             ) : calendarsQuery.isError ? (
-              <p className="text-xs text-destructive">
+              <p className="text-destructive text-xs">
                 {(calendarsQuery.error as Error).message}
               </p>
             ) : calendarsQuery.data && calendarsQuery.data.length > 0 ? (
               <ul className="flex flex-col gap-0.5 text-xs">
                 {calendarsQuery.data.map((c) => (
                   <li key={c.id} className="flex items-center gap-2">
-                    <span className="size-1.5 rounded-full bg-foreground/40" />
+                    <span className="bg-foreground/40 size-1.5 rounded-full" />
                     <span className="truncate">{c.name}</span>
                     {c.primary ? (
-                      <span className="rounded bg-muted px-1 text-[10px]">
+                      <span className="bg-muted rounded px-1 text-[10px]">
                         primary
                       </span>
                     ) : null}
@@ -198,7 +196,7 @@ export function GoogleCalendarIntegration() {
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 No calendars found.
               </p>
             )}

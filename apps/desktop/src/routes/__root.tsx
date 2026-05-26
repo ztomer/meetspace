@@ -11,7 +11,7 @@ export const Route = createRootRouteWithContext<Partial<Context>>()({
 
 function Component() {
   return (
-    <Suspense fallback={<div className="h-screen w-screen bg-muted" />}>
+    <Suspense fallback={<div className="bg-muted h-screen w-screen" />}>
       <MainAppLayout />
     </Suspense>
   );

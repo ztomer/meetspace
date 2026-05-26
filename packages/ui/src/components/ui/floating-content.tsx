@@ -11,10 +11,7 @@ export function AppFloatingPanel({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn([
-        "rounded-xl border border-border bg-popover",
-        className,
-      ])}
+      className={cn(["border-border bg-popover rounded-xl border", className])}
       {...props}
     />
   );

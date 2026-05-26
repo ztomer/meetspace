@@ -67,7 +67,7 @@ function OAuthTodoProviderContent({ config }: { config: TodoProvider }) {
           <TooltipTrigger asChild>
             <span
               tabIndex={0}
-              className="cursor-not-allowed text-xs text-muted-foreground opacity-50"
+              className="text-muted-foreground cursor-not-allowed text-xs opacity-50"
             >
               Connect {config.displayName}
             </span>
@@ -86,7 +86,7 @@ function OAuthTodoProviderContent({ config }: { config: TodoProvider }) {
         <button
           type="button"
           onClick={upgradeToPro}
-          className="cursor-pointer text-xs text-muted-foreground underline transition-colors hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground cursor-pointer text-xs underline transition-colors"
         >
           Upgrade to connect
         </button>
@@ -97,7 +97,7 @@ function OAuthTodoProviderContent({ config }: { config: TodoProvider }) {
   if (isError) {
     return (
       <div className="pt-1 pb-2">
-        <span className="text-xs text-destructive">
+        <span className="text-destructive text-xs">
           Failed to load integration status
         </span>
       </div>
@@ -110,7 +110,7 @@ function OAuthTodoProviderContent({ config }: { config: TodoProvider }) {
         <button
           type="button"
           onClick={handleConnect}
-          className="cursor-pointer text-xs text-muted-foreground underline transition-colors hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground cursor-pointer text-xs underline transition-colors"
         >
           Connect {config.displayName}
         </button>
@@ -171,11 +171,11 @@ function ConnectionActions({
               "todo",
             )
           }
-          className="cursor-pointer text-xs text-warning-fg underline transition-colors hover:text-warning-fg"
+          className="text-warning-fg hover:text-warning-fg cursor-pointer text-xs underline transition-colors"
         >
           Reconnect required
         </button>
-        <span className="text-xs text-muted-foreground">or</span>
+        <span className="text-muted-foreground text-xs">or</span>
         <button
           type="button"
           onClick={() =>
@@ -186,7 +186,7 @@ function ConnectionActions({
               "todo",
             )
           }
-          className="cursor-pointer text-xs text-destructive underline transition-colors hover:text-destructive"
+          className="text-destructive hover:text-destructive cursor-pointer text-xs underline transition-colors"
         >
           Disconnect
         </button>
@@ -206,7 +206,7 @@ function ConnectionActions({
             "todo",
           )
         }
-        className="cursor-pointer text-xs text-muted-foreground underline transition-colors hover:text-foreground"
+        className="text-muted-foreground hover:text-foreground cursor-pointer text-xs underline transition-colors"
       >
         Disconnect
       </button>

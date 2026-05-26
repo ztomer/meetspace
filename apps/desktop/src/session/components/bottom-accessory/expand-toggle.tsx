@@ -27,12 +27,12 @@ export function ExpandToggle({
         "absolute left-3 z-10",
         "relative flex h-5 items-center justify-center gap-1",
         hasLabel ? "px-3" : "w-10",
-        "rounded-t-[10px] rounded-b-none border-x border-t border-border",
+        "border-border rounded-t-[10px] rounded-b-none border-x border-t",
         "text-muted-foreground",
         isExpanded
           ? (expandedClassName ?? "bg-background")
           : (collapsedClassName ?? "bg-background"),
-        "transition-colors hover:bg-muted hover:text-muted-foreground",
+        "hover:bg-muted hover:text-muted-foreground transition-colors",
         "hover:cursor-pointer",
       ])}
       aria-label={

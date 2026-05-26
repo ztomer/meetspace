@@ -100,15 +100,15 @@ export function Timeline() {
           className={cn([
             "flex items-center justify-center",
             "h-8 w-8 rounded-full",
-            "border border-border bg-background",
-            "transition-all hover:scale-110 hover:bg-muted",
+            "border-border bg-background border",
+            "hover:bg-muted transition-all hover:scale-110",
             "shrink-0 shadow-xs select-none",
           ])}
         >
           {state === "playing" ? (
-            <Pause className="h-4 w-4 text-foreground" fill="currentColor" />
+            <Pause className="text-foreground h-4 w-4" fill="currentColor" />
           ) : (
-            <Play className="h-4 w-4 text-foreground" fill="currentColor" />
+            <Play className="text-foreground h-4 w-4" fill="currentColor" />
           )}
         </button>
       }
@@ -126,9 +126,9 @@ export function Timeline() {
                 className={cn([
                   "flex items-center justify-center",
                   "h-6 rounded-md px-1.5",
-                  "border border-border bg-background",
-                  "transition-colors hover:bg-muted",
-                  "font-mono text-xs text-foreground select-none",
+                  "border-border bg-background border",
+                  "hover:bg-muted transition-colors",
+                  "text-foreground font-mono text-xs select-none",
                   "shadow-xs",
                 ])}
               >
@@ -138,7 +138,7 @@ export function Timeline() {
                 <div
                   className={cn([
                     "absolute right-0 bottom-full mb-1",
-                    "rounded-lg border border-border bg-background shadow-md",
+                    "border-border bg-background rounded-lg border shadow-md",
                     "z-50 py-1",
                   ])}
                 >
@@ -151,9 +151,9 @@ export function Timeline() {
                       }}
                       className={cn([
                         "block w-full px-3 py-1 text-left font-mono text-xs select-none",
-                        "transition-colors hover:bg-muted",
+                        "hover:bg-muted transition-colors",
                         rate === playbackRate
-                          ? "font-semibold text-foreground"
+                          ? "text-foreground font-semibold"
                           : "text-muted-foreground",
                       ])}
                     >

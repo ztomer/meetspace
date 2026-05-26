@@ -66,8 +66,8 @@ export function NotificationsMenuContent({ onBack }: { onBack: () => void }) {
         {MOCK_NOTIFICATIONS.length === 0 && (
           <div className="flex h-full items-center justify-center">
             <div className="text-center">
-              <Bell className="mx-auto mb-2 h-8 w-8 text-muted-foreground/60" />
-              <p className="text-sm text-muted-foreground">No notifications</p>
+              <Bell className="text-muted-foreground/60 mx-auto mb-2 h-8 w-8" />
+              <p className="text-muted-foreground text-sm">No notifications</p>
             </div>
           </div>
         )}
@@ -96,7 +96,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
         "flex w-full gap-3 rounded-lg",
         "px-4 py-2.5",
         "text-left",
-        "transition-colors hover:bg-muted",
+        "hover:bg-muted transition-colors",
         !notification.read && "bg-info-bg/50",
       ])}
     >
@@ -123,20 +123,22 @@ function NotificationItem({ notification }: { notification: Notification }) {
         <div className="mb-0.5 flex items-start justify-between gap-2">
           <p
             className={clsx(
-              "truncate text-sm font-medium text-foreground",
+              "text-foreground truncate text-sm font-medium",
               !notification.read && "font-semibold",
             )}
           >
             {notification.title}
           </p>
           {!notification.read && (
-            <span className="h-2 w-2 shrink-0 rounded-full bg-info" />
+            <span className="bg-info h-2 w-2 shrink-0 rounded-full" />
           )}
         </div>
-        <p className="mb-1 line-clamp-2 text-xs text-muted-foreground">
+        <p className="text-muted-foreground mb-1 line-clamp-2 text-xs">
           {notification.description}
         </p>
-        <p className="text-xs text-muted-foreground">{notification.timestamp}</p>
+        <p className="text-muted-foreground text-xs">
+          {notification.timestamp}
+        </p>
       </div>
     </button>
   );

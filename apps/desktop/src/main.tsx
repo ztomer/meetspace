@@ -24,6 +24,8 @@ import { env } from "./env";
 import { AppI18nProvider } from "./i18n/provider";
 import { FloatingMeetingWindowHost } from "./meeting-float/host";
 import { routeTree } from "./routeTree.gen";
+import { useGoogleCalendarSync } from "./services/calendar/use-google-sync";
+import { useOutlookCalendarSync } from "./services/calendar/use-outlook-sync";
 import { EventListeners } from "./services/event-listeners";
 import { TaskManager } from "./services/task-manager";
 import { RawEditorSyncBridge } from "./session/raw-editor-sync";
@@ -61,6 +63,10 @@ declare module "@tanstack/react-router" {
 function App() {
   const stores = useStores();
   useApplyTheme();
+  // Phase 10.1 + 10.2 — keep Google + Outlook calendars / events tables
+  // fresh while the user is signed into each. No-op when not signed in.
+  useGoogleCalendarSync();
+  useOutlookCalendarSync();
 
   const store = stores[STORE_ID] as unknown as Store;
   const settingsStore = stores[SETTINGS_STORE_ID] as unknown as SettingsStore;
@@ -73,7 +79,7 @@ function App() {
   }, [store, settingsStore]);
 
   if (!store || !settingsStore || !aiTaskStore) {
-    return <div className="h-screen w-screen bg-muted" />;
+    return <div className="bg-muted h-screen w-screen" />;
   }
 
   return (

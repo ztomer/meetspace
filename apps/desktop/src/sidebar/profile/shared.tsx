@@ -21,13 +21,13 @@ export function MenuItem({
         className={cn([
           "group flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg",
           "px-3 py-1.5",
-          "text-sm whitespace-nowrap text-foreground",
-          "transition-colors hover:bg-muted",
+          "text-foreground text-sm whitespace-nowrap",
+          "hover:bg-muted transition-colors",
         ])}
         onClick={onClick}
       >
         <div className="flex items-center justify-start gap-2.5">
-          <Icon className="h-4 w-4 shrink-0 text-foreground" />
+          <Icon className="text-foreground h-4 w-4 shrink-0" />
           {label}
         </div>
         {badge &&
@@ -46,7 +46,9 @@ export function MenuItem({
             badge
           ))}
         {SuffixIcon && (
-          <SuffixIcon className={cn("h-4 w-4 shrink-0", "text-muted-foreground")} />
+          <SuffixIcon
+            className={cn("h-4 w-4 shrink-0", "text-muted-foreground")}
+          />
         )}
       </button>
     </div>
@@ -65,7 +67,7 @@ export function ProfileFacehash({
   className?: string;
 }) {
   return (
-    <div className={cn(["rounded-full bg-warning-bg", className])}>
+    <div className={cn(["bg-warning-bg rounded-full", className])}>
       <Facehash
         name={name}
         size={size}

@@ -54,9 +54,9 @@ export function AvailabilityHealth({ message }: { message: string }) {
     <div
       className={cn([
         "flex items-center justify-center gap-2 text-center",
-        "border-b border-destructive/30 bg-destructive-bg/70",
+        "border-destructive/30 bg-destructive-bg/70 border-b",
         "-mx-6 -mt-6 px-4 py-3",
-        "text-sm text-destructive",
+        "text-destructive text-sm",
       ])}
     >
       <AlertCircleIcon className="h-4 w-4 shrink-0" />

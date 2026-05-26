@@ -44,7 +44,7 @@ export function ChatView() {
         chat.mode !== "RightPanelOpen" && "bg-muted",
       ])}
     >
-      <div className="flex h-10 shrink-0 items-center border-b border-border pr-0 pl-0">
+      <div className="border-border flex h-10 shrink-0 items-center border-b pr-0 pl-0">
         <ChatToolbarControls
           currentChatGroupId={groupId}
           onNewChat={chat.startNewChat}

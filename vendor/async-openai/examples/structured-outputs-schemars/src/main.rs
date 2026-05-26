@@ -1,15 +1,15 @@
 use std::error::Error;
 
 use async_openai::{
+    Client,
     types::{
         ChatCompletionRequestMessage, ChatCompletionRequestSystemMessage,
         ChatCompletionRequestUserMessage, CreateChatCompletionRequestArgs, ResponseFormat,
         ResponseFormatJsonSchema,
     },
-    Client,
 };
-use schemars::{schema_for, JsonSchema};
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use schemars::{JsonSchema, schema_for};
+use serde::{Deserialize, Serialize, de::DeserializeOwned};
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]

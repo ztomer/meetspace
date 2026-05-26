@@ -61,7 +61,7 @@ export function ToolCardHeader({
       {running && !awaitingApproval ? (
         <Loader2Icon className="h-4 w-4 animate-spin" />
       ) : awaitingApproval ? (
-        <ShieldAlertIcon className="h-4 w-4 text-muted-foreground" />
+        <ShieldAlertIcon className="text-muted-foreground h-4 w-4" />
       ) : (
         <span
           className={cn([
@@ -108,17 +108,19 @@ export function ToolCardFooterSuccess({
 
 export function ToolCardFooterError({ text }: { text: string }) {
   return (
-    <div className="flex items-center gap-2 border-t border-destructive/30 bg-destructive-bg px-3.5 py-2.5">
-      <XCircleIcon className="h-4 w-4 shrink-0 text-destructive" />
-      <p className="text-[13px] text-destructive">{text}</p>
+    <div className="border-destructive/30 bg-destructive-bg flex items-center gap-2 border-t px-3.5 py-2.5">
+      <XCircleIcon className="text-destructive h-4 w-4 shrink-0" />
+      <p className="text-destructive text-[13px]">{text}</p>
     </div>
   );
 }
 
 export function ToolCardFooterRaw({ text }: { text: string }) {
   return (
-    <div className="border-t border-border/80 bg-muted/80 px-3.5 py-2.5">
-      <p className="text-[13px] whitespace-pre-wrap text-muted-foreground">{text}</p>
+    <div className="border-border/80 bg-muted/80 border-t px-3.5 py-2.5">
+      <p className="text-muted-foreground text-[13px] whitespace-pre-wrap">
+        {text}
+      </p>
     </div>
   );
 }
@@ -171,18 +173,18 @@ export function ToolCardApproval() {
   }
 
   return (
-    <div className="flex items-center gap-2.5 border-t border-border/80 bg-muted/80 px-3.5 py-2.5">
-      <span className="flex-1 text-[13px] text-muted-foreground">
+    <div className="border-border/80 bg-muted/80 flex items-center gap-2.5 border-t px-3.5 py-2.5">
+      <span className="text-muted-foreground flex-1 text-[13px]">
         {pending.message}
       </span>
       <button
-        className="rounded-md border border-border bg-background px-3 py-1 text-[13px] text-muted-foreground transition-colors hover:bg-muted"
+        className="border-border bg-background text-muted-foreground hover:bg-muted rounded-md border px-3 py-1 text-[13px] transition-colors"
         onClick={() => respond(false)}
       >
         Decline
       </button>
       <button
-        className="rounded-md bg-primary px-3 py-1 text-[13px] text-white transition-colors hover:bg-primary"
+        className="bg-primary hover:bg-primary rounded-md px-3 py-1 text-[13px] text-white transition-colors"
         onClick={() => respond(true)}
         autoFocus
       >
@@ -199,10 +201,10 @@ export function useToolApproval(running: boolean) {
 
 export function MarkdownPreview({ children }: { children: string }) {
   return (
-    <div className="rounded-lg border border-border/80 bg-background">
+    <div className="border-border/80 bg-background rounded-lg border">
       <div className="max-h-64 overflow-y-auto px-3 py-2.5">
         <Streamdown
-          className="text-[13px] leading-relaxed text-foreground"
+          className="text-foreground text-[13px] leading-relaxed"
           linkSafety={{ enabled: false }}
         >
           {children}

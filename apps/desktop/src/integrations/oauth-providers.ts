@@ -52,7 +52,8 @@ export const OAUTH_PROVIDERS: Record<OAuthProviderId, OAuthProviderConfig> = {
     tokenUrl: "https://login.microsoftonline.com/common/oauth2/v2.0/token",
     scopes: "Calendars.Read offline_access openid email profile",
     extraAuthorizeParams: {},
-    consoleUrl: "https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade",
+    consoleUrl:
+      "https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade",
   },
 };
 

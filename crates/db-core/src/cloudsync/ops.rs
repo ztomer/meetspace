@@ -64,7 +64,10 @@ impl Db {
         cloudsync_commit_alter_on(&self.pool, table_name).await
     }
 
-    pub async fn cloudsync_cleanup(&self, table_name: &str) -> Result<(), meetspace_cloudsync::Error> {
+    pub async fn cloudsync_cleanup(
+        &self,
+        table_name: &str,
+    ) -> Result<(), meetspace_cloudsync::Error> {
         meetspace_cloudsync::cleanup(&self.pool, table_name).await
     }
 
@@ -98,7 +101,9 @@ impl Db {
         meetspace_cloudsync::network_check_changes(&self.pool, wait_ms, max_retries).await
     }
 
-    pub async fn cloudsync_network_reset_sync_version(&self) -> Result<(), meetspace_cloudsync::Error> {
+    pub async fn cloudsync_network_reset_sync_version(
+        &self,
+    ) -> Result<(), meetspace_cloudsync::Error> {
         meetspace_cloudsync::network_reset_sync_version(&self.pool).await
     }
 

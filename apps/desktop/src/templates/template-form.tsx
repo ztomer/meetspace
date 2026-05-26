@@ -108,7 +108,7 @@ function TemplateTargetsInput({
           type="text"
           autoFocus
           value={inputValue}
-          className="min-w-[84px] flex-1 bg-transparent py-0 text-xs leading-none text-muted-foreground outline-hidden"
+          className="text-muted-foreground min-w-[84px] flex-1 bg-transparent py-0 text-xs leading-none outline-hidden"
           onChange={(e) => setInputValue(e.target.value)}
           onBlur={submitTargets}
           onKeyDown={(e) => {
@@ -229,10 +229,8 @@ export function TemplateForm({
               onClick={setSelectedTemplateId}
               title={isDefault ? "Remove as default" : "Set as default"}
               className={cn([
-                "shrink-0 text-muted-foreground hover:text-foreground",
-                isDefault
-                  ? "bg-muted text-foreground hover:bg-muted"
-                  : null,
+                "text-muted-foreground hover:text-foreground shrink-0",
+                isDefault ? "bg-muted text-foreground hover:bg-muted" : null,
               ])}
             >
               {isDefault ? "Current default" : "Set as default"}
@@ -266,8 +264,7 @@ export function TemplateForm({
                   variant="ghost"
                   className={cn([
                     "text-muted-foreground hover:text-foreground",
-                    actionsOpen &&
-                      "bg-muted text-foreground hover:bg-muted",
+                    actionsOpen && "bg-muted text-foreground hover:bg-muted",
                   ])}
                   aria-label="Template actions"
                 >
@@ -284,7 +281,7 @@ export function TemplateForm({
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleDeleteTemplate(id)}
-                    className="cursor-pointer text-destructive focus:text-destructive"
+                    className="text-destructive focus:text-destructive cursor-pointer"
                   >
                     Delete
                   </DropdownMenuItem>
@@ -311,7 +308,7 @@ export function TemplateForm({
                     className="absolute inset-0 h-auto w-full max-w-full min-w-0 border-0 px-0 py-0 text-lg font-semibold shadow-none focus-visible:ring-0 md:text-lg"
                   />
                 </div>
-                <span className="shrink-0 text-sm font-normal whitespace-nowrap text-muted-foreground">
+                <span className="text-muted-foreground shrink-0 text-sm font-normal whitespace-nowrap">
                   {getTemplateCreatorLabel({
                     isUserTemplate: true,
                     creatorName,
@@ -327,7 +324,7 @@ export function TemplateForm({
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="Describe the template purpose..."
-                className="mt-1 min-h-[24px] resize-none border-0 px-0 py-0 text-sm text-muted-foreground shadow-none focus-visible:ring-0"
+                className="text-muted-foreground mt-1 min-h-[24px] resize-none border-0 px-0 py-0 text-sm shadow-none focus-visible:ring-0"
                 rows={1}
               />
             )}

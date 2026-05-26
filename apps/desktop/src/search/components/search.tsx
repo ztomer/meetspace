@@ -108,12 +108,12 @@ function ExpandedSearch({ onBlur }: { onBlur?: () => void }) {
         {showLoading ? (
           <Loader2Icon
             className={cn([
-              "absolute left-3 h-4 w-4 animate-spin text-muted-foreground",
+              "text-muted-foreground absolute left-3 h-4 w-4 animate-spin",
             ])}
           />
         ) : (
           <SearchIcon
-            className={cn(["absolute left-3 h-4 w-4 text-muted-foreground"])}
+            className={cn(["text-muted-foreground absolute left-3 h-4 w-4"])}
           />
         )}
         <input
@@ -178,7 +178,7 @@ function ExpandedSearch({ onBlur }: { onBlur?: () => void }) {
             onBlur?.();
           }}
           className={cn([
-            "text-sm placeholder:text-sm placeholder:text-muted-foreground",
+            "placeholder:text-muted-foreground text-sm placeholder:text-sm",
             "h-full w-full pl-9",
             query
               ? hasResults
@@ -187,7 +187,7 @@ function ExpandedSearch({ onBlur }: { onBlur?: () => void }) {
               : showShortcut
                 ? "pr-14"
                 : "pr-4",
-            "rounded-xl bg-muted",
+            "bg-muted rounded-xl",
             "focus:bg-accent focus:outline-hidden",
           ])}
         />
@@ -196,7 +196,7 @@ function ExpandedSearch({ onBlur }: { onBlur?: () => void }) {
             className={cn([
               "absolute right-9",
               "px-2 py-0.5",
-              "rounded-full bg-muted-foreground/40",
+              "bg-muted-foreground/40 rounded-full",
               "text-xs font-semibold text-white",
               "pointer-events-none",
             ])}

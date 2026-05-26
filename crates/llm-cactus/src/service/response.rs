@@ -6,9 +6,8 @@ pub(super) struct ModelError(pub meetspace_cactus::Error);
 
 fn status_code_for(error: &meetspace_cactus::Error) -> axum::http::StatusCode {
     match error {
-        meetspace_cactus::Error::InvalidRequest(_) | meetspace_cactus::Error::InvalidJsonSchema { .. } => {
-            axum::http::StatusCode::BAD_REQUEST
-        }
+        meetspace_cactus::Error::InvalidRequest(_)
+        | meetspace_cactus::Error::InvalidJsonSchema { .. } => axum::http::StatusCode::BAD_REQUEST,
         meetspace_cactus::Error::InvalidStructuredOutput { .. }
         | meetspace_cactus::Error::JsonSchemaValidation { .. } => {
             axum::http::StatusCode::UNPROCESSABLE_ENTITY

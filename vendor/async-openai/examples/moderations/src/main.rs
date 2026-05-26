@@ -1,4 +1,4 @@
-use async_openai::{types::CreateModerationRequestArgs, Client};
+use async_openai::{Client, types::CreateModerationRequestArgs};
 use std::error::Error;
 
 #[tokio::main]

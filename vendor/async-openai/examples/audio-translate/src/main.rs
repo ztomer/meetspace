@@ -1,6 +1,6 @@
 use async_openai::{
-    types::{AudioResponseFormat, CreateTranslationRequestArgs},
     Client,
+    types::{AudioResponseFormat, CreateTranslationRequestArgs},
 };
 use std::error::Error;
 

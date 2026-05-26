@@ -134,7 +134,8 @@ pub(super) async fn run_soniqo_batch(
             message: format_user_friendly_error(&e),
         })?;
 
-        let response = meetspace_transcribe_soniqo::batch_response_from_channels(model, transcribed);
+        let response =
+            meetspace_transcribe_soniqo::batch_response_from_channels(model, transcribed);
 
         Ok(BatchRunOutput {
             session_id: params.session_id,
@@ -160,8 +161,8 @@ fn transcribe_soniqo_file(
             .map_err(|e| e.to_string());
     }
 
-    let samples =
-        meetspace_audio_utils::resample_audio(source, TARGET_SAMPLE_RATE).map_err(|e| e.to_string())?;
+    let samples = meetspace_audio_utils::resample_audio(source, TARGET_SAMPLE_RATE)
+        .map_err(|e| e.to_string())?;
     let channel_samples =
         collapse_identical_channels(split_resampled_channels(&samples, channel_count));
 
@@ -177,8 +178,8 @@ fn transcribe_soniqo_channel(
     language: Option<&str>,
 ) -> std::result::Result<meetspace_transcribe_soniqo::FileTranscript, String> {
     let duration_seconds = channel_duration_sec(samples);
-    let chunks =
-        chunk_channel_audio::<meetspace_audio_chunking::Error>(samples).map_err(|e| e.to_string())?;
+    let chunks = chunk_channel_audio::<meetspace_audio_chunking::Error>(samples)
+        .map_err(|e| e.to_string())?;
     let mut texts = Vec::new();
 
     for chunk in chunks {
@@ -220,7 +221,8 @@ fn transcribe_soniqo_samples(
         writer.finalize().map_err(|e| e.to_string())?;
     }
 
-    meetspace_transcribe_soniqo::transcribe_file(model, file.path(), language).map_err(|e| e.to_string())
+    meetspace_transcribe_soniqo::transcribe_file(model, file.path(), language)
+        .map_err(|e| e.to_string())
 }
 
 fn collapse_identical_channels(channels: Vec<Vec<f32>>) -> Vec<Vec<f32>> {

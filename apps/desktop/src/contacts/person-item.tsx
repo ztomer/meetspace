@@ -107,7 +107,9 @@ export function PersonItem({
           {personName || personEmail || "Unnamed"}
         </div>
         {personEmail && personName && (
-          <div className="truncate text-xs text-muted-foreground">{personEmail}</div>
+          <div className="text-muted-foreground truncate text-xs">
+            {personEmail}
+          </div>
         )}
       </div>
       <button
@@ -116,7 +118,7 @@ export function PersonItem({
           "shrink-0 rounded-xs p-1 transition-colors",
           isPinned
             ? "text-info-fg hover:text-info-fg"
-            : "text-muted-foreground/60 opacity-0 group-hover:opacity-100 hover:text-muted-foreground",
+            : "text-muted-foreground/60 hover:text-muted-foreground opacity-0 group-hover:opacity-100",
         ])}
         aria-label={isPinned ? "Unpin contact" : "Pin contact"}
       >

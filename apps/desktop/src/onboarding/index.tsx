@@ -193,7 +193,7 @@ function OnboardingScreenContent({
           <div className="absolute inset-x-0 top-0 h-[92%] [mask-image:linear-gradient(to_bottom,black,rgba(0,0,0,0.8)_34%,rgba(0,0,0,0.35)_62%,transparent)] backdrop-blur-[12px]" />
           <div className="absolute inset-x-0 top-0 h-[84%] bg-linear-to-b from-stone-50 via-stone-50/82 via-stone-50/97 via-18% via-42% to-stone-50/0" />
           <motion.div
-            className="absolute inset-0 bg-muted"
+            className="bg-muted absolute inset-0"
             initial={{ opacity: 1 }}
             animate={{ opacity: 0 }}
             transition={{ duration: 1.0, ease: "easeOut", delay: 0.1 }}
@@ -207,13 +207,13 @@ function OnboardingScreenContent({
             headerClassName,
           ])}
         >
-          <h1 className="font-sans text-3xl font-semibold text-foreground">
+          <h1 className="text-foreground font-sans text-3xl font-semibold">
             Welcome to Meetspace
           </h1>
           <button
             onClick={() => setIsMuted((prev) => !prev)}
             data-tauri-drag-region="false"
-            className="rounded-full p-1.5 transition-colors hover:bg-muted"
+            className="hover:bg-muted rounded-full p-1.5 transition-colors"
             aria-label={isMuted ? "Unmute" : "Mute"}
           >
             {isMuted ? (
@@ -249,7 +249,8 @@ function OnboardingScreenContent({
               <CalendarSection
                 onContinue={goNext}
                 onSignIn={handleCalendarSignIn}
-              />{/* onSignIn retained as a no-op for backward compat */}
+              />
+              {/* onSignIn retained as a no-op for backward compat */}
             </OnboardingSection>
 
             <OnboardingSection

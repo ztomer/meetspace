@@ -71,7 +71,7 @@ function IconButton({
       className={cn([
         "rounded-sm p-0.5 transition-colors",
         disabled
-          ? "cursor-not-allowed text-muted-foreground/60"
+          ? "text-muted-foreground/60 cursor-not-allowed"
           : "text-muted-foreground hover:bg-accent",
       ])}
     >
@@ -197,7 +197,7 @@ export function SearchBar({
 
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex h-7 items-center gap-1.5 rounded-lg bg-muted px-2">
+      <div className="bg-muted flex h-7 items-center gap-1.5 rounded-lg px-2">
         <input
           ref={searchInputRef}
           type="text"
@@ -205,7 +205,7 @@ export function SearchBar({
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleSearchKeyDown}
           placeholder="Search..."
-          className="h-full min-w-0 flex-1 bg-transparent text-xs placeholder:text-muted-foreground focus:outline-hidden"
+          className="placeholder:text-muted-foreground h-full min-w-0 flex-1 bg-transparent text-xs focus:outline-hidden"
         />
         <div className="flex items-center gap-0.5">
           <ToggleButton
@@ -235,7 +235,7 @@ export function SearchBar({
             <ReplaceIcon className="size-3.5" />
           </ToggleButton>
         </div>
-        <span className="text-[10px] whitespace-nowrap text-muted-foreground tabular-nums">
+        <span className="text-muted-foreground text-[10px] whitespace-nowrap tabular-nums">
           {displayCount}
         </span>
         <div className="flex items-center">
@@ -278,7 +278,7 @@ export function SearchBar({
       </div>
 
       {showReplace && (
-        <div className="flex h-7 items-center gap-1.5 rounded-lg bg-muted px-2">
+        <div className="bg-muted flex h-7 items-center gap-1.5 rounded-lg px-2">
           <input
             ref={replaceInputRef}
             type="text"
@@ -286,7 +286,7 @@ export function SearchBar({
             onChange={(e) => setReplaceQuery(e.target.value)}
             onKeyDown={handleReplaceKeyDown}
             placeholder="Replace with..."
-            className="h-full min-w-0 flex-1 bg-transparent text-xs placeholder:text-muted-foreground focus:outline-hidden"
+            className="placeholder:text-muted-foreground h-full min-w-0 flex-1 bg-transparent text-xs focus:outline-hidden"
           />
           <div className="flex items-center gap-0.5">
             <IconButton

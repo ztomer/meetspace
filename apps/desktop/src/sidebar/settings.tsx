@@ -51,9 +51,7 @@ function getBaseGroups(): SettingsNavGroup[] {
     },
     {
       label: "Integrations",
-      items: [
-        { id: "integrations", label: "Integrations", icon: PuzzleIcon },
-      ],
+      items: [{ id: "integrations", label: "Integrations", icon: PuzzleIcon }],
     },
   ];
 }
@@ -110,7 +108,7 @@ export function SettingsNav() {
         <div className="flex flex-col gap-4 pb-2">
           {groups.map((group) => (
             <div key={group.label} className="flex flex-col gap-0.5">
-              <span className="px-3 pb-1 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
+              <span className="text-muted-foreground px-3 pb-1 text-[11px] font-medium tracking-wider uppercase">
                 {group.label}
               </span>
               {group.items.map((item) => {
@@ -135,7 +133,7 @@ export function SettingsNav() {
                       "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm",
                       "transition-colors",
                       isSettingsItem && activeTab === item.id
-                        ? "bg-accent font-medium text-foreground"
+                        ? "bg-accent text-foreground font-medium"
                         : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
                     ])}
                   >

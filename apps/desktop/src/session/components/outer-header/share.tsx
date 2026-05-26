@@ -14,7 +14,7 @@ export function ShareButton(_: { sessionId: string }) {
         <Button
           size="sm"
           variant="ghost"
-          className="cursor-not-allowed gap-1.5 text-muted-foreground opacity-50"
+          className="text-muted-foreground cursor-not-allowed gap-1.5 opacity-50"
           aria-label="Share"
         >
           <Share2 className="size-4" />

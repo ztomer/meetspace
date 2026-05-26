@@ -1,6 +1,6 @@
 use async_openai::{
-    types::{CreateSpeechRequestArgs, SpeechModel, Voice},
     Client,
+    types::{CreateSpeechRequestArgs, SpeechModel, Voice},
 };
 use std::error::Error;
 

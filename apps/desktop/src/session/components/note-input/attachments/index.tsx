@@ -58,33 +58,35 @@ function LinkAttachmentCard({
   const addedLabel = formatAttachmentTimestamp(attachment.addedAt);
 
   return (
-    <div className="relative flex flex-col gap-3 rounded-lg border border-border bg-background p-4 transition-colors hover:bg-muted">
+    <div className="border-border bg-background hover:bg-muted relative flex flex-col gap-3 rounded-lg border p-4 transition-colors">
       {onRemove && (
         <button
           type="button"
           onClick={() => onRemove(attachment.attachmentId)}
-          className="absolute top-2 right-2 rounded-full border border-border bg-background/80 p-1 transition-colors hover:bg-background"
+          className="border-border bg-background/80 hover:bg-background absolute top-2 right-2 rounded-full border p-1 transition-colors"
           aria-label="Remove attachment"
         >
-          <X className="h-3 w-3 text-muted-foreground" />
+          <X className="text-muted-foreground h-3 w-3" />
         </button>
       )}
       <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded bg-muted">
-          <LinkIcon className="h-6 w-6 text-muted-foreground" />
+        <div className="bg-muted flex h-12 w-12 items-center justify-center rounded">
+          <LinkIcon className="text-muted-foreground h-6 w-6" />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-medium text-foreground">
+          <div className="text-foreground truncate text-sm font-medium">
             {attachment.title}
           </div>
-          <div className="mt-0.5 text-xs text-muted-foreground">{addedLabel}</div>
+          <div className="text-muted-foreground mt-0.5 text-xs">
+            {addedLabel}
+          </div>
         </div>
       </div>
       <a
         href={attachment.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="truncate text-xs text-info-fg underline hover:text-info-fg"
+        className="text-info-fg hover:text-info-fg truncate text-xs underline"
       >
         {attachment.url}
       </a>
@@ -140,19 +142,19 @@ function ImageAttachmentCard({
   return (
     <div
       onContextMenu={showContextMenu}
-      className="relative flex flex-col gap-3 rounded-lg border border-border bg-background p-4 transition-colors hover:bg-muted"
+      className="border-border bg-background hover:bg-muted relative flex flex-col gap-3 rounded-lg border p-4 transition-colors"
     >
       {onRemove && (
         <button
           type="button"
           onClick={() => onRemove(attachment.attachmentId)}
-          className="absolute top-2 right-2 z-10 rounded-full border border-border bg-background/80 p-1 transition-colors hover:bg-background"
+          className="border-border bg-background/80 hover:bg-background absolute top-2 right-2 z-10 rounded-full border p-1 transition-colors"
           aria-label="Remove attachment"
         >
-          <X className="h-3 w-3 text-muted-foreground" />
+          <X className="text-muted-foreground h-3 w-3" />
         </button>
       )}
-      <div className="relative aspect-video w-full overflow-hidden rounded bg-muted">
+      <div className="bg-muted relative aspect-video w-full overflow-hidden rounded">
         {attachment.thumbnailUrl ? (
           <img
             src={attachment.thumbnailUrl}
@@ -161,22 +163,22 @@ function ImageAttachmentCard({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <ImageIcon className="h-8 w-8 text-muted-foreground" />
+            <ImageIcon className="text-muted-foreground h-8 w-8" />
           </div>
         )}
         {!attachment.isPersisted && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/60">
-            <span className="text-xs font-medium text-muted-foreground">
+          <div className="bg-background/60 absolute inset-0 flex items-center justify-center">
+            <span className="text-muted-foreground text-xs font-medium">
               Saving...
             </span>
           </div>
         )}
       </div>
       <div>
-        <div className="text-sm font-medium text-foreground">
+        <div className="text-foreground text-sm font-medium">
           {attachment.title}
         </div>
-        <div className="mt-0.5 text-xs text-muted-foreground">{addedLabel}</div>
+        <div className="text-muted-foreground mt-0.5 text-xs">{addedLabel}</div>
       </div>
     </div>
   );
@@ -195,12 +197,12 @@ export function Attachments({
     <div className="flex h-full flex-col overflow-auto">
       <div className="min-h-0 flex-1">
         {isLoading ? (
-          <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+          <div className="text-muted-foreground flex h-full items-center justify-center text-xs">
             Loading attachments...
           </div>
         ) : attachments.length === 0 ? (
-          <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-xs text-muted-foreground">
-            <ImageIcon className="h-5 w-5 text-muted-foreground" />
+          <div className="text-muted-foreground flex h-full flex-col items-center justify-center gap-2 text-center text-xs">
+            <ImageIcon className="text-muted-foreground h-5 w-5" />
             <p>No attachments yet. Use the + icon above to add one.</p>
           </div>
         ) : (

@@ -122,7 +122,7 @@ function DeviceList({ direction }: { direction: "input" | "output" }) {
       <h3 className="mb-2 text-sm font-medium">
         {direction === "input" ? "Input devices" : "Output devices"}
       </h3>
-      <p className="mb-3 text-xs text-muted-foreground">
+      <p className="text-muted-foreground mb-3 text-xs">
         {direction === "input"
           ? "Drag to set microphone priority. Top device will be auto-selected."
           : "Drag to set speaker priority. Top device will be auto-selected."}
@@ -183,12 +183,12 @@ function DeviceItem({
       <span
         className={cn([
           "flex-1 truncate text-sm",
-          isTop && "font-medium text-success-fg",
+          isTop && "text-success-fg font-medium",
         ])}
       >
         {device.name}
       </span>
-      {isTop && <span className="text-xs text-success-fg">Active</span>}
+      {isTop && <span className="text-success-fg text-xs">Active</span>}
     </Reorder.Item>
   );
 }

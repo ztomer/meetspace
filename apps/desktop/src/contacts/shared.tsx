@@ -130,8 +130,8 @@ export function ColumnHeader({
       </div>
       {onSearchChange && (
         <div className="px-2 pb-2">
-          <div className="flex h-8 items-center gap-2 rounded-lg border border-border bg-accent/50 px-3 transition-colors focus-within:bg-accent">
-            <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <div className="border-border bg-accent/50 focus-within:bg-accent flex h-8 items-center gap-2 rounded-lg border px-3 transition-colors">
+            <Search className="text-muted-foreground h-4 w-4 shrink-0" />
             <input
               ref={searchInputRef}
               type="text"
@@ -139,12 +139,12 @@ export function ColumnHeader({
               onChange={(e) => onSearchChange(e.target.value)}
               onKeyDown={handleSearchKeyDown}
               placeholder="Search contacts..."
-              className="min-w-0 flex-1 bg-transparent text-sm placeholder:text-sm placeholder:text-muted-foreground focus:outline-hidden"
+              className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-sm placeholder:text-sm focus:outline-hidden"
             />
             {searchValue && (
               <button
                 onClick={() => onSearchChange("")}
-                className="h-4 w-4 shrink-0 text-muted-foreground transition-colors hover:text-muted-foreground"
+                className="text-muted-foreground hover:text-muted-foreground h-4 w-4 shrink-0 transition-colors"
                 aria-label="Clear search"
               >
                 <X className="h-4 w-4" />

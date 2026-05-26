@@ -1,13 +1,13 @@
 use std::error::Error;
 
 use async_openai::{
+    Client,
     types::{
         AssistantToolFileSearchResources, AssistantToolsFileSearch, CreateAssistantRequestArgs,
         CreateFileRequest, CreateMessageRequestArgs, CreateRunRequest, CreateThreadRequest,
         CreateVectorStoreRequest, FilePurpose, MessageAttachment, MessageAttachmentTool,
         MessageContent, MessageRole, ModifyAssistantRequest, RunStatus,
     },
-    Client,
 };
 
 #[tokio::main]

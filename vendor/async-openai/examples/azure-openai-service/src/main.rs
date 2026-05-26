@@ -1,12 +1,12 @@
 use std::error::Error;
 
 use async_openai::{
+    Client,
     config::AzureConfig,
     types::{
         ChatCompletionRequestSystemMessageArgs, ChatCompletionRequestUserMessageArgs,
         CreateChatCompletionRequestArgs, CreateEmbeddingRequestArgs,
     },
-    Client,
 };
 
 async fn chat_completion_example(client: &Client<AzureConfig>) -> Result<(), Box<dyn Error>> {

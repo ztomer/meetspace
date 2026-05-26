@@ -220,7 +220,10 @@ mod tests {
 
         let (status, idle) = read_health(app).await;
         assert_eq!(status, StatusCode::OK);
-        assert_eq!(idle.status, meetspace_cactus_model::CactusServiceStatus::Idle);
+        assert_eq!(
+            idle.status,
+            meetspace_cactus_model::CactusServiceStatus::Idle
+        );
     }
 
     #[tokio::test]

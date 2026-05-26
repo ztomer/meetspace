@@ -29,12 +29,12 @@ export function SidebarSearchInput() {
       {showLoading ? (
         <Loader2Icon
           className={cn([
-            "absolute left-5 h-4 w-4 animate-spin text-muted-foreground",
+            "text-muted-foreground absolute left-5 h-4 w-4 animate-spin",
           ])}
         />
       ) : (
         <SearchIcon
-          className={cn(["absolute left-5 h-4 w-4 text-muted-foreground"])}
+          className={cn(["text-muted-foreground absolute left-5 h-4 w-4"])}
         />
       )}
       <input
@@ -45,10 +45,10 @@ export function SidebarSearchInput() {
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={onKeyDown}
         className={cn([
-          "text-sm placeholder:text-sm placeholder:text-muted-foreground",
+          "placeholder:text-muted-foreground text-sm placeholder:text-sm",
           "h-full w-full pl-8",
           query ? "pr-8" : showShortcut ? "pr-14" : "pr-4",
-          "rounded-lg border border-border bg-accent/50",
+          "border-border bg-accent/50 rounded-lg border",
           "focus:bg-accent focus:outline-hidden",
         ])}
       />

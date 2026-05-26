@@ -72,7 +72,7 @@ export function TabContentChangelog({
         </div>
 
         <div className="mt-2 shrink-0 px-3">
-          <h1 className="text-xl font-semibold text-foreground">
+          <h1 className="text-foreground text-xl font-semibold">
             What's new in {current}?
           </h1>
         </div>
@@ -96,7 +96,7 @@ function ExternalLink({
 }) {
   return (
     <a
-      className="text-info-fg underline hover:text-info-fg"
+      className="text-info-fg hover:text-info-fg underline"
       href={href}
       onClick={(e) => {
         e.preventDefault();
@@ -142,7 +142,9 @@ function ChangelogBody({
   }
 
   return (
-    <p className="text-muted-foreground">No changelog available for this version.</p>
+    <p className="text-muted-foreground">
+      No changelog available for this version.
+    </p>
   );
 }
 
@@ -161,7 +163,7 @@ function ChangelogHeader({
       <div className="flex items-center gap-2">
         <div className="min-w-0 flex-1">
           <Breadcrumb className="ml-1.5 min-w-0">
-            <BreadcrumbList className="flex-nowrap gap-0.5 overflow-hidden text-xs text-foreground">
+            <BreadcrumbList className="text-foreground flex-nowrap gap-0.5 overflow-hidden text-xs">
               <BreadcrumbItem className="shrink-0">
                 <span className="text-muted-foreground">Changelog</span>
               </BreadcrumbItem>
@@ -178,7 +180,7 @@ function ChangelogHeader({
             <Button
               size="sm"
               variant="ghost"
-              className="pointer-events-none text-muted-foreground"
+              className="text-muted-foreground pointer-events-none"
             >
               <CalendarIcon size={14} className="shrink-0" />
               <span>{formattedDate}</span>
@@ -187,7 +189,7 @@ function ChangelogHeader({
           <Button
             size="sm"
             variant="ghost"
-            className="gap-1.5 text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground gap-1.5"
             onClick={() => openerCommands.openUrl(webUrl, null)}
           >
             <ExternalLinkIcon size={14} />

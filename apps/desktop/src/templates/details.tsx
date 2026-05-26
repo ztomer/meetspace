@@ -74,7 +74,7 @@ export function TemplateDetailsColumn({
 function TemplateDetailEmpty({ onCreate }: { onCreate: () => void }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-3">
-      <p className="text-sm text-muted-foreground">No templates yet</p>
+      <p className="text-muted-foreground text-sm">No templates yet</p>
       <Button
         type="button"
         size="sm"
@@ -117,7 +117,7 @@ function WebTemplatePreview({
         category={template.category}
         targets={template.targets}
         titleMeta={
-          <span className="shrink-0 text-sm font-normal whitespace-nowrap text-muted-foreground">
+          <span className="text-muted-foreground shrink-0 text-sm font-normal whitespace-nowrap">
             {getTemplateCreatorLabel({
               isUserTemplate: false,
               format: "short",
@@ -132,7 +132,7 @@ function WebTemplatePreview({
               size="sm"
               variant="ghost"
               onClick={() => onSetDefault(nextTemplate)}
-              className="shrink-0 text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground shrink-0"
             >
               Set as default
             </Button>
@@ -155,8 +155,7 @@ function WebTemplatePreview({
                   variant="ghost"
                   className={cn([
                     "text-muted-foreground hover:text-foreground",
-                    actionsOpen &&
-                      "bg-muted text-foreground hover:bg-muted",
+                    actionsOpen && "bg-muted text-foreground hover:bg-muted",
                   ])}
                   aria-label="Template actions"
                 >

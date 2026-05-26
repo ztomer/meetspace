@@ -179,7 +179,7 @@ export function SectionsList({
         <Button
           variant="outline"
           size="sm"
-          className="h-auto w-fit rounded-full border-border bg-background px-4 py-2.5 text-sm text-foreground shadow-[0_2px_6px_rgba(87,83,78,0.08),0_10px_18px_-10px_rgba(87,83,78,0.22)] hover:bg-muted"
+          className="border-border bg-background text-foreground hover:bg-muted h-auto w-fit rounded-full px-4 py-2.5 text-sm shadow-[0_2px_6px_rgba(87,83,78,0.08),0_10px_18px_-10px_rgba(87,83,78,0.22)]"
           onClick={addSection}
           disabled={disabled}
         >
@@ -217,7 +217,7 @@ function SectionItem({
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <div className="group relative bg-background">
+    <div className="group bg-background relative">
       {!disabled && (
         <button
           type="button"
@@ -237,7 +237,7 @@ function SectionItem({
                 type="button"
                 size="icon"
                 variant="ghost"
-                className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground h-7 w-7"
                 aria-label="Section actions"
               >
                 <MoreHorizontalIcon className="size-4" />
@@ -273,7 +273,7 @@ function SectionItem({
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => onDelete(item.key)}
-                  className="cursor-pointer text-destructive focus:text-destructive"
+                  className="text-destructive focus:text-destructive cursor-pointer"
                 >
                   Delete
                 </DropdownMenuItem>

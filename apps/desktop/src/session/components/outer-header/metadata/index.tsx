@@ -194,16 +194,16 @@ export function EventDisplay({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="text-base font-medium text-foreground">
+      <div className="text-foreground text-base font-medium">
         {event.title || "Untitled Event"}
       </div>
 
-      <div className="h-px bg-accent" />
+      <div className="bg-accent h-px" />
 
       {shouldShowLocation && (
         <>
-          <div className="flex items-center gap-2 text-sm text-foreground">
-            <MapPinIcon size={16} className="shrink-0 text-muted-foreground" />
+          <div className="text-foreground flex items-center gap-2 text-sm">
+            <MapPinIcon size={16} className="text-muted-foreground shrink-0" />
             <span>{event.location}</span>
           </div>
         </>
@@ -212,8 +212,8 @@ export function EventDisplay({
       {event.meetingLink && (
         <>
           <div className="flex items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2 text-sm text-foreground">
-              <VideoIcon size={16} className="shrink-0 text-muted-foreground" />
+            <div className="text-foreground flex min-w-0 items-center gap-2 text-sm">
+              <VideoIcon size={16} className="text-muted-foreground shrink-0" />
               <span className="truncate">
                 {meetingDomain || "Meeting link"}
               </span>
@@ -231,15 +231,15 @@ export function EventDisplay({
       )}
 
       {event.startedAt && (
-        <div className="text-sm text-foreground">{formatEventDateTime()}</div>
+        <div className="text-foreground text-sm">{formatEventDateTime()}</div>
       )}
 
       {children}
 
       {event.description && (
         <>
-          <div className="h-px bg-accent" />
-          <div className="select-text-deep max-h-40 overflow-y-auto text-sm break-words whitespace-pre-wrap text-foreground">
+          <div className="bg-accent h-px" />
+          <div className="select-text-deep text-foreground max-h-40 overflow-y-auto text-sm break-words whitespace-pre-wrap">
             {renderDescriptionWithLinks(event.description)}
           </div>
         </>
@@ -304,7 +304,7 @@ function renderDescriptionWithLinks(description: string): React.ReactNode {
       <a
         key={`description-link-${linkIndex}`}
         href={url}
-        className="cursor-pointer underline transition-colors hover:text-foreground"
+        className="hover:text-foreground cursor-pointer underline transition-colors"
         onClick={(e) => {
           e.preventDefault();
           void openerCommands.openUrl(url, null);

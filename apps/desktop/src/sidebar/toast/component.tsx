@@ -41,8 +41,8 @@ export function Toast({
           "group relative z-50 overflow-visible rounded-lg",
           "bg-background p-4",
           toast.variant === "error"
-            ? "border border-destructive/40 shadow-xl shadow-red-200"
-            : "border border-border shadow-xl",
+            ? "border-destructive/40 border shadow-xl shadow-red-200"
+            : "border-border border shadow-xl",
         ])}
       >
         {onDismiss && (
@@ -86,7 +86,7 @@ export function Toast({
                     <div className="flex items-center gap-2">
                       {toast.icon}
                       {toast.title && (
-                        <h3 className="text-lg font-bold text-foreground">
+                        <h3 className="text-foreground text-lg font-bold">
                           {toast.title}
                         </h3>
                       )}
@@ -117,8 +117,8 @@ export function Toast({
                         onClick={action.onClick}
                         className={cn([
                           "flex w-full items-center justify-center gap-2",
-                          "rounded-full bg-accent py-2 text-sm font-medium text-foreground",
-                          "duration-150 hover:scale-[1.01] hover:bg-accent active:scale-[0.99]",
+                          "bg-accent text-foreground rounded-full py-2 text-sm font-medium",
+                          "hover:bg-accent duration-150 hover:scale-[1.01] active:scale-[0.99]",
                         ])}
                       >
                         {action.icon}
@@ -130,7 +130,7 @@ export function Toast({
                       {toast.primaryAction && (
                         <button
                           onClick={toast.primaryAction.onClick}
-                          className="flex h-11 w-full items-center justify-center rounded-full border-2 border-border bg-primary px-4 text-sm font-medium text-primary-foreground shadow-[0_2px_6px_rgba(87,83,78,0.22),0_10px_18px_-10px_rgba(87,83,78,0.65)] transition-all duration-200 hover:bg-primary"
+                          className="border-border bg-primary text-primary-foreground hover:bg-primary flex h-11 w-full items-center justify-center rounded-full border-2 px-4 text-sm font-medium shadow-[0_2px_6px_rgba(87,83,78,0.22),0_10px_18px_-10px_rgba(87,83,78,0.65)] transition-all duration-200"
                         >
                           {toast.primaryAction.label}
                         </button>
@@ -138,7 +138,7 @@ export function Toast({
                       {toast.secondaryAction && (
                         <button
                           onClick={toast.secondaryAction.onClick}
-                          className="w-full rounded-full bg-accent py-2 text-sm font-medium text-foreground duration-150 hover:scale-[1.01] active:scale-[0.99]"
+                          className="bg-accent text-foreground w-full rounded-full py-2 text-sm font-medium duration-150 hover:scale-[1.01] active:scale-[0.99]"
                         >
                           {toast.secondaryAction.label}
                         </button>
@@ -177,7 +177,7 @@ function ProgressBar({ progress }: { progress: number }) {
 function DownloadProgressBar({ download }: { download: DownloadProgress }) {
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
+      <div className="text-muted-foreground flex items-center justify-between text-xs">
         <span className="truncate font-medium">{download.displayName}</span>
         <span>{Math.round(download.progress)}%</span>
       </div>

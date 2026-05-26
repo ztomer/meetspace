@@ -45,7 +45,7 @@ function ActionLink({
       onClick={onClick}
       disabled={disabled}
       className={cn([
-        "underline transition-colors hover:text-foreground",
+        "hover:text-foreground underline transition-colors",
         disabled && "cursor-not-allowed opacity-50",
       ])}
     >
@@ -150,12 +150,12 @@ export function TroubleShootingLink({
 }) {
   const [showActions, setShowActions] = useState(false);
   return (
-    <div className={cn(["text-xs text-muted-foreground", className])}>
+    <div className={cn(["text-muted-foreground text-xs", className])}>
       {!showActions ? (
         <button
           type="button"
           onClick={() => setShowActions(true)}
-          className="underline transition-colors hover:text-foreground"
+          className="hover:text-foreground underline transition-colors"
         >
           Having trouble?
         </button>

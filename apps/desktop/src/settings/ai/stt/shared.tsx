@@ -3,9 +3,7 @@ import type { ReactNode } from "react";
 
 import type { LocalModel } from "@meetspace/plugin-local-stt";
 
-import {
-  type ProviderRequirement,
-} from "~/settings/ai/shared/eligibility";
+import { type ProviderRequirement } from "~/settings/ai/shared/eligibility";
 import { sortProviders } from "~/settings/ai/shared/sort-providers";
 import { localSttQueries } from "~/stt/useLocalSttModel";
 
