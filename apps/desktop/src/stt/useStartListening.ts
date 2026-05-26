@@ -12,8 +12,10 @@ import {
 } from "./useRunBatch";
 import { useSTTConnection } from "./useSTTConnection";
 
-import { getEnhancerService } from "~/services/enhancer";
+import { useLanguageModel } from "~/ai/hooks";
 import { maybeDiarizeAndPersist } from "~/services/diarize-on-stop";
+import { getEnhancerService } from "~/services/enhancer";
+import { maybeResolveSpeakerNames } from "~/services/name-resolve-on-stop";
 import { maybeAutoExportToObsidian } from "~/services/obsidian-auto-export";
 import { getSessionEventById } from "~/session/utils";
 import { useConfigValue } from "~/shared/config";
@@ -67,6 +69,12 @@ export function useStartListening(sessionId: string) {
   runBatchRef.current = runBatch;
   canRunBatchRef.current = canRunBatchTranscription(conn);
 
+  // Captured for the post-stop name-resolution pass. The LLM may be null
+  // (not configured) — the service no-ops in that case.
+  const languageModel = useLanguageModel();
+  const languageModelRef = useRef(languageModel);
+  languageModelRef.current = languageModel;
+
   const startListening = useCallback(async () => {
     if (!store) {
       return;
@@ -103,17 +111,21 @@ export function useStartListening(sessionId: string) {
       }
 
       if (store && settingsStore) {
-        // Run diarization first (writes speaker_hints) so the export sees
-        // the speaker-tagged transcript. Both are fire-and-forget; the
-        // export hook reads its own state at fire time.
+        // Chain: diarize -> resolve Speaker N -> human names via LLM ->
+        // Obsidian export, so the exported markdown reflects every post-pass.
+        // Each step swallows its own failures.
         void maybeDiarizeAndPersist(
           store,
           settingsStore,
           sessionId,
           details.audioPath ?? null,
-        ).finally(() => {
-          void maybeAutoExportToObsidian(store, settingsStore, sessionId);
-        });
+        )
+          .then(() =>
+            maybeResolveSpeakerNames(store, sessionId, languageModelRef.current),
+          )
+          .finally(() => {
+            void maybeAutoExportToObsidian(store, settingsStore, sessionId);
+          });
       }
     };
 
