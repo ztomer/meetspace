@@ -75,8 +75,8 @@ msgid "Select language"
 msgstr "언어 선택"
 
 #: src/settings/general/index.tsx:173
-msgid "Send anonymous usage analytics to help improve Anarlog."
-msgstr "Anarlog 개선을 위해 익명 사용 분석을 보냅니다."
+msgid "Send anonymous usage analytics to help improve Meetspace."
+msgstr "Meetspace 개선을 위해 익명 사용 분석을 보냅니다."
 
 #: src/settings/index.tsx:36
 msgid "Settings"
@@ -87,8 +87,8 @@ msgid "Share usage data"
 msgstr "사용 데이터 공유"
 
 #: src/settings/general/index.tsx:152
-msgid "Start Anarlog at login"
-msgstr "로그인 시 Anarlog 시작"
+msgid "Start Meetspace at login"
+msgstr "로그인 시 Meetspace 시작"
 
 #: src/settings/general/index.tsx:158
 msgid "Start when meeting begins"

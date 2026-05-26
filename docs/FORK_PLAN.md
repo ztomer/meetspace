@@ -1,8 +1,8 @@
-# Anarlog Local-Only Fork — Plan
+# Meetspace Fork Plan
 
-Goal: turn Anarlog into a fully local desktop app with all commercial features either enabled, replaced with local equivalents, or honestly hidden. Maintain rebase-ability against upstream `main`.
+This is the phased plan we executed to fork [Anarlog](https://github.com/fastrepl/anarlog) (originally `hyprnote`) into **Meetspace** — a fully local desktop app with all commercial features either enabled, replaced with local equivalents, or honestly hidden. Maintaining rebase-ability against the upstream remote is a non-goal but a nice-to-have.
 
-**Branch:** `MIT_BACK` (will be renamed). **Never push to the `anarlog` origin.** A new origin will be added later.
+**Active branch:** `MIT_BACK` (local) → `meetspace/main` (origin). The `origin` git remote points at upstream Anarlog and is rebase-source only — **never push there.**
 
 ## Status
 
@@ -75,7 +75,7 @@ Steps:
 - Unmount the "Account" tab from settings tab registry; delete `apps/desktop/src/settings/general/account.tsx`.
 - Delete sign-in section from [apps/desktop/src/sidebar/profile/auth.tsx](../apps/desktop/src/sidebar/profile/auth.tsx).
 - Remove the onboarding "account" step (`apps/desktop/src/onboarding/account/`).
-- Scrub UI strings: "Pro", "Upgrade", "Plan", "Trial", "Free tier", "Lite", "Anarlog cloud". Remove "Recommended" / "Pro (Cloud)" badges from provider entries.
+- Scrub UI strings: "Pro", "Upgrade", "Plan", "Trial", "Free tier", "Lite", "upstream cloud". Remove "Recommended" / "Pro (Cloud)" badges from provider entries.
 - Remove tier pricing UI fed by `packages/pricing`. The package itself can stay un-imported or be deleted.
 - Remove paid-feature toasts in [apps/desktop/src/sidebar/toast/registry.tsx](../apps/desktop/src/sidebar/toast/registry.tsx) (`hasProSttConfigured`, `hasProLlmConfigured`).
 
@@ -128,8 +128,8 @@ Files: [apps/desktop/src/settings/ai/llm/shared.tsx](../apps/desktop/src/setting
 - Replaces "Cloud Sync".
 
 ### 4c. Obsidian integration
-- Settings: pick **default Obsidian vault folder** (Tauri `dialog::open`, persisted in TinyBase) and **default subfolder** within the vault (e.g. `Anarlog/`).
-- Action: **explicit** "Export to Obsidian" button on each session. Writes `<vault>/<subfolder>/<YYYY-MM-DD>-<title>.md` with YAML frontmatter (date, attendees, tags, source = anarlog).
+- Settings: pick **default Obsidian vault folder** (Tauri `dialog::open`, persisted in TinyBase) and **default subfolder** within the vault (e.g. `Meetspace/`).
+- Action: **explicit** "Export to Obsidian" button on each session. Writes `<vault>/<subfolder>/<YYYY-MM-DD>-<title>.md` with YAML frontmatter (date, attendees, tags, source = meetspace).
 - Toggle: "Auto-export new sessions to Obsidian" (off by default). When on, fires the same action on session finalize.
 - No API. Pure filesystem writes via Tauri `fs`.
 
@@ -166,7 +166,7 @@ Files: [apps/desktop/src/settings/ai/llm/shared.tsx](../apps/desktop/src/setting
   - Re-`git rm` any auth/billing/supabase files upstream reintroduces (list maintained in `docs/_REMOVED_AUTH.md`).
   - Run `pnpm -F desktop typecheck` and `cargo check`; fail loud on signature drift in eligibility / billing helpers (so we notice when upstream changes gate shapes).
 - Add a "Maintaining the fork" section to `CONTRIBUTING.md`.
-- **Origin discipline:** the existing `origin` remote points at upstream `anarlog`. Do not push. New origin will be added later by the user; only push then.
+- **Origin discipline:** the existing `origin` remote points at upstream Anarlog. Do not push there. The `meetspace` remote (`github.com/ztomer/meetspace`) is the fork's home.
 
 ---
 
@@ -193,7 +193,7 @@ Files: [apps/desktop/src/settings/ai/llm/shared.tsx](../apps/desktop/src/setting
 
 ## Open items / future
 
-- Replace "Anarlog" branding throughout once a new project name is chosen.
-- Consider deleting `packages/pricing/` entirely once nothing imports it.
+- Visual QA pass for dark mode — ~50 intentional-contrast classes (stone-700/800 buttons, explicit toast colors) need hand-fixes once surfaced.
 - Consider whether `legacy/` and `examples/` directories are still relevant.
-- Decide on a new origin remote name and push target.
+- `crates/api-client` and `apps/api/openapi.gen.json` are frozen upstream artifacts kept to satisfy `crates/calendar` + `plugins/todo` type imports. Could be inlined and the package deleted.
+- Two git deps still pull from upstream forks: `async-openai` and `gbnf-validator` (both `github.com/fastrepl/*` in `Cargo.toml`). Fork or vendor if independence matters.

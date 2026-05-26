@@ -11,22 +11,10 @@ import { commands } from "~/types/tauri.gen";
 
 const SOCIALS = [
   {
-    label: "Discord",
-    icon: "simple-icons:discord",
-    size: 23,
-    url: "https://discord.gg/CX8gTH2tj9",
-  },
-  {
     label: "GitHub",
     icon: "simple-icons:github",
     size: 23,
-    url: "https://github.com/fastrepl/char",
-  },
-  {
-    label: "X",
-    icon: "simple-icons:x",
-    size: 23,
-    url: "https://x.com/getcharnotes",
+    url: "https://github.com/ztomer/meetspace",
   },
 ] as const;
 
