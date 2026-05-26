@@ -98,6 +98,7 @@ bold "==> Re-removing files in docs/_REMOVED_AUTH.md that upstream may have rein
 
 # Directories that should stay deleted in this fork.
 REMOVED_DIRS=(
+  # Phase 1 — auth/billing/cloud backend.
   "apps/api"
   "apps/stripe"
   "apps/web"
@@ -106,10 +107,17 @@ REMOVED_DIRS=(
   "packages/pricing"
   "apps/desktop/src/billing"
   "apps/desktop/src/onboarding/account"
+  # Phase 7 rebrand pass — upstream's CI + release pipeline.
+  ".github/workflows"
+  ".github/actions"
+  ".github/scripts"
+  ".github/reports"
+  "scripts/s3"
 )
 
 # Individual files that should stay deleted.
 REMOVED_FILES=(
+  # Phase 1.
   "apps/desktop/src/auth/client.ts"
   "apps/desktop/src/auth/errors.ts"
   "apps/desktop/src/shared/config/configure-paid-settings.ts"
@@ -125,6 +133,20 @@ REMOVED_FILES=(
   "openstatus.yaml"
   "render.yaml"
   "bitrise.yml"
+  # Phase 4g — dead-code integrations panel never mounted.
+  "apps/desktop/src/settings/integrations.tsx"
+  "apps/desktop/src/settings/shared.tsx"
+  # Phase 7 rebrand pass.
+  "scripts/download_releases.sh"
+  ".github/AGENTS.md"
+)
+
+# File-name globs that should stay deleted (one entry per pattern).
+# Globs are evaluated under `shopt -s nullglob` so missing matches are OK.
+REMOVED_GLOBS=(
+  # Phase 7 — historical upstream changelogs (30 of them, 1.0.0..1.0.30).
+  "packages/changelog/content/1.*.md"
+  "packages/changelog/content/0.0.*.md"
 )
 
 resurrected=0
@@ -142,14 +164,29 @@ for f in "${REMOVED_FILES[@]}"; do
     resurrected=1
   fi
 done
+shopt -s nullglob
+for pattern in "${REMOVED_GLOBS[@]}"; do
+  for match in $pattern; do
+    yellow "  re-removing (glob): $match"
+    git rm "$match" >/dev/null
+    resurrected=1
+  done
+done
+shopt -u nullglob
 
 if [ "$resurrected" = "1" ]; then
   yellow "Some deletions were re-applied. Review them, then commit:"
-  yellow "  git commit -m 'chore(fork): re-remove auth/billing files after rebase on $TARGET'"
+  yellow "  git commit -m 'chore(fork): re-remove upstream files after rebase on $TARGET'"
 fi
 
 bold "==> pnpm install"
 pnpm install --frozen-lockfile=false
+
+# The desktop's main.tsx imports @meetspace/ui/globals.css, which resolves to
+# packages/ui/dist/globals.css — produced by tailwindcss compile in @meetspace/ui's
+# build script. The dist is git-ignored, so rebuild before typecheck/vite touch it.
+bold "==> pnpm -F @meetspace/ui build (rebuild Tailwind globals.css + token CSS vars)"
+pnpm -F @meetspace/ui build
 
 bold "==> pnpm -F desktop typecheck"
 pnpm -F desktop typecheck
