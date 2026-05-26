@@ -1,4 +1,4 @@
-import type { ConnectionItem } from "@meetspace/api-client";
+import type { ConnectionItem } from "~/shared/api-types";
 
 export function useConnections(_enabled?: boolean) {
   return {

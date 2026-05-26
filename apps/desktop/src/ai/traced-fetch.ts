@@ -1,6 +1,6 @@
 import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 
-import type { CharTask } from "@meetspace/api-client";
+import type { CharTask } from "~/shared/api-types";
 import { commands as miscCommands } from "@meetspace/plugin-misc";
 
 import {
