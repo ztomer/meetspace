@@ -108,7 +108,7 @@ function TemplateTargetsInput({
           type="text"
           autoFocus
           value={inputValue}
-          className="min-w-[84px] flex-1 bg-transparent py-0 text-xs leading-none text-neutral-500 outline-hidden"
+          className="min-w-[84px] flex-1 bg-transparent py-0 text-xs leading-none text-muted-foreground outline-hidden"
           onChange={(e) => setInputValue(e.target.value)}
           onBlur={submitTargets}
           onKeyDown={(e) => {
@@ -229,9 +229,9 @@ export function TemplateForm({
               onClick={setSelectedTemplateId}
               title={isDefault ? "Remove as default" : "Set as default"}
               className={cn([
-                "shrink-0 text-neutral-600 hover:text-black",
+                "shrink-0 text-muted-foreground hover:text-black",
                 isDefault
-                  ? "bg-neutral-100 text-black hover:bg-neutral-100"
+                  ? "bg-muted text-black hover:bg-muted"
                   : null,
               ])}
             >
@@ -243,7 +243,7 @@ export function TemplateForm({
               variant="ghost"
               onClick={() => toggleTemplateFavorite(id)}
               className={cn([
-                "text-neutral-500 hover:text-neutral-800",
+                "text-muted-foreground hover:text-foreground",
                 template.pinned && "text-rose-500 hover:text-rose-600",
               ])}
               title={
@@ -265,9 +265,9 @@ export function TemplateForm({
                   size="icon"
                   variant="ghost"
                   className={cn([
-                    "text-neutral-500 hover:text-neutral-800",
+                    "text-muted-foreground hover:text-foreground",
                     actionsOpen &&
-                      "bg-neutral-100 text-neutral-800 hover:bg-neutral-100",
+                      "bg-muted text-foreground hover:bg-muted",
                   ])}
                   aria-label="Template actions"
                 >
@@ -284,7 +284,7 @@ export function TemplateForm({
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleDeleteTemplate(id)}
-                    className="cursor-pointer text-red-600 focus:text-red-600"
+                    className="cursor-pointer text-destructive focus:text-destructive"
                   >
                     Delete
                   </DropdownMenuItem>
@@ -311,7 +311,7 @@ export function TemplateForm({
                     className="absolute inset-0 h-auto w-full max-w-full min-w-0 border-0 px-0 py-0 text-lg font-semibold shadow-none focus-visible:ring-0 md:text-lg"
                   />
                 </div>
-                <span className="shrink-0 text-sm font-normal whitespace-nowrap text-neutral-400">
+                <span className="shrink-0 text-sm font-normal whitespace-nowrap text-muted-foreground">
                   {getTemplateCreatorLabel({
                     isUserTemplate: true,
                     creatorName,
@@ -327,7 +327,7 @@ export function TemplateForm({
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="Describe the template purpose..."
-                className="mt-1 min-h-[24px] resize-none border-0 px-0 py-0 text-sm text-neutral-500 shadow-none focus-visible:ring-0"
+                className="mt-1 min-h-[24px] resize-none border-0 px-0 py-0 text-sm text-muted-foreground shadow-none focus-visible:ring-0"
                 rows={1}
               />
             )}

@@ -101,15 +101,15 @@ function ContextChip({
           className={cn([
             "group max-w-48 min-w-0 rounded-md px-1.5 py-0.5 text-xs",
             pending
-              ? "bg-neutral-500/5 text-neutral-400"
-              : "bg-white text-neutral-600 shadow-xs",
+              ? "bg-neutral-500/5 text-muted-foreground"
+              : "bg-white text-muted-foreground shadow-xs",
             "inline-flex shrink items-center gap-1",
             isClickable
               ? "cursor-pointer hover:bg-neutral-500/20"
               : "cursor-default",
           ])}
         >
-          {Icon && <Icon className="size-3 shrink-0 text-neutral-400" />}
+          {Icon && <Icon className="size-3 shrink-0 text-muted-foreground" />}
           <span className="truncate">{chip.label}</span>
           {chip.removable && onRemove && (
             <button
@@ -172,7 +172,7 @@ function ChipList({
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className="inline-flex shrink-0 items-center gap-0.5 rounded-md bg-neutral-500/10 px-1 py-0.5 text-xs text-neutral-400 transition-colors hover:bg-neutral-500/20 hover:text-neutral-600"
+          className="inline-flex shrink-0 items-center gap-0.5 rounded-md bg-neutral-500/10 px-1 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-neutral-500/20 hover:text-muted-foreground"
         >
           {!expanded && hiddenCount > 0 && <span>+{hiddenCount}</span>}
           <ChevronDownIcon
@@ -220,7 +220,7 @@ function SessionPicker({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search sessions..."
-        className="w-full rounded-md border border-neutral-200 bg-white px-2.5 py-1.5 text-xs outline-none focus:border-neutral-400"
+        className="w-full rounded-md border border-border bg-white px-2.5 py-1.5 text-xs outline-none focus:border-neutral-400"
       />
       <div className="flex max-h-48 flex-col gap-0.5 overflow-y-auto">
         {results.map((result) => (
@@ -231,18 +231,18 @@ function SessionPicker({
               onSelect(result.id);
               onClose();
             }}
-            className="flex flex-col items-start rounded-md px-2 py-1.5 text-left transition-colors hover:bg-neutral-100"
+            className="flex flex-col items-start rounded-md px-2 py-1.5 text-left transition-colors hover:bg-muted"
           >
-            <span className="w-full truncate text-xs font-medium text-neutral-700">
+            <span className="w-full truncate text-xs font-medium text-foreground">
               {result.title || "Untitled"}
             </span>
-            <span className="text-[10px] text-neutral-400">
+            <span className="text-[10px] text-muted-foreground">
               {new Date(result.created_at).toLocaleDateString()}
             </span>
           </button>
         ))}
         {results.length === 0 && (
-          <span className="px-2 py-1.5 text-xs text-neutral-400">
+          <span className="px-2 py-1.5 text-xs text-muted-foreground">
             No sessions found
           </span>
         )}
@@ -259,7 +259,7 @@ function AddSessionButton({ onAdd }: { onAdd: (sessionId: string) => void }) {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="inline-flex shrink-0 items-center justify-center rounded-md bg-neutral-500/10 p-0.5 text-neutral-400 transition-colors hover:bg-neutral-500/20 hover:text-neutral-600"
+          className="inline-flex shrink-0 items-center justify-center rounded-md bg-neutral-500/10 p-0.5 text-muted-foreground transition-colors hover:bg-neutral-500/20 hover:text-muted-foreground"
         >
           <PlusIcon className="size-3.5" />
         </button>
@@ -304,7 +304,7 @@ export function ContextBar({
   return (
     <div
       className={cn([
-        "shrink-0 rounded-t-xl border-t border-r border-l border-neutral-200 bg-white",
+        "shrink-0 rounded-t-xl border-t border-r border-l border-border bg-white",
         chat.mode !== "RightPanelOpen" && "mx-2",
       ])}
     >

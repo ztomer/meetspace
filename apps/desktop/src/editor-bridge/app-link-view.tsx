@@ -76,7 +76,7 @@ function Checkbox({ checked }: { checked: boolean }) {
         "flex size-5 shrink-0 items-center justify-center rounded-md border-2",
         checked
           ? "border-neutral-400 bg-neutral-400"
-          : "border-neutral-300 bg-white",
+          : "border-border bg-white",
       ])}
     >
       {checked && <CheckIcon className="size-3.5 text-white" strokeWidth={3} />}
@@ -135,15 +135,15 @@ export const AppLinkView = forwardRef<HTMLSpanElement, NodeViewComponentProps>(
           }}
           className={cn([
             "inline-flex max-w-full items-center gap-2.5 rounded-lg px-2 py-1 text-left align-middle",
-            "transition-colors hover:bg-neutral-100",
+            "transition-colors hover:bg-muted",
           ])}
         >
           {showCheckbox ? (
             <Checkbox checked={checked} />
           ) : attrs.provider === "slack" ? (
-            <SlackIcon className="size-4 shrink-0 text-neutral-500" />
+            <SlackIcon className="size-4 shrink-0 text-muted-foreground" />
           ) : attrs.provider === "discord" ? (
-            <DiscordIcon className="size-4 shrink-0 text-neutral-500" />
+            <DiscordIcon className="size-4 shrink-0 text-muted-foreground" />
           ) : (
             <img
               src="/assets/github-icon.svg"
@@ -152,10 +152,10 @@ export const AppLinkView = forwardRef<HTMLSpanElement, NodeViewComponentProps>(
             />
           )}
           <span className="min-w-0">
-            <span className="block truncate text-sm font-medium text-neutral-800">
+            <span className="block truncate text-sm font-medium text-foreground">
               {header}
             </span>
-            <span className="block truncate text-xs text-neutral-500">
+            <span className="block truncate text-xs text-muted-foreground">
               {subline}
             </span>
           </span>

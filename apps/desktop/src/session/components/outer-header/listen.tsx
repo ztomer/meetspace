@@ -35,7 +35,7 @@ function InMeetingIndicator({ sessionId }: { sessionId: string }) {
   const accent = degraded ? "amber" : "red";
   const colors = {
     red: {
-      button: "text-red-500 hover:text-red-600 bg-red-50 hover:bg-red-100",
+      button: "text-destructive hover:text-destructive bg-red-50 hover:bg-red-100",
       sticks: "#ef4444",
       stop: "bg-red-500",
     },
@@ -55,7 +55,7 @@ function InMeetingIndicator({ sessionId }: { sessionId: string }) {
       className={cn([
         "group inline-flex items-center justify-center rounded-md text-sm font-medium",
         finalizing
-          ? ["text-neutral-500", "bg-neutral-100", "cursor-wait"]
+          ? ["text-muted-foreground", "bg-muted", "cursor-wait"]
           : [colors.button],
         "h-7 w-20",
         "disabled:pointer-events-none disabled:opacity-50",

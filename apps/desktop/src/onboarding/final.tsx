@@ -33,7 +33,7 @@ const SOCIALS = [
 export function FinalSection({ onContinue }: { onContinue: () => void }) {
   return (
     <div className="flex flex-col gap-6">
-      <div className="items-left flex flex-col gap-4 text-sm text-neutral-500">
+      <div className="items-left flex flex-col gap-4 text-sm text-muted-foreground">
         <span>Join our community and stay updated:</span>
         <div className="flex items-center gap-4">
           {SOCIALS.map(({ label, icon, size, url }) => {
@@ -41,7 +41,7 @@ export function FinalSection({ onContinue }: { onContinue: () => void }) {
               <button
                 key={label}
                 onClick={() => void openerCommands.openUrl(url, null)}
-                className="inline-flex size-6 items-center justify-center rounded-md text-neutral-400 transition-colors duration-150 hover:text-neutral-700"
+                className="inline-flex size-6 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:text-foreground"
                 aria-label={label}
               >
                 <Icon icon={icon} width={size} height={size} />

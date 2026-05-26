@@ -149,9 +149,9 @@ export function ClassicMainTabChrome({ tabs }: { tabs: Tab[] }) {
                 onClick={leftsidebar.toggleExpanded}
               >
                 {leftsidebar.expanded ? (
-                  <PanelLeftCloseIcon size={16} className="text-neutral-600" />
+                  <PanelLeftCloseIcon size={16} className="text-muted-foreground" />
                 ) : (
-                  <PanelLeftOpenIcon size={16} className="text-neutral-600" />
+                  <PanelLeftOpenIcon size={16} className="text-muted-foreground" />
                 )}
               </Button>
             </TooltipTrigger>
@@ -284,7 +284,7 @@ export function ClassicMainTabChrome({ tabs }: { tabs: Tab[] }) {
           variant="ghost"
           size="icon"
           className={cn([
-            "text-neutral-600",
+            "text-muted-foreground",
             isOnboarding && "cursor-not-allowed opacity-40",
           ])}
         >
@@ -335,7 +335,7 @@ function TabChatButton({ shortcutLabel }: { shortcutLabel?: string }) {
           onClick={handleClick}
           variant="ghost"
           size="icon"
-          className="text-neutral-600"
+          className="text-muted-foreground"
           aria-label={buttonTitle}
           title={buttonTitle}
         >

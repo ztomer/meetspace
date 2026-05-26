@@ -289,10 +289,10 @@ function ToastPill({
         className={cn([
           "flex items-center gap-3 py-1.5 pr-1.5 pl-4",
           "rounded-full bg-white",
-          "border border-neutral-200 shadow-lg",
+          "border border-border shadow-lg",
         ])}
       >
-        <span className="max-w-50 truncate text-sm text-neutral-600">
+        <span className="max-w-50 truncate text-sm text-muted-foreground">
           {label}...
         </span>
 
@@ -301,8 +301,8 @@ function ToastPill({
           className={cn([
             "rounded-full px-3 py-1.5 text-xs font-medium",
             "whitespace-nowrap",
-            "bg-red-50 text-red-500",
-            "hover:bg-red-100 hover:text-red-600",
+            "bg-red-50 text-destructive",
+            "hover:bg-red-100 hover:text-destructive",
             "transition-colors",
           ])}
         >
@@ -314,8 +314,8 @@ function ToastPill({
           className={cn([
             "rounded-full px-3 py-1.5 text-xs font-medium",
             "whitespace-nowrap",
-            "border border-neutral-200 bg-white text-neutral-700",
-            "hover:bg-neutral-50",
+            "border border-border bg-white text-foreground",
+            "hover:bg-muted",
             "transition-colors",
           ])}
         >

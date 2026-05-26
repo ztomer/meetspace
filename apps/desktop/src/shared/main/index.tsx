@@ -150,8 +150,8 @@ function MainPanel({
             : "rounded-xl",
           !noBorder &&
             (mergeAfterBorder && afterBorder
-              ? "border border-b-0 border-neutral-200"
-              : "border border-neutral-200"),
+              ? "border border-b-0 border-border"
+              : "border border-border"),
         ])}
       >
         {children}

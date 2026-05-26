@@ -26,13 +26,13 @@ export function DateEditor({ sessionId }: { sessionId: string }) {
     return (
       <div className="flex h-9 items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <div className="text-sm text-neutral-700">{noteDate}</div>
+          <div className="text-sm text-foreground">{noteDate}</div>
         </div>
         <Button
           type="button"
           variant="ghost"
           size="icon"
-          className="size-7 rounded-md text-neutral-500 hover:text-neutral-900"
+          className="size-7 rounded-md text-muted-foreground hover:text-foreground"
           onClick={() => setIsEditing(true)}
           aria-label="Edit date"
         >
@@ -138,7 +138,7 @@ function EditableDateForm({
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="size-7 shrink-0 rounded-md text-neutral-400 hover:bg-red-50 hover:text-red-600"
+                className="size-7 shrink-0 rounded-md text-muted-foreground hover:bg-red-50 hover:text-destructive"
                 onClick={onCancel}
                 aria-label="Cancel date edit"
               >
@@ -152,7 +152,7 @@ function EditableDateForm({
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="size-7 shrink-0 rounded-md text-neutral-400 hover:bg-green-50 hover:text-green-600"
+                  className="size-7 shrink-0 rounded-md text-muted-foreground hover:bg-green-50 hover:text-green-600"
                   onClick={() => void form.handleSubmit()}
                   disabled={!canSubmit}
                   aria-label="Save date"
@@ -168,7 +168,7 @@ function EditableDateForm({
       <form.Field name="createdAt">
         {(field) =>
           field.state.meta.errors[0] ? (
-            <div className="text-xs text-red-600">
+            <div className="text-xs text-destructive">
               {field.state.meta.errors[0]}
             </div>
           ) : null

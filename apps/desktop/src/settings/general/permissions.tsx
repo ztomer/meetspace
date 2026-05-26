@@ -22,7 +22,7 @@ function ActionLink({
       onClick={onClick}
       disabled={disabled}
       className={cn([
-        "underline transition-colors hover:text-neutral-900",
+        "underline transition-colors hover:text-foreground",
         disabled && "cursor-not-allowed opacity-50",
       ])}
     >
@@ -66,20 +66,20 @@ function PermissionRow({
         <div
           className={cn([
             "mb-1 flex items-center gap-2",
-            !isAuthorized && "text-red-500",
+            !isAuthorized && "text-destructive",
           ])}
         >
           {!isAuthorized && <AlertCircleIcon className="size-4" />}
           <h3 className="text-sm font-medium">{title}</h3>
         </div>
-        <div className="text-xs text-neutral-600">
+        <div className="text-xs text-muted-foreground">
           {!showActions ? (
             <div>
               {!isAuthorized && <span>{description} · </span>}
               <button
                 type="button"
                 onClick={() => setShowActions(true)}
-                className="underline transition-colors hover:text-neutral-900"
+                className="underline transition-colors hover:text-foreground"
               >
                 Having trouble?
               </button>
@@ -109,7 +109,7 @@ function PermissionRow({
         disabled={isPending}
         className={cn([
           "size-8",
-          isAuthorized && "bg-stone-100 text-stone-800 hover:bg-stone-200",
+          isAuthorized && "bg-muted text-foreground hover:bg-accent",
         ])}
         aria-label={
           isAuthorized
@@ -136,7 +136,7 @@ function PermissionGroup({
 }) {
   return (
     <div>
-      <h3 className="mb-3 text-xs font-semibold tracking-wide text-neutral-500 uppercase">
+      <h3 className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
         {title}
       </h3>
       <div className="flex flex-col gap-4">{children}</div>

@@ -36,7 +36,7 @@ export function TagInput({ sessionId }: { sessionId: string }) {
       <input
         ref={inputRef}
         type="text"
-        className="min-w-[100px] flex-1 bg-transparent text-sm outline-hidden placeholder:text-neutral-400"
+        className="min-w-[100px] flex-1 bg-transparent text-sm outline-hidden placeholder:text-muted-foreground"
         value={inputValue}
         placeholder={placeholder}
         onChange={(e) => setInputValue(e.target.value)}

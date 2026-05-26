@@ -82,10 +82,10 @@ function HumanSearchResultItem({
       className={cn([
         "w-full px-3 py-2",
         "flex items-start gap-3",
-        "hover:bg-neutral-100",
+        "hover:bg-muted",
         "rounded-lg transition-colors",
         "text-left",
-        isSelected && "bg-neutral-100",
+        isSelected && "bg-muted",
       ])}
     >
       <div className="shrink-0 rounded-full bg-amber-50">
@@ -99,7 +99,7 @@ function HumanSearchResultItem({
       <div className={cn(["min-w-0 flex-1"])}>
         <div
           className={cn([
-            "truncate text-sm font-normal [&_mark]:bg-yellow-200 [&_mark]:font-semibold [&_mark]:text-neutral-900",
+            "truncate text-sm font-normal [&_mark]:bg-yellow-200 [&_mark]:font-semibold [&_mark]:text-foreground",
           ])}
           dangerouslySetInnerHTML={{ __html: sanitizedTitle }}
         />
@@ -142,20 +142,20 @@ function OrganizationSearchResultItem({
       className={cn([
         "w-full px-3 py-2",
         "flex items-start gap-3",
-        "hover:bg-neutral-100",
+        "hover:bg-muted",
         "rounded-lg transition-colors",
         "text-left",
-        isSelected && "bg-neutral-100",
+        isSelected && "bg-muted",
       ])}
     >
       <div className={cn(["min-w-0 flex-1"])}>
         <div
           className={cn([
-            "truncate text-sm font-normal [&_mark]:bg-yellow-200 [&_mark]:font-semibold [&_mark]:text-neutral-900",
+            "truncate text-sm font-normal [&_mark]:bg-yellow-200 [&_mark]:font-semibold [&_mark]:text-foreground",
           ])}
           dangerouslySetInnerHTML={{ __html: sanitizedTitle }}
         />
-        <div className={cn(["mt-0.5 truncate text-xs text-neutral-500"])}>
+        <div className={cn(["mt-0.5 truncate text-xs text-muted-foreground"])}>
           {memberText}
         </div>
       </div>
@@ -248,16 +248,16 @@ function SessionSearchResultItem({
       className={cn([
         "w-full px-3 py-2",
         "flex flex-col gap-0.5",
-        "hover:bg-neutral-100",
+        "hover:bg-muted",
         "rounded-lg transition-colors",
         "text-left",
         "min-w-0",
-        isSelected && "bg-neutral-100",
+        isSelected && "bg-muted",
       ])}
     >
       <div
         className={cn([
-          "truncate text-sm font-medium text-neutral-900 [&_mark]:bg-yellow-200 [&_mark]:font-semibold",
+          "truncate text-sm font-medium text-foreground [&_mark]:bg-yellow-200 [&_mark]:font-semibold",
           "w-full",
         ])}
         dangerouslySetInnerHTML={{ __html: displayTitle }}
@@ -265,12 +265,12 @@ function SessionSearchResultItem({
       {snippet && (
         <div
           className={cn([
-            "line-clamp-2 text-xs text-neutral-500 [&_mark]:bg-yellow-200 [&_mark]:font-semibold [&_mark]:text-neutral-900",
+            "line-clamp-2 text-xs text-muted-foreground [&_mark]:bg-yellow-200 [&_mark]:font-semibold [&_mark]:text-foreground",
           ])}
           dangerouslySetInnerHTML={{ __html: snippet }}
         />
       )}
-      <div className={cn(["text-xs text-neutral-500"])}>{timeAgo}</div>
+      <div className={cn(["text-xs text-muted-foreground"])}>{timeAgo}</div>
     </button>
   );
 }

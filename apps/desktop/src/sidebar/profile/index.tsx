@@ -177,7 +177,7 @@ export function ProfileSection({ onExpandChange }: ProfileSectionProps = {}) {
                         <div key={item.label}>
                           <MenuItem {...item} />
                           {sectionBreakAfter && (
-                            <div className="my-1 border-t border-neutral-100" />
+                            <div className="my-1 border-t border-border" />
                           )}
                         </div>
                       ))}
@@ -235,8 +235,8 @@ function ProfileButton({
         "px-4 py-2",
         "text-left",
         "transition-all duration-300",
-        "hover:bg-neutral-200/50",
-        isExpanded && "border-neutral-300 bg-neutral-200/50",
+        "hover:bg-accent/50",
+        isExpanded && "border-border bg-accent/50",
       ])}
       onClick={onClick}
     >
@@ -255,7 +255,7 @@ function ProfileButton({
         className={cn([
           "h-4 w-4",
           "transition-transform duration-300",
-          isExpanded ? "rotate-180 text-neutral-500" : "text-neutral-400",
+          isExpanded ? "rotate-180 text-muted-foreground" : "text-muted-foreground",
         ])}
       />
     </button>

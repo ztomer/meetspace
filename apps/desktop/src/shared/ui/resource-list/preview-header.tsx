@@ -71,7 +71,7 @@ export function ResourcePreviewHeader({
           {titleMeta}
         </div>
         {description && (
-          <p className="mt-1 min-h-[24px] text-sm text-neutral-500">
+          <p className="mt-1 min-h-[24px] text-sm text-muted-foreground">
             {description}
           </p>
         )}
@@ -80,7 +80,7 @@ export function ResourcePreviewHeader({
             {targets.map((target, index) => (
               <span
                 key={index}
-                className="inline-flex h-6 items-center rounded-md bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600"
+                className="inline-flex h-6 items-center rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground"
               >
                 {target}
               </span>
@@ -88,7 +88,7 @@ export function ResourcePreviewHeader({
           </div>
         )}
         {footer === undefined ? (
-          <p className="mt-2 text-xs text-neutral-400">
+          <p className="mt-2 text-xs text-muted-foreground">
             {getTemplateCreatorLabel({ isUserTemplate: false })}
           </p>
         ) : (

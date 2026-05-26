@@ -159,14 +159,14 @@ function AudioRetentionRow() {
   return (
     <div className="flex items-center gap-3">
       <div className="flex w-24 shrink-0 cursor-default items-center gap-2">
-        <Settings2Icon className="size-4 text-neutral-500" />
+        <Settings2Icon className="size-4 text-muted-foreground" />
         <span className="text-sm font-medium">Audio</span>
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm text-neutral-700">
+        <p className="truncate text-sm text-foreground">
           Save audio after meeting
         </p>
-        <p className="text-xs text-neutral-500">{selectedOption.description}</p>
+        <p className="text-xs text-muted-foreground">{selectedOption.description}</p>
       </div>
       <Select value={audioRetention} onValueChange={setAudioRetention}>
         <SelectTrigger className="w-36 bg-white shadow-none focus:ring-0">
@@ -271,12 +271,12 @@ function ChangeContentPathDialog({
               className={cn([
                 "flex items-center gap-3 rounded-lg border px-3 py-2",
                 isNewPathChosen && isNewPathEmpty === false
-                  ? "border-yellow-400 bg-neutral-50"
+                  ? "border-yellow-400 bg-muted"
                   : "border-neutral-900",
               ])}
             >
               <div className="min-w-0 flex-1">
-                <p className="text-sm text-neutral-700">
+                <p className="text-sm text-foreground">
                   {selectedPath
                     ? displayPath(selectedPath, home)
                     : displayPath(currentPath, home)}
@@ -307,7 +307,7 @@ function ChangeContentPathDialog({
                   <button
                     key={vault.path}
                     onClick={() => selectPath(vault.path)}
-                    className="flex cursor-pointer items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-left text-sm text-neutral-500 transition-colors hover:bg-neutral-100"
+                    className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2 text-left text-sm text-muted-foreground transition-colors hover:bg-muted"
                   >
                     <img
                       src="/assets/obsidian-icon.svg"
@@ -324,7 +324,7 @@ function ChangeContentPathDialog({
           </div>
         </div>
 
-        {error && <p className="text-sm text-red-500">{error.message}</p>}
+        {error && <p className="text-sm text-destructive">{error.message}</p>}
 
         {isNewPathChosen && (
           <DialogFooter className="items-center">
@@ -335,10 +335,10 @@ function ChangeContentPathDialog({
                   onCheckedChange={(v) => setMoveVault(v === true)}
                 />
                 <div className="flex flex-row gap-1">
-                  <span className="text-sm font-semibold text-neutral-600">
+                  <span className="text-sm font-semibold text-muted-foreground">
                     Move
                   </span>
-                  <span className="text-sm text-neutral-600">
+                  <span className="text-sm text-muted-foreground">
                     existing data to new location
                   </span>
                 </div>
@@ -404,7 +404,7 @@ function BackupRow({ currentPath }: { currentPath: string | undefined }) {
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
           <div className="flex w-24 shrink-0 cursor-default items-center gap-2">
-            <ArchiveIcon className="size-4 text-neutral-500" />
+            <ArchiveIcon className="size-4 text-muted-foreground" />
             <span className="text-sm font-medium">Backup</span>
           </div>
         </TooltipTrigger>
@@ -424,13 +424,13 @@ function BackupRow({ currentPath }: { currentPath: string | undefined }) {
             Backed up to {lastBackupPath}
           </button>
         ) : (
-          <p className="truncate text-sm text-neutral-500">
+          <p className="truncate text-sm text-muted-foreground">
             Copy your vault to another folder. To restore, use Content →
             Customize and pick the backup folder.
           </p>
         )}
         {backup.error && (
-          <p className="mt-1 text-xs text-red-600">
+          <p className="mt-1 text-xs text-destructive">
             {(backup.error as Error).message}
           </p>
         )}
@@ -475,7 +475,7 @@ function StoragePathRow({
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
           <div className="flex w-24 shrink-0 cursor-default items-center gap-2">
-            <Icon className="size-4 text-neutral-500" />
+            <Icon className="size-4 text-muted-foreground" />
             <span className="text-sm font-medium">{title}</span>
           </div>
         </TooltipTrigger>
@@ -485,7 +485,7 @@ function StoragePathRow({
       </Tooltip>
       <button
         onClick={() => path && openerCommands.openPath(path, null)}
-        className="min-w-0 flex-1 cursor-pointer truncate text-left text-sm text-neutral-500 hover:underline"
+        className="min-w-0 flex-1 cursor-pointer truncate text-left text-sm text-muted-foreground hover:underline"
       >
         {displayPath(path, home)}
       </button>

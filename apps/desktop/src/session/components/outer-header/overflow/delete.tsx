@@ -34,8 +34,8 @@ export function DeleteRecording({ sessionId }: { sessionId: string }) {
       onClick={handleDeleteRecording}
       disabled={isDisabled}
       className={cn([
-        "cursor-pointer text-red-600",
-        "hover:bg-red-50 hover:text-red-700",
+        "cursor-pointer text-destructive",
+        "hover:bg-red-50 hover:text-destructive",
       ])}
     >
       {isDeletingRecording ? (
@@ -82,8 +82,8 @@ export function DeleteNote({ sessionId }: { sessionId: string }) {
     <DropdownMenuItem
       onClick={handleDeleteNote}
       className={cn([
-        "cursor-pointer text-red-600",
-        "hover:bg-red-50 hover:text-red-700",
+        "cursor-pointer text-destructive",
+        "hover:bg-red-50 hover:text-destructive",
       ])}
     >
       <TrashIcon />

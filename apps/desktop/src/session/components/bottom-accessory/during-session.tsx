@@ -35,10 +35,10 @@ export function DuringSessionAccessory({
   if (isFinalizing) {
     return (
       <div className="relative w-full pt-1 select-none">
-        <div className="rounded-xl bg-neutral-50">
+        <div className="rounded-xl bg-muted">
           <div className="flex min-h-12 items-center gap-2 p-2">
             <div className="min-w-0 flex-1">
-              <span className="text-xs text-neutral-400">Finalizing...</span>
+              <span className="text-xs text-muted-foreground">Finalizing...</span>
             </div>
           </div>
         </div>
@@ -119,7 +119,7 @@ function LiveTranscriptFooterContent({
     <div className={cn(["w-full select-none", fillHeight && "h-full min-h-0"])}>
       <div
         className={cn([
-          "rounded-xl bg-neutral-50",
+          "rounded-xl bg-muted",
           fillHeight && "h-full min-h-0",
         ])}
       >
@@ -190,7 +190,7 @@ function LiveTranscriptContent({
       ])}
     >
       {segments.length === 0 ? (
-        <span className="py-4 text-center text-xs text-neutral-400">
+        <span className="py-4 text-center text-xs text-muted-foreground">
           Transcript will appear here as you speak.
         </span>
       ) : (
@@ -239,7 +239,7 @@ function CollapsedFooterMessage({ message }: { message: string }) {
       ])}
     >
       <div className="min-w-0 flex-1 select-none">
-        <p className="truncate text-left text-xs text-neutral-600 [direction:rtl]">
+        <p className="truncate text-left text-xs text-muted-foreground [direction:rtl]">
           {message}
         </p>
       </div>
@@ -373,7 +373,7 @@ function TranscriptSegmentRow({
       >
         <span className="min-w-0 truncate">{label}</span>
       </span>
-      <span className="min-w-0 text-xs leading-5 text-neutral-700">
+      <span className="min-w-0 text-xs leading-5 text-foreground">
         {getSegmentText(segment)}
       </span>
     </div>

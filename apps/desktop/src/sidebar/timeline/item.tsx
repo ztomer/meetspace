@@ -116,9 +116,9 @@ function ItemBase({
       className={cn([
         "w-full rounded-lg px-3 py-2 text-left",
         ignored ? "cursor-default" : "cursor-pointer",
-        multiSelected && "bg-neutral-200",
-        !multiSelected && selected && "bg-neutral-200",
-        !multiSelected && !selected && "hover:bg-neutral-200/50",
+        multiSelected && "bg-accent",
+        !multiSelected && selected && "bg-accent",
+        !multiSelected && !selected && "hover:bg-accent/50",
         ignored && "opacity-40",
         !ignored && muted && "opacity-65",
       ])}
@@ -139,7 +139,7 @@ function ItemBase({
             {title || "Untitled"}
           </div>
           {displayTime && (
-            <div className="font-mono text-xs text-neutral-500">
+            <div className="font-mono text-xs text-muted-foreground">
               {displayTime}
             </div>
           )}

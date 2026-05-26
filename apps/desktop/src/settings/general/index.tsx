@@ -8,6 +8,7 @@ import { commands as listenerCommands } from "@meetspace/plugin-transcription";
 import type { General, GeneralStorage } from "@meetspace/store";
 
 import { AppSettingsView } from "./app-settings";
+import { AppearanceSettings } from "./appearance";
 import { getAdditionalSpokenLanguages } from "./language";
 import { MainLanguageView } from "./main-language";
 import { NotificationSettingsView } from "./notification";
@@ -183,6 +184,8 @@ export function SettingsApp() {
           </form.Field>
         )}
       </form.Field>
+
+      <AppearanceSettings />
 
       <div>
         <h2 className="mb-4 font-sans text-lg font-semibold">

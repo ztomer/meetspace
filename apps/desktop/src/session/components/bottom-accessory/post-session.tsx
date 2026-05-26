@@ -172,13 +172,13 @@ function BatchingTranscriptPanel({
   return (
     <TranscriptCard fillHeight={fillHeight}>
       <div className="flex shrink-0 items-center justify-between px-3 py-1.5">
-        <span className="text-xs font-medium text-neutral-500">Transcript</span>
+        <span className="text-xs font-medium text-muted-foreground">Transcript</span>
         <div className="flex items-center gap-1 px-1 py-0.5">
           <Spinner size={10} />
-          <span className="text-[11px] text-neutral-500">
+          <span className="text-[11px] text-muted-foreground">
             {phaseLabel}
             {typeof percentage === "number" && percentage > 0 && (
-              <span className="ml-1 text-neutral-400 tabular-nums">
+              <span className="ml-1 text-muted-foreground tabular-nums">
                 {Math.round(percentage * 100)}%
               </span>
             )}
@@ -230,14 +230,14 @@ function BatchTranscriptSkeleton({ fillHeight }: { fillHeight: boolean }) {
             <div className="flex w-[72px] shrink-0 flex-col gap-3 pt-0.5">
               <div
                 className={cn([
-                  "h-2.5 rounded-full bg-neutral-200/80",
+                  "h-2.5 rounded-full bg-accent/80",
                   "animate-pulse",
                   row.speaker,
                 ])}
               />
               <div
                 className={cn([
-                  "h-1.5 rounded-full bg-neutral-100",
+                  "h-1.5 rounded-full bg-muted",
                   "animate-pulse",
                   row.time,
                 ])}
@@ -248,7 +248,7 @@ function BatchTranscriptSkeleton({ fillHeight }: { fillHeight: boolean }) {
                 <div
                   key={lineIndex}
                   className={cn([
-                    "h-2.5 rounded-full bg-neutral-100",
+                    "h-2.5 rounded-full bg-muted",
                     "animate-pulse",
                     lineWidth,
                   ])}
@@ -291,7 +291,7 @@ function BatchProgressTimeline({
         <div
           className={cn([
             "flex h-8 w-8 items-center justify-center rounded-full",
-            "border border-neutral-200 bg-white shadow-xs",
+            "border border-border bg-white shadow-xs",
             "shrink-0",
           ])}
         >
@@ -308,13 +308,13 @@ function BatchProgressTimeline({
       }
       main={
         <div className="flex h-[30px] items-center">
-          <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-neutral-200/80">
+          <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-accent/80">
             <div
               className="absolute inset-y-0 left-0 rounded-full bg-neutral-400 transition-[width] duration-300 ease-out"
               style={{ width: `${Math.max(progress * 100, 8)}%` }}
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="px-2 text-[10px] font-medium tracking-[0.02em] text-neutral-500">
+              <span className="px-2 text-[10px] font-medium tracking-[0.02em] text-muted-foreground">
                 {phaseLabel}
               </span>
             </div>
@@ -340,7 +340,7 @@ function StopTranscriptionButton({
           variant="ghost"
           size="icon"
           className={cn([
-            "text-neutral-500 hover:text-neutral-700",
+            "text-muted-foreground hover:text-foreground",
             compact ? "h-5 w-5" : "h-6 w-6",
           ])}
           onClick={onClick}
@@ -385,7 +385,7 @@ function TranscriptReadyPanel({
                 disabled
                 className={cn([
                   "flex items-center gap-1 rounded px-1.5 py-0.5",
-                  "text-[11px] font-medium text-neutral-300",
+                  "text-[11px] font-medium text-muted-foreground/60",
                   "cursor-not-allowed",
                 ])}
               >
@@ -402,8 +402,8 @@ function TranscriptReadyPanel({
             onClick={regenerate}
             className={cn([
               "flex items-center gap-1 rounded px-1.5 py-0.5",
-              "text-[11px] font-medium text-neutral-500",
-              "transition-colors hover:bg-neutral-200/60 hover:text-neutral-700",
+              "text-[11px] font-medium text-muted-foreground",
+              "transition-colors hover:bg-accent/60 hover:text-foreground",
             ])}
           >
             <RefreshCw size={10} />
@@ -417,8 +417,8 @@ function TranscriptReadyPanel({
             disabled={isDeletingRecording}
             className={cn([
               "flex items-center gap-1 rounded px-1.5 py-0.5",
-              "text-[11px] font-medium text-red-600",
-              "transition-colors hover:bg-red-50 hover:text-red-700",
+              "text-[11px] font-medium text-destructive",
+              "transition-colors hover:bg-red-50 hover:text-destructive",
               "disabled:cursor-not-allowed disabled:text-red-300",
             ])}
           >
@@ -464,9 +464,9 @@ function TranscriptEmptyPanel({
     <TranscriptCard fillHeight={fillHeight}>
       <div className="flex min-h-0 flex-1 items-center justify-between px-4 py-3">
         {error ? (
-          <span className="text-xs text-red-500">{error}</span>
+          <span className="text-xs text-destructive">{error}</span>
         ) : (
-          <span className="text-xs text-neutral-400">No transcript yet</span>
+          <span className="text-xs text-muted-foreground">No transcript yet</span>
         )}
 
         <div className="flex items-center gap-1.5">
@@ -474,7 +474,7 @@ function TranscriptEmptyPanel({
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 gap-1.5 text-xs text-neutral-500"
+              className="h-7 gap-1.5 text-xs text-muted-foreground"
               onClick={regenerate}
             >
               <RefreshCw size={12} />
@@ -484,7 +484,7 @@ function TranscriptEmptyPanel({
           <Button
             variant="ghost"
             size="sm"
-            className="h-7 text-xs text-neutral-500"
+            className="h-7 text-xs text-muted-foreground"
             onClick={uploadAudio}
           >
             Upload audio
@@ -524,7 +524,7 @@ function TranscriptCard({
   return (
     <div
       className={cn([
-        "min-h-[96px] overflow-hidden rounded-b-xl border-x border-b border-neutral-200 bg-white",
+        "min-h-[96px] overflow-hidden rounded-b-xl border-x border-b border-border bg-white",
         fillHeight && "flex flex-1 flex-col",
       ])}
     >

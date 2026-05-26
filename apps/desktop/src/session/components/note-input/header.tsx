@@ -291,8 +291,8 @@ function HeaderTabEnhanced({
             className="w-72"
           >
             <AppFloatingPanel className="flex flex-col gap-2 p-3">
-              <p className="text-xs leading-5 text-neutral-700">
-                <span className="font-medium text-neutral-900">
+              <p className="text-xs leading-5 text-foreground">
+                <span className="font-medium text-foreground">
                   {templateTitle}
                 </span>{" "}
                 was used to generate this summary.
@@ -300,7 +300,7 @@ function HeaderTabEnhanced({
               <button
                 type="button"
                 onClick={handleExploreTemplatesClick}
-                className="w-fit text-xs font-medium text-neutral-900 underline underline-offset-2 hover:text-neutral-600"
+                className="w-fit text-xs font-medium text-foreground underline underline-offset-2 hover:text-muted-foreground"
               >
                 Explore more templates
               </button>
@@ -376,11 +376,11 @@ function HeaderTabEnhanced({
         className={cn([
           "group/tab relative my-2 shrink-0 cursor-pointer border-b-2 px-1 py-0.5 text-xs font-medium transition-all duration-200 select-none",
           isActive
-            ? ["text-neutral-900", "border-neutral-900"]
+            ? ["text-foreground", "border-neutral-900"]
             : [
-                "text-neutral-600",
+                "text-muted-foreground",
                 "border-transparent",
-                "hover:text-neutral-800",
+                "hover:text-foreground",
               ],
         ])}
       >
@@ -390,7 +390,7 @@ function HeaderTabEnhanced({
             type="button"
             onClick={handleCancelClick}
             className={cn([
-              "inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded-xs hover:bg-neutral-200",
+              "inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded-xs hover:bg-accent",
               !isActive && "opacity-50",
             ])}
             aria-label="Cancel enhancement"
@@ -421,9 +421,9 @@ function HeaderTabEnhanced({
         "group relative inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded-xs transition-colors",
         isError
           ? [
-              "text-red-600 hover:bg-red-50 hover:text-neutral-900 focus-visible:bg-red-50 focus-visible:text-neutral-900",
+              "text-destructive hover:bg-red-50 hover:text-foreground focus-visible:bg-red-50 focus-visible:text-foreground",
             ]
-          : ["hover:bg-neutral-200 focus-visible:bg-neutral-200"],
+          : ["hover:bg-accent focus-visible:bg-accent"],
       ])}
     >
       {isError && (
@@ -915,7 +915,7 @@ function CreateOtherFormatButton({
         <button
           className={cn([
             "relative my-2 shrink-0 px-1 py-0.5 text-xs font-medium whitespace-nowrap transition-all duration-200 select-none",
-            "text-neutral-600 hover:text-neutral-800",
+            "text-muted-foreground hover:text-foreground",
             "flex items-center gap-1",
             "border-b-2 border-transparent",
           ])}
@@ -927,13 +927,13 @@ function CreateOtherFormatButton({
       <PopoverContent variant="app" className="w-80" align="start">
         <div className="flex flex-col gap-1">
           <AppFloatingPanel className="flex flex-col overflow-hidden">
-            <div className="border-b border-neutral-200 py-2">
+            <div className="border-b border-border py-2">
               <div
                 className={cn([
                   "flex h-9 items-center gap-2 rounded-md bg-white px-3",
                 ])}
               >
-                <SearchIcon className="h-4 w-4 text-neutral-400" />
+                <SearchIcon className="h-4 w-4 text-muted-foreground" />
                 <input
                   ref={searchInputRef}
                   autoFocus
@@ -942,14 +942,14 @@ function CreateOtherFormatButton({
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={handleSearchInputKeyDown}
                   placeholder="Search templates..."
-                  className="flex-1 bg-transparent text-sm placeholder:text-neutral-400 focus:outline-hidden"
+                  className="flex-1 bg-transparent text-sm placeholder:text-muted-foreground focus:outline-hidden"
                 />
                 {search && (
                   <button
                     onClick={() => setSearch("")}
-                    className="rounded-xs p-0.5 hover:bg-neutral-100"
+                    className="rounded-xs p-0.5 hover:bg-muted"
                   >
-                    <XIcon className="h-3 w-3 text-neutral-400" />
+                    <XIcon className="h-3 w-3 text-muted-foreground" />
                   </button>
                 )}
               </div>
@@ -992,7 +992,7 @@ function CreateOtherFormatButton({
                           );
                         })
                       ) : (
-                        <div className="px-2 py-3 text-sm text-neutral-500">
+                        <div className="px-2 py-3 text-sm text-muted-foreground">
                           {section.emptyMessage}
                         </div>
                       )}
@@ -1007,7 +1007,7 @@ function CreateOtherFormatButton({
             onClick={handleSeeAllTemplates}
             className={cn([
               "flex h-7 w-full items-center justify-center gap-1 rounded-lg px-3 text-xs font-medium",
-              "text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900",
+              "text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
             ])}
           >
             See all templates
@@ -1427,7 +1427,7 @@ function TemplateSection({
           ) : null)}
         <p
           className={cn([
-            "font-mono text-[11px] font-medium tracking-wide text-neutral-500",
+            "font-mono text-[11px] font-medium tracking-wide text-muted-foreground",
             uppercase && "uppercase",
           ])}
         >
@@ -1460,29 +1460,29 @@ function TemplateResultButton({
     <button
       ref={buttonRef}
       className={cn([
-        "w-full rounded-md px-3 py-2 text-left transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-hidden",
+        "w-full rounded-md px-3 py-2 text-left transition-colors hover:bg-muted focus:bg-muted focus:outline-hidden",
         "flex flex-col gap-0.5",
       ])}
       onClick={onClick}
       onKeyDown={onKeyDown}
     >
-      <span className="truncate text-sm font-medium text-neutral-900">
+      <span className="truncate text-sm font-medium text-foreground">
         {title}
       </span>
       {description ? (
-        <span className="line-clamp-2 text-xs text-neutral-500">
+        <span className="line-clamp-2 text-xs text-muted-foreground">
           {description}
         </span>
       ) : null}
       {creatorLabel ? (
-        <span className="text-[11px] text-neutral-400">{creatorLabel}</span>
+        <span className="text-[11px] text-muted-foreground">{creatorLabel}</span>
       ) : null}
       {tags && tags.length > 0 ? (
         <span className="mt-1 flex flex-wrap gap-1">
           {tags.map((tag, index) => (
             <span
               key={`${tag}-${index}`}
-              className="rounded-xs bg-neutral-100 px-1.5 py-0.5 text-[11px] text-neutral-500"
+              className="rounded-xs bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground"
             >
               {tag}
             </span>

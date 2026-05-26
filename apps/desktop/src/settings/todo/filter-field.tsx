@@ -56,9 +56,9 @@ export function TodoFilterField({
     <div className="flex items-center justify-between gap-4">
       <div className="flex-1">
         <h3 className="mb-1 text-sm font-medium">{label}</h3>
-        <p className="text-xs text-neutral-500">{description}</p>
+        <p className="text-xs text-muted-foreground">{description}</p>
         {invalidMessage ? (
-          <p className="mt-2 text-xs text-red-600">{invalidMessage}</p>
+          <p className="mt-2 text-xs text-destructive">{invalidMessage}</p>
         ) : null}
       </div>
 

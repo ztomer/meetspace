@@ -74,8 +74,8 @@ export function OnboardingSection({
               className={cn([
                 "transition-all duration-300",
                 isCompleted
-                  ? "text-sm font-normal text-neutral-300"
-                  : "mb-2 font-sans text-2xl font-semibold text-neutral-900",
+                  ? "text-sm font-normal text-muted-foreground/60"
+                  : "mb-2 font-sans text-2xl font-semibold text-foreground",
               ])}
             >
               {isCompleted ? (completedTitle ?? title) : title}
@@ -86,7 +86,7 @@ export function OnboardingSection({
                   <button
                     onClick={onBack}
                     aria-label="Go to previous section"
-                    className="rounded p-0.5 text-neutral-400 transition-colors hover:text-neutral-600"
+                    className="rounded p-0.5 text-muted-foreground transition-colors hover:text-muted-foreground"
                   >
                     <ChevronLeftIcon className="size-3" />
                   </button>
@@ -98,7 +98,7 @@ export function OnboardingSection({
                         onSkip?.();
                         onNext?.();
                       }}
-                      className="flex items-center gap-1 text-sm text-neutral-400 transition-colors hover:text-neutral-600"
+                      className="flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-muted-foreground"
                     >
                       Skip
                       <ChevronRightIcon className="size-3" />
@@ -107,7 +107,7 @@ export function OnboardingSection({
                     <button
                       onClick={onNext}
                       aria-label="Go to next section"
-                      className="rounded p-0.5 text-neutral-400 transition-colors hover:text-neutral-600"
+                      className="rounded p-0.5 text-muted-foreground transition-colors hover:text-muted-foreground"
                     >
                       <ChevronRightIcon className="size-3" />
                     </button>
@@ -116,7 +116,7 @@ export function OnboardingSection({
             )}
           </div>
           {isActive && description && (
-            <p className="text-sm text-neutral-500">{description}</p>
+            <p className="text-sm text-muted-foreground">{description}</p>
           )}
         </div>
       </div>
@@ -154,8 +154,8 @@ export function OnboardingButton({
         variant === "primary" &&
           "border-2 border-stone-600 bg-stone-800 text-white shadow-[0_2px_6px_rgba(87,83,78,0.22),0_10px_18px_-10px_rgba(87,83,78,0.65)] hover:bg-stone-700",
         variant === "secondary" &&
-          "border border-neutral-300 text-neutral-600 hover:border-neutral-400 hover:text-neutral-800",
-        variant === "ghost" && "text-neutral-500 hover:text-neutral-700",
+          "border border-border text-muted-foreground hover:border-neutral-400 hover:text-foreground",
+        variant === "ghost" && "text-muted-foreground hover:text-foreground",
         className,
       ])}
     />
@@ -176,9 +176,9 @@ export function OnboardingMeetspaceIcon() {
 export function Divider({ text }: { text: string }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="h-px flex-1 bg-neutral-200" />
-      <span className="text-sm text-neutral-500">{text}</span>
-      <div className="h-px flex-1 bg-neutral-200" />
+      <div className="h-px flex-1 bg-accent" />
+      <span className="text-sm text-muted-foreground">{text}</span>
+      <div className="h-px flex-1 bg-accent" />
     </div>
   );
 }
@@ -196,11 +196,11 @@ export function StepRow({
         <CheckCircle2Icon className="size-4 text-emerald-600" />
       )}
       {status === "active" && (
-        <Loader2Icon className="size-4 animate-spin text-neutral-400" />
+        <Loader2Icon className="size-4 animate-spin text-muted-foreground" />
       )}
       {status === "failed" && <XCircleIcon className="size-4 text-red-400" />}
       <span
-        className={status === "failed" ? "text-red-500" : "text-neutral-500"}
+        className={status === "failed" ? "text-destructive" : "text-muted-foreground"}
       >
         {label}
       </span>

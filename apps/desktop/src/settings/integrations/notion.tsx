@@ -23,10 +23,10 @@ export function NotionIntegration() {
   );
 
   return (
-    <section className="rounded-lg border border-neutral-200 p-5">
+    <section className="rounded-lg border border-border p-5">
       <div className="mb-4">
         <h3 className="text-sm font-semibold">Notion</h3>
-        <p className="text-xs text-neutral-600">
+        <p className="text-xs text-muted-foreground">
           Export sessions as new pages in a Notion database. Bring your own
           integration token — it stays on this device.
         </p>
@@ -48,7 +48,7 @@ export function NotionIntegration() {
             placeholder="secret_..."
             className="shadow-none"
           />
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-muted-foreground">
             Create an internal integration at{" "}
             <span className="font-mono">
               notion.so/profile/integrations
@@ -71,10 +71,10 @@ export function NotionIntegration() {
             placeholder="32-char database id"
             className="shadow-none"
           />
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-muted-foreground">
             Open the database in Notion and copy the 32-character id from
             the URL. The database needs a title property called{" "}
-            <code className="rounded bg-neutral-100 px-1 py-0.5 text-[10px]">
+            <code className="rounded bg-muted px-1 py-0.5 text-[10px]">
               Name
             </code>
             .

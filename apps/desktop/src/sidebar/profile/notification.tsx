@@ -66,8 +66,8 @@ export function NotificationsMenuContent({ onBack }: { onBack: () => void }) {
         {MOCK_NOTIFICATIONS.length === 0 && (
           <div className="flex h-full items-center justify-center">
             <div className="text-center">
-              <Bell className="mx-auto mb-2 h-8 w-8 text-neutral-300" />
-              <p className="text-sm text-neutral-500">No notifications</p>
+              <Bell className="mx-auto mb-2 h-8 w-8 text-muted-foreground/60" />
+              <p className="text-sm text-muted-foreground">No notifications</p>
             </div>
           </div>
         )}
@@ -96,7 +96,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
         "flex w-full gap-3 rounded-lg",
         "px-4 py-2.5",
         "text-left",
-        "transition-colors hover:bg-neutral-100",
+        "transition-colors hover:bg-muted",
         !notification.read && "bg-blue-50/50",
       ])}
     >
@@ -133,10 +133,10 @@ function NotificationItem({ notification }: { notification: Notification }) {
             <span className="h-2 w-2 shrink-0 rounded-full bg-blue-500" />
           )}
         </div>
-        <p className="mb-1 line-clamp-2 text-xs text-neutral-600">
+        <p className="mb-1 line-clamp-2 text-xs text-muted-foreground">
           {notification.description}
         </p>
-        <p className="text-xs text-neutral-400">{notification.timestamp}</p>
+        <p className="text-xs text-muted-foreground">{notification.timestamp}</p>
       </div>
     </button>
   );

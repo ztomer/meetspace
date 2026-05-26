@@ -58,7 +58,7 @@ function CollapsedSearch({ onClick }: { onClick: () => void }) {
       onClick={onClick}
       size="icon"
       variant="ghost"
-      className="text-neutral-400"
+      className="text-muted-foreground"
     >
       {showLoading ? (
         <Loader2Icon className="size-4 animate-spin" />
@@ -108,12 +108,12 @@ function ExpandedSearch({ onBlur }: { onBlur?: () => void }) {
         {showLoading ? (
           <Loader2Icon
             className={cn([
-              "absolute left-3 h-4 w-4 animate-spin text-neutral-400",
+              "absolute left-3 h-4 w-4 animate-spin text-muted-foreground",
             ])}
           />
         ) : (
           <SearchIcon
-            className={cn(["absolute left-3 h-4 w-4 text-neutral-400"])}
+            className={cn(["absolute left-3 h-4 w-4 text-muted-foreground"])}
           />
         )}
         <input
@@ -178,7 +178,7 @@ function ExpandedSearch({ onBlur }: { onBlur?: () => void }) {
             onBlur?.();
           }}
           className={cn([
-            "text-sm placeholder:text-sm placeholder:text-neutral-400",
+            "text-sm placeholder:text-sm placeholder:text-muted-foreground",
             "h-full w-full pl-9",
             query
               ? hasResults
@@ -187,8 +187,8 @@ function ExpandedSearch({ onBlur }: { onBlur?: () => void }) {
               : showShortcut
                 ? "pr-14"
                 : "pr-4",
-            "rounded-xl bg-neutral-100",
-            "focus:bg-neutral-200 focus:outline-hidden",
+            "rounded-xl bg-muted",
+            "focus:bg-accent focus:outline-hidden",
           ])}
         />
         {hasResults && query && (
@@ -210,7 +210,7 @@ function ExpandedSearch({ onBlur }: { onBlur?: () => void }) {
             className={cn([
               "absolute right-3",
               "h-4 w-4",
-              "text-neutral-400 hover:text-neutral-600",
+              "text-muted-foreground hover:text-muted-foreground",
               "transition-colors",
             ])}
             aria-label="Clear search"

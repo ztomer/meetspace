@@ -26,12 +26,12 @@ export function BatchState({
         gap={4}
       />
       <div className="flex max-w-sm flex-col items-center gap-2 text-center">
-        <p className="text-base font-semibold text-neutral-700">
+        <p className="text-base font-semibold text-foreground">
           {isFallbackFromLive
             ? "Live transcription stopped"
             : "Recording continues"}
         </p>
-        <p className="text-sm leading-relaxed text-neutral-400">
+        <p className="text-sm leading-relaxed text-muted-foreground">
           {isFallbackFromLive
             ? `${error ? degradedMessage(error) : "Live transcription is unavailable."} ${continuation}`
             : `${continuation}`}

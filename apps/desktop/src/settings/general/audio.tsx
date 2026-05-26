@@ -122,7 +122,7 @@ function DeviceList({ direction }: { direction: "input" | "output" }) {
       <h3 className="mb-2 text-sm font-medium">
         {direction === "input" ? "Input devices" : "Output devices"}
       </h3>
-      <p className="mb-3 text-xs text-neutral-500">
+      <p className="mb-3 text-xs text-muted-foreground">
         {direction === "input"
           ? "Drag to set microphone priority. Top device will be auto-selected."
           : "Drag to set speaker priority. Top device will be auto-selected."}
@@ -163,19 +163,19 @@ function DeviceItem({
         "border transition-colors",
         isTop
           ? "border-green-200 bg-green-50"
-          : "border-neutral-200 bg-neutral-50 hover:bg-neutral-100",
+          : "border-border bg-muted hover:bg-muted",
       ])}
     >
       <GripVertical
         className={cn([
           "h-4 w-4 shrink-0",
-          isTop ? "text-green-500" : "text-neutral-400",
+          isTop ? "text-green-500" : "text-muted-foreground",
         ])}
       />
       <span
         className={cn([
           "w-4 text-xs",
-          isTop ? "text-green-500" : "text-neutral-400",
+          isTop ? "text-green-500" : "text-muted-foreground",
         ])}
       >
         {rank}

@@ -26,10 +26,10 @@ import { openIntegrationUrl } from "~/shared/integration";
 
 function getProviderBadgeClassName(badge: string) {
   if (badge === "Beta") {
-    return "text-xs font-medium text-stone-600";
+    return "text-xs font-medium text-muted-foreground";
   }
 
-  return "rounded-full border border-neutral-300 px-2 text-xs font-light text-neutral-500";
+  return "rounded-full border border-border px-2 text-xs font-light text-muted-foreground";
 }
 
 function getDefaultOpenProviderIds(
@@ -116,7 +116,7 @@ export function CalendarSidebarContent({
         provider.disabled ? (
           <div
             key={provider.id}
-            className="flex items-center gap-2 border-b border-neutral-100 py-3 opacity-50 last:border-none"
+            className="flex items-center gap-2 border-b border-border py-3 opacity-50 last:border-none"
           >
             {provider.icon}
             <span className="text-sm font-medium">{provider.displayName}</span>
@@ -236,13 +236,13 @@ function ProviderAccordionItem({
   return (
     <AccordionItem
       value={provider.id}
-      className="group/provider border-b border-neutral-100 last:border-none"
+      className="group/provider border-b border-border last:border-none"
     >
       <div
         onContextMenu={
           providerMenuItems.length > 0 ? showProviderMenu : undefined
         }
-        className="group/row relative grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1 rounded-md hover:bg-neutral-50"
+        className="group/row relative grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1 rounded-md hover:bg-muted"
       >
         <AccordionHeader
           className={cn(["min-w-0", requiresPro && "opacity-60"])}
@@ -286,7 +286,7 @@ function ProviderAccordionItem({
           <button
             type="button"
             onClick={handleAddAccount}
-            className="shrink-0 rounded p-1 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-900"
+            className="shrink-0 rounded p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             aria-label={`Add ${provider.displayName} account`}
           >
             <PlusIcon className="size-4" />
@@ -296,7 +296,7 @@ function ProviderAccordionItem({
         {!requiresPro && (
           <ChevronDown
             className={cn([
-              "size-4 shrink-0 text-neutral-500 opacity-0 transition-all duration-200 group-focus-within/row:opacity-100 group-hover/row:opacity-100",
+              "size-4 shrink-0 text-muted-foreground opacity-0 transition-all duration-200 group-focus-within/row:opacity-100 group-hover/row:opacity-100",
               "group-data-[state=open]/provider:rotate-180",
             ])}
           />
