@@ -70,6 +70,7 @@
     "@meetspace/plugin-network": "workspace:*",
     "@meetspace/plugin-notification": "workspace:*",
     "@meetspace/plugin-notify": "workspace:*",
+    "@meetspace/plugin-oauth": "workspace:*",
     "@meetspace/plugin-opener2": "workspace:*",
     "@meetspace/plugin-overlay": "workspace:*",
     "@meetspace/plugin-path2": "workspace:*",

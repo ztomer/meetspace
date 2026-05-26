@@ -178,6 +178,38 @@ export const SETTINGS_MAPPING = {
       type: "string",
       path: ["general", "linear_team_id"],
     },
+    google_client_id: {
+      type: "string",
+      path: ["general", "google_client_id"],
+    },
+    google_refresh_token: {
+      type: "string",
+      path: ["general", "google_refresh_token"],
+    },
+    google_access_token: {
+      type: "string",
+      path: ["general", "google_access_token"],
+    },
+    google_token_expires_at: {
+      type: "number",
+      path: ["general", "google_token_expires_at"],
+    },
+    outlook_client_id: {
+      type: "string",
+      path: ["general", "outlook_client_id"],
+    },
+    outlook_refresh_token: {
+      type: "string",
+      path: ["general", "outlook_refresh_token"],
+    },
+    outlook_access_token: {
+      type: "string",
+      path: ["general", "outlook_access_token"],
+    },
+    outlook_token_expires_at: {
+      type: "number",
+      path: ["general", "outlook_token_expires_at"],
+    },
   },
   tables: {
     ai_providers: {

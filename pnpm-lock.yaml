@@ -238,6 +238,9 @@ importers:
       '@meetspace/plugin-notify':
         specifier: workspace:*
         version: link:../../plugins/notify
+      '@meetspace/plugin-oauth':
+        specifier: workspace:*
+        version: link:../../plugins/oauth
       '@meetspace/plugin-opener2':
         specifier: workspace:*
         version: link:../../plugins/opener2
@@ -1439,6 +1442,8 @@ importers:
       '@tauri-apps/api':
         specifier: ^2.10.1
         version: 2.10.1
+
+  plugins/oauth: {}
 
   plugins/opener2:
     dependencies:

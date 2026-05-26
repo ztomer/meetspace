@@ -183,4 +183,12 @@ export const valueSchemaForTinybase = {
   notion_database_id: { type: "string" },
   linear_api_key: { type: "string" },
   linear_team_id: { type: "string" },
+  google_client_id: { type: "string" },
+  google_refresh_token: { type: "string" },
+  google_access_token: { type: "string" },
+  google_token_expires_at: { type: "number" },
+  outlook_client_id: { type: "string" },
+  outlook_refresh_token: { type: "string" },
+  outlook_access_token: { type: "string" },
+  outlook_token_expires_at: { type: "number" },
 } as const satisfies InferTinyBaseSchema<typeof generalSchema>;
