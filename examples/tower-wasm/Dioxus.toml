@@ -1,7 +1,0 @@
-[application]
-name = "tower-wasm"
-default_platform = "web"
-out_dir = "dist"
-
-[web.app]
-title = "async-openai Tower WASM demo"

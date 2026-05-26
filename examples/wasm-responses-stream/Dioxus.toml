@@ -1,7 +1,0 @@
-[application]
-name = "wasm-responses-stream"
-default_platform = "web"
-out_dir = "dist"
-
-[web.app]
-title = "async-openai WASM streaming demo"
