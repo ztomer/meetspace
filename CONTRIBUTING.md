@@ -1,6 +1,6 @@
 # Contributing
 
-**Meetspace** is a local-only fork of [Anarlog](https://github.com/fastrepl/anarlog) (originally `hyprnote`). Cloud / Pro / Supabase / Stripe / billing / OAuth-callback features have been ripped out; all transcription, LLM, and integrations run on-device or via user-supplied tokens.
+**Meetspace** is a local-only fork of [Meetspace](https://github.com/fastrepl/meetspace) (originally `meetspace`). Cloud / Pro / Supabase / Stripe / billing / OAuth-callback features have been ripped out; all transcription, LLM, and integrations run on-device or via user-supplied tokens.
 
 ## Layout
 

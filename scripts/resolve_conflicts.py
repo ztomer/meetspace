@@ -92,20 +92,20 @@ def should_delete(filepath):
     return False
 
 REPLACEMENTS = [
-    ("__" + "HYPR_NAVIGATE__", "__MEETSPACE_NAVIGATE__"),
-    ("com." + "hyprnote", "com.meetspace"),
-    ("@" + "hypr/", "@meetspace/"),
-    ("hypr-", "meetspace-"),
-    ("hypr_", "meetspace_"),
-    ("HYPR_", "MEETSPACE_"),
+    ("__" + "MEETSPACE_NAVIGATE__", "__MEETSPACE_NAVIGATE__"),
+    ("com." + "meetspace", "com.meetspace"),
+    ("@" + "meetspace/", "@meetspace/"),
+    ("meetspace-", "meetspace-"),
+    ("meetspace_", "meetspace_"),
+    ("MEETSPACE_", "MEETSPACE_"),
     ("Hypr" + "note", "Meetspace"),
-    ("hypr" + "note", "meetspace"),
-    ("HYPR" + "NOTE", "MEETSPACE"),
+    ("meetspace" + "note", "meetspace"),
+    ("MEETSPACE" + "NOTE", "MEETSPACE"),
     ("Anar" + "log", "Meetspace"),
     ("anar" + "log", "meetspace"),
     ("ANAR" + "LOG", "MEETSPACE"),
-    ("hypr", "meetspace"),
-    ("HYPR", "MEETSPACE"),
+    ("meetspace", "meetspace"),
+    ("MEETSPACE", "MEETSPACE"),
 ]
 
 def is_rebrand_commit():
