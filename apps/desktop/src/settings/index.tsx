@@ -12,8 +12,7 @@ import {
 import { SettingsIntegrations } from "./integrations";
 import { SettingsTodo } from "./todo";
 
-import { LLM } from "~/settings/ai/llm";
-import { STT } from "~/settings/ai/stt";
+import { Intelligence } from "~/settings/ai";
 import { StandardTabWrapper } from "~/shared/main";
 import { type TabItem, TabItemBase } from "~/shared/tabs";
 import { type Tab } from "~/store/zustand/tabs";
@@ -73,9 +72,8 @@ function SettingsView({ tab }: { tab: Extract<Tab, { type: "settings" }> }) {
       case "permissions":
         return <SettingsPermissions />;
       case "transcription":
-        return <STT />;
       case "intelligence":
-        return <LLM />;
+        return <Intelligence />;
       case "integrations":
         return <SettingsIntegrations />;
       case "todo":

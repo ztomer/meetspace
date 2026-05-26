@@ -41,7 +41,7 @@ function DevtoolCard({
   return (
     <div
       className={cn([
-        "rounded-lg border border-border bg-white",
+        "rounded-lg border border-border bg-background",
         "shadow-xs",
         "overflow-hidden",
         "shrink-0",

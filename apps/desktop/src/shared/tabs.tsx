@@ -41,8 +41,8 @@ const accentColors: Record<
     selected: [
       "bg-accent/50",
       "hover:bg-accent",
-      "text-black",
-      "border-stone-400",
+      "text-foreground",
+      "border-border",
     ],
     unselected: [
       "bg-muted",
