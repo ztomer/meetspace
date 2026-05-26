@@ -5,8 +5,10 @@
 # Falls back to `origin/main` if --on-main is passed, or if no stable tag
 # newer than HEAD's most recent ancestor tag can be found.
 #
-# We do NOT push from this script — a new origin will be added later by
-# the maintainer. See docs/FORK_PLAN.md and docs/_REMOVED_AUTH.md for context.
+# We do NOT push from this script. Remotes:
+#   origin    -> https://github.com/fastrepl/anarlog.git   (upstream; rebase source)
+#   meetspace -> https://github.com/ztomer/meetspace.git   (fork; push target — when approved)
+# See docs/FORK_PLAN.md and docs/_REMOVED_AUTH.md for context.
 
 set -euo pipefail
 
@@ -157,4 +159,4 @@ cargo check
 
 green "==> Rebase verified against $TARGET."
 yellow "Inspect with: git log --oneline $TARGET..HEAD"
-yellow "Reminder: do NOT push to $UPSTREAM_REMOTE. Add a new remote first."
+yellow "Reminder: do NOT push to $UPSTREAM_REMOTE. Push to 'meetspace' once approved."
