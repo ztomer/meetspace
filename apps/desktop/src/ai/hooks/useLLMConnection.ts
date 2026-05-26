@@ -3,7 +3,7 @@ import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 import { extractReasoningMiddleware, wrapLanguageModel } from "ai";
 import { useMemo } from "react";
 
-import type { CharTask } from "@meetspace/api-client";
+import type { CharTask } from "~/shared/api-types";
 import type { AIProviderStorage } from "@meetspace/store";
 
 import { createTracedFetch, tracedFetch } from "../traced-fetch";

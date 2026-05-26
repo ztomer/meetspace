@@ -2,7 +2,7 @@ import { platform } from "@tauri-apps/plugin-os";
 import { ChevronDown, PlusIcon } from "lucide-react";
 import { useCallback, useMemo, type MouseEvent } from "react";
 
-import type { ConnectionItem } from "@meetspace/api-client";
+import type { ConnectionItem } from "~/shared/api-types";
 import {
   Accordion,
   AccordionContent,

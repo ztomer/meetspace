@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 
-import type { ConnectionItem } from "@meetspace/api-client";
+import type { ConnectionItem } from "~/shared/api-types";
 import {
   Tooltip,
   TooltipContent,
