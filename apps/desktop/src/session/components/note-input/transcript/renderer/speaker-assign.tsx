@@ -5,8 +5,8 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@hypr/ui/components/ui/popover";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/popover";
+import { cn } from "@meetspace/utils";
 
 import * as main from "~/store/tinybase/store/main";
 import type { Segment } from "~/stt/live-segment";

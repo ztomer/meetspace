@@ -10,7 +10,7 @@ pub struct CactusAdapter;
 
 impl CactusAdapter {
     pub fn is_supported_languages_live(
-        languages: &[hypr_language::Language],
+        languages: &[meetspace_language::Language],
         model: Option<&str>,
     ) -> bool {
         let _ = (languages, model);
@@ -21,7 +21,7 @@ impl CactusAdapter {
 #[cfg(test)]
 mod tests {
     use super::CactusAdapter;
-    use hypr_language::ISO639;
+    use meetspace_language::ISO639;
 
     #[test]
     fn rejects_live_for_parakeet_models() {

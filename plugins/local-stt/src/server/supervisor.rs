@@ -1,4 +1,4 @@
-use hypr_supervisor::{
+use meetspace_supervisor::{
     RestartPolicy,
     dynamic::{
         ChildBackoffFn, DynChildSpec, DynSpawnFn, DynamicSupervisor, DynamicSupervisorMsg,

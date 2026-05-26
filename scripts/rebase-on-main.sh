@@ -6,7 +6,7 @@
 # newer than HEAD's most recent ancestor tag can be found.
 #
 # We do NOT push from this script. Remotes:
-#   origin    -> https://github.com/fastrepl/anarlog.git   (upstream; rebase source)
+#   origin    -> https://github.com/fastrepl/meetspace.git   (upstream; rebase source)
 #   meetspace -> https://github.com/ztomer/meetspace.git   (fork; push target — when approved)
 # See docs/FORK_PLAN.md and docs/_REMOVED_AUTH.md for context.
 

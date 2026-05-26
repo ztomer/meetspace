@@ -1,7 +1,7 @@
 import {
   commands as windowsCommands,
   events as windowsEvents,
-} from "@hypr/plugin-windows";
+} from "@meetspace/plugin-windows";
 
 import { useConfigValue } from "~/shared/config";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";

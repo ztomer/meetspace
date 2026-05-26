@@ -9,8 +9,8 @@ TinyBase as the primary data store (schema at `packages/store/src/tinybase.ts`),
 - Format: `pnpm exec dprint fmt`
 - Typecheck (TS): `pnpm -r typecheck`
 - Typecheck (Rust): `cargo check`
-- Desktop dev: `pnpm -F @hypr/desktop tauri:dev`
-- Web dev: `pnpm -F @hypr/web dev`
+- Desktop dev: `pnpm -F @meetspace/desktop tauri:dev`
+- Web dev: `pnpm -F @meetspace/web dev`
 - Dev docs: https://char.com/docs/developers
 
 ## Guidelines
@@ -29,7 +29,7 @@ TinyBase as the primary data store (schema at `packages/store/src/tinybase.ts`),
 
 - Avoid creating types/interfaces unless shared. Inline function props.
 - Do not write comments unless code is non-obvious. Comments should explain "why", not "what".
-- Use `cn` from `@hypr/utils` for conditional classNames. Always pass an array, split by logical grouping.
+- Use `cn` from `@meetspace/utils` for conditional classNames. Always pass an array, split by logical grouping.
 - Use `motion/react` instead of `framer-motion`.
 
 ## CLI TUI Command Architecture

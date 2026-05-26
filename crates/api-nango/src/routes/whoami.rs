@@ -1,6 +1,6 @@
 use axum::{Extension, Json, extract::State};
-use hypr_api_auth::AuthContext;
-use hypr_nango::ListConnectionsParams;
+use meetspace_api_auth::AuthContext;
+use meetspace_nango::ListConnectionsParams;
 use serde::Serialize;
 use utoipa::ToSchema;
 

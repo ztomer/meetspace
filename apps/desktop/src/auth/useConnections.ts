@@ -1,4 +1,4 @@
-import type { ConnectionItem } from "@hypr/api-client";
+import type { ConnectionItem } from "@meetspace/api-client";
 
 export function useConnections(_enabled?: boolean) {
   return {

@@ -1,5 +1,5 @@
-use hypr_apple_todo::types::{Reminder, ReminderList};
-use hypr_ticket_interface::{CollectionPage, TicketPage};
+use meetspace_apple_todo::types::{Reminder, ReminderList};
+use meetspace_ticket_interface::{CollectionPage, TicketPage};
 
 use crate::error::Error;
 

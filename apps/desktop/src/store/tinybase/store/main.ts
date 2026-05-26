@@ -10,8 +10,8 @@ import {
   type MergeableStore,
 } from "tinybase/with-schemas";
 
-import { SCHEMA, type Schemas } from "@hypr/store";
-import { format } from "@hypr/utils";
+import { SCHEMA, type Schemas } from "@meetspace/store";
+import { format } from "@meetspace/utils";
 
 import { useMainPersisters } from "./persisters";
 
@@ -56,7 +56,7 @@ export const StoreComponent = () => {
   const synchronizer = useCreateSynchronizer(store, async (store) =>
     createBroadcastChannelSynchronizer(
       store,
-      "hypr-sync-persisted",
+      "meetspace-sync-persisted",
     ).startSync(),
   );
 

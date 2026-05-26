@@ -1,1 +1,1 @@
-pub use ::hypr_cactus::{Model, VadOptions, VadResult, VadSegment};
+pub use ::meetspace_cactus::{Model, VadOptions, VadResult, VadSegment};

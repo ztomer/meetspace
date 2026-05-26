@@ -21,7 +21,7 @@ use self::{
 mod request;
 mod response;
 
-type CactusModelManager = ModelManager<hypr_cactus::Model>;
+type CactusModelManager = ModelManager<meetspace_cactus::Model>;
 
 pub const COMPLETE_PATH: &str = "/v1/chat/completions";
 pub const HEALTH_PATH: &str = "/health";
@@ -29,15 +29,15 @@ pub const HEALTH_PATH: &str = "/health";
 #[derive(Clone)]
 pub struct CompleteService {
     manager: CactusModelManager,
-    health: hypr_cactus::ServiceHealthTracker,
+    health: meetspace_cactus::ServiceHealthTracker,
     model_label: Option<String>,
 }
 
 impl CompleteService {
     pub fn new(manager: CactusModelManager) -> Self {
-        hypr_cactus::init_runtime();
+        meetspace_cactus::init_runtime();
 
-        let health = hypr_cactus::ServiceHealthTracker::new();
+        let health = meetspace_cactus::ServiceHealthTracker::new();
         let model_label = manager.default_model_name();
         if model_label.is_some() {
             let warmup_manager = manager.clone();
@@ -115,7 +115,7 @@ impl Service<Request<Body>> for CompleteService {
                     return Ok((StatusCode::BAD_REQUEST, error).into_response());
                 }
             };
-            if let Err(error) = hypr_cactus::validate_messages(&messages) {
+            if let Err(error) = meetspace_cactus::validate_messages(&messages) {
                 return Ok(ModelError(error).into_response());
             }
             let mut options = build_options(&request);
@@ -138,7 +138,7 @@ impl Service<Request<Body>> for CompleteService {
 
             if request.stream.unwrap_or(false) {
                 let completion_stream =
-                    match hypr_cactus::complete_stream(&model, messages, options) {
+                    match meetspace_cactus::complete_stream(&model, messages, options) {
                         Ok(s) => s,
                         Err(e) => {
                             return Ok(ModelError(e).into_response());
@@ -162,7 +162,7 @@ mod tests {
 
     async fn read_health(
         app: axum::Router,
-    ) -> (StatusCode, hypr_cactus_model::CactusServiceHealth) {
+    ) -> (StatusCode, meetspace_cactus_model::CactusServiceHealth) {
         let response = app
             .oneshot(
                 Request::builder()
@@ -182,7 +182,7 @@ mod tests {
     async fn health_starts_loading_then_fails_when_default_model_cannot_load() {
         let model_path =
             std::env::temp_dir().join(format!("llm-cactus-missing-model-{}", uuid::Uuid::new_v4()));
-        let manager = ModelManager::<hypr_cactus::Model>::builder()
+        let manager = ModelManager::<meetspace_cactus::Model>::builder()
             .register("default", &model_path)
             .default_model("default")
             .build();
@@ -193,7 +193,7 @@ mod tests {
         assert_eq!(status, StatusCode::OK);
         assert_eq!(
             loading.status,
-            hypr_cactus_model::CactusServiceStatus::Loading
+            meetspace_cactus_model::CactusServiceStatus::Loading
         );
 
         tokio::time::sleep(std::time::Duration::from_millis(25)).await;
@@ -201,7 +201,7 @@ mod tests {
         let (_, failed) = read_health(app).await;
         assert_eq!(
             failed.status,
-            hypr_cactus_model::CactusServiceStatus::Failed
+            meetspace_cactus_model::CactusServiceStatus::Failed
         );
         assert!(
             failed
@@ -214,18 +214,18 @@ mod tests {
 
     #[tokio::test]
     async fn health_starts_idle_without_default_model() {
-        let manager = ModelManager::<hypr_cactus::Model>::builder().build();
+        let manager = ModelManager::<meetspace_cactus::Model>::builder().build();
         let app = CompleteService::new(manager)
             .into_router(|err| async move { (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()) });
 
         let (status, idle) = read_health(app).await;
         assert_eq!(status, StatusCode::OK);
-        assert_eq!(idle.status, hypr_cactus_model::CactusServiceStatus::Idle);
+        assert_eq!(idle.status, meetspace_cactus_model::CactusServiceStatus::Idle);
     }
 
     #[tokio::test]
     async fn request_with_model_field_reports_default_model_failure() {
-        let manager = ModelManager::<hypr_cactus::Model>::builder().build();
+        let manager = ModelManager::<meetspace_cactus::Model>::builder().build();
         let app = CompleteService::new(manager)
             .into_router(|err| async move { (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()) });
 
@@ -255,7 +255,7 @@ mod tests {
         let (_, health) = read_health(app).await;
         assert_eq!(
             health.status,
-            hypr_cactus_model::CactusServiceStatus::Failed
+            meetspace_cactus_model::CactusServiceStatus::Failed
         );
         assert_eq!(health.error.as_deref(), Some("no default model configured"));
     }
@@ -264,7 +264,7 @@ mod tests {
     async fn request_model_field_does_not_select_a_named_model() {
         let model_path =
             std::env::temp_dir().join(format!("llm-cactus-missing-model-{}", uuid::Uuid::new_v4()));
-        let manager = ModelManager::<hypr_cactus::Model>::builder()
+        let manager = ModelManager::<meetspace_cactus::Model>::builder()
             .register("named-model", &model_path)
             .build();
         let app = CompleteService::new(manager)

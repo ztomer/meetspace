@@ -1,5 +1,5 @@
-import type { ParsedDocument } from "@hypr/plugin-fs-sync";
-import { SCHEMA } from "@hypr/store";
+import type { ParsedDocument } from "@meetspace/plugin-fs-sync";
+import { SCHEMA } from "@meetspace/store";
 
 import type { Store } from "~/store/tinybase/store/main";
 

@@ -1,13 +1,13 @@
 import { createMergeableStore, createQueries } from "tinybase/with-schemas";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { SCHEMA } from "@hypr/store";
+import { SCHEMA } from "@meetspace/store";
 
 const pluginCalendar = vi.hoisted(() => ({
   listCalendars: vi.fn(),
 }));
 
-vi.mock("@hypr/plugin-calendar", () => ({
+vi.mock("@meetspace/plugin-calendar", () => ({
   commands: {
     listCalendars: pluginCalendar.listCalendars,
   },
@@ -84,7 +84,7 @@ describe("syncCalendars", () => {
       user_id: "user-1",
       created_at: "2026-03-25T00:00:00.000Z",
       tracking_id_calendar: "primary",
-      name: "John (Anarlog)",
+      name: "John (Meetspace)",
       enabled: true,
       provider: "google",
       source: "john@char.com",
@@ -100,7 +100,7 @@ describe("syncCalendars", () => {
             data: [
               {
                 id: "primary",
-                title: "John (Anarlog)",
+                title: "John (Meetspace)",
                 source: "john@char.com",
                 color: "#4285f4",
               },
@@ -140,7 +140,7 @@ describe("syncCalendars", () => {
       calendars.find((calendar) => calendar.connection_id === "conn-john"),
     ).toMatchObject({
       tracking_id_calendar: "primary",
-      name: "John (Anarlog)",
+      name: "John (Meetspace)",
       enabled: true,
       source: "john@char.com",
     });
@@ -161,7 +161,7 @@ describe("syncCalendars", () => {
       user_id: "user-1",
       created_at: "2026-03-25T00:00:00.000Z",
       tracking_id_calendar: "primary",
-      name: "John (Anarlog)",
+      name: "John (Meetspace)",
       enabled: true,
       provider: "google",
       source: "john@char.com",

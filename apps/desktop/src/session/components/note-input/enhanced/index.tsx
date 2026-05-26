@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-import type { NoteEditorRef } from "@hypr/editor/note";
+import type { NoteEditorRef } from "@meetspace/editor/note";
 
 import { ConfigError } from "./config-error";
 import { EnhancedEditor } from "./editor";

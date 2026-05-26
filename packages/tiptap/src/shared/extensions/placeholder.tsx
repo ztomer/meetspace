@@ -30,7 +30,7 @@ export interface PlaceholderOptions {
 }
 
 export const Placeholder = Extension.create<PlaceholderOptions>({
-  name: "hypr-placeholder",
+  name: "meetspace-placeholder",
 
   addOptions() {
     return {

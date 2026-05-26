@@ -8,7 +8,7 @@ pub use result::{TranscriptionResult, TranscriptionSegment};
 pub use stream::{TranscribeEvent, TranscriptionSession, transcribe_stream};
 pub use transcriber::{CloudConfig, StreamResult, StreamSegment, Transcriber};
 
-use hypr_language::Language;
+use meetspace_language::Language;
 
 pub fn constrain_to(languages: &[Language]) -> Option<Language> {
     match languages {

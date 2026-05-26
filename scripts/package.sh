@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Produce a distributable Anarlog desktop build (.dmg / .app / .exe / .deb).
+# Produce a distributable Meetspace desktop build (.dmg / .app / .exe / .deb).
 #
-# Wraps `pnpm -F @hypr/desktop tauri:build`. Outputs land in:
+# Wraps `pnpm -F @meetspace/desktop tauri:build`. Outputs land in:
 #   target/release/bundle/    (per-platform installers)
 #   apps/desktop/src-tauri/target/release/bundle/
 #
@@ -29,14 +29,14 @@ if [ ! -d node_modules ]; then
   pnpm install
 fi
 
-bold "==> Prebuild @hypr/ui (Tailwind globals.css)"
-pnpm -F @hypr/ui build
+bold "==> Prebuild @meetspace/ui (Tailwind globals.css)"
+pnpm -F @meetspace/ui build
 
 bold "==> Tauri build"
 if [ "$#" -gt 0 ]; then
-  pnpm -F @hypr/desktop tauri build --bundles "$@"
+  pnpm -F @meetspace/desktop tauri build --bundles "$@"
 else
-  pnpm -F @hypr/desktop tauri build
+  pnpm -F @meetspace/desktop tauri build
 fi
 
 green "==> Done. Artifacts:"

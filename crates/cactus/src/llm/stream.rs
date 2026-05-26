@@ -3,7 +3,7 @@ use std::sync::Arc;
 use std::task::{Context, Poll};
 
 use futures_util::Stream;
-use hypr_llm_types::{Response, StreamingParser};
+use meetspace_llm_types::{Response, StreamingParser};
 use tokio::sync::mpsc::UnboundedSender;
 use tokio_stream::wrappers::UnboundedReceiverStream;
 use tokio_util::sync::CancellationToken;

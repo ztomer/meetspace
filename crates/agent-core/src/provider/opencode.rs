@@ -4,7 +4,7 @@ use crate::{
 };
 
 pub fn health(options: &HealthCheckOptions) -> ProviderHealth {
-    let health = hypr_opencode::health_check_with_options(&hypr_opencode::OpencodeOptions {
+    let health = meetspace_opencode::health_check_with_options(&meetspace_opencode::OpencodeOptions {
         opencode_path_override: options.opencode_path_override.clone(),
         ..Default::default()
     });
@@ -22,16 +22,16 @@ pub fn health(options: &HealthCheckOptions) -> ProviderHealth {
 }
 
 pub fn install_cli() -> Result<InstallCliResponse, String> {
-    let plugin_path = hypr_opencode::plugin_path();
+    let plugin_path = meetspace_opencode::plugin_path();
 
-    if plugin_path.exists() && !hypr_opencode::is_char_plugin(&plugin_path)? {
+    if plugin_path.exists() && !meetspace_opencode::is_char_plugin(&plugin_path)? {
         return Err(format!(
             "refusing to replace existing plugin at {}",
             plugin_path.display()
         ));
     }
 
-    hypr_opencode::write_plugin(&plugin_path)?;
+    meetspace_opencode::write_plugin(&plugin_path)?;
 
     Ok(InstallCliResponse {
         provider: ProviderKind::Opencode,
@@ -44,16 +44,16 @@ pub fn install_cli() -> Result<InstallCliResponse, String> {
 }
 
 pub fn uninstall_cli() -> Result<UninstallCliResponse, String> {
-    let plugin_path = hypr_opencode::plugin_path();
+    let plugin_path = meetspace_opencode::plugin_path();
 
-    if plugin_path.exists() && !hypr_opencode::has_char_plugin(&plugin_path)? {
+    if plugin_path.exists() && !meetspace_opencode::has_char_plugin(&plugin_path)? {
         return Err(format!(
             "refusing to remove existing plugin at {}",
             plugin_path.display()
         ));
     }
 
-    hypr_opencode::remove_plugin(&plugin_path)?;
+    meetspace_opencode::remove_plugin(&plugin_path)?;
 
     Ok(UninstallCliResponse {
         provider: ProviderKind::Opencode,
@@ -66,36 +66,36 @@ pub fn uninstall_cli() -> Result<UninstallCliResponse, String> {
 }
 
 pub fn upgrade() {
-    upgrade_at(&hypr_opencode::plugin_path());
+    upgrade_at(&meetspace_opencode::plugin_path());
 }
 
 fn upgrade_at(plugin_path: &std::path::Path) {
-    if hypr_opencode::is_char_plugin(plugin_path).unwrap_or(false) {
-        let _ = hypr_opencode::write_plugin(plugin_path);
+    if meetspace_opencode::is_char_plugin(plugin_path).unwrap_or(false) {
+        let _ = meetspace_opencode::write_plugin(plugin_path);
     }
 }
 
 fn integration_installed() -> Result<bool, String> {
-    let plugin_path = hypr_opencode::plugin_path();
-    hypr_opencode::is_char_plugin(&plugin_path)
+    let plugin_path = meetspace_opencode::plugin_path();
+    meetspace_opencode::is_char_plugin(&plugin_path)
 }
 
-impl From<hypr_opencode::HealthStatus> for ProviderHealthStatus {
-    fn from(value: hypr_opencode::HealthStatus) -> Self {
+impl From<meetspace_opencode::HealthStatus> for ProviderHealthStatus {
+    fn from(value: meetspace_opencode::HealthStatus) -> Self {
         match value {
-            hypr_opencode::HealthStatus::Ready => Self::Ready,
-            hypr_opencode::HealthStatus::Warning => Self::Warning,
-            hypr_opencode::HealthStatus::Error => Self::Error,
+            meetspace_opencode::HealthStatus::Ready => Self::Ready,
+            meetspace_opencode::HealthStatus::Warning => Self::Warning,
+            meetspace_opencode::HealthStatus::Error => Self::Error,
         }
     }
 }
 
-impl From<hypr_opencode::HealthAuthStatus> for ProviderAuthStatus {
-    fn from(value: hypr_opencode::HealthAuthStatus) -> Self {
+impl From<meetspace_opencode::HealthAuthStatus> for ProviderAuthStatus {
+    fn from(value: meetspace_opencode::HealthAuthStatus) -> Self {
         match value {
-            hypr_opencode::HealthAuthStatus::Authenticated => Self::Authenticated,
-            hypr_opencode::HealthAuthStatus::Unauthenticated => Self::Unauthenticated,
-            hypr_opencode::HealthAuthStatus::Unknown => Self::Unknown,
+            meetspace_opencode::HealthAuthStatus::Authenticated => Self::Authenticated,
+            meetspace_opencode::HealthAuthStatus::Unauthenticated => Self::Unauthenticated,
+            meetspace_opencode::HealthAuthStatus::Unknown => Self::Unknown,
         }
     }
 }
@@ -136,6 +136,6 @@ mod tests {
 
         upgrade_at(&path);
 
-        assert!(hypr_opencode::has_char_plugin(&path).unwrap());
+        assert!(meetspace_opencode::has_char_plugin(&path).unwrap());
     }
 }

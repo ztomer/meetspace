@@ -1,9 +1,9 @@
 import { AlertCircleIcon, ArrowRightIcon, CheckIcon } from "lucide-react";
 import { useState } from "react";
 
-import type { PermissionStatus } from "@hypr/plugin-permissions";
-import { Button } from "@hypr/ui/components/ui/button";
-import { cn } from "@hypr/utils";
+import type { PermissionStatus } from "@meetspace/plugin-permissions";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { cn } from "@meetspace/utils";
 
 import { usePermission } from "~/shared/hooks/usePermissions";
 
@@ -22,7 +22,7 @@ function ActionLink({
       onClick={onClick}
       disabled={disabled}
       className={cn([
-        "underline transition-colors hover:text-neutral-900",
+        "hover:text-foreground underline transition-colors",
         disabled && "cursor-not-allowed opacity-50",
       ])}
     >
@@ -66,20 +66,20 @@ function PermissionRow({
         <div
           className={cn([
             "mb-1 flex items-center gap-2",
-            !isAuthorized && "text-red-500",
+            !isAuthorized && "text-destructive",
           ])}
         >
           {!isAuthorized && <AlertCircleIcon className="size-4" />}
           <h3 className="text-sm font-medium">{title}</h3>
         </div>
-        <div className="text-xs text-neutral-600">
+        <div className="text-muted-foreground text-xs">
           {!showActions ? (
             <div>
               {!isAuthorized && <span>{description} · </span>}
               <button
                 type="button"
                 onClick={() => setShowActions(true)}
-                className="underline transition-colors hover:text-neutral-900"
+                className="hover:text-foreground underline transition-colors"
               >
                 Having trouble?
               </button>
@@ -109,7 +109,7 @@ function PermissionRow({
         disabled={isPending}
         className={cn([
           "size-8",
-          isAuthorized && "bg-stone-100 text-stone-800 hover:bg-stone-200",
+          isAuthorized && "bg-muted text-foreground hover:bg-accent",
         ])}
         aria-label={
           isAuthorized
@@ -136,7 +136,7 @@ function PermissionGroup({
 }) {
   return (
     <div>
-      <h3 className="mb-3 text-xs font-semibold tracking-wide text-neutral-500 uppercase">
+      <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wide uppercase">
         {title}
       </h3>
       <div className="flex flex-col gap-4">{children}</div>
@@ -154,78 +154,81 @@ export function Permissions() {
   const inputMonitoring = usePermission("inputMonitoring");
 
   return (
-    <div className="flex flex-col gap-8">
-      <PermissionGroup title="Audio">
-        <PermissionRow
-          title="Microphone"
-          description="Required to record your voice during meetings and calls"
-          status={mic.status}
-          isPending={mic.isPending}
-          onRequest={mic.request}
-          onReset={mic.reset}
-          onOpen={mic.open}
-        />
-        <PermissionRow
-          title="System audio"
-          description="Required to capture other participants' voices in meetings"
-          status={systemAudio.status}
-          isPending={systemAudio.isPending}
-          onRequest={systemAudio.request}
-          onReset={systemAudio.reset}
-          onOpen={systemAudio.open}
-        />
-      </PermissionGroup>
+    <div>
+      <h2 className="mb-6 font-sans text-lg font-semibold">Permissions</h2>
+      <div className="flex flex-col gap-8">
+        <PermissionGroup title="Audio">
+          <PermissionRow
+            title="Microphone"
+            description="Required to record your voice during meetings and calls"
+            status={mic.status}
+            isPending={mic.isPending}
+            onRequest={mic.request}
+            onReset={mic.reset}
+            onOpen={mic.open}
+          />
+          <PermissionRow
+            title="System audio"
+            description="Required to capture other participants' voices in meetings"
+            status={systemAudio.status}
+            isPending={systemAudio.isPending}
+            onRequest={systemAudio.request}
+            onReset={systemAudio.reset}
+            onOpen={systemAudio.open}
+          />
+        </PermissionGroup>
 
-      <PermissionGroup title="Dailynote">
-        <PermissionRow
-          title="Accessibility"
-          description="Required to detect meeting apps and sync mute status"
-          status={accessibility.status}
-          isPending={accessibility.isPending}
-          onRequest={accessibility.request}
-          onReset={accessibility.reset}
-          onOpen={accessibility.open}
-        />
-        <PermissionRow
-          title="Screen recording"
-          description="Required to capture screenshots and on-screen context for vision and activity features"
-          status={screenRecording.status}
-          isPending={screenRecording.isPending}
-          onRequest={screenRecording.request}
-          onReset={screenRecording.reset}
-          onOpen={screenRecording.open}
-        />
-      </PermissionGroup>
+        <PermissionGroup title="Dailynote">
+          <PermissionRow
+            title="Accessibility"
+            description="Required to detect meeting apps and sync mute status"
+            status={accessibility.status}
+            isPending={accessibility.isPending}
+            onRequest={accessibility.request}
+            onReset={accessibility.reset}
+            onOpen={accessibility.open}
+          />
+          <PermissionRow
+            title="Screen recording"
+            description="Required to capture screenshots and on-screen context for vision and activity features"
+            status={screenRecording.status}
+            isPending={screenRecording.isPending}
+            onRequest={screenRecording.request}
+            onReset={screenRecording.reset}
+            onOpen={screenRecording.open}
+          />
+        </PermissionGroup>
 
-      <PermissionGroup title="Others">
-        <PermissionRow
-          title="Calendar"
-          description="Required to sync Apple Calendar events into Anarlog"
-          status={calendar.status}
-          isPending={calendar.isPending}
-          onRequest={calendar.request}
-          onReset={calendar.reset}
-          onOpen={calendar.open}
-        />
-        <PermissionRow
-          title="Reminders"
-          description="Required to sync Apple Reminders into Anarlog"
-          status={reminders.status}
-          isPending={reminders.isPending}
-          onRequest={reminders.request}
-          onReset={reminders.reset}
-          onOpen={reminders.open}
-        />
-        <PermissionRow
-          title="Input monitoring"
-          description="Required to listen for global dictation hotkeys"
-          status={inputMonitoring.status}
-          isPending={inputMonitoring.isPending}
-          onRequest={inputMonitoring.request}
-          onReset={inputMonitoring.reset}
-          onOpen={inputMonitoring.open}
-        />
-      </PermissionGroup>
+        <PermissionGroup title="Others">
+          <PermissionRow
+            title="Calendar"
+            description="Required to sync Apple Calendar events into Meetspace"
+            status={calendar.status}
+            isPending={calendar.isPending}
+            onRequest={calendar.request}
+            onReset={calendar.reset}
+            onOpen={calendar.open}
+          />
+          <PermissionRow
+            title="Reminders"
+            description="Required to sync Apple Reminders into Meetspace"
+            status={reminders.status}
+            isPending={reminders.isPending}
+            onRequest={reminders.request}
+            onReset={reminders.reset}
+            onOpen={reminders.open}
+          />
+          <PermissionRow
+            title="Input monitoring"
+            description="Required to listen for global dictation hotkeys"
+            status={inputMonitoring.status}
+            isPending={inputMonitoring.isPending}
+            onRequest={inputMonitoring.request}
+            onReset={inputMonitoring.reset}
+            onOpen={inputMonitoring.open}
+          />
+        </PermissionGroup>
+      </div>
     </div>
   );
 }

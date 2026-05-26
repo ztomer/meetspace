@@ -1,6 +1,6 @@
 # Contributing
 
-This is a **local-only fork** of [Anarlog](https://github.com/fastrepl/anarlog). Cloud / Pro / Supabase / Stripe / billing / OAuth-callback features have been ripped out; all transcription, LLM, and integrations run on-device or via user-supplied tokens.
+This is a **local-only fork** of [Meetspace](https://github.com/fastrepl/meetspace). Cloud / Pro / Supabase / Stripe / billing / OAuth-callback features have been ripped out; all transcription, LLM, and integrations run on-device or via user-supplied tokens.
 
 For the original project's developer docs see https://char.com/docs/developers.
 
@@ -38,7 +38,7 @@ pnpm exec dprint fmt              # before committing
 
 ## Maintaining the fork
 
-To pull in upstream Anarlog changes:
+To pull in upstream Meetspace changes:
 
 ```
 ./scripts/rebase-on-main.sh           # rebase onto latest stable desktop_vX.Y.Z tag
@@ -56,7 +56,7 @@ The script:
 4. Re-applies our deletions of auth/billing/Supabase files using the list in `docs/_REMOVED_AUTH.md`.
 5. Runs `pnpm install`, `pnpm -F desktop typecheck`, and `cargo check`.
 
-**Do NOT push to the existing `origin` remote.** It points at the upstream Anarlog repo. A new origin will be added later. The script never pushes.
+**Do NOT push to the existing `origin` remote.** It points at the upstream Meetspace repo. A new origin will be added later. The script never pushes.
 
 When upstream changes anything in `apps/desktop/src/auth/` or `apps/desktop/src/settings/ai/{stt,llm}/`, expect manual conflict resolution — those are our biggest hotspots.
 

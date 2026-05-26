@@ -1,5 +1,5 @@
 {
-  "name": "@hypr/plugin-relay",
+  "name": "@meetspace/plugin-relay",
   "private": true,
   "type": "module",
   "exports": {

@@ -6,8 +6,8 @@ use futures_util::{SinkExt, Stream, StreamExt};
 use owhisper_interface::stream::{Metadata, StreamResponse};
 use owhisper_interface::{ControlMessage, ListenParams};
 
-use hypr_model_manager::ModelManager;
-use hypr_ws_utils::ConnectionGuard;
+use meetspace_model_manager::ModelManager;
+use meetspace_ws_utils::ConnectionGuard;
 
 use super::debug;
 use super::message::{AudioExtract, IncomingMessage, process_incoming_message};
@@ -64,7 +64,7 @@ impl SessionExit {
 
 type TaggedEvent = (
     usize,
-    Result<hypr_cactus::TranscribeEvent, hypr_cactus::Error>,
+    Result<meetspace_cactus::TranscribeEvent, meetspace_cactus::Error>,
 );
 
 struct Session {
@@ -76,11 +76,11 @@ struct Session {
 pub(super) async fn handle_websocket(
     socket: WebSocket,
     params: ListenParams,
-    model: Arc<hypr_cactus::Model>,
+    model: Arc<meetspace_cactus::Model>,
     metadata: Metadata,
     cactus_config: crate::CactusConfig,
     guard: ConnectionGuard,
-    manager: ModelManager<hypr_cactus::Model>,
+    manager: ModelManager<meetspace_cactus::Model>,
 ) {
     let (ws_sender, mut ws_receiver) = socket.split();
 
@@ -100,7 +100,7 @@ pub(super) async fn handle_websocket(
 
     for ch_idx in 0..total_channels {
         let cloud_config = cactus_config.cloud.clone();
-        let (audio_tx, session) = hypr_cactus::transcribe_stream(
+        let (audio_tx, session) = meetspace_cactus::transcribe_stream(
             model.clone(),
             options.clone(),
             cloud_config,
@@ -193,7 +193,7 @@ impl Session {
                 .await;
                 LoopAction::Break(SessionExit::Error)
             }
-            Ok(hypr_cactus::TranscribeEvent {
+            Ok(meetspace_cactus::TranscribeEvent {
                 result,
                 chunk_duration_secs,
             }) => {
@@ -206,7 +206,7 @@ impl Session {
     async fn process_result(
         &mut self,
         ch_idx: usize,
-        result: hypr_cactus::StreamResult,
+        result: meetspace_cactus::StreamResult,
         chunk_duration_secs: f64,
     ) -> LoopAction {
         let total_channels = self.channel_states.len();
@@ -260,9 +260,9 @@ impl Session {
             );
 
             tracing::info!(
-                hyprnote.transcript.char_count = cloud_text.chars().count() as u64,
-                hyprnote.stt.job.id = job_id,
-                hyprnote.audio.channel_index = ch_idx,
+                meetspace.transcript.char_count = cloud_text.chars().count() as u64,
+                meetspace.stt.job.id = job_id,
+                meetspace.audio.channel_index = ch_idx,
                 "cactus_cloud_correction"
             );
 
@@ -307,8 +307,8 @@ impl Session {
             }
 
             tracing::info!(
-                hyprnote.transcript.char_count = confirmed_text.chars().count() as u64,
-                hyprnote.audio.channel_index = ch_idx,
+                meetspace.transcript.char_count = confirmed_text.chars().count() as u64,
+                meetspace.audio.channel_index = ch_idx,
                 "cactus_confirmed_text"
             );
 
@@ -449,7 +449,7 @@ impl Session {
                         return LoopAction::Break(SessionExit::Error);
                     }
                 } else {
-                    let mixed = hypr_audio_utils::mix_audio_f32(&ch0, &ch1);
+                    let mixed = meetspace_audio_utils::mix_audio_f32(&ch0, &ch1);
                     if !mixed.is_empty() && audio_txs[0].send(mixed).await.is_err() {
                         send_ws_best_effort(
                             &mut self.ws_sender,
@@ -557,7 +557,7 @@ impl Session {
 }
 
 fn segment_timing_from_result(
-    result: &hypr_cactus::StreamResult,
+    result: &meetspace_cactus::StreamResult,
     audio_offset: f64,
     segment_start: f64,
 ) -> (f64, f64) {
@@ -572,7 +572,7 @@ fn segment_timing_from_result(
 }
 
 fn stream_result_metrics(
-    result: &hypr_cactus::StreamResult,
+    result: &meetspace_cactus::StreamResult,
 ) -> std::collections::HashMap<String, serde_json::Value> {
     [
         ("decode_tps", serde_json::json!(result.decode_tps)),
@@ -597,7 +597,7 @@ fn stream_result_metrics(
 
 fn build_extra_keys(
     metrics: &std::collections::HashMap<String, serde_json::Value>,
-    result: &hypr_cactus::StreamResult,
+    result: &meetspace_cactus::StreamResult,
 ) -> Option<std::collections::HashMap<String, serde_json::Value>> {
     let mut keys = metrics.clone();
     if result.cloud_handoff && result.cloud_job_id != 0 {

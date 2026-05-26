@@ -1,6 +1,6 @@
 import type { Queries } from "tinybase/with-schemas";
 
-import type { CalendarProviderType } from "@hypr/plugin-calendar";
+import type { CalendarProviderType } from "@meetspace/plugin-calendar";
 
 import { createCtx, getProviderConnections, syncCalendars } from "./ctx";
 import {

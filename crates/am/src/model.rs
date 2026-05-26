@@ -1,4 +1,4 @@
-pub use hypr_language::PARAKEET_TDT_V3_LANGUAGE_CODES as PARAKEET_V3_LANGS;
+pub use meetspace_language::PARAKEET_TDT_V3_LANGUAGE_CODES as PARAKEET_V3_LANGS;
 
 #[derive(
     Debug,
@@ -56,13 +56,13 @@ impl AmModel {
         }
     }
 
-    pub fn supported_languages(&self) -> Vec<hypr_language::Language> {
-        use hypr_language::ISO639;
+    pub fn supported_languages(&self) -> Vec<meetspace_language::Language> {
+        use meetspace_language::ISO639;
 
         match self {
             AmModel::ParakeetV2 => vec![ISO639::En.into()],
-            AmModel::ParakeetV3 => hypr_language::parakeet_tdt_v3_languages(),
-            AmModel::WhisperLargeV3 => hypr_language::whisper_multilingual(),
+            AmModel::ParakeetV3 => meetspace_language::parakeet_tdt_v3_languages(),
+            AmModel::WhisperLargeV3 => meetspace_language::whisper_multilingual(),
         }
     }
 
@@ -97,13 +97,13 @@ impl AmModel {
     pub fn tar_url(&self) -> &str {
         match self {
             AmModel::ParakeetV2 => {
-                "https://hyprnote.s3.us-east-1.amazonaws.com/v0/nvidia_parakeet-v2_476MB.tar"
+                "https://meetspace.s3.us-east-1.amazonaws.com/v0/nvidia_parakeet-v2_476MB.tar"
             }
             AmModel::ParakeetV3 => {
-                "https://hyprnote.s3.us-east-1.amazonaws.com/v0/nvidia_parakeet-v3_494MB.tar"
+                "https://meetspace.s3.us-east-1.amazonaws.com/v0/nvidia_parakeet-v3_494MB.tar"
             }
             AmModel::WhisperLargeV3 => {
-                "https://hyprnote.s3.us-east-1.amazonaws.com/v0/openai_whisper-large-v3-v20240930_626MB.tar"
+                "https://meetspace.s3.us-east-1.amazonaws.com/v0/openai_whisper-large-v3-v20240930_626MB.tar"
             }
         }
     }
@@ -130,12 +130,12 @@ impl AmModel {
         Ok(())
     }
 
-    pub async fn download<F: Fn(hypr_download_interface::DownloadProgress) + Send + Sync>(
+    pub async fn download<F: Fn(meetspace_download_interface::DownloadProgress) + Send + Sync>(
         &self,
         output_path: impl AsRef<std::path::Path>,
         progress_callback: F,
     ) -> Result<(), crate::Error> {
-        hypr_file::download_file_parallel(self.tar_url(), output_path, progress_callback).await?;
+        meetspace_file::download_file_parallel(self.tar_url(), output_path, progress_callback).await?;
         Ok(())
     }
 }

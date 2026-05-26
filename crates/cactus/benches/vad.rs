@@ -12,7 +12,7 @@ fn vad_model() -> Model {
 fn bench_vad_pcm(c: &mut Criterion) {
     let model = vad_model();
     let options = VadOptions::default();
-    let pcm = hypr_data::english_1::AUDIO;
+    let pcm = meetspace_data::english_1::AUDIO;
 
     c.bench_function("vad_pcm english_1", |b| {
         b.iter(|| model.vad_pcm(black_box(pcm), black_box(&options)).unwrap())
@@ -22,7 +22,7 @@ fn bench_vad_pcm(c: &mut Criterion) {
 fn bench_vad_file(c: &mut Criterion) {
     let model = vad_model();
     let options = VadOptions::default();
-    let path = hypr_data::english_1::AUDIO_PATH;
+    let path = meetspace_data::english_1::AUDIO_PATH;
 
     c.bench_function("vad_file english_1", |b| {
         b.iter(|| {

@@ -7,8 +7,8 @@ import {
 } from "lucide-react";
 import { useEffect, useRef } from "react";
 
-import { type PermissionStatus } from "@hypr/plugin-permissions";
-import { cn } from "@hypr/utils";
+import { type PermissionStatus } from "@meetspace/plugin-permissions";
+import { cn } from "@meetspace/utils";
 
 import { usePermission } from "~/shared/hooks/usePermissions";
 
@@ -133,10 +133,10 @@ export function PermissionsSection({
   return (
     <div className="@container flex items-stretch gap-3">
       <PermissionBlock
-        enabledLabel="Anarlog can hear your voice"
+        enabledLabel="Meetspace can hear your voice"
         enableLabel="Allow microphone access"
         enabledBody="Microphone access turned on"
-        enableBody="Help Anarlog listen to you"
+        enableBody="Help Meetspace listen to you"
         Icon={MicIcon}
         permissionName="Microphone"
         status={mic.status}
@@ -145,10 +145,10 @@ export function PermissionsSection({
       />
 
       <PermissionBlock
-        enabledLabel="Anarlog can hear others"
+        enabledLabel="Meetspace can hear others"
         enableLabel="Allow system audio access"
         enabledBody="System audio enabled"
-        enableBody="Help Anarlog listen to others"
+        enableBody="Help Meetspace listen to others"
         Icon={Volume2Icon}
         permissionName="System audio"
         status={systemAudio.status}

@@ -6,17 +6,17 @@ import { useEffect } from "react";
 import {
   commands as localSttCommands,
   type LocalModel,
-} from "@hypr/plugin-local-stt";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { commands as listenerCommands } from "@hypr/plugin-transcription";
+} from "@meetspace/plugin-local-stt";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { commands as listenerCommands } from "@meetspace/plugin-transcription";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@hypr/ui/components/ui/select";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/select";
+import { cn } from "@meetspace/utils";
 
 import { useSttSettings } from "./context";
 import { HealthStatusIndicator, useConnectionHealth } from "./health";
@@ -97,7 +97,7 @@ export function SelectProviderAndModel() {
         <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3">
           <span className="text-sm text-red-600">
             <strong className="font-medium">Transcription model</strong> is
-            needed to make Anarlog listen to your conversations.
+            needed to make Meetspace listen to your conversations.
           </span>
         </div>
       )}

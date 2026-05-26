@@ -1,16 +1,14 @@
-import { SquareIcon } from "lucide-react";
 import { memo, useCallback, useMemo } from "react";
 
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { DancingSticks } from "@hypr/ui/components/ui/dancing-sticks";
-import { Spinner } from "@hypr/ui/components/ui/spinner";
+import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { Spinner } from "@meetspace/ui/components/ui/spinner";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
-import { cn, format, getYear, safeParseDate, TZDate } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/tooltip";
+import { cn, format, getYear, safeParseDate, TZDate } from "@meetspace/utils";
 
 import {
   type EventTimelineItem,
@@ -84,8 +82,6 @@ function ItemBase({
   title,
   displayTime,
   calendarId,
-  isLive,
-  amplitude,
   showSpinner,
   selected,
   ignored,
@@ -94,14 +90,11 @@ function ItemBase({
   onClick,
   onCmdClick,
   onShiftClick,
-  onStop,
   contextMenu,
 }: {
   title: string;
   displayTime: string;
   calendarId: string | null;
-  isLive?: boolean;
-  amplitude?: number;
   showSpinner?: boolean;
   selected: boolean;
   ignored?: boolean;
@@ -110,100 +103,50 @@ function ItemBase({
   onClick: () => void;
   onCmdClick: () => void;
   onShiftClick: () => void;
-  onStop?: () => void;
   contextMenu: MenuItemDef[];
 }) {
   const hasSelection = useTimelineSelection((s) => s.selectedIds.length > 0);
-  const showLiveStop = isLive && onStop;
 
   return (
-    <div className="group/sidebar-live-item relative">
-      <InteractiveButton
-        onClick={ignored ? undefined : onClick}
-        onCmdClick={ignored ? undefined : onCmdClick}
-        onShiftClick={ignored ? undefined : onShiftClick}
-        contextMenu={hasSelection ? undefined : contextMenu}
-        className={cn([
-          "w-full rounded-lg px-3 py-2 text-left",
-          showLiveStop && "pr-10",
-          ignored ? "cursor-default" : "cursor-pointer",
-          multiSelected && "bg-neutral-200",
-          !multiSelected && selected && "bg-neutral-200",
-          !multiSelected && !selected && "hover:bg-neutral-200/50",
-          isLive && [
-            "bg-red-500 text-white hover:bg-red-600",
-            "focus-visible:ring-2 focus-visible:ring-red-500/40 focus-visible:outline-hidden",
-          ],
-          ignored && "opacity-40",
-          !ignored && muted && !isLive && "opacity-65",
-        ])}
-      >
-        <div className="flex items-center gap-2">
-          {showSpinner && (
-            <div className="shrink-0">
-              <Spinner size={14} />
+    <InteractiveButton
+      onClick={ignored ? undefined : onClick}
+      onCmdClick={ignored ? undefined : onCmdClick}
+      onShiftClick={ignored ? undefined : onShiftClick}
+      contextMenu={hasSelection ? undefined : contextMenu}
+      className={cn([
+        "w-full rounded-lg px-3 py-2 text-left",
+        ignored ? "cursor-default" : "cursor-pointer",
+        multiSelected && "bg-accent",
+        !multiSelected && selected && "bg-accent",
+        !multiSelected && !selected && "hover:bg-accent/50",
+        ignored && "opacity-40",
+        !ignored && muted && "opacity-65",
+      ])}
+    >
+      <div className="flex items-center gap-2">
+        {showSpinner && (
+          <div className="shrink-0">
+            <Spinner size={14} />
+          </div>
+        )}
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <div
+            className={cn(
+              "pointer-events-none truncate text-sm font-normal",
+              ignored && "line-through",
+            )}
+          >
+            {title || "Untitled"}
+          </div>
+          {displayTime && (
+            <div className="text-muted-foreground font-mono text-xs">
+              {displayTime}
             </div>
           )}
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <div
-              className={cn(
-                "pointer-events-none truncate text-sm font-normal",
-                ignored && "line-through",
-              )}
-            >
-              {title || "Untitled"}
-            </div>
-            {displayTime && (
-              <div
-                className={cn([
-                  "font-mono text-xs",
-                  isLive ? "text-white/65" : "text-neutral-500",
-                ])}
-              >
-                {displayTime}
-              </div>
-            )}
-          </div>
-          {calendarId && <CalendarIndicator calendarId={calendarId} />}
         </div>
-      </InteractiveButton>
-      {showLiveStop ? (
-        <button
-          type="button"
-          aria-label="Stop listening"
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            onStop();
-          }}
-          className={cn([
-            "absolute top-1/2 right-3 flex size-5 -translate-y-1/2 items-center justify-center rounded-sm",
-            "text-white/80 transition-colors hover:bg-white/15 hover:text-white",
-            "focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-hidden",
-          ])}
-        >
-          <span
-            aria-hidden
-            className="flex items-center justify-center group-hover/sidebar-live-item:hidden"
-          >
-            <DancingSticks
-              amplitude={amplitude ?? 0.25}
-              color="currentColor"
-              height={14}
-              width={13}
-              stickWidth={2}
-              gap={2}
-            />
-          </span>
-          <span
-            aria-hidden
-            className="hidden items-center justify-center group-hover/sidebar-live-item:flex"
-          >
-            <SquareIcon size={10} className="fill-current" />
-          </span>
-        </button>
-      ) : null}
-    </div>
+        {calendarId && <CalendarIndicator calendarId={calendarId} />}
+      </div>
+    </InteractiveButton>
   );
 }
 
@@ -230,6 +173,7 @@ const EventItem = memo(
     const eventId = item.id;
     const trackingIdEvent = item.data.tracking_id_event;
     const title = item.data.title || "Untitled";
+    const calendarId = item.data.calendar_id ?? null;
     const recurrenceSeriesId = item.data.recurrence_series_id;
 
     const {
@@ -353,7 +297,7 @@ const EventItem = memo(
       <ItemBase
         title={title}
         displayTime={displayTime}
-        calendarId={null}
+        calendarId={calendarId}
         selected={selected}
         ignored={ignored}
         muted={muted}
@@ -400,17 +344,12 @@ const SessionItem = memo(
     ) as string | undefined;
     const title = useSessionTitle(sessionId, storeTitle);
 
-    const { sessionMode, stop, amplitude } = useListener((state) => ({
-      sessionMode: state.getSessionMode(sessionId),
-      stop: state.stop,
-      amplitude: state.live.amplitude,
-    }));
+    const sessionMode = useListener((state) => state.getSessionMode(sessionId));
     const isEnhancing = useIsSessionEnhancing(sessionId);
-    const isLive = sessionMode === "active";
     const isFinalizing = sessionMode === "finalizing";
     const isBatching = sessionMode === "running_batch";
     const showSpinner =
-      !selected && !isLive && (isFinalizing || isEnhancing || isBatching);
+      !selected && (isFinalizing || isEnhancing || isBatching);
 
     const sessionEvent = useMemo(
       () => getSessionEvent(item.data),
@@ -519,11 +458,6 @@ const SessionItem = memo(
           title={title}
           displayTime={displayTime}
           calendarId={calendarId}
-          isLive={isLive}
-          amplitude={Math.max(
-            0.25,
-            Math.min(Math.hypot(amplitude.mic, amplitude.speaker), 1),
-          )}
           showSpinner={showSpinner}
           selected={selected}
           muted={muted}
@@ -531,7 +465,6 @@ const SessionItem = memo(
           onClick={handleClick}
           onCmdClick={handleCmdClick}
           onShiftClick={handleShiftClick}
-          onStop={stop}
           contextMenu={contextMenu}
         />
       </SessionPreviewCard>

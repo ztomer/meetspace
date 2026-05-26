@@ -5,15 +5,15 @@ import {
 import { format } from "date-fns";
 import { forwardRef, type ReactNode, useCallback, useMemo } from "react";
 
-import { getSafeNodePos, TaskCheckbox } from "@hypr/editor/node-views";
-import { useLinkedItemOpenBehavior } from "@hypr/editor/note";
+import { getSafeNodePos, TaskCheckbox } from "@meetspace/editor/node-views";
+import { useLinkedItemOpenBehavior } from "@meetspace/editor/note";
 import {
   createTaskStatusAttrs,
   getNextTaskStatus,
   getOptionalTaskStatus,
   normalizeTaskStatus,
-} from "@hypr/editor/tasks";
-import { cn, safeParseDate } from "@hypr/utils";
+} from "@meetspace/editor/tasks";
+import { cn, safeParseDate } from "@meetspace/utils";
 
 import { toTz, useTimezone } from "~/calendar/hooks";
 import { getSessionEvent } from "~/session/utils";

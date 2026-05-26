@@ -1,11 +1,11 @@
 import { forwardRef, useMemo } from "react";
 
-import { parseJsonContent } from "@hypr/editor/markdown";
+import { parseJsonContent } from "@meetspace/editor/markdown";
 import {
   NoteEditor,
   type JSONContent,
   type NoteEditorRef,
-} from "@hypr/editor/note";
+} from "@meetspace/editor/note";
 
 import { AppLinkView } from "~/editor-bridge/app-link-view";
 import { useMentionConfig } from "~/editor-bridge/mention-config";

@@ -1,8 +1,7 @@
-import type { ServerStatus } from "@hypr/plugin-local-stt";
+import type { ServerStatus } from "@meetspace/plugin-local-stt";
 
 import type { DownloadProgress, ToastCondition, ToastType } from "./types";
 
-import type { DevtoolsToastPreview } from "~/store/zustand/devtools-toast-preview";
 type ToastRegistryEntry = {
   toast: ToastType;
   condition: ToastCondition;
@@ -23,13 +22,6 @@ type ToastRegistryParams = {
   onOpenSTTSettings: () => void;
 };
 
-type DevtoolsToastPreviewParams = {
-  preview: DevtoolsToastPreview;
-  onSignIn: () => void | Promise<void>;
-  onOpenLLMSettings: () => void;
-  onOpenSTTSettings: () => void;
-};
-
 export function createToastRegistry({
   hasLLMConfigured,
   hasSttConfigured,
@@ -45,7 +37,7 @@ export function createToastRegistry({
   onOpenSTTSettings,
 }: ToastRegistryParams): ToastRegistryEntry[] {
   const downloadTitle =
-    activeDownloads.length === 1 && downloadingModel
+    activeDownloads.length === 1
       ? `Downloading ${downloadingModel}`
       : `Downloading ${activeDownloads.length} models`;
 
@@ -54,7 +46,8 @@ export function createToastRegistry({
     {
       toast: {
         id: "downloading-model",
-        description: downloadTitle,
+        title: downloadTitle,
+        description: "This may take a few minutes",
         dismissible: false,
         progress:
           activeDownloads.length === 1 ? (downloadProgress ?? 0) : undefined,
@@ -65,7 +58,12 @@ export function createToastRegistry({
     {
       toast: {
         id: "local-stt-loading",
-        description: "Starting transcription...",
+        description: (
+          <>
+            <strong className="font-mono">Local transcription</strong> is
+            starting up...
+          </>
+        ),
         dismissible: false,
       },
       condition: () =>
@@ -74,9 +72,14 @@ export function createToastRegistry({
     {
       toast: {
         id: "local-stt-unreachable",
-        description: "Transcription unavailable",
+        description: (
+          <>
+            <strong className="text-destructive">Could not connect</strong> to
+            the local speech-to-text model. Please check your settings.
+          </>
+        ),
         primaryAction: {
-          label: "Settings",
+          label: "Check settings",
           onClick: onOpenSTTSettings,
         },
         dismissible: true,
@@ -91,9 +94,14 @@ export function createToastRegistry({
     {
       toast: {
         id: "missing-stt",
-        description: "Transcription model needed",
+        description: (
+          <>
+            <strong className="font-mono">Transcription model</strong> is needed
+            to make Meetspace listen to your conversations.
+          </>
+        ),
         primaryAction: {
-          label: "Add",
+          label: "Configure transcription",
           onClick: onOpenSTTSettings,
         },
         dismissible: false,
@@ -103,15 +111,21 @@ export function createToastRegistry({
     {
       toast: {
         id: "missing-llm",
-        description: "Language model needed",
+        description: (
+          <>
+            <strong className="font-mono">Language model</strong> is needed to
+            make Meetspace summarize and chat about your conversations.
+          </>
+        ),
         primaryAction: {
-          label: "Add",
+          label: "Add intelligence",
           onClick: onOpenLLMSettings,
         },
         dismissible: true,
       },
       condition: () =>
         hasSttConfigured && !hasLLMConfigured && !isAiIntelligenceTabActive,
+    },
   ];
 }
 
@@ -125,62 +139,4 @@ export function getToastToShow(
     }
   }
   return null;
-}
-
-export function createDevtoolsToastPreview({
-  preview,
-  onSignIn,
-  onOpenLLMSettings,
-  onOpenSTTSettings,
-}: DevtoolsToastPreviewParams): ToastType {
-  switch (preview) {
-    case "language-model":
-      return {
-        id: "devtools-missing-llm",
-        description: "Language model needed",
-        primaryAction: {
-          label: "Add",
-          onClick: onOpenLLMSettings,
-        },
-        dismissible: true,
-      };
-    case "transcription-model":
-      return {
-        id: "devtools-missing-stt",
-        description: "Transcription model needed",
-        primaryAction: {
-          label: "Add",
-          onClick: onOpenSTTSettings,
-        },
-        dismissible: false,
-      };
-    case "transcription-error":
-      return {
-        id: "devtools-local-stt-unreachable",
-        description: "Transcription unavailable",
-        primaryAction: {
-          label: "Settings",
-          onClick: onOpenSTTSettings,
-        },
-        dismissible: true,
-        variant: "error",
-      };
-    case "download":
-      return {
-        id: "devtools-downloading-model",
-        description: "Downloading model",
-        dismissible: false,
-        progress: 42,
-      };
-    case "pro":
-      return {
-        id: "devtools-upgrade-to-pro",
-        description: "Pro features available",
-        primaryAction: {
-          label: "Upgrade",
-          onClick: onSignIn,
-        },
-        dismissible: true,
-      };
-  }
 }

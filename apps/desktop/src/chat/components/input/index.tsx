@@ -1,10 +1,10 @@
 import { SquareIcon } from "lucide-react";
 import { useRef } from "react";
 
-import { ChatEditor, type ChatEditorHandle } from "@hypr/editor/chat";
-import type { PlaceholderFunction } from "@hypr/editor/plugins";
-import { Button } from "@hypr/ui/components/ui/button";
-import { cn } from "@hypr/utils";
+import { ChatEditor, type ChatEditorHandle } from "@meetspace/editor/chat";
+import type { PlaceholderFunction } from "@meetspace/editor/plugins";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { cn } from "@meetspace/utils";
 
 import { useAutoFocusEditor, useDraftState, useSubmit } from "./hooks";
 

@@ -1,4 +1,4 @@
-import { Input } from "@hypr/ui/components/ui/input";
+import { Input } from "@meetspace/ui/components/ui/input";
 
 import { useConfigValues } from "~/shared/config";
 import * as settings from "~/store/tinybase/store/settings";
