@@ -2,7 +2,7 @@ import { Facehash } from "facehash";
 import { Pin } from "lucide-react";
 import React, { useCallback } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { getContactBgClass } from "~/contacts/shared";
 import { useNativeContextMenu } from "~/shared/hooks/useNativeContextMenu";

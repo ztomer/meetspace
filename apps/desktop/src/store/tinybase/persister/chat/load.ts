@@ -1,8 +1,8 @@
 import { sep } from "@tauri-apps/api/path";
 
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
-import { commands as fs2Commands } from "@hypr/plugin-fs2";
-import type { ChatMessageStatus } from "@hypr/store";
+import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
+import { commands as fs2Commands } from "@meetspace/plugin-fs2";
+import type { ChatMessageStatus } from "@meetspace/store";
 
 import type { ChatJson, LoadedChatData } from "./types";
 

@@ -1,7 +1,7 @@
 use std::ffi::CString;
 use std::path::{Path, PathBuf};
 
-use hypr_llm_types::{MessageContent, MessagePart};
+use meetspace_llm_types::{MessageContent, MessagePart};
 use url::Url;
 
 use crate::error::{Error, Result};

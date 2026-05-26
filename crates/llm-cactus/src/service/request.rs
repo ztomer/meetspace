@@ -1,4 +1,4 @@
-use hypr_llm_types::{ImageDetail, MessageContent, MessagePart};
+use meetspace_llm_types::{ImageDetail, MessageContent, MessagePart};
 
 const TEXT_TEMPERATURE: f32 = 0.1;
 
@@ -86,11 +86,11 @@ struct ChatImageUrl {
 
 pub(super) fn convert_messages(
     messages: &[ChatMessage],
-) -> Result<Vec<hypr_llm_types::Message>, String> {
+) -> Result<Vec<meetspace_llm_types::Message>, String> {
     messages.iter().map(convert_message).collect()
 }
 
-fn convert_message(message: &ChatMessage) -> Result<hypr_llm_types::Message, String> {
+fn convert_message(message: &ChatMessage) -> Result<meetspace_llm_types::Message, String> {
     let content = match &message.content {
         Some(ChatMessageContent::Text(text)) => MessageContent::Text(text.clone()),
         Some(ChatMessageContent::Parts(parts)) => {
@@ -118,7 +118,7 @@ fn convert_message(message: &ChatMessage) -> Result<hypr_llm_types::Message, Str
         None => MessageContent::default(),
     };
 
-    Ok(hypr_llm_types::Message {
+    Ok(meetspace_llm_types::Message {
         role: message.role.clone(),
         content,
         name: None,
@@ -127,8 +127,8 @@ fn convert_message(message: &ChatMessage) -> Result<hypr_llm_types::Message, Str
     })
 }
 
-pub(super) fn build_options(request: &ChatCompletionRequest) -> hypr_cactus::CompleteOptions {
-    hypr_cactus::CompleteOptions {
+pub(super) fn build_options(request: &ChatCompletionRequest) -> meetspace_cactus::CompleteOptions {
+    meetspace_cactus::CompleteOptions {
         temperature: Some(TEXT_TEMPERATURE),
         max_tokens: request.max_completion_tokens.or(request.max_tokens),
         ..Default::default()
@@ -137,8 +137,8 @@ pub(super) fn build_options(request: &ChatCompletionRequest) -> hypr_cactus::Com
 
 pub(super) fn apply_response_format(
     response_format: Option<&ResponseFormat>,
-    messages: &mut Vec<hypr_llm_types::Message>,
-    options: &mut hypr_cactus::CompleteOptions,
+    messages: &mut Vec<meetspace_llm_types::Message>,
+    options: &mut meetspace_cactus::CompleteOptions,
 ) {
     let format = match response_format {
         Some(format) => format,
@@ -161,11 +161,11 @@ pub(super) fn apply_response_format(
                 text.push_str(&instruction);
             }
             _ => {
-                messages.insert(0, hypr_llm_types::Message::system(instruction));
+                messages.insert(0, meetspace_llm_types::Message::system(instruction));
             }
         }
     } else {
-        messages.insert(0, hypr_llm_types::Message::system(instruction));
+        messages.insert(0, meetspace_llm_types::Message::system(instruction));
     }
 }
 
@@ -245,7 +245,7 @@ mod tests {
     }
 
     async fn assert_bad_request(content: serde_json::Value, stream: bool, needle: &str) {
-        let manager = ModelManager::<hypr_cactus::Model>::builder().build();
+        let manager = ModelManager::<meetspace_cactus::Model>::builder().build();
         let mut service = CompleteService::new(manager);
         let response = service.call(make_request(content, stream)).await.unwrap();
 
@@ -262,7 +262,7 @@ mod tests {
         }
     }
 
-    fn snapshot_messages(messages: &[hypr_llm_types::Message]) -> String {
+    fn snapshot_messages(messages: &[meetspace_llm_types::Message]) -> String {
         serde_json::to_string_pretty(messages).unwrap()
     }
 
@@ -275,7 +275,7 @@ mod tests {
 
         let messages = convert_messages(&request).unwrap();
 
-        assert_eq!(messages, vec![hypr_llm_types::Message::user("hello")]);
+        assert_eq!(messages, vec![meetspace_llm_types::Message::user("hello")]);
     }
 
     #[test]
@@ -299,7 +299,7 @@ mod tests {
 
         assert_eq!(
             messages,
-            vec![hypr_llm_types::Message::user(vec![
+            vec![meetspace_llm_types::Message::user(vec![
                 MessagePart::text("describe "),
                 MessagePart::image_url_with_detail("file:///tmp/test.png", ImageDetail::High),
             ])]
@@ -345,8 +345,8 @@ mod tests {
 
     #[test]
     fn apply_response_format_none_is_noop() {
-        let mut messages = vec![hypr_llm_types::Message::system("You are helpful.")];
-        let mut options = hypr_cactus::CompleteOptions::default();
+        let mut messages = vec![meetspace_llm_types::Message::system("You are helpful.")];
+        let mut options = meetspace_cactus::CompleteOptions::default();
 
         apply_response_format(None, &mut messages, &mut options);
 
@@ -356,8 +356,8 @@ mod tests {
 
     #[test]
     fn apply_response_format_text_is_noop() {
-        let mut messages = vec![hypr_llm_types::Message::system("You are helpful.")];
-        let mut options = hypr_cactus::CompleteOptions::default();
+        let mut messages = vec![meetspace_llm_types::Message::system("You are helpful.")];
+        let mut options = meetspace_cactus::CompleteOptions::default();
 
         apply_response_format(Some(&ResponseFormat::Text), &mut messages, &mut options);
 
@@ -368,10 +368,10 @@ mod tests {
     #[test]
     fn apply_response_format_json_object_injects_into_system() {
         let mut messages = vec![
-            hypr_llm_types::Message::system("You are helpful."),
-            hypr_llm_types::Message::user("hello"),
+            meetspace_llm_types::Message::system("You are helpful."),
+            meetspace_llm_types::Message::user("hello"),
         ];
-        let mut options = hypr_cactus::CompleteOptions::default();
+        let mut options = meetspace_cactus::CompleteOptions::default();
 
         apply_response_format(
             Some(&ResponseFormat::JsonObject),
@@ -394,10 +394,10 @@ mod tests {
         let schema =
             serde_json::json!({"type": "object", "properties": {"name": {"type": "string"}}});
         let mut messages = vec![
-            hypr_llm_types::Message::system("You are helpful."),
-            hypr_llm_types::Message::user("hello"),
+            meetspace_llm_types::Message::system("You are helpful."),
+            meetspace_llm_types::Message::user("hello"),
         ];
-        let mut options = hypr_cactus::CompleteOptions::default();
+        let mut options = meetspace_cactus::CompleteOptions::default();
         let fmt = ResponseFormat::JsonSchema {
             json_schema: JsonSchemaConfig {
                 schema: Some(schema.clone()),
@@ -426,8 +426,8 @@ mod tests {
 
     #[test]
     fn apply_response_format_inserts_system_when_missing() {
-        let mut messages = vec![hypr_llm_types::Message::user("hello")];
-        let mut options = hypr_cactus::CompleteOptions::default();
+        let mut messages = vec![meetspace_llm_types::Message::user("hello")];
+        let mut options = meetspace_cactus::CompleteOptions::default();
 
         apply_response_format(
             Some(&ResponseFormat::JsonObject),
@@ -441,8 +441,8 @@ mod tests {
 
     #[test]
     fn apply_response_format_json_schema_inserts_new_system_message_snapshot() {
-        let mut messages = vec![hypr_llm_types::Message::user("hello")];
-        let mut options = hypr_cactus::CompleteOptions::default();
+        let mut messages = vec![meetspace_llm_types::Message::user("hello")];
+        let mut options = meetspace_cactus::CompleteOptions::default();
         let schema = serde_json::json!({
             "type": "object",
             "required": ["name"],
@@ -563,6 +563,6 @@ mod tests {
         }])
         .unwrap();
 
-        hypr_cactus::validate_messages(&messages).unwrap();
+        meetspace_cactus::validate_messages(&messages).unwrap();
     }
 }

@@ -5,7 +5,7 @@ use std::sync::Mutex;
 use tauri::Wry;
 use tokio::sync::Mutex as TokioMutex;
 
-use hypr_model_downloader::ModelDownloadManager;
+use meetspace_model_downloader::ModelDownloadManager;
 
 mod commands;
 mod error;
@@ -15,7 +15,7 @@ mod resource;
 
 pub use error::*;
 pub use ext::*;
-pub use hypr_local_llm_core::{
+pub use meetspace_local_llm_core::{
     CustomModelInfo, ModelIdentifier, ModelInfo, SUPPORTED_MODELS, SupportedModel,
 };
 
@@ -26,7 +26,7 @@ pub type SharedState = std::sync::Arc<TokioMutex<State>>;
 pub struct State {
     pub model_downloader: ModelDownloadManager<SupportedModel>,
     pub download_channels: Arc<Mutex<HashMap<String, tauri::ipc::Channel<i8>>>>,
-    pub server: Option<hypr_local_llm_core::LlmServer>,
+    pub server: Option<meetspace_local_llm_core::LlmServer>,
 }
 
 fn make_specta_builder<R: tauri::Runtime>() -> tauri_specta::Builder<R> {
@@ -65,7 +65,7 @@ pub(crate) fn spawn_llm_server<R: tauri::Runtime>(
             }
         };
 
-        match hypr_local_llm_core::LlmServer::start_with_model_path(model_name, &model_path).await {
+        match meetspace_local_llm_core::LlmServer::start_with_model_path(model_name, &model_path).await {
             Ok(server) => {
                 let mut guard = state.lock().await;
                 guard.server = Some(server);

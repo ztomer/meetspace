@@ -9,9 +9,9 @@ use std::sync::Arc;
 use owhisper_client::{CactusAdapter, ListenClient};
 use transcribe_cactus::CactusConfig;
 
-use hypr_audio::AudioProvider;
-use hypr_audio_actual::ActualAudio;
-use hypr_audio_mock::MockAudio;
+use meetspace_audio::AudioProvider;
+use meetspace_audio_actual::ActualAudio;
+use meetspace_audio_mock::MockAudio;
 
 use display::{ChannelKind, DisplayMode};
 
@@ -114,7 +114,7 @@ impl Args {
 }
 
 /// Example:
-/// cargo run -p transcribe-cactus --example live -- --model ~/Library/Application\ Support/hyprnote/models/cactus/parakeet-tdt-0.6b-v3-int4 --audio mock --stream-chunk-sec 0.2 --min-chunk-sec 2.0
+/// cargo run -p transcribe-cactus --example live -- --model ~/Library/Application\ Support/meetspace/models/cactus/parakeet-tdt-0.6b-v3-int4 --audio mock --stream-chunk-sec 0.2 --min-chunk-sec 2.0
 #[tokio::main]
 async fn main() {
     let args = Args::parse();
@@ -138,7 +138,7 @@ async fn main() {
     let api_base = format!("http://{}/v1", server.addr);
     let params = owhisper_interface::ListenParams {
         sample_rate: SAMPLE_RATE,
-        languages: vec![hypr_language::ISO639::En.into()],
+        languages: vec![meetspace_language::ISO639::En.into()],
         ..Default::default()
     };
 

@@ -30,8 +30,8 @@ import {
 } from "react";
 import { useDebounceCallback } from "usehooks-ts";
 
-import "@hypr/tiptap/styles.css";
-import { cn } from "@hypr/utils";
+import "@meetspace/tiptap/styles.css";
+import { cn } from "@meetspace/utils";
 
 import { EditorErrorBoundary } from "../editor-error-boundary";
 import {

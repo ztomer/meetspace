@@ -1,7 +1,7 @@
 import { LaptopIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
-import type { LocalModel } from "@hypr/plugin-local-stt";
+import type { LocalModel } from "@meetspace/plugin-local-stt";
 
 import { type ProviderRequirement } from "~/settings/ai/shared/eligibility";
 import { sortProviders } from "~/settings/ai/shared/sort-providers";
@@ -46,13 +46,13 @@ export function formatModelSize(sizeBytes?: number | null) {
   })} ${unit}`;
 }
 
-// The picker is local-only. We keep a single internal provider ("hyprnote")
+// The picker is local-only. We keep a single internal provider ("meetspace")
 // because tinybase settings and several callers persist a provider id, but
 // the UI surfaces only the model list — no provider selector.
 const _PROVIDERS = [
   {
     disabled: false,
-    id: "hyprnote",
+    id: "meetspace",
     displayName: "Local",
     badge: null,
     icon: <LaptopIcon className="size-4" />,
@@ -66,4 +66,4 @@ export const PROVIDERS = sortProviders(_PROVIDERS);
 export type ProviderId = (typeof _PROVIDERS)[number]["id"];
 
 /** Internal id of the local provider — used to seed settings on first run. */
-export const LOCAL_STT_PROVIDER_ID: ProviderId = "hyprnote";
+export const LOCAL_STT_PROVIDER_ID: ProviderId = "meetspace";

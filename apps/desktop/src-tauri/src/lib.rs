@@ -14,9 +14,9 @@ use tauri_plugin_permissions::{Permission, PermissionsPluginExt};
 use tauri_plugin_windows::{AppWindow, WindowsPluginExt};
 
 #[cfg(any(feature = "dev", feature = "devtools"))]
-const STAGING_BUNDLE_ID: &str = "com.hyprnote.staging";
+const STAGING_BUNDLE_ID: &str = "com.meetspace.staging";
 
-fn create_audio_provider(_bundle_id: &str) -> std::sync::Arc<dyn hypr_audio_actual::AudioProvider> {
+fn create_audio_provider(_bundle_id: &str) -> std::sync::Arc<dyn meetspace_audio_actual::AudioProvider> {
     #[cfg(any(feature = "dev", feature = "devtools"))]
     {
         let bundle_id = _bundle_id;
@@ -28,10 +28,10 @@ fn create_audio_provider(_bundle_id: &str) -> std::sync::Arc<dyn hypr_audio_actu
         let mock_audio_allowed = cfg!(feature = "dev") || bundle_id == STAGING_BUNDLE_ID;
 
         if mock_audio_allowed && selection > 0 {
-            return std::sync::Arc::new(hypr_audio_mock::MockAudio::new(selection));
+            return std::sync::Arc::new(meetspace_audio_mock::MockAudio::new(selection));
         }
     }
-    std::sync::Arc::new(hypr_audio_actual::ActualAudio)
+    std::sync::Arc::new(meetspace_audio_actual::ActualAudio)
 }
 
 #[tokio::main]
@@ -50,7 +50,7 @@ pub async fn main() {
 
         if let Some(dsn) = dsn {
             let release =
-                option_env!("APP_VERSION").map(|v| format!("hyprnote-desktop@{}", v).into());
+                option_env!("APP_VERSION").map(|v| format!("meetspace-desktop@{}", v).into());
 
             let client = sentry::init((
                 dsn,
@@ -63,11 +63,11 @@ pub async fn main() {
             ));
 
             sentry::configure_scope(|scope| {
-                scope.set_tag("service.namespace", "hyprnote");
+                scope.set_tag("service.namespace", "meetspace");
                 scope.set_tag("service.name", "desktop");
-                scope.set_tag("enduser.pseudo.id", hypr_host::fingerprint());
+                scope.set_tag("enduser.pseudo.id", meetspace_host::fingerprint());
                 scope.set_user(Some(sentry::User {
-                    id: Some(hypr_host::fingerprint()),
+                    id: Some(meetspace_host::fingerprint()),
                     ..Default::default()
                 }));
             });
@@ -82,7 +82,7 @@ pub async fn main() {
         .as_ref()
         .map(|client| tauri_plugin_sentry::minidump::init(client));
 
-    let audio: std::sync::Arc<dyn hypr_audio_actual::AudioProvider> =
+    let audio: std::sync::Arc<dyn meetspace_audio_actual::AudioProvider> =
         create_audio_provider(&context.config().identifier);
 
     let db = open_desktop_db(&context.config().identifier).await;
@@ -285,7 +285,7 @@ pub async fn main() {
     }
 
     #[cfg(target_os = "macos")]
-    hypr_intercept::setup_force_quit_handler();
+    meetspace_intercept::setup_force_quit_handler();
 
     #[allow(unused_variables)]
     app.run(move |app, event| match event {
@@ -299,7 +299,7 @@ pub async fn main() {
                 ctx.mark_exiting();
             }
 
-            if hypr_intercept::should_force_quit() {
+            if meetspace_intercept::should_force_quit() {
                 return;
             }
 
@@ -324,7 +324,7 @@ pub async fn main() {
                 ctx.stop();
             }
 
-            hypr_host::kill_processes_by_matcher(hypr_host::ProcessMatcher::Sidecar);
+            meetspace_host::kill_processes_by_matcher(meetspace_host::ProcessMatcher::Sidecar);
         }
         _ => {}
     });

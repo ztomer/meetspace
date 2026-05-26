@@ -290,7 +290,7 @@ export const generalSchema = z.object({
   timezone: z.string().optional(),
   week_start: z.string().optional(),
   obsidian_vault_path: z.string().optional(),
-  obsidian_subfolder: z.string().default("Anarlog"),
+  obsidian_subfolder: z.string().default("Meetspace"),
   obsidian_auto_export: z.boolean().default(false),
   notion_token: z.string().optional(),
   notion_database_id: z.string().optional(),

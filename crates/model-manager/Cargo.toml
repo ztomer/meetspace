@@ -4,12 +4,12 @@ version = "0.1.0"
 edition = "2024"
 
 [features]
-cactus = ["hypr-cactus"]
-whisper-local = ["hypr-whisper-local"]
+cactus = ["meetspace-cactus"]
+whisper-local = ["meetspace-whisper-local"]
 
 [dependencies]
-hypr-cactus = { workspace = true, optional = true }
-hypr-whisper-local = { workspace = true, optional = true }
+meetspace-cactus = { workspace = true, optional = true }
+meetspace-whisper-local = { workspace = true, optional = true }
 
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["sync", "time", "rt", "macros"] }

@@ -54,7 +54,7 @@ pub(super) fn log(
     audio_offset: f64,
     kind: Kind,
     segment: &crate::service::Segment<'_>,
-    result: &hypr_cactus::StreamResult,
+    result: &meetspace_cactus::StreamResult,
 ) {
     if !enabled() {
         return;

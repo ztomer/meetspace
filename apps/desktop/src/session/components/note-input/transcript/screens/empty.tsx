@@ -1,7 +1,7 @@
 import { AlertCircleIcon, AudioLinesIcon } from "lucide-react";
 
-import { Button } from "@hypr/ui/components/ui/button";
-import { Spinner } from "@hypr/ui/components/ui/spinner";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { Spinner } from "@meetspace/ui/components/ui/spinner";
 
 export function TranscriptEmptyState({
   isBatching,

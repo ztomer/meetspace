@@ -36,7 +36,7 @@ export async function maybeAutoExportToObsidian(
   try {
     await exportSessionToObsidian({
       vaultPath,
-      subfolder: typeof subfolder === "string" ? subfolder : "Anarlog",
+      subfolder: typeof subfolder === "string" ? subfolder : "Meetspace",
       sessionTitle: typeof title === "string" ? title : "Untitled",
       sessionCreatedAt:
         typeof createdAt === "string" ? createdAt : new Date().toISOString(),

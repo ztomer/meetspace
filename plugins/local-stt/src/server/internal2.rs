@@ -8,7 +8,7 @@ use reqwest::StatusCode;
 use tower_http::cors::{self, CorsLayer};
 
 use super::{ServerInfo, ServerStatus};
-use hypr_cactus_model::{CactusServiceHealth, CactusServiceStatus, CactusSttModel};
+use meetspace_cactus_model::{CactusServiceHealth, CactusServiceStatus, CactusSttModel};
 
 pub enum Internal2STTMessage {
     GetHealth(RpcReplyPort<ServerInfo>),
@@ -19,7 +19,7 @@ pub enum Internal2STTMessage {
 pub struct Internal2STTArgs {
     pub model_type: CactusSttModel,
     pub model_cache_dir: PathBuf,
-    pub cactus_config: hypr_transcribe_cactus::CactusConfig,
+    pub cactus_config: meetspace_transcribe_cactus::CactusConfig,
 }
 
 pub struct Internal2STTState {
@@ -58,7 +58,7 @@ impl Actor for Internal2STTActor {
 
         tracing::info!(model_path = %model_path.display(), "starting internal2 STT server");
 
-        let router = hypr_transcribe_cactus::TranscribeService::builder()
+        let router = meetspace_transcribe_cactus::TranscribeService::builder()
             .model_path(model_path)
             .cactus_config(cactus_config)
             .build()
@@ -118,7 +118,7 @@ impl Actor for Internal2STTActor {
                 let health_url = format!(
                     "http://{}{}",
                     state.server_addr,
-                    hypr_transcribe_cactus::HEALTH_PATH,
+                    meetspace_transcribe_cactus::HEALTH_PATH,
                 );
 
                 let status = match reqwest::get(&health_url).await {
@@ -150,7 +150,7 @@ impl Actor for Internal2STTActor {
                     url: Some(format!(
                         "http://{}{}",
                         state.server_addr,
-                        hypr_transcribe_cactus::LISTEN_PATH,
+                        meetspace_transcribe_cactus::LISTEN_PATH,
                     )),
                     status,
                     model: Some(crate::LocalModel::Cactus(state.model.clone())),

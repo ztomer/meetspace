@@ -46,7 +46,7 @@ pub(super) fn build_whisper_prompt(options: &TranscribeOptions) -> String {
 
 #[cfg(test)]
 mod tests {
-    use hypr_language::Language;
+    use meetspace_language::Language;
 
     use super::*;
 
@@ -59,7 +59,7 @@ mod tests {
     #[test]
     fn with_language() {
         let opts = TranscribeOptions {
-            language: Some(Language::from(hypr_language::ISO639::En)),
+            language: Some(Language::from(meetspace_language::ISO639::En)),
             ..Default::default()
         };
         insta::assert_snapshot!(build_whisper_prompt(&opts), @"<|startoftranscript|><|en|><|transcribe|><|notimestamps|>");
@@ -77,7 +77,7 @@ mod tests {
     #[test]
     fn with_language_and_initial_prompt() {
         let opts = TranscribeOptions {
-            language: Some(Language::from(hypr_language::ISO639::Ko)),
+            language: Some(Language::from(meetspace_language::ISO639::Ko)),
             initial_prompt: Some("안녕하세요".into()),
             ..Default::default()
         };

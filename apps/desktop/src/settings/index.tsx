@@ -1,4 +1,7 @@
-import { cn } from "@hypr/utils";
+import { useLingui } from "@lingui/react/macro";
+import { SettingsIcon } from "lucide-react";
+
+import { cn } from "@meetspace/utils";
 
 import {
   SettingsApp,
@@ -9,10 +12,39 @@ import {
 import { SettingsIntegrations } from "./integrations";
 import { SettingsTodo } from "./todo";
 
-import { LLM } from "~/settings/ai/llm";
-import { STT } from "~/settings/ai/stt";
+import { Intelligence } from "~/settings/ai";
 import { StandardTabWrapper } from "~/shared/main";
+import { type TabItem, TabItemBase } from "~/shared/tabs";
 import { type Tab } from "~/store/zustand/tabs";
+
+export const TabItemSettings: TabItem<Extract<Tab, { type: "settings" }>> = ({
+  tab,
+  tabIndex,
+  handleCloseThis,
+  handleSelectThis,
+  handleCloseOthers,
+  handleCloseAll,
+  handlePinThis,
+  handleUnpinThis,
+}) => {
+  const { t } = useLingui();
+
+  return (
+    <TabItemBase
+      icon={<SettingsIcon className="h-4 w-4" />}
+      title={t`Settings`}
+      selected={tab.active}
+      pinned={tab.pinned}
+      tabIndex={tabIndex}
+      handleCloseThis={() => handleCloseThis(tab)}
+      handleSelectThis={() => handleSelectThis(tab)}
+      handleCloseOthers={handleCloseOthers}
+      handleCloseAll={handleCloseAll}
+      handlePinThis={() => handlePinThis(tab)}
+      handleUnpinThis={() => handleUnpinThis(tab)}
+    />
+  );
+};
 
 export function TabContentSettings({
   tab,
@@ -40,9 +72,8 @@ function SettingsView({ tab }: { tab: Extract<Tab, { type: "settings" }> }) {
       case "permissions":
         return <SettingsPermissions />;
       case "transcription":
-        return <STT />;
       case "intelligence":
-        return <LLM />;
+        return <Intelligence />;
       case "integrations":
         return <SettingsIntegrations />;
       case "todo":
@@ -55,7 +86,7 @@ function SettingsView({ tab }: { tab: Extract<Tab, { type: "settings" }> }) {
       <div className="relative w-full flex-1 overflow-hidden">
         <div
           className={cn([
-            "scroll-fade-y scrollbar-hide h-full w-full flex-1 overflow-y-auto p-6",
+            "scroll-fade-y scrollbar-hide h-full w-full flex-1 overflow-y-auto px-6 pt-3 pb-6",
           ])}
         >
           {renderContent()}

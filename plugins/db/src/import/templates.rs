@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use hypr_db_app::UpsertTemplate;
+use meetspace_db_app::UpsertTemplate;
 use sqlx::SqlitePool;
 
 pub async fn import_legacy_templates_from_path(
@@ -13,7 +13,7 @@ pub async fn import_legacy_templates_from_path(
 
     let templates = read_template_file(path)?;
     for template in templates {
-        hypr_db_app::insert_template_if_missing(
+        meetspace_db_app::insert_template_if_missing(
             pool,
             UpsertTemplate {
                 id: &template.id,
@@ -196,11 +196,11 @@ struct ParsedTemplate {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use hypr_db_core::Db;
+    use meetspace_db_core::Db;
 
     async fn test_db() -> Db {
         let db = Db::connect_memory_plain().await.unwrap();
-        hypr_db_migrate::migrate(&db, hypr_db_app::schema())
+        meetspace_db_migrate::migrate(&db, meetspace_db_app::schema())
             .await
             .unwrap();
         db
@@ -285,7 +285,7 @@ mod tests {
             .await
             .unwrap();
 
-        let row = hypr_db_app::get_template(db.pool(), "template-1")
+        let row = meetspace_db_app::get_template(db.pool(), "template-1")
             .await
             .unwrap()
             .unwrap();
@@ -315,14 +315,14 @@ mod tests {
             .await
             .unwrap();
 
-        let existing_row = hypr_db_app::get_template(db.pool(), "template-1")
+        let existing_row = meetspace_db_app::get_template(db.pool(), "template-1")
             .await
             .unwrap()
             .unwrap();
         assert_eq!(existing_row.title, "Weekly");
         assert_eq!(existing_row.description, "Agenda");
 
-        let imported_row = hypr_db_app::get_template(db.pool(), "template-2")
+        let imported_row = meetspace_db_app::get_template(db.pool(), "template-2")
             .await
             .unwrap()
             .unwrap();
@@ -336,7 +336,7 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join(super::super::TEMPLATES_FILENAME);
 
-        hypr_db_app::upsert_template(
+        meetspace_db_app::upsert_template(
             db.pool(),
             UpsertTemplate {
                 id: "template-1",
@@ -375,14 +375,14 @@ mod tests {
             .await
             .unwrap();
 
-        let seeded_row = hypr_db_app::get_template(db.pool(), "template-1")
+        let seeded_row = meetspace_db_app::get_template(db.pool(), "template-1")
             .await
             .unwrap()
             .unwrap();
         assert_eq!(seeded_row.title, "Seeded");
         assert_eq!(seeded_row.description, "Keep this");
 
-        let inserted_row = hypr_db_app::get_template(db.pool(), "template-2")
+        let inserted_row = meetspace_db_app::get_template(db.pool(), "template-2")
             .await
             .unwrap()
             .unwrap();

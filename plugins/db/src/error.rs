@@ -5,17 +5,17 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error(transparent)]
-    Db(#[from] hypr_db_core::DbOpenError),
+    Db(#[from] meetspace_db_core::DbOpenError),
     #[error(transparent)]
-    Migrate(#[from] hypr_db_migrate::MigrateError),
+    Migrate(#[from] meetspace_db_migrate::MigrateError),
     #[error(transparent)]
     Io(#[from] std::io::Error),
     #[error(transparent)]
     Sqlx(#[from] sqlx::Error),
     #[error(transparent)]
-    Execute(#[from] hypr_db_execute::Error),
+    Execute(#[from] meetspace_db_execute::Error),
     #[error(transparent)]
-    Reactive(#[from] hypr_db_reactive::Error),
+    Reactive(#[from] meetspace_db_reactive::Error),
 }
 
 impl Serialize for Error {

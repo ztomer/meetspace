@@ -11,10 +11,10 @@ pub(crate) fn cleanup_legacy_logs<M: Manager<tauri::Wry>>(app: &M) {
     };
 
     let bundle_id: &str = app.config().identifier.as_ref();
-    let app_folder = if cfg!(debug_assertions) || bundle_id == "com.hyprnote.staging" {
+    let app_folder = if cfg!(debug_assertions) || bundle_id == "com.meetspace.staging" {
         bundle_id
     } else {
-        "hyprnote"
+        "meetspace"
     };
 
     let old_logs_dir = data_dir.join(app_folder);

@@ -1,12 +1,12 @@
-import { json2md } from "@hypr/editor/markdown";
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
+import { json2md } from "@meetspace/editor/markdown";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 import type {
   Event,
   EventParticipant,
   HumanStorage,
   MappingSessionParticipantStorage,
   SessionEvent,
-} from "@hypr/store";
+} from "@meetspace/store";
 
 import * as main from "./main";
 

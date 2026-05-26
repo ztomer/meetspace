@@ -60,15 +60,15 @@ pub enum CloudsyncRuntimeError {
     #[error("cloudsync sync interval must be greater than 0")]
     InvalidSyncInterval,
     #[error(transparent)]
-    Cloudsync(#[from] hypr_cloudsync::Error),
+    Cloudsync(#[from] meetspace_cloudsync::Error),
 }
 
-impl From<hypr_cloudsync::ErrorKind> for CloudsyncErrorKind {
-    fn from(kind: hypr_cloudsync::ErrorKind) -> Self {
+impl From<meetspace_cloudsync::ErrorKind> for CloudsyncErrorKind {
+    fn from(kind: meetspace_cloudsync::ErrorKind) -> Self {
         match kind {
-            hypr_cloudsync::ErrorKind::Transient => Self::Transient,
-            hypr_cloudsync::ErrorKind::Auth => Self::Auth,
-            hypr_cloudsync::ErrorKind::Fatal => Self::Fatal,
+            meetspace_cloudsync::ErrorKind::Transient => Self::Transient,
+            meetspace_cloudsync::ErrorKind::Auth => Self::Auth,
+            meetspace_cloudsync::ErrorKind::Fatal => Self::Fatal,
         }
     }
 }

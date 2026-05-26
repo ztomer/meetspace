@@ -1,4 +1,4 @@
-use hypr_ws_client::client::Message;
+use meetspace_ws_client::client::Message;
 use owhisper_interface::ListenParams;
 use owhisper_interface::stream::StreamResponse;
 
@@ -16,7 +16,7 @@ impl RealtimeSttAdapter for DeepgramAdapter {
 
     fn is_supported_languages(
         &self,
-        languages: &[hypr_language::Language],
+        languages: &[meetspace_language::Language],
         model: Option<&str>,
     ) -> bool {
         if languages.is_empty() {
@@ -68,7 +68,7 @@ impl RealtimeSttAdapter for DeepgramAdapter {
 mod tests {
     use std::collections::HashMap;
 
-    use hypr_language::ISO639;
+    use meetspace_language::ISO639;
 
     use crate::ListenClient;
     use crate::adapter::RealtimeSttAdapter;
@@ -256,7 +256,7 @@ mod tests {
         };
 
         let url =
-            adapter.build_ws_url("https://api.hyprnote.com/stt?provider=deepgram", &params, 1);
+            adapter.build_ws_url("https://api.meetspace.com/stt?provider=deepgram", &params, 1);
 
         assert!(url.as_str().contains("provider=deepgram"));
     }
@@ -299,7 +299,7 @@ mod tests {
         owhisper_interface::ListenParams {
             model: Some("nova-3".to_string()),
             languages: vec![ISO639::En.into()],
-            keywords: vec!["Hyprnote".to_string(), "transcription".to_string()],
+            keywords: vec!["Meetspace".to_string(), "transcription".to_string()],
             ..Default::default()
         }
     );

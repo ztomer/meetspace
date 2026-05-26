@@ -6,7 +6,7 @@ import { createTestMainStore } from "~/store/tinybase/persister/testing/mocks";
 
 const analyticsEventMock = vi.hoisted(() => vi.fn());
 
-vi.mock("@hypr/plugin-analytics", () => ({
+vi.mock("@meetspace/plugin-analytics", () => ({
   commands: {
     event: analyticsEventMock,
   },

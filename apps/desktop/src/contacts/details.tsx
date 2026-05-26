@@ -8,16 +8,16 @@ import {
 } from "lucide-react";
 import React, { useCallback, useState } from "react";
 
-import { Button } from "@hypr/ui/components/ui/button";
-import { Input } from "@hypr/ui/components/ui/input";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { Input } from "@meetspace/ui/components/ui/input";
 import {
   AppFloatingPanel,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@hypr/ui/components/ui/popover";
-import { Textarea } from "@hypr/ui/components/ui/textarea";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/popover";
+import { Textarea } from "@meetspace/ui/components/ui/textarea";
+import { cn } from "@meetspace/utils";
 
 import { getContactBgClass } from "./shared";
 

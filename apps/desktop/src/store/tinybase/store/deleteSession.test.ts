@@ -9,7 +9,7 @@ const fsSyncMocks = vi.hoisted(() => ({
   deleteSessionFolder: vi.fn(),
 }));
 
-vi.mock("@hypr/plugin-fs-sync", () => ({ commands: fsSyncMocks }));
+vi.mock("@meetspace/plugin-fs-sync", () => ({ commands: fsSyncMocks }));
 
 describe("deleteSessionCascade", () => {
   let store: ReturnType<typeof createTestMainStore>;

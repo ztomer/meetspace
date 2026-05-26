@@ -1,14 +1,14 @@
 import { CalendarIcon, MapPinIcon, VideoIcon } from "lucide-react";
 import { forwardRef, useState } from "react";
 
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { Button } from "@hypr/ui/components/ui/button";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   AppFloatingPanel,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@hypr/ui/components/ui/popover";
+} from "@meetspace/ui/components/ui/popover";
 import {
   cn,
   differenceInDays,
@@ -16,7 +16,7 @@ import {
   safeParseDate,
   startOfDay,
   TZDate,
-} from "@hypr/utils";
+} from "@meetspace/utils";
 
 import { DateEditor } from "./date";
 import { ParticipantsDisplay } from "./participants";

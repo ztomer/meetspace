@@ -1,7 +1,7 @@
 import * as _UI from "tinybase/ui-react/with-schemas";
 
-import { getCurrentWebviewWindowLabel } from "@hypr/plugin-windows";
-import { type Schemas } from "@hypr/store";
+import { getCurrentWebviewWindowLabel } from "@meetspace/plugin-windows";
+import { type Schemas } from "@meetspace/store";
 
 import { createTaskPersister } from "./persister";
 

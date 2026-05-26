@@ -632,7 +632,7 @@ version = "0.1.0"
 dependencies = [
  "api-error",
  "axum 0.8.9",
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "slack-web",
@@ -6567,7 +6567,7 @@ dependencies = [
 name = "github-issues"
 version = "0.1.0"
 dependencies = [
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "specta",
@@ -8211,7 +8211,7 @@ name = "google-calendar"
 version = "0.1.0"
 dependencies = [
  "chrono",
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "specta",
@@ -8225,7 +8225,7 @@ dependencies = [
 name = "google-drive"
 version = "0.1.0"
 dependencies = [
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "thiserror 2.0.18",
@@ -8237,7 +8237,7 @@ dependencies = [
 name = "google-mail"
 version = "0.1.0"
 dependencies = [
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "specta",
@@ -9088,10 +9088,6 @@ name = "hypher"
 version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bef68590049bab63a464eee1a1158ac04c6f6613a546d8d90f78636b8b94f171"
-
-[[package]]
-name = "hypr-http-utils"
-version = "0.1.0"
 
 [[package]]
 name = "iana-time-zone"
@@ -10482,7 +10478,7 @@ dependencies = [
 name = "linear"
 version = "0.1.0"
 dependencies = [
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "specta",
@@ -11030,6 +11026,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "meetspace-http-utils"
+version = "0.1.0"
+
+[[package]]
 name = "memchr"
 version = "2.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -11372,7 +11372,7 @@ version = "0.1.0"
 dependencies = [
  "hex",
  "hmac 0.13.0",
- "hypr-http-utils",
+ "meetspace-http-utils",
  "reqwest 0.13.2",
  "schemars 1.2.1",
  "serde",
@@ -12616,7 +12616,7 @@ name = "outlook-calendar"
 version = "0.1.0"
 dependencies = [
  "chrono",
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "specta",
@@ -16212,7 +16212,7 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
 name = "slack-web"
 version = "0.1.0"
 dependencies = [
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "thiserror 2.0.18",
@@ -18894,7 +18894,7 @@ dependencies = [
  "api-client",
  "apple-todo",
  "github-issues",
- "hypr-http-utils",
+ "meetspace-http-utils",
  "reqwest 0.13.2",
  "serde",
  "specta",
@@ -19243,7 +19243,7 @@ dependencies = [
 name = "teems"
 version = "0.1.0"
 dependencies = [
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "thiserror 2.0.18",

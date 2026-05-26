@@ -1,8 +1,7 @@
 import type { ChatStatus } from "ai";
 import { ChevronDownIcon } from "lucide-react";
 
-import { Button } from "@hypr/ui/components/ui/button";
-import { cn } from "@hypr/utils";
+import { Button } from "@meetspace/ui/components/ui/button";
 
 import { ChatBodyEmpty } from "./empty";
 import { ChatBodyNonEmpty } from "./non-empty";
@@ -10,7 +9,6 @@ import { useChatAutoScroll } from "./use-chat-auto-scroll";
 
 import type { ContextRef } from "~/chat/context/entities";
 import type { HyprUIMessage } from "~/chat/types";
-import { useShell } from "~/contexts/shell";
 
 export function ChatBody({
   messages,
@@ -33,8 +31,6 @@ export function ChatBody({
     contextRefs?: ContextRef[],
   ) => void;
 }) {
-  const { chat } = useShell();
-  const isRightPanel = chat.mode === "RightPanelOpen";
   const {
     contentRef,
     isAtBottom,
@@ -55,10 +51,7 @@ export function ChatBody({
       >
         <div
           ref={contentRef}
-          className={cn([
-            "flex min-h-full flex-1 flex-col",
-            isRightPanel ? "px-3 py-5" : "px-2 py-3",
-          ])}
+          className="flex min-h-full flex-1 flex-col px-2 py-3"
         >
           <div className="flex-1" />
           {messages.length === 0 ? (
@@ -81,7 +74,7 @@ export function ChatBody({
         <Button
           onClick={scrollToBottom}
           size="sm"
-          className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 transform items-center gap-1 rounded-full border border-neutral-200 bg-white text-neutral-700 shadow-xs hover:bg-neutral-50"
+          className="border-border bg-background text-foreground hover:bg-muted absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 transform items-center gap-1 rounded-full border shadow-xs"
           variant="outline"
         >
           <ChevronDownIcon size={12} />

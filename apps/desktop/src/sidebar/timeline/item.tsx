@@ -1,16 +1,16 @@
 import { SquareIcon } from "lucide-react";
 import { memo, type DragEvent, useCallback, useMemo } from "react";
 
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { DancingSticks } from "@hypr/ui/components/ui/dancing-sticks";
-import { Spinner } from "@hypr/ui/components/ui/spinner";
+import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { DancingSticks } from "@meetspace/ui/components/ui/dancing-sticks";
+import { Spinner } from "@meetspace/ui/components/ui/spinner";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
-import { cn, format, getYear, safeParseDate, TZDate } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/tooltip";
+import { cn, format, getYear, safeParseDate, TZDate } from "@meetspace/utils";
 
 import {
   type EventTimelineItem,
@@ -133,9 +133,9 @@ function ItemBase({
           "w-full rounded-lg px-3 py-2 text-left",
           showLiveStop && "pr-10",
           ignored ? "cursor-default" : "cursor-pointer",
-          multiSelected && "bg-neutral-200",
-          !multiSelected && selected && "bg-neutral-200",
-          !multiSelected && !selected && "hover:bg-neutral-200/50",
+          multiSelected && "bg-accent",
+          !multiSelected && selected && "bg-accent",
+          !multiSelected && !selected && "hover:bg-accent/50",
           isLive && [
             "bg-red-500 text-white hover:bg-red-600",
             "focus-visible:ring-2 focus-visible:ring-red-500/40 focus-visible:outline-hidden",
@@ -164,7 +164,7 @@ function ItemBase({
               <div
                 className={cn([
                   "font-mono text-xs",
-                  isLive ? "text-white/65" : "text-neutral-500",
+                  isLive ? "text-white/65" : "text-muted-foreground",
                 ])}
               >
                 {displayTime}
@@ -237,6 +237,7 @@ const EventItem = memo(
     const eventId = item.id;
     const trackingIdEvent = item.data.tracking_id_event;
     const title = item.data.title || "Untitled";
+    const calendarId = item.data.calendar_id ?? null;
     const recurrenceSeriesId = item.data.recurrence_series_id;
 
     const {
@@ -360,7 +361,7 @@ const EventItem = memo(
       <ItemBase
         title={title}
         displayTime={displayTime}
-        calendarId={null}
+        calendarId={calendarId}
         selected={selected}
         ignored={ignored}
         muted={muted}
@@ -407,12 +408,12 @@ const SessionItem = memo(
     ) as string | undefined;
     const title = useSessionTitle(sessionId, storeTitle);
 
+    const isEnhancing = useIsSessionEnhancing(sessionId);
     const { sessionMode, stop, amplitude } = useListener((state) => ({
       sessionMode: state.getSessionMode(sessionId),
       stop: state.stop,
       amplitude: state.live.amplitude,
     }));
-    const isEnhancing = useIsSessionEnhancing(sessionId);
     const isLive = sessionMode === "active";
     const isFinalizing = sessionMode === "finalizing";
     const isBatching = sessionMode === "running_batch";

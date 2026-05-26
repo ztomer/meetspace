@@ -1,15 +1,15 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useForm } from "@tanstack/react-form";
+import { useQuery } from "@tanstack/react-query";
 import { disable, enable } from "@tauri-apps/plugin-autostart";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import type { General, GeneralStorage } from "@hypr/store";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as listenerCommands } from "@meetspace/plugin-transcription";
+import type { General, GeneralStorage } from "@meetspace/store";
 
 import { AppSettingsView } from "./app-settings";
-import {
-  CORE_TRANSCRIPTION_LANGUAGE_CODES,
-  getAdditionalSpokenLanguages,
-} from "./language";
+import { AppearanceSettings } from "./appearance";
+import { getAdditionalSpokenLanguages } from "./language";
 import { MainLanguageView } from "./main-language";
 import { NotificationSettingsView } from "./notification";
 import { Permissions } from "./permissions";
@@ -29,7 +29,6 @@ function useSettingsForm() {
     "auto_start_scheduled_meetings",
     "auto_stop_meetings",
     "floating_bar_enabled",
-    "sidebar_timeline_enabled",
     "notification_detect",
     "telemetry_consent",
     "ai_language",
@@ -67,7 +66,6 @@ function useSettingsForm() {
       auto_start_scheduled_meetings: value.auto_start_scheduled_meetings,
       auto_stop_meetings: value.auto_stop_meetings,
       floating_bar_enabled: value.floating_bar_enabled,
-      sidebar_timeline_enabled: value.sidebar_timeline_enabled,
       notification_detect: value.notification_detect,
       telemetry_consent: value.telemetry_consent,
       ai_language: value.ai_language,
@@ -111,7 +109,6 @@ function useSettingsForm() {
           normalizedValue.auto_start_scheduled_meetings,
         auto_stop_meetings: normalizedValue.auto_stop_meetings,
         floating_bar_enabled: normalizedValue.floating_bar_enabled,
-        sidebar_timeline_enabled: normalizedValue.sidebar_timeline_enabled,
         notification_detect: normalizedValue.notification_detect,
         telemetry_consent: normalizedValue.telemetry_consent,
       });
@@ -130,9 +127,21 @@ export function SettingsApp() {
   const { t } = useLingui();
   const { form } = useSettingsForm();
 
+  const supportedLanguagesQuery = useQuery({
+    queryKey: ["documented-language-codes", "live"],
+    queryFn: async () => {
+      const result = await listenerCommands.listDocumentedLanguageCodesLive();
+      if (result.status === "error") {
+        throw new Error(result.error);
+      }
+      return result.data;
+    },
+    staleTime: Infinity,
+  });
+  const supportedLanguages = supportedLanguagesQuery.data ?? ["en"];
+
   return (
     <div className="flex flex-col gap-8">
-      <SettingsPageTitle title={t`App`} />
       <form.Field name="autostart">
         {(autostartField) => (
           <form.Field name="auto_start_scheduled_meetings">
@@ -141,62 +150,48 @@ export function SettingsApp() {
                 {(autoStopMeetingsField) => (
                   <form.Field name="floating_bar_enabled">
                     {(floatingBarEnabledField) => (
-                      <form.Field name="sidebar_timeline_enabled">
-                        {(sidebarTimelineEnabledField) => (
-                          <form.Field name="telemetry_consent">
-                            {(telemetryConsentField) => (
-                              <AppSettingsView
-                                autostart={{
-                                  title: t`Start Anarlog at login`,
-                                  description: t`Always ready without manually launching.`,
-                                  value: autostartField.state.value,
-                                  onChange: (val) =>
-                                    autostartField.handleChange(val),
-                                }}
-                                autoStartScheduledMeetings={{
-                                  title: t`Start when meeting begins`,
-                                  description: t`Automatically start listening when an event-backed note reaches its scheduled start time.`,
-                                  value:
-                                    autoStartScheduledMeetingsField.state.value,
-                                  onChange: (val) =>
-                                    autoStartScheduledMeetingsField.handleChange(
-                                      val,
-                                    ),
-                                }}
-                                autoStopMeetings={{
-                                  title: t`Stop when meeting ends`,
-                                  description: t`Automatically stop listening when the meeting app releases the microphone.`,
-                                  value: autoStopMeetingsField.state.value,
-                                  onChange: (val) =>
-                                    autoStopMeetingsField.handleChange(val),
-                                }}
-                                floatingBar={{
-                                  title: t`Show floating bar`,
-                                  description: t`Show the compact floating control while listening.`,
-                                  value: floatingBarEnabledField.state.value,
-                                  onChange: (val) =>
-                                    floatingBarEnabledField.handleChange(val),
-                                }}
-                                sidebarTimeline={{
-                                  title: t`Show timeline in sidebar`,
-                                  description: t`Use the left sidebar timeline instead of the top timeline.`,
-                                  value:
-                                    sidebarTimelineEnabledField.state.value,
-                                  onChange: (val) =>
-                                    sidebarTimelineEnabledField.handleChange(
-                                      val,
-                                    ),
-                                }}
-                                telemetryConsent={{
-                                  title: t`Share usage data`,
-                                  description: t`Send anonymous usage analytics to help improve Anarlog.`,
-                                  value: telemetryConsentField.state.value,
-                                  onChange: (val) =>
-                                    telemetryConsentField.handleChange(val),
-                                }}
-                              />
-                            )}
-                          </form.Field>
+                      <form.Field name="telemetry_consent">
+                        {(telemetryConsentField) => (
+                          <AppSettingsView
+                            autostart={{
+                              title: t`Start Meetspace at login`,
+                              description: t`Always ready without manually launching.`,
+                              value: autostartField.state.value,
+                              onChange: (val) =>
+                                autostartField.handleChange(val),
+                            }}
+                            autoStartScheduledMeetings={{
+                              title: t`Start when meeting begins`,
+                              description: t`Automatically start listening when an event-backed note reaches its scheduled start time.`,
+                              value:
+                                autoStartScheduledMeetingsField.state.value,
+                              onChange: (val) =>
+                                autoStartScheduledMeetingsField.handleChange(
+                                  val,
+                                ),
+                            }}
+                            autoStopMeetings={{
+                              title: t`Stop when meeting ends`,
+                              description: t`Automatically stop listening when the meeting app releases the microphone.`,
+                              value: autoStopMeetingsField.state.value,
+                              onChange: (val) =>
+                                autoStopMeetingsField.handleChange(val),
+                            }}
+                            floatingBar={{
+                              title: t`Show floating bar`,
+                              description: t`Show the compact floating control while listening.`,
+                              value: floatingBarEnabledField.state.value,
+                              onChange: (val) =>
+                                floatingBarEnabledField.handleChange(val),
+                            }}
+                            telemetryConsent={{
+                              title: t`Share usage data`,
+                              description: t`Send anonymous usage analytics to help improve Meetspace.`,
+                              value: telemetryConsentField.state.value,
+                              onChange: (val) =>
+                                telemetryConsentField.handleChange(val),
+                            }}
+                          />
                         )}
                       </form.Field>
                     )}
@@ -207,6 +202,8 @@ export function SettingsApp() {
           </form.Field>
         )}
       </form.Field>
+
+      <AppearanceSettings />
 
       <div>
         <h2 className="mb-4 font-sans text-lg font-semibold">
@@ -227,7 +224,7 @@ export function SettingsApp() {
                     ),
                   );
                 }}
-                supportedLanguages={CORE_TRANSCRIPTION_LANGUAGE_CODES}
+                supportedLanguages={supportedLanguages}
               />
             )}
           </form.Field>
@@ -246,7 +243,7 @@ export function SettingsApp() {
                     ),
                   )
                 }
-                supportedLanguages={CORE_TRANSCRIPTION_LANGUAGE_CODES}
+                supportedLanguages={supportedLanguages}
               />
             )}
           </form.Field>
@@ -282,7 +279,6 @@ export function SettingsNotifications() {
 export function SettingsPermissions() {
   return (
     <div className="flex flex-col gap-8">
-      <SettingsPageTitle title="Permissions" />
       <Permissions />
     </div>
   );

@@ -2,10 +2,10 @@ import { getIdentifier } from "@tauri-apps/api/app";
 import { Effect, Exit } from "effect";
 import type { StoreApi } from "zustand";
 
-import { commands as detectCommands } from "@hypr/plugin-detect";
-import { commands as hooksCommands } from "@hypr/plugin-hooks";
-import { commands as iconCommands } from "@hypr/plugin-icon";
-import { commands as settingsCommands } from "@hypr/plugin-settings";
+import { commands as detectCommands } from "@meetspace/plugin-detect";
+import { commands as hooksCommands } from "@meetspace/plugin-hooks";
+import { commands as iconCommands } from "@meetspace/plugin-icon";
+import { commands as settingsCommands } from "@meetspace/plugin-settings";
 import {
   commands as listenerCommands,
   events as listenerEvents,
@@ -15,7 +15,7 @@ import {
   type CaptureStatusEvent,
   type LiveTranscriptDelta,
   type LiveTranscriptSegmentDelta,
-} from "@hypr/plugin-transcription";
+} from "@meetspace/plugin-transcription";
 
 import {
   type GeneralState,
@@ -268,7 +268,7 @@ export const startLiveSession = <T extends LiveStore>(
             .then((r) =>
               r.status === "ok" ? r.data.map((app) => app.id) : null,
             ),
-          getIdentifier().catch(() => "com.hyprnote.stable"),
+          getIdentifier().catch(() => "com.meetspace.stable"),
         ]),
       catch: (error) => error,
     });
@@ -291,7 +291,7 @@ export const startLiveSession = <T extends LiveStore>(
           beforeListeningStarted: {
             args: {
               resource_dir: sessionPath,
-              app_hyprnote: bundleId,
+              app_meetspace: bundleId,
               app_meeting,
             },
           },
@@ -359,7 +359,7 @@ export const stopLiveSession = <T extends GeneralState>(
             if (r.status === "error") throw new Error(r.error);
             return r.data;
           }),
-          getIdentifier().catch(() => "com.hyprnote.stable"),
+          getIdentifier().catch(() => "com.meetspace.stable"),
         ])
           .then(([dataDirPath, bundleId]) => {
             const sessionPath = buildSessionPath(dataDirPath, sessionId);
@@ -367,7 +367,7 @@ export const stopLiveSession = <T extends GeneralState>(
               afterListeningStopped: {
                 args: {
                   resource_dir: sessionPath,
-                  app_hyprnote: bundleId,
+                  app_meetspace: bundleId,
                   app_meeting: null,
                 },
               },

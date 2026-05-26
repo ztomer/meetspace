@@ -1,13 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
 import { FileTextIcon, Loader2Icon } from "lucide-react";
 
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { DropdownMenuItem } from "@hypr/ui/components/ui/dropdown-menu";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { DropdownMenuItem } from "@meetspace/ui/components/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
+} from "@meetspace/ui/components/ui/tooltip";
 
 import { exportSessionToNotion } from "~/integrations/notion";
 import { useConfigValues } from "~/shared/config";

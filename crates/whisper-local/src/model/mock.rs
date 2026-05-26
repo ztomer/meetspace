@@ -1,5 +1,5 @@
 use crate::Segment;
-use hypr_whisper::Language;
+use meetspace_whisper::Language;
 
 #[derive(Default)]
 pub struct LoadedWhisperBuilder {}

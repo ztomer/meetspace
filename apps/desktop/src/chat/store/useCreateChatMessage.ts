@@ -1,4 +1,4 @@
-import type { ChatMessage, ChatMessageStorage } from "@hypr/store";
+import type { ChatMessage, ChatMessageStorage } from "@meetspace/store";
 
 import * as main from "~/store/tinybase/store/main";
 

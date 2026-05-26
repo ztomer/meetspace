@@ -1,4 +1,4 @@
-use hypr_github_issues::{GitHubIssuesClient, Issue, IssueComment};
+use meetspace_github_issues::{GitHubIssuesClient, Issue, IssueComment};
 
 use crate::error::Error;
 
@@ -20,7 +20,7 @@ impl PublicGitHubHttpClient {
             reqwest::header::ACCEPT,
             "application/vnd.github+json".parse().unwrap(),
         );
-        headers.insert(reqwest::header::USER_AGENT, "hypr-desktop".parse().unwrap());
+        headers.insert(reqwest::header::USER_AGENT, "meetspace-desktop".parse().unwrap());
 
         let client = reqwest::Client::builder()
             .default_headers(headers)
@@ -29,8 +29,8 @@ impl PublicGitHubHttpClient {
     }
 }
 
-impl hypr_http::HttpClient for PublicGitHubHttpClient {
-    async fn get(&self, path: &str) -> Result<Vec<u8>, hypr_http::Error> {
+impl meetspace_http::HttpClient for PublicGitHubHttpClient {
+    async fn get(&self, path: &str) -> Result<Vec<u8>, meetspace_http::Error> {
         let url = format!("https://api.github.com{path}");
         let resp = self.client.get(&url).send().await.map_err(Box::new)?;
         let status = resp.status();
@@ -46,19 +46,19 @@ impl hypr_http::HttpClient for PublicGitHubHttpClient {
         _path: &str,
         _body: Vec<u8>,
         _content_type: &str,
-    ) -> Result<Vec<u8>, hypr_http::Error> {
+    ) -> Result<Vec<u8>, meetspace_http::Error> {
         unimplemented!()
     }
 
-    async fn put(&self, _path: &str, _body: Vec<u8>) -> Result<Vec<u8>, hypr_http::Error> {
+    async fn put(&self, _path: &str, _body: Vec<u8>) -> Result<Vec<u8>, meetspace_http::Error> {
         unimplemented!()
     }
 
-    async fn patch(&self, _path: &str, _body: Vec<u8>) -> Result<Vec<u8>, hypr_http::Error> {
+    async fn patch(&self, _path: &str, _body: Vec<u8>) -> Result<Vec<u8>, meetspace_http::Error> {
         unimplemented!()
     }
 
-    async fn delete(&self, _path: &str) -> Result<Vec<u8>, hypr_http::Error> {
+    async fn delete(&self, _path: &str) -> Result<Vec<u8>, meetspace_http::Error> {
         unimplemented!()
     }
 }

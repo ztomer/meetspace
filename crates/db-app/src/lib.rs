@@ -16,26 +16,26 @@ pub use event_types::*;
 pub use template_ops::*;
 pub use template_types::*;
 
-pub const APP_MIGRATION_STEPS: &[hypr_db_migrate::MigrationStep] = &[
-    hypr_db_migrate::MigrationStep {
+pub const APP_MIGRATION_STEPS: &[meetspace_db_migrate::MigrationStep] = &[
+    meetspace_db_migrate::MigrationStep {
         id: "20260413020000_templates",
-        scope: hypr_db_migrate::MigrationScope::Plain,
+        scope: meetspace_db_migrate::MigrationScope::Plain,
         sql: include_str!("../migrations/20260413020000_templates.sql"),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260414120000_calendars_events",
-        scope: hypr_db_migrate::MigrationScope::Plain,
+        scope: meetspace_db_migrate::MigrationScope::Plain,
         sql: include_str!("../migrations/20260414120000_calendars_events.sql"),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260524000000_default_templates",
-        scope: hypr_db_migrate::MigrationScope::Plain,
+        scope: meetspace_db_migrate::MigrationScope::Plain,
         sql: include_str!("../migrations/20260524000000_default_templates.sql"),
     },
 ];
 
-pub fn schema() -> hypr_db_migrate::DbSchema {
-    hypr_db_migrate::DbSchema {
+pub fn schema() -> meetspace_db_migrate::DbSchema {
+    meetspace_db_migrate::DbSchema {
         steps: APP_MIGRATION_STEPS,
         validate_cloudsync_table: cloudsync_alter_guard_required,
     }
@@ -44,12 +44,12 @@ pub fn schema() -> hypr_db_migrate::DbSchema {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use hypr_db_core::Db;
+    use meetspace_db_core::Db;
     use sqlx::Row;
 
     async fn test_db() -> Db {
-        let db = Db::open(hypr_db_core::DbOpenOptions {
-            storage: hypr_db_core::DbStorage::Memory,
+        let db = Db::open(meetspace_db_core::DbOpenOptions {
+            storage: meetspace_db_core::DbStorage::Memory,
             cloudsync_enabled: false,
             journal_mode_wal: true,
             foreign_keys: true,
@@ -57,13 +57,13 @@ mod tests {
         })
         .await
         .unwrap();
-        hypr_db_migrate::migrate(&db, schema()).await.unwrap();
+        meetspace_db_migrate::migrate(&db, schema()).await.unwrap();
         db
     }
 
     async fn test_db_without_default_templates() -> Db {
-        let db = Db::open(hypr_db_core::DbOpenOptions {
-            storage: hypr_db_core::DbStorage::Memory,
+        let db = Db::open(meetspace_db_core::DbOpenOptions {
+            storage: meetspace_db_core::DbStorage::Memory,
             cloudsync_enabled: false,
             journal_mode_wal: true,
             foreign_keys: true,
@@ -71,9 +71,9 @@ mod tests {
         })
         .await
         .unwrap();
-        hypr_db_migrate::migrate(
+        meetspace_db_migrate::migrate(
             &db,
-            hypr_db_migrate::DbSchema {
+            meetspace_db_migrate::DbSchema {
                 steps: &APP_MIGRATION_STEPS[..2],
                 validate_cloudsync_table: cloudsync_alter_guard_required,
             },
@@ -264,9 +264,9 @@ mod tests {
     #[tokio::test]
     async fn migrations_seed_default_templates_without_overwriting_existing_rows() {
         let db = Db::connect_memory_plain().await.unwrap();
-        hypr_db_migrate::migrate(
+        meetspace_db_migrate::migrate(
             &db,
-            hypr_db_migrate::DbSchema {
+            meetspace_db_migrate::DbSchema {
                 steps: &APP_MIGRATION_STEPS[..1],
                 validate_cloudsync_table: cloudsync_alter_guard_required,
             },
@@ -290,7 +290,7 @@ mod tests {
         .await
         .unwrap();
 
-        hypr_db_migrate::migrate(&db, schema()).await.unwrap();
+        meetspace_db_migrate::migrate(&db, schema()).await.unwrap();
 
         let rows = list_templates(db.pool()).await.unwrap();
         assert_eq!(rows.len(), 17);
