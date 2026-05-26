@@ -28,6 +28,7 @@ REMOVED_DIRS = [
     "apps/desktop/src/onboarding/account",
     ".github/scripts",
     ".github/reports",
+    ".github/workflows",
     "scripts/s3",
     "crates/cactus",
     "crates/cactus-model",
@@ -91,26 +92,31 @@ def should_delete(filepath):
     return False
 
 REPLACEMENTS = [
-    ("__MEETSPACE_NAVIGATE__", "__MEETSPACE_NAVIGATE__"),
-    ("com.meetspace", "com.meetspace"),
-    ("@meetspace/", "@meetspace/"),
-    ("meetspace-", "meetspace-"),
-    ("meetspace_", "meetspace_"),
-    ("MEETSPACE_", "MEETSPACE_"),
-    ("Meetspace", "Meetspace"),
-    ("meetspace", "meetspace"),
-    ("MEETSPACE", "MEETSPACE"),
-    ("Meetspace", "Meetspace"),
-    ("meetspace", "meetspace"),
-    ("MEETSPACE", "MEETSPACE"),
-    ("meetspace", "meetspace"),
-    ("MEETSPACE", "MEETSPACE"),
+    ("__" + "HYPR_NAVIGATE__", "__MEETSPACE_NAVIGATE__"),
+    ("com." + "hyprnote", "com.meetspace"),
+    ("@" + "hypr/", "@meetspace/"),
+    ("hypr-", "meetspace-"),
+    ("hypr_", "meetspace_"),
+    ("HYPR_", "MEETSPACE_"),
+    ("Hypr" + "note", "Meetspace"),
+    ("hypr" + "note", "meetspace"),
+    ("HYPR" + "NOTE", "MEETSPACE"),
+    ("Anar" + "log", "Meetspace"),
+    ("anar" + "log", "meetspace"),
+    ("ANAR" + "LOG", "MEETSPACE"),
+    ("hypr", "meetspace"),
+    ("HYPR", "MEETSPACE"),
 ]
 
 def is_rebrand_commit():
     code, stdout, stderr = run_command("git log -1 REBASE_HEAD")
-    if code == 0 and ("rename Meetspace/Meetspace" in stdout or "fork(phase 7.1): rename" in stdout):
-        return True
+    if code == 0:
+        lines = stdout.splitlines()
+        # Find commit subject (typically 5th line in git log)
+        for line in lines[4:8]:
+            l = line.lower()
+            if "rebrand" in l or "rename" in l or "purge" in l:
+                return True
     return False
 
 def apply_rebrand_renames(filepath):
