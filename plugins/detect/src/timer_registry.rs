@@ -37,6 +37,7 @@ impl TimerRegistry {
         generation
     }
 
+    #[allow(dead_code)] // Public surface kept symmetric with start_replace; not called yet.
     pub fn start_if_absent(&mut self, key: String, token: CancellationToken) -> Option<u64> {
         if self.timers.contains_key(&key) {
             return None;

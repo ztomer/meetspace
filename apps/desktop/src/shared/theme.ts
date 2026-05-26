@@ -32,6 +32,11 @@ export function useApplyTheme() {
 
   useEffect(() => {
     apply(resolve(choice));
+    // Mirror to localStorage so index.html's pre-React inline script can
+    // pick the right `.dark` class on next launch and avoid a white flash.
+    try {
+      localStorage.setItem("meetspace-theme", choice);
+    } catch {}
 
     if (choice !== "system") return;
 
