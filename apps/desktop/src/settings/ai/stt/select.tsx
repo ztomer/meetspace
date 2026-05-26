@@ -223,12 +223,14 @@ function useLocalModels(): ModelEntry[] {
 
   const all = supportedModels.data ?? [];
 
-  // Apple Silicon: surface the Soniqo (Parakeet streaming) backend. Other
-  // platforms get the Cactus/Whisper-CPP family. We don't show deprecated
-  // cactus models on Apple Silicon since Soniqo supersedes them there.
+  // Apple Silicon: surface Soniqo (Parakeet streaming) plus the Argmax-backed
+  // models (Parakeet V2/V3 and Whisper Large V3) — both are MLX/CoreML-native.
+  // Other platforms get the Cactus/Whisper-CPP family. Deprecated Cactus
+  // models are hidden on Apple Silicon since Soniqo supersedes them there.
   const soniqo = all.filter((m) => m.model_type === "soniqo");
+  const argmax = all.filter((m) => m.model_type === "argmax");
   const cactus = all.filter((m) => m.model_type === "cactus");
-  const visible = isAppleSilicon ? soniqo : cactus;
+  const visible = isAppleSilicon ? [...soniqo, ...argmax] : cactus;
 
   const downloaded = useQueries({
     queries: visible.map((m) => sttModelQueries.isDownloaded(m.key)),
