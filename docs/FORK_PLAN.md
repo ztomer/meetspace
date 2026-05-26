@@ -193,7 +193,23 @@ Files: [apps/desktop/src/settings/ai/llm/shared.tsx](../apps/desktop/src/setting
 
 ## Open items / future
 
-- Visual QA pass for dark mode — ~50 intentional-contrast classes (stone-700/800 buttons, explicit toast colors) need hand-fixes once surfaced.
 - Consider whether `legacy/` and `examples/` directories are still relevant.
 - `crates/api-client` and `apps/api/openapi.gen.json` are frozen upstream artifacts kept to satisfy `crates/calendar` + `plugins/todo` type imports. Could be inlined and the package deleted.
 - Two git deps still pull from upstream forks: `async-openai` and `gbnf-validator` (both `github.com/fastrepl/*` in `Cargo.toml`). Fork or vendor if independence matters.
+
+---
+
+## Phase 8 — Dark mode polish + calendar OAuth + UI consolidation
+
+Surfaced during visual QA of the dark-mode foundation.
+
+| # | Item | Status |
+|---|---|---|
+| 1 | **Session tab text stays dark in dark mode** — unreadable on the dark tab bar. Tab labels likely use a `text-black` / `text-neutral-900` that wasn't picked up by the migration sweep (or wraps the text with explicit color). Hunt down in `apps/desktop/src/shared/tabs.tsx` + `apps/desktop/src/main/tabs*`. Replace with `text-foreground`. | ⏳ Pending |
+| 2 | **Settings section headers become white-on-white in dark mode** — e.g. "Start Meetspace at login" in `settings/general/app-settings.tsx` `SettingRow.title`. The `<h3>` likely renders at `text-foreground` against a card that itself isn't switching. Investigate the SettingRow's bg vs text resolution; probably need to give settings panels an explicit `bg-card text-card-foreground` container. | ⏳ Pending |
+| 3 | **Settings panel background stays white in dark mode** — visible especially when more than one window is open. The settings tab uses `StandardTabWrapper` which hard-codes a light bg somewhere, or the body bg cascade doesn't reach the floating settings overlay. Fix in `shared/main.tsx` and ensure all tab wrappers use `bg-background`. | ⏳ Pending |
+| 4 | **Google Calendar sign-in** — implement OAuth 2.0 PKCE with localhost redirect. Tauri opens browser to Google's OAuth URL, hosts a temporary localhost server to catch the `?code=…` redirect, exchanges via PKCE (no client secret needed). User does a one-time setup of their own Google Cloud OAuth client ID (free, no review needed for desktop). Tokens stored in OS keychain via `@tauri-apps/plugin-keyring` (or tinybase encrypted). | ⏳ Pending |
+| 5 | **Outlook Calendar sign-in** — same pattern as #4 but against Microsoft Entra (Azure AD) `/common/oauth2/v2.0/authorize`. User registers a public client in Azure portal, no secret. Microsoft Graph `/me/events` for fetch. | ⏳ Pending |
+| 6 | **System theme not following OS** — `useApplyTheme()` should react to `prefers-color-scheme` changes when set to "system" but isn't visibly doing so. Debug whether (a) the `MediaQueryList.addEventListener` is firing, (b) Tauri's webview ignores OS theme changes by default and needs `apps/desktop/src-tauri/tauri.conf.json::app.windows.theme` set to `null` (auto), (c) `.dark` class is being applied to `<html>` correctly. | ⏳ Pending |
+| 7 | **Merge Intelligence + Transcription** into a single **"Intelligence"** tab — both panels are AI/model settings. Combine into one tab with two sections (STT model picker + LLM provider picker), drop the "Transcription" sidebar entry. Update `SettingsTab` type, `sidebar/settings.tsx` nav, `settings/index.tsx` routing. | ⏳ Pending |
+| 8 | **End-to-end visual QA** of all surfaces in both light + dark — session view, sidebar tabs, all settings tabs, dialogs (export modal, Linear team picker, delete confirmations), toasts, integrations panel, calendar sidebar, onboarding. Catch-all for any remaining intentional-contrast classes (stone-700/800 buttons etc.) that need hand-fixes. | ⏳ Pending |
