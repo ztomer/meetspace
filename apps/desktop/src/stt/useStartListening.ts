@@ -13,6 +13,7 @@ import {
 import { useSTTConnection } from "./useSTTConnection";
 
 import { getEnhancerService } from "~/services/enhancer";
+import { maybeDiarizeAndPersist } from "~/services/diarize-on-stop";
 import { maybeAutoExportToObsidian } from "~/services/obsidian-auto-export";
 import { getSessionEventById } from "~/session/utils";
 import { useConfigValue } from "~/shared/config";
@@ -102,7 +103,17 @@ export function useStartListening(sessionId: string) {
       }
 
       if (store && settingsStore) {
-        void maybeAutoExportToObsidian(store, settingsStore, sessionId);
+        // Run diarization first (writes speaker_hints) so the export sees
+        // the speaker-tagged transcript. Both are fire-and-forget; the
+        // export hook reads its own state at fire time.
+        void maybeDiarizeAndPersist(
+          store,
+          settingsStore,
+          sessionId,
+          details.audioPath ?? null,
+        ).finally(() => {
+          void maybeAutoExportToObsidian(store, settingsStore, sessionId);
+        });
       }
     };
 
