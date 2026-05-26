@@ -115,13 +115,13 @@ export function SpokenLanguagesView({
       <h3 className="mb-1 text-sm font-medium">
         <Trans>Additional spoken languages</Trans>
       </h3>
-      <p className="mb-3 text-xs text-muted-foreground">
+      <p className="text-muted-foreground mb-3 text-xs">
         <Trans>The main language is always included for transcription</Trans>
       </p>
       <div className="relative">
         <div
           className={cn([
-            "flex min-h-[38px] w-full flex-wrap items-center gap-1.5 rounded-lg border border-border bg-background px-2 py-1.5 focus-within:border-border",
+            "border-border bg-background focus-within:border-border flex min-h-[38px] w-full flex-wrap items-center gap-1.5 rounded-lg border px-2 py-1.5",
             languageInputFocused && "border-border",
           ])}
           onClick={() =>
@@ -150,7 +150,7 @@ export function SpokenLanguagesView({
             </Badge>
           ))}
           {selectedLanguageCodes.length === 0 && (
-            <Search className="size-4 shrink-0 text-foreground" />
+            <Search className="text-foreground size-4 shrink-0" />
           )}
           <input
             id="language-search-input"
@@ -176,7 +176,7 @@ export function SpokenLanguagesView({
             placeholder={
               selectedLanguageCodes.length === 0 ? t`Add language` : ""
             }
-            className="min-w-[120px] flex-1 bg-transparent text-sm placeholder:text-muted-foreground focus:outline-hidden"
+            className="placeholder:text-muted-foreground min-w-[120px] flex-1 bg-transparent text-sm focus:outline-hidden"
           />
         </div>
 
@@ -184,7 +184,7 @@ export function SpokenLanguagesView({
           <div
             id="language-options"
             role="listbox"
-            className="absolute top-full right-0 left-0 z-10 mt-1 flex max-h-60 w-full flex-col overflow-hidden overflow-y-auto rounded-xs border border-border bg-background shadow-md"
+            className="border-border bg-background absolute top-full right-0 left-0 z-10 mt-1 flex max-h-60 w-full flex-col overflow-hidden overflow-y-auto rounded-xs border shadow-md"
           >
             {filteredLanguages.length > 0 ? (
               filteredLanguages.map((langCode, index) => (
@@ -214,7 +214,7 @@ export function SpokenLanguagesView({
                 </button>
               ))
             ) : (
-              <div className="px-3 py-2 text-center text-sm text-muted-foreground">
+              <div className="text-muted-foreground px-3 py-2 text-center text-sm">
                 <Trans>No matching languages found</Trans>
               </div>
             )}

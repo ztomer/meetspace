@@ -1,4 +1,4 @@
-use crate::pipeline::{diarize_file, SpeakerTurn};
+use crate::pipeline::{SpeakerTurn, diarize_file};
 
 #[tauri::command]
 #[specta::specta]

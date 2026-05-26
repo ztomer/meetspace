@@ -78,9 +78,7 @@ const _PROVIDERS = [
     badge: null,
     icon: <Icon icon="mingcute:random-fill" />,
     baseUrl: undefined,
-    requirements: [
-      { kind: "requires_config", fields: ["base_url"] },
-    ],
+    requirements: [{ kind: "requires_config", fields: ["base_url"] }],
   },
 ] as const satisfies readonly Provider[];
 

@@ -1,14 +1,9 @@
-import {
-  Accordion,
-} from "@meetspace/ui/components/ui/accordion";
+import { Accordion } from "@meetspace/ui/components/ui/accordion";
 
 import { useLlmSettings } from "./context";
 import { ProviderId, PROVIDERS } from "./shared";
 
-import {
-  NonHyprProviderCard,
-  StyledStreamdown,
-} from "~/settings/ai/shared";
+import { NonHyprProviderCard, StyledStreamdown } from "~/settings/ai/shared";
 
 export function ConfigureProviders() {
   const { accordionValue, setAccordionValue } = useLlmSettings();

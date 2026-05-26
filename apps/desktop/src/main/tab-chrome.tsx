@@ -164,7 +164,10 @@ export function ClassicMainTabChrome({ tabs }: { tabs: Tab[] }) {
                 ) : togglesTopTimeline ? (
                   <PanelTopOpenIcon size={16} className="text-muted-foreground" />
                 ) : (
-                  <PanelLeftOpenIcon size={16} className="text-muted-foreground" />
+                  <PanelLeftOpenIcon
+                    size={16}
+                    className="text-muted-foreground"
+                  />
                 )}
               </Button>
             </TooltipTrigger>

@@ -1,11 +1,11 @@
 use std::error::Error;
 
 use async_openai::{
+    Client,
     types::{
         ChatCompletionRequestAssistantMessageArgs, ChatCompletionRequestSystemMessageArgs,
         ChatCompletionRequestUserMessageArgs, CreateChatCompletionRequestArgs,
     },
-    Client,
 };
 
 #[tokio::main]

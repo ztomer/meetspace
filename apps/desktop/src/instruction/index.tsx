@@ -49,7 +49,7 @@ function InstructionShell({
           type="button"
           onClick={onBack}
           className={cn([
-            "flex h-9 items-center gap-1.5 rounded-full px-3 text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground",
+            "text-muted-foreground hover:bg-muted/70 hover:text-foreground flex h-9 items-center gap-1.5 rounded-full px-3 transition-colors",
           ])}
         >
           <ChevronLeft className="h-4 w-4" />
@@ -62,7 +62,7 @@ function InstructionShell({
         className="relative z-10 flex flex-1 items-center justify-center p-6"
       >
         <div className="flex w-full max-w-sm flex-col items-center gap-6 px-10 pb-10 text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-[20px] border border-border/70 bg-background/90 shadow-[0_6px_18px_rgba(28,25,23,0.05)]">
+          <div className="border-border/70 bg-background/90 flex h-14 w-14 items-center justify-center rounded-[20px] border shadow-[0_6px_18px_rgba(28,25,23,0.05)]">
             <img
               src="/assets/meetspace-icon.png"
               alt=""
@@ -71,19 +71,21 @@ function InstructionShell({
           </div>
 
           <div className="flex max-w-[17rem] flex-col gap-3">
-            <div className="text-[10px] font-medium tracking-[0.22em] text-muted-foreground uppercase">
+            <div className="text-muted-foreground text-[10px] font-medium tracking-[0.22em] uppercase">
               Browser step required
             </div>
-            <h2 className="font-sans text-[22px] leading-[1.15] font-semibold text-foreground sm:text-[28px]">
+            <h2 className="text-foreground font-sans text-[22px] leading-[1.15] font-semibold sm:text-[28px]">
               {title}
             </h2>
-            <p className="text-sm leading-6 text-muted-foreground">{description}</p>
+            <p className="text-muted-foreground text-sm leading-6">
+              {description}
+            </p>
           </div>
 
           <div className="flex items-center gap-2.5 pt-1">
-            <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
-            <div className="h-1.5 w-1.5 rounded-full bg-accent" />
-            <div className="h-1.5 w-1.5 rounded-full bg-accent" />
+            <div className="bg-muted-foreground/50 h-1.5 w-1.5 rounded-full" />
+            <div className="bg-accent h-1.5 w-1.5 rounded-full" />
+            <div className="bg-accent h-1.5 w-1.5 rounded-full" />
           </div>
 
           {action ? <div className="w-full">{action}</div> : null}
@@ -121,7 +123,7 @@ function ExternalInstruction({
           <Button
             variant="outline"
             className={cn([
-              "h-10 w-full border-border bg-background text-foreground hover:bg-muted",
+              "border-border bg-background text-foreground hover:bg-muted h-10 w-full",
             ])}
             onClick={() => void openerCommands.openUrl(url, null)}
           >
@@ -211,7 +213,7 @@ function SignInInstruction({ onBack }: { onBack: () => void }) {
               Submit callback URL
             </Button>
           </div>
-          <p className="text-xs leading-5 text-muted-foreground">
+          <p className="text-muted-foreground text-xs leading-5">
             Paste the browser URL here if the browser button did not reopen
             Meetspace.
           </p>
@@ -221,7 +223,7 @@ function SignInInstruction({ onBack }: { onBack: () => void }) {
           type="button"
           onClick={() => setShowCallbackInput(true)}
           className={cn([
-            "text-xs font-medium text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground",
+            "text-muted-foreground hover:text-foreground text-xs font-medium underline underline-offset-4 transition-colors",
           ])}
         >
           Browser handoff not working? Paste the callback link instead

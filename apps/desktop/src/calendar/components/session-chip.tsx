@@ -39,10 +39,10 @@ export function SessionChip({ sessionId }: { sessionId: string }) {
             "cursor-pointer hover:opacity-80",
           ])}
         >
-          <div className="w-[4px] shrink-0 self-stretch rounded-full border border-border bg-transparent" />
+          <div className="border-border w-[4px] shrink-0 self-stretch rounded-full border bg-transparent" />
           <span className="truncate">{session.title as string}</span>
           {createdAt && (
-            <span className="ml-auto shrink-0 font-mono text-muted-foreground">
+            <span className="text-muted-foreground ml-auto shrink-0 font-mono">
               {createdAt}
             </span>
           )}
@@ -85,14 +85,14 @@ function SessionPopoverContent({ sessionId }: { sessionId: string }) {
 
   return (
     <div className="flex flex-col gap-3 p-4">
-      <div className="text-base font-medium text-foreground">
+      <div className="text-foreground text-base font-medium">
         {session.title as string}
       </div>
-      <div className="h-px bg-accent" />
-      {createdAt && <div className="text-sm text-foreground">{createdAt}</div>}
+      <div className="bg-accent h-px" />
+      {createdAt && <div className="text-foreground text-sm">{createdAt}</div>}
       <Button
         size="sm"
-        className="min-h-8 w-full bg-primary text-white hover:bg-primary"
+        className="bg-primary hover:bg-primary min-h-8 w-full text-white"
         onClick={handleOpen}
       >
         Open note

@@ -195,7 +195,7 @@ export function DetailsColumn({
     <div className="flex h-full flex-1 flex-col">
       {selectedPersonData && selectedHumanId ? (
         <>
-          <div className="flex items-center justify-center border-b border-border py-6">
+          <div className="border-border flex items-center justify-center border-b py-6">
             <div className={cn(["rounded-full", bgClass])}>
               <Facehash
                 name={facehashName}
@@ -209,12 +209,12 @@ export function DetailsColumn({
 
           <div className="flex-1 overflow-y-auto">
             {duplicatesWithData.length > 0 && (
-              <div className="border-b border-border bg-destructive-bg px-6 py-4">
-                <h4 className="mb-1 text-sm font-semibold text-destructive-fg">
+              <div className="border-border bg-destructive-bg border-b px-6 py-4">
+                <h4 className="text-destructive-fg mb-1 text-sm font-semibold">
                   Duplicate Contact
                   {duplicatesWithData.length > 1 ? "s" : ""} Found
                 </h4>
-                <p className="mb-3 text-sm text-destructive-fg">
+                <p className="text-destructive-fg mb-3 text-sm">
                   {duplicatesWithData.length > 1
                     ? `${duplicatesWithData.length} contacts`
                     : "Another contact"}{" "}
@@ -226,7 +226,7 @@ export function DetailsColumn({
                   {duplicatesWithData.map((dup) => (
                     <div
                       key={dup.id}
-                      className="flex items-center justify-between rounded-md border border-border bg-muted p-2"
+                      className="border-border bg-muted flex items-center justify-between rounded-md border p-2"
                     >
                       <div className="flex items-center gap-2">
                         <div
@@ -250,10 +250,10 @@ export function DetailsColumn({
                           />
                         </div>
                         <div>
-                          <div className="text-sm font-medium text-foreground">
+                          <div className="text-foreground text-sm font-medium">
                             {dup.name || "Unnamed Contact"}
                           </div>
-                          <div className="text-xs text-muted-foreground">
+                          <div className="text-muted-foreground text-xs">
                             {dup.email}
                           </div>
                         </div>
@@ -272,16 +272,18 @@ export function DetailsColumn({
             )}
 
             <div>
-              <div className="flex items-center border-b border-border px-4 py-3">
-                <div className="w-28 text-sm text-muted-foreground">Name</div>
+              <div className="border-border flex items-center border-b px-4 py-3">
+                <div className="text-muted-foreground w-28 text-sm">Name</div>
                 <div className="flex-1">
                   <EditablePersonNameField personId={selectedHumanId} />
                 </div>
               </div>
               <EditablePersonJobTitleField personId={selectedHumanId} />
 
-              <div className="flex items-center border-b border-border px-4 py-3">
-                <div className="w-28 text-sm text-muted-foreground">Company</div>
+              <div className="border-border flex items-center border-b px-4 py-3">
+                <div className="text-muted-foreground w-28 text-sm">
+                  Company
+                </div>
                 <div className="flex-1">
                   <EditPersonOrganizationSelector personId={selectedHumanId} />
                 </div>
@@ -293,12 +295,12 @@ export function DetailsColumn({
             </div>
 
             {personSessions.length > 0 && (
-              <div className="border-b border-border p-6">
-                <h3 className="mb-3 text-sm font-medium text-muted-foreground">
+              <div className="border-border border-b p-6">
+                <h3 className="text-muted-foreground mb-3 text-sm font-medium">
                   Summary
                 </h3>
-                <div className="rounded-lg border border-border bg-muted p-4">
-                  <p className="text-sm leading-relaxed text-foreground">
+                <div className="border-border bg-muted rounded-lg border p-4">
+                  <p className="text-foreground text-sm leading-relaxed">
                     AI-generated summary of all interactions and notes with this
                     contact will appear here. This will synthesize key
                     discussion points, action items, and relationship context
@@ -309,7 +311,7 @@ export function DetailsColumn({
             )}
 
             <div className="p-6">
-              <h3 className="mb-4 text-sm font-medium text-muted-foreground">
+              <h3 className="text-muted-foreground mb-4 text-sm font-medium">
                 Related Notes
               </h3>
               <div className="flex flex-col gap-2">
@@ -318,28 +320,28 @@ export function DetailsColumn({
                     <button
                       key={session.id}
                       onClick={() => handleSessionClick(session.id)}
-                      className="w-full rounded-md border border-border p-3 text-left transition-colors hover:bg-muted"
+                      className="border-border hover:bg-muted w-full rounded-md border p-3 text-left transition-colors"
                     >
                       <div className="mb-1 flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        <FileText className="text-muted-foreground h-4 w-4" />
                         <span className="text-sm font-medium">
                           {session.title || "Untitled Note"}
                         </span>
                       </div>
                       {session.summary && (
-                        <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                        <p className="text-muted-foreground mt-1 line-clamp-2 text-xs">
                           {session.summary}
                         </p>
                       )}
                       {session.created_at && (
-                        <div className="mt-1 text-xs text-muted-foreground">
+                        <div className="text-muted-foreground mt-1 text-xs">
                           {new Date(session.created_at).toLocaleDateString()}
                         </div>
                       )}
                     </button>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     No related notes found
                   </p>
                 )}
@@ -351,7 +353,7 @@ export function DetailsColumn({
         </>
       ) : (
         <div className="flex flex-1 items-center justify-center">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Select a person to view details
           </p>
         </div>
@@ -395,8 +397,8 @@ function EditablePersonJobTitleField({ personId }: { personId: string }) {
   );
 
   return (
-    <div className="flex items-center border-b border-border px-4 py-3">
-      <div className="w-28 text-sm text-muted-foreground">Job Title</div>
+    <div className="border-border flex items-center border-b px-4 py-3">
+      <div className="text-muted-foreground w-28 text-sm">Job Title</div>
       <div className="flex-1">
         <Input
           value={(value as string) || ""}
@@ -422,8 +424,8 @@ function EditablePersonEmailField({ personId }: { personId: string }) {
   );
 
   return (
-    <div className="flex items-center border-b border-border px-4 py-3">
-      <div className="w-28 text-sm text-muted-foreground">Email</div>
+    <div className="border-border flex items-center border-b px-4 py-3">
+      <div className="text-muted-foreground w-28 text-sm">Email</div>
       <div className="flex-1">
         <Input
           type="email"
@@ -455,8 +457,8 @@ function EditablePersonLinkedInField({ personId }: { personId: string }) {
   );
 
   return (
-    <div className="flex items-center border-b border-border px-4 py-3">
-      <div className="w-28 text-sm text-muted-foreground">LinkedIn</div>
+    <div className="border-border flex items-center border-b px-4 py-3">
+      <div className="text-muted-foreground w-28 text-sm">LinkedIn</div>
       <div className="flex-1">
         <Input
           value={(value as string) || ""}
@@ -482,8 +484,8 @@ function EditablePersonMemoField({ personId }: { personId: string }) {
   );
 
   return (
-    <div className="flex border-b border-border px-4 py-3">
-      <div className="w-28 pt-2 text-sm text-muted-foreground">Notes</div>
+    <div className="border-border flex border-b px-4 py-3">
+      <div className="text-muted-foreground w-28 pt-2 text-sm">Notes</div>
       <div className="flex-1">
         <Textarea
           value={(value as string) || ""}
@@ -524,13 +526,13 @@ function EditPersonOrganizationSelector({ personId }: { personId: string }) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <div className="-mx-2 inline-flex cursor-pointer items-center rounded-lg px-2 py-1 transition-colors hover:bg-muted">
+        <div className="hover:bg-muted -mx-2 inline-flex cursor-pointer items-center rounded-lg px-2 py-1 transition-colors">
           {organization?.name ? (
             <div className="flex items-center">
               <span className="text-base">{organization.name}</span>
-              <span className="group ml-2 text-muted-foreground">
+              <span className="group text-muted-foreground ml-2">
                 <CircleMinus
-                  className="size-4 cursor-pointer text-muted-foreground hover:text-destructive"
+                  className="text-muted-foreground hover:text-destructive size-4 cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRemoveOrganization();
@@ -539,7 +541,7 @@ function EditPersonOrganizationSelector({ personId }: { personId: string }) {
               </span>
             </div>
           ) : (
-            <span className="flex items-center gap-1 text-base text-muted-foreground">
+            <span className="text-muted-foreground flex items-center gap-1 text-base">
               <Plus className="size-4" />
               Add organization
             </span>
@@ -638,12 +640,12 @@ function OrganizationControl({
 
   return (
     <div className="flex max-w-[450px] flex-col gap-3">
-      <div className="text-sm font-medium text-foreground">Organization</div>
+      <div className="text-foreground text-sm font-medium">Organization</div>
 
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-2">
-          <div className="flex w-full items-center gap-2 rounded-xs border border-border bg-muted px-2 py-1.5">
-            <span className="shrink-0 text-muted-foreground">
+          <div className="border-border bg-muted flex w-full items-center gap-2 rounded-xs border px-2 py-1.5">
+            <span className="text-muted-foreground shrink-0">
               <SearchIcon className="size-4" />
             </span>
             <input
@@ -655,26 +657,24 @@ function OrganizationControl({
               }}
               onKeyDown={handleKeyDown}
               placeholder="Search or add company"
-              className="w-full bg-transparent text-sm placeholder:text-muted-foreground focus:outline-hidden focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="placeholder:text-muted-foreground w-full bg-transparent text-sm focus:outline-hidden focus-visible:ring-0 focus-visible:ring-offset-0"
             />
           </div>
 
           {searchTerm.trim() && (
-            <div className="flex w-full flex-col overflow-hidden rounded-xs border border-border">
+            <div className="border-border flex w-full flex-col overflow-hidden rounded-xs border">
               {organizations.map((org: any, index: number) => (
                 <button
                   key={org.id}
                   type="button"
                   className={[
                     "flex items-center px-3 py-2 text-sm text-left transition-colors w-full",
-                    highlightedIndex === index
-                      ? "bg-muted"
-                      : "hover:bg-muted",
+                    highlightedIndex === index ? "bg-muted" : "hover:bg-muted",
                   ].join(" ")}
                   onClick={() => selectOrganization(org.id)}
                   onMouseEnter={() => setHighlightedIndex(index)}
                 >
-                  <span className="mr-2 flex size-5 shrink-0 items-center justify-center rounded-full bg-muted">
+                  <span className="bg-muted mr-2 flex size-5 shrink-0 items-center justify-center rounded-full">
                     <Building2 className="size-3" />
                   </span>
                   <span className="truncate font-medium">{org.name}</span>
@@ -693,12 +693,12 @@ function OrganizationControl({
                   onClick={() => handleCreateOrganization()}
                   onMouseEnter={() => setHighlightedIndex(organizations.length)}
                 >
-                  <span className="mr-2 flex size-5 shrink-0 items-center justify-center rounded-full bg-accent">
+                  <span className="bg-accent mr-2 flex size-5 shrink-0 items-center justify-center rounded-full">
                     <span className="text-xs">+</span>
                   </span>
-                  <span className="flex items-center gap-1 font-medium text-muted-foreground">
+                  <span className="text-muted-foreground flex items-center gap-1 font-medium">
                     Create
-                    <span className="max-w-[140px] truncate text-foreground">
+                    <span className="text-foreground max-w-[140px] truncate">
                       &quot;{searchTerm.trim()}&quot;
                     </span>
                   </span>
@@ -708,21 +708,19 @@ function OrganizationControl({
           )}
 
           {!searchTerm.trim() && organizations.length > 0 && (
-            <div className="custom-scrollbar flex max-h-[40vh] w-full flex-col overflow-hidden overflow-y-auto rounded-xs border border-border">
+            <div className="custom-scrollbar border-border flex max-h-[40vh] w-full flex-col overflow-hidden overflow-y-auto rounded-xs border">
               {organizations.map((org: any, index: number) => (
                 <button
                   key={org.id}
                   type="button"
                   className={[
                     "flex items-center px-3 py-2 text-sm text-left transition-colors w-full",
-                    highlightedIndex === index
-                      ? "bg-muted"
-                      : "hover:bg-muted",
+                    highlightedIndex === index ? "bg-muted" : "hover:bg-muted",
                   ].join(" ")}
                   onClick={() => selectOrganization(org.id)}
                   onMouseEnter={() => setHighlightedIndex(index)}
                 >
-                  <span className="mr-2 flex size-5 shrink-0 items-center justify-center rounded-full bg-muted">
+                  <span className="bg-muted mr-2 flex size-5 shrink-0 items-center justify-center rounded-full">
                     <Building2 className="size-3" />
                   </span>
                   <span className="truncate font-medium">{org.name}</span>

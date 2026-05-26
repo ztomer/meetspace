@@ -189,7 +189,9 @@ impl DeepgramAdapter {
         LanguageSupport::Supported { quality }
     }
 
-    pub fn recommended_model_live(languages: &[meetspace_language::Language]) -> Option<&'static str> {
+    pub fn recommended_model_live(
+        languages: &[meetspace_language::Language],
+    ) -> Option<&'static str> {
         match Self::find_model(languages) {
             Some(DeepgramModel::Nova3General) => Some("nova-3"),
             Some(DeepgramModel::Nova3Medical) => Some("nova-3-medical"),

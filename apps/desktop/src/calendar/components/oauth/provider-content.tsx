@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
 
-import type { ConnectionItem } from "~/shared/api-types";
 import {
   Tooltip,
   TooltipContent,
@@ -17,6 +16,7 @@ import { useAuth } from "~/auth";
 import { useBillingAccess } from "~/auth/billing";
 import { useConnections } from "~/auth/useConnections";
 import type { CalendarProvider } from "~/calendar/components/shared";
+import type { ConnectionItem } from "~/shared/api-types";
 import { openIntegrationUrl } from "~/shared/integration";
 
 export function OAuthProviderContent({
@@ -55,7 +55,7 @@ export function OAuthProviderContent({
           <TooltipTrigger asChild>
             <span
               tabIndex={0}
-              className="cursor-not-allowed text-xs text-muted-foreground opacity-50"
+              className="text-muted-foreground cursor-not-allowed text-xs opacity-50"
             >
               Connect {config.displayName} Calendar
             </span>
@@ -73,7 +73,7 @@ export function OAuthProviderContent({
       <div className="pt-1 pb-2">
         <button
           onClick={upgradeToPro}
-          className="cursor-pointer text-xs text-muted-foreground underline transition-colors hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground cursor-pointer text-xs underline transition-colors"
         >
           Upgrade to connect
         </button>
@@ -124,7 +124,7 @@ export function OAuthProviderContent({
   if (isError) {
     return (
       <div className="pt-1 pb-2">
-        <span className="text-xs text-destructive">
+        <span className="text-destructive text-xs">
           Failed to load integration status
         </span>
       </div>
@@ -135,7 +135,7 @@ export function OAuthProviderContent({
     <div className="pt-1 pb-2">
       <button
         onClick={handleAddAccount}
-        className="cursor-pointer text-xs text-muted-foreground underline transition-colors hover:text-foreground"
+        className="text-muted-foreground hover:text-foreground cursor-pointer text-xs underline transition-colors"
       >
         Connect {config.displayName} Calendar
       </button>
@@ -156,26 +156,26 @@ function ReconnectRequiredContent({
 }) {
   return (
     <div className="flex flex-col gap-2 pb-2">
-      <div className="flex items-center gap-2 text-xs text-warning-fg">
+      <div className="text-warning-fg flex items-center gap-2 text-xs">
         <ReconnectRequiredIndicator />
         <span>Reconnect required for {config.displayName} Calendar</span>
       </div>
 
       {errorDescription && (
-        <p className="text-xs text-muted-foreground">{errorDescription}</p>
+        <p className="text-muted-foreground text-xs">{errorDescription}</p>
       )}
 
       <div className="flex items-center gap-2">
         <button
           onClick={onReconnect}
-          className="cursor-pointer text-xs text-muted-foreground underline transition-colors hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground cursor-pointer text-xs underline transition-colors"
         >
           Reconnect
         </button>
-        <span className="text-xs text-muted-foreground">or</span>
+        <span className="text-muted-foreground text-xs">or</span>
         <button
           onClick={onDisconnect}
-          className="cursor-pointer text-xs text-destructive underline transition-colors hover:text-destructive"
+          className="text-destructive hover:text-destructive cursor-pointer text-xs underline transition-colors"
         >
           Disconnect
         </button>

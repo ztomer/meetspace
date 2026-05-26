@@ -1,16 +1,16 @@
 use std::error::Error;
 
 use async_openai::{
+    Client,
     config::OpenAIConfig,
     types::{
         AssistantStreamEvent, CreateAssistantRequestArgs, CreateMessageRequest, CreateRunRequest,
         CreateThreadRequest, FunctionObject, MessageDeltaContent, MessageRole, RunObject,
         SubmitToolOutputsRunRequest, ToolsOutputs,
     },
-    Client,
 };
 use futures::StreamExt;
-use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
+use tracing_subscriber::{EnvFilter, fmt, layer::SubscriberExt, util::SubscriberInitExt};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {

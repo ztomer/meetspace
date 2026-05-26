@@ -25,5 +25,5 @@ thiserror = { workspace = true }
 tracing = { workspace = true }
 
 meetspace-pyannote-local = { workspace = true }
-simsimd = "6"
 rodio = { workspace = true }
+simsimd = "6"

@@ -312,12 +312,9 @@ export function TimelineView() {
                 />
               )}
               <div
-                className={cn([
-                  "sticky top-0 z-10",
-                  "bg-muted py-1 pr-1 pl-3",
-                ])}
+                className={cn(["sticky top-0 z-10", "bg-muted py-1 pr-1 pl-3"])}
               >
-                <div className="text-base font-bold text-foreground">
+                <div className="text-foreground text-base font-bold">
                   {bucket.label}
                 </div>
               </div>
@@ -368,8 +365,8 @@ export function TimelineView() {
               onClick={handleOpenCalendar}
               size="sm"
               className={cn([
-                "rounded-full bg-background hover:bg-muted",
-                "border border-border text-foreground",
+                "bg-background hover:bg-muted rounded-full",
+                "border-border text-foreground border",
                 "flex items-center gap-1",
                 "px-3",
                 "shadow-xs",
@@ -385,8 +382,8 @@ export function TimelineView() {
               onClick={scrollToToday}
               size="sm"
               className={cn([
-                "rounded-full bg-background hover:bg-muted",
-                "border border-border text-foreground",
+                "bg-background hover:bg-muted rounded-full",
+                "border-border text-foreground border",
                 "flex items-center gap-1",
                 "shadow-xs",
               ])}
@@ -405,8 +402,8 @@ export function TimelineView() {
           size="sm"
           className={cn([
             "absolute bottom-2 left-1/2 -translate-x-1/2 transform",
-            "rounded-full bg-background hover:bg-muted",
-            "border border-border text-foreground",
+            "bg-background hover:bg-muted rounded-full",
+            "border-border text-foreground border",
             "z-20 flex items-center gap-1",
             "shadow-xs",
           ])}
@@ -460,7 +457,7 @@ function TodayBucket({
       return (
         <>
           <CurrentTimeIndicator ref={registerIndicator} timezone={timezone} />
-          <div className="px-3 py-4 text-center text-sm text-muted-foreground">
+          <div className="text-muted-foreground px-3 py-4 text-center text-sm">
             No items today
           </div>
         </>

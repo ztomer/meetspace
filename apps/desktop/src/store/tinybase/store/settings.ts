@@ -221,6 +221,11 @@ export const SETTINGS_MAPPING = {
       path: ["general", "diarize_auto"],
       default: false as boolean,
     },
+    calendar_provider_precedence: {
+      type: "string",
+      path: ["general", "calendar_provider_precedence"],
+      default: JSON.stringify(["apple", "google", "outlook"]) as string,
+    },
   },
   tables: {
     ai_providers: {
@@ -325,7 +330,10 @@ export const StoreComponent = () => {
   }, [store]);
 
   const synchronizer = useCreateSynchronizer(store, async (store) =>
-    createBroadcastChannelSynchronizer(store, "meetspace-sync-settings").startSync(),
+    createBroadcastChannelSynchronizer(
+      store,
+      "meetspace-sync-settings",
+    ).startSync(),
   );
 
   const queries = useCreateQueries(store, (store) =>

@@ -291,8 +291,8 @@ function HeaderTabEnhanced({
             className="w-72"
           >
             <AppFloatingPanel className="flex flex-col gap-2 p-3">
-              <p className="text-xs leading-5 text-foreground">
-                <span className="font-medium text-foreground">
+              <p className="text-foreground text-xs leading-5">
+                <span className="text-foreground font-medium">
                   {templateTitle}
                 </span>{" "}
                 was used to generate this summary.
@@ -300,7 +300,7 @@ function HeaderTabEnhanced({
               <button
                 type="button"
                 onClick={handleExploreTemplatesClick}
-                className="w-fit text-xs font-medium text-foreground underline underline-offset-2 hover:text-muted-foreground"
+                className="text-foreground hover:text-muted-foreground w-fit text-xs font-medium underline underline-offset-2"
               >
                 Explore more templates
               </button>
@@ -390,7 +390,7 @@ function HeaderTabEnhanced({
             type="button"
             onClick={handleCancelClick}
             className={cn([
-              "inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded-xs hover:bg-accent",
+              "hover:bg-accent inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded-xs",
               !isActive && "opacity-50",
             ])}
             aria-label="Cancel enhancement"
@@ -809,7 +809,7 @@ function CreateOtherFormatButton({
       {
         key: "create",
         title: "Create new template",
-        icon: <PlusIcon className="h-3.5 w-3.5 text-info" />,
+        icon: <PlusIcon className="text-info h-3.5 w-3.5" />,
         uppercase: false,
         items: [
           {
@@ -927,13 +927,13 @@ function CreateOtherFormatButton({
       <PopoverContent variant="app" className="w-80" align="start">
         <div className="flex flex-col gap-1">
           <AppFloatingPanel className="flex flex-col overflow-hidden">
-            <div className="border-b border-border py-2">
+            <div className="border-border border-b py-2">
               <div
                 className={cn([
-                  "flex h-9 items-center gap-2 rounded-md bg-background px-3",
+                  "bg-background flex h-9 items-center gap-2 rounded-md px-3",
                 ])}
               >
-                <SearchIcon className="h-4 w-4 text-muted-foreground" />
+                <SearchIcon className="text-muted-foreground h-4 w-4" />
                 <input
                   ref={searchInputRef}
                   autoFocus
@@ -942,14 +942,14 @@ function CreateOtherFormatButton({
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={handleSearchInputKeyDown}
                   placeholder="Search templates..."
-                  className="flex-1 bg-transparent text-sm placeholder:text-muted-foreground focus:outline-hidden"
+                  className="placeholder:text-muted-foreground flex-1 bg-transparent text-sm focus:outline-hidden"
                 />
                 {search && (
                   <button
                     onClick={() => setSearch("")}
-                    className="rounded-xs p-0.5 hover:bg-muted"
+                    className="hover:bg-muted rounded-xs p-0.5"
                   >
-                    <XIcon className="h-3 w-3 text-muted-foreground" />
+                    <XIcon className="text-muted-foreground h-3 w-3" />
                   </button>
                 )}
               </div>
@@ -992,7 +992,7 @@ function CreateOtherFormatButton({
                           );
                         })
                       ) : (
-                        <div className="px-2 py-3 text-sm text-muted-foreground">
+                        <div className="text-muted-foreground px-2 py-3 text-sm">
                           {section.emptyMessage}
                         </div>
                       )}
@@ -1007,7 +1007,7 @@ function CreateOtherFormatButton({
             onClick={handleSeeAllTemplates}
             className={cn([
               "flex h-7 w-full items-center justify-center gap-1 rounded-lg px-3 text-xs font-medium",
-              "text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+              "text-muted-foreground hover:bg-muted hover:text-foreground transition-colors",
             ])}
           >
             See all templates
@@ -1421,13 +1421,13 @@ function TemplateSection({
       <div className="flex items-center gap-2 px-2">
         {icon ??
           (title === "Suggested templates" ? (
-            <LightbulbIcon className="h-3.5 w-3.5 text-warning" />
+            <LightbulbIcon className="text-warning h-3.5 w-3.5" />
           ) : title === "Favorite templates" ? (
             <HeartIcon className="h-3.5 w-3.5 text-rose-500" />
           ) : null)}
         <p
           className={cn([
-            "font-mono text-[11px] font-medium tracking-wide text-muted-foreground",
+            "text-muted-foreground font-mono text-[11px] font-medium tracking-wide",
             uppercase && "uppercase",
           ])}
         >
@@ -1460,29 +1460,31 @@ function TemplateResultButton({
     <button
       ref={buttonRef}
       className={cn([
-        "w-full rounded-md px-3 py-2 text-left transition-colors hover:bg-muted focus:bg-muted focus:outline-hidden",
+        "hover:bg-muted focus:bg-muted w-full rounded-md px-3 py-2 text-left transition-colors focus:outline-hidden",
         "flex flex-col gap-0.5",
       ])}
       onClick={onClick}
       onKeyDown={onKeyDown}
     >
-      <span className="truncate text-sm font-medium text-foreground">
+      <span className="text-foreground truncate text-sm font-medium">
         {title}
       </span>
       {description ? (
-        <span className="line-clamp-2 text-xs text-muted-foreground">
+        <span className="text-muted-foreground line-clamp-2 text-xs">
           {description}
         </span>
       ) : null}
       {creatorLabel ? (
-        <span className="text-[11px] text-muted-foreground">{creatorLabel}</span>
+        <span className="text-muted-foreground text-[11px]">
+          {creatorLabel}
+        </span>
       ) : null}
       {tags && tags.length > 0 ? (
         <span className="mt-1 flex flex-wrap gap-1">
           {tags.map((tag, index) => (
             <span
               key={`${tag}-${index}`}
-              className="rounded-xs bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground"
+              className="bg-muted text-muted-foreground rounded-xs px-1.5 py-0.5 text-[11px]"
             >
               {tag}
             </span>

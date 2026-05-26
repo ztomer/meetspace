@@ -1,11 +1,11 @@
 use crate::{
+    Client, Messages, Runs,
     config::Config,
     error::OpenAIError,
     types::{
         AssistantEventStream, AssistantStreamEvent, CreateThreadAndRunRequest, CreateThreadRequest,
         DeleteThreadResponse, ModifyThreadRequest, RunObject, ThreadObject,
     },
-    Client, Messages, Runs,
 };
 
 /// Create threads that assistants can interact with.

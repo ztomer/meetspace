@@ -2,8 +2,8 @@ use std::net::{Ipv4Addr, SocketAddr};
 use std::path::{Path, PathBuf};
 
 use axum::http::StatusCode;
-use meetspace_llm_types::ImageDetail;
 use llm_cactus::{CompleteService, ModelManagerBuilder};
+use meetspace_llm_types::ImageDetail;
 use url::Url;
 
 pub const COMMON_OPTIONS: &str = "\

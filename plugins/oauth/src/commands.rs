@@ -80,11 +80,8 @@ async fn run_flow<R: tauri::Runtime>(
     let state = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(state_bytes);
 
     // Bind localhost listener first so we know which port to register as redirect_uri.
-    let (redirect_uri, wait_fut) = listen_for_callback(
-        state.clone(),
-        Duration::from_secs(args.timeout_seconds),
-    )
-    .await?;
+    let (redirect_uri, wait_fut) =
+        listen_for_callback(state.clone(), Duration::from_secs(args.timeout_seconds)).await?;
 
     // Build authorize URL.
     let mut auth_url = Url::parse(&args.authorize_url)?;

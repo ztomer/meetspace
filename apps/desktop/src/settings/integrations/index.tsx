@@ -1,3 +1,4 @@
+import { CalendarPrecedenceSetting } from "./calendar-precedence";
 import { GoogleCalendarIntegration } from "./google-calendar";
 import { LinearIntegration } from "./linear";
 import { NotionIntegration } from "./notion";
@@ -9,7 +10,7 @@ export function SettingsIntegrations() {
     <div className="flex flex-col gap-8">
       <div>
         <h2 className="mb-4 font-sans text-lg font-semibold">Integrations</h2>
-        <p className="mb-6 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mb-6 text-sm">
           Connect Meetspace to other tools you use. All integrations run
           locally; tokens stay on this device.
         </p>
@@ -17,6 +18,7 @@ export function SettingsIntegrations() {
       <ObsidianIntegration />
       <GoogleCalendarIntegration />
       <OutlookCalendarIntegration />
+      <CalendarPrecedenceSetting />
       <NotionIntegration />
       <LinearIntegration />
     </div>

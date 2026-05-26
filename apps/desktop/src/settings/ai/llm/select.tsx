@@ -150,7 +150,7 @@ export function SelectProviderAndModel() {
       <div
         className={cn([
           "flex flex-col gap-4",
-          "rounded-xl border border-border p-4",
+          "border-border rounded-xl border p-4",
           !isConfigured || hasError ? "bg-destructive-bg" : "bg-muted",
         ])}
       >
@@ -170,7 +170,7 @@ export function SelectProviderAndModel() {
                       <ProviderIconSlot>{provider.icon}</ProviderIconSlot>
                       <span>{provider.displayName}</span>
                       {provider.badge ? (
-                        <span className="rounded-full border border-border px-2 py-0.5 text-[10px] tracking-wide text-muted-foreground uppercase">
+                        <span className="border-border text-muted-foreground rounded-full border px-2 py-0.5 text-[10px] tracking-wide uppercase">
                           {provider.badge}
                         </span>
                       ) : null}
@@ -201,8 +201,8 @@ export function SelectProviderAndModel() {
         </div>
 
         {!isConfigured && (
-          <div className="flex items-center gap-2 border-t border-destructive/30 pt-2">
-            <span className="text-sm text-destructive">
+          <div className="border-destructive/30 flex items-center gap-2 border-t pt-2">
+            <span className="text-destructive text-sm">
               <strong className="font-medium">Language model</strong> is needed
               to make Meetspace summarize and chat about your conversations.
             </span>
@@ -210,8 +210,8 @@ export function SelectProviderAndModel() {
         )}
 
         {hasError && health.message && (
-          <div className="flex items-center gap-2 border-t border-destructive/30 pt-2">
-            <span className="text-sm text-destructive">{health.message}</span>
+          <div className="border-destructive/30 flex items-center gap-2 border-t pt-2">
+            <span className="text-destructive text-sm">{health.message}</span>
           </div>
         )}
       </div>

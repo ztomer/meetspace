@@ -62,7 +62,7 @@ export function ListenButton({
     return (
       <div className="flex flex-col items-center gap-2">
         {countdown.label && (
-          <div className="text-xs whitespace-nowrap text-muted-foreground">
+          <div className="text-muted-foreground text-xs whitespace-nowrap">
             <span>{countdown.label}</span>
           </div>
         )}
@@ -78,7 +78,7 @@ export function ListenButton({
   return (
     <div className="flex flex-col items-center gap-2">
       {countdown.label && (
-        <div className="text-xs whitespace-nowrap text-muted-foreground">
+        <div className="text-muted-foreground text-xs whitespace-nowrap">
           <span>{countdown.label}</span>
         </div>
       )}
@@ -100,7 +100,7 @@ function RemoteMeetingButton({ remote }: { remote: RemoteMeeting }) {
   return (
     <FloatingButton
       onClick={handleJoin}
-      className="h-10 justify-center gap-2 border-border bg-background px-4 text-foreground shadow-[0_4px_14px_rgba(0,0,0,0.1)] hover:bg-muted"
+      className="border-border bg-background text-foreground hover:bg-muted h-10 justify-center gap-2 px-4 shadow-[0_4px_14px_rgba(0,0,0,0.1)]"
     >
       <span>Join</span>
       {icon}

@@ -4,6 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import { safeParseDate } from "@meetspace/utils";
 import { TZDate } from "@meetspace/utils";
 
+import {
+  computeDuplicateHiddenSet,
+  parsePrecedence,
+} from "~/services/calendar/dedup";
 import { useConfigValue } from "~/shared/config";
 import { useIgnoredEvents } from "~/store/tinybase/hooks";
 import * as main from "~/store/tinybase/store/main";
@@ -126,14 +130,36 @@ export function useCalendarData(): CalendarData {
     main.STORE_ID,
   );
   const { isIgnored } = useIgnoredEvents();
+  const precedenceRaw = useConfigValue("calendar_provider_precedence");
 
   return useMemo(() => {
     const eventIdsByDate: Record<string, string[]> = {};
     const sessionIdsByDate: Record<string, string[]> = {};
 
+    // Phase 10.3 — drop cross-provider duplicates so the agenda doesn't show
+    // the same meeting twice when it surfaces from Apple AND Google AND/OR
+    // Outlook. Pure read-side filter — the duplicate rows stay in the table
+    // so flipping precedence in settings rebinds instantly.
+    const precedence = parsePrecedence(precedenceRaw);
+    const hiddenDuplicates = eventsTable
+      ? computeDuplicateHiddenSet(
+          Object.entries(eventsTable).map(([id, data]) => ({
+            id,
+            data: {
+              provider: data.provider as string | undefined,
+              title: data.title as string | undefined,
+              started_at: data.started_at as string | undefined,
+              ended_at: data.ended_at as string | undefined,
+            },
+          })),
+          precedence,
+        )
+      : new Set<string>();
+
     if (eventsTable) {
       for (const [eventId, row] of Object.entries(eventsTable)) {
         if (!row.title) continue;
+        if (hiddenDuplicates.has(eventId)) continue;
         const raw = safeParseDate(row.started_at);
         if (!raw) continue;
         if (isIgnored(row.tracking_id_event, row.recurrence_series_id))
@@ -193,5 +219,5 @@ export function useCalendarData(): CalendarData {
     }
 
     return { eventIdsByDate, sessionIdsByDate };
-  }, [eventsTable, sessionsTable, tz, isIgnored]);
+  }, [eventsTable, sessionsTable, tz, isIgnored, precedenceRaw]);
 }

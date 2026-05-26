@@ -62,7 +62,7 @@ export function SpeakerAssignPopover({
           type="button"
           className={cn([
             "-ml-1 cursor-pointer rounded-xs px-1",
-            "transition-colors hover:bg-muted",
+            "hover:bg-muted transition-colors",
           ])}
           style={{ color }}
         >
@@ -114,7 +114,9 @@ function ParticipantList({
   if (participants.length === 0) {
     return (
       <AppFloatingPanel>
-        <p className="px-3 py-2 text-xs text-muted-foreground">No participants</p>
+        <p className="text-muted-foreground px-3 py-2 text-xs">
+          No participants
+        </p>
       </AppFloatingPanel>
     );
   }

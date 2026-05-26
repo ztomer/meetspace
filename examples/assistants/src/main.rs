@@ -1,12 +1,12 @@
 use async_openai::{
+    Client,
     types::{
         CreateAssistantRequestArgs, CreateMessageRequestArgs, CreateRunRequestArgs,
         CreateThreadRequestArgs, MessageContent, MessageRole, RunStatus,
     },
-    Client,
 };
 use std::error::Error;
-use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
+use tracing_subscriber::{EnvFilter, fmt, layer::SubscriberExt, util::SubscriberInitExt};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {

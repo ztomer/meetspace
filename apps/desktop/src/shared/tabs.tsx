@@ -276,11 +276,11 @@ export function TabItemBase({
   const indicatorDot =
     status === "listening" ? (
       <div className="relative size-2">
-        <div className="absolute inset-0 rounded-full bg-destructive"></div>
-        <div className="absolute inset-0 animate-ping rounded-full bg-destructive/40"></div>
+        <div className="bg-destructive absolute inset-0 rounded-full"></div>
+        <div className="bg-destructive/40 absolute inset-0 animate-ping rounded-full"></div>
       </div>
     ) : status === "listening-degraded" ? (
-      <AlertCircleIcon className="size-4 text-warning" />
+      <AlertCircleIcon className="text-warning size-4" />
     ) : null;
 
   return (
@@ -411,7 +411,7 @@ export function TabItemBase({
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <AppFloatingPanel className="flex flex-col gap-2 p-3">
-            <p className="text-sm text-foreground">
+            <p className="text-foreground text-sm">
               Are you sure you want to close this tab? This will stop Meetspace
               from listening.
             </p>

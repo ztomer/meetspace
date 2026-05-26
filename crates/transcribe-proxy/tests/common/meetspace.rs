@@ -5,7 +5,7 @@ use bytes::Bytes;
 use futures_util::StreamExt;
 use owhisper_client::meetspace_ws_client;
 use owhisper_client::{
-    BatchClient, BatchSttAdapter, DeepgramAdapter, MeetspaceAdapter, ListenClient,
+    BatchClient, BatchSttAdapter, DeepgramAdapter, ListenClient, MeetspaceAdapter,
 };
 use owhisper_interface::stream::{Alternatives, Channel, Metadata, StreamResponse};
 use owhisper_interface::{ControlMessage, ListenParams, MixedMessage};

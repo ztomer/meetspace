@@ -35,7 +35,8 @@ function InMeetingIndicator({ sessionId }: { sessionId: string }) {
   const accent = degraded ? "amber" : "red";
   const colors = {
     red: {
-      button: "text-destructive hover:text-destructive bg-destructive-bg hover:bg-destructive-bg",
+      button:
+        "text-destructive hover:text-destructive bg-destructive-bg hover:bg-destructive-bg",
       sticks: "#ef4444",
       stop: "bg-destructive",
     },

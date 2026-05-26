@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
-use axum::{extract::Query, response::Html, routing::get, Router};
+use axum::{Router, extract::Query, response::Html, routing::get};
 use serde::Deserialize;
 use tokio::net::TcpListener;
 use tokio::sync::oneshot;
-use tokio::time::{timeout, Duration};
+use tokio::time::{Duration, timeout};
 
 use crate::error::{Error, Result};
 

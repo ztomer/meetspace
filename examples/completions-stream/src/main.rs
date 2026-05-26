@@ -1,4 +1,4 @@
-use async_openai::{types::CreateCompletionRequestArgs, Client};
+use async_openai::{Client, types::CreateCompletionRequestArgs};
 use futures::StreamExt;
 
 #[tokio::main]

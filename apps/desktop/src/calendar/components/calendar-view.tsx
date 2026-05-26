@@ -125,11 +125,11 @@ export function CalendarView() {
       <div
         className={cn([
           "flex items-center justify-between",
-          "h-12 border-b border-border py-2 pr-1 pl-3",
+          "border-border h-12 border-b py-2 pr-1 pl-3",
         ])}
       >
         <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold text-foreground">
+          <h2 className="text-foreground text-sm font-semibold">
             {isMonthView
               ? format(currentMonth, "MMMM yyyy")
               : days.length > 0
@@ -167,7 +167,7 @@ export function CalendarView() {
       </div>
 
       <div
-        className="grid border-b border-border"
+        className="border-border grid border-b"
         style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
       >
         {visibleHeaders.map((day, i) => (
@@ -248,7 +248,7 @@ function CalendarSyncHeaderControls() {
       {showSyncIndicator ? (
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
-            <span className="flex size-6 items-center justify-center text-muted-foreground">
+            <span className="text-muted-foreground flex size-6 items-center justify-center">
               <Spinner size={12} />
             </span>
           </TooltipTrigger>

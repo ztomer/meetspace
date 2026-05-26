@@ -34,9 +34,9 @@ export const CurrentTimeIndicator = forwardRef<
       style={variant === "inside" ? { top: insideOffset } : undefined}
     >
       <div className="absolute top-0 right-3 left-3 -translate-y-1/2">
-        <div className="absolute top-1/2 right-0 left-0 h-px -translate-y-1/2 bg-destructive/90 mix-blend-multiply" />
+        <div className="bg-destructive/90 absolute top-1/2 right-0 left-0 h-px -translate-y-1/2 mix-blend-multiply" />
         <div className="relative flex h-5 items-center justify-center">
-          <div className="rounded-full bg-destructive px-2 py-0.5 font-mono text-[11px] font-semibold text-white opacity-0 shadow-xs transition-opacity group-hover:opacity-100">
+          <div className="bg-destructive rounded-full px-2 py-0.5 font-mono text-[11px] font-semibold text-white opacity-0 shadow-xs transition-opacity group-hover:opacity-100">
             {label}
           </div>
         </div>

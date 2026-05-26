@@ -80,7 +80,7 @@ export function SearchableSelect({
           role="combobox"
           aria-expanded={open}
           className={cn([
-            "justify-between bg-background font-normal shadow-none focus-visible:ring-0",
+            "bg-background justify-between font-normal shadow-none focus-visible:ring-0",
             "rounded-lg px-3",
             className,
           ])}
@@ -138,7 +138,7 @@ export function SearchableSelect({
                   >
                     <span className="flex-1 truncate">{option.label}</span>
                     {option.detail && (
-                      <span className="shrink-0 font-mono text-[10px] text-muted-foreground">
+                      <span className="text-muted-foreground shrink-0 font-mono text-[10px]">
                         {option.detail}
                       </span>
                     )}

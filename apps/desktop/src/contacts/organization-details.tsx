@@ -36,16 +36,16 @@ export function OrganizationDetailsColumn({
     <div className="flex flex-1 flex-col">
       {selectedOrgData && selectedOrganizationId ? (
         <>
-          <div className="flex items-center justify-center border-b border-border py-6">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent">
-              <Building2 className="h-8 w-8 text-muted-foreground" />
+          <div className="border-border flex items-center justify-center border-b py-6">
+            <div className="bg-accent flex h-16 w-16 items-center justify-center rounded-full">
+              <Building2 className="text-muted-foreground h-8 w-8" />
             </div>
           </div>
 
           <div className="flex-1 overflow-y-auto">
             <div>
-              <div className="flex items-center border-b border-border px-4 py-3">
-                <div className="w-28 text-sm text-muted-foreground">Name</div>
+              <div className="border-border flex items-center border-b px-4 py-3">
+                <div className="text-muted-foreground w-28 text-sm">Name</div>
                 <div className="flex-1">
                   <EditableOrganizationNameField
                     organizationId={selectedOrganizationId}
@@ -55,9 +55,9 @@ export function OrganizationDetailsColumn({
             </div>
 
             <div className="p-6">
-              <h3 className="mb-4 text-sm font-medium text-muted-foreground">
+              <h3 className="text-muted-foreground mb-4 text-sm font-medium">
                 People
-                <span className="font-normal text-muted-foreground">
+                <span className="text-muted-foreground font-normal">
                   {" "}
                   &middot; {peopleInOrg?.length ?? 0}{" "}
                   {(peopleInOrg?.length ?? 0) === 1 ? "member" : "members"}
@@ -75,7 +75,7 @@ export function OrganizationDetailsColumn({
                       return (
                         <div
                           key={humanId}
-                          className="cursor-pointer rounded-lg border border-border bg-background p-4 transition-all hover:shadow-xs"
+                          className="border-border bg-background cursor-pointer rounded-lg border p-4 transition-all hover:shadow-xs"
                           onClick={() => onPersonClick?.(humanId)}
                         >
                           <div className="flex flex-col items-center gap-3 text-center">
@@ -108,7 +108,7 @@ export function OrganizationDetailsColumn({
                                 {human.name || human.email || "Unnamed"}
                               </div>
                               {human.job_title && (
-                                <div className="mt-1 truncate text-xs text-muted-foreground">
+                                <div className="text-muted-foreground mt-1 truncate text-xs">
                                   {human.job_title as string}
                                 </div>
                               )}
@@ -156,7 +156,7 @@ export function OrganizationDetailsColumn({
                     })}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     No people in this organization
                   </p>
                 )}
@@ -168,7 +168,7 @@ export function OrganizationDetailsColumn({
         </>
       ) : (
         <div className="flex flex-1 items-center justify-center">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Select an organization to view details
           </p>
         </div>

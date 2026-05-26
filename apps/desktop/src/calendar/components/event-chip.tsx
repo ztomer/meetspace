@@ -70,7 +70,7 @@ export function EventChip({ eventId }: { eventId: string }) {
             />
             <span className="truncate">{event.title as string}</span>
             {startedAt && (
-              <span className="ml-auto shrink-0 font-mono text-muted-foreground">
+              <span className="text-muted-foreground ml-auto shrink-0 font-mono">
                 {startedAt}
               </span>
             )}
@@ -118,7 +118,7 @@ function EventPopoverContent({ eventId }: { eventId: string }) {
       <EventDisplay event={event} />
       <Button
         size="sm"
-        className="min-h-8 w-full bg-primary text-white hover:bg-primary"
+        className="bg-primary hover:bg-primary min-h-8 w-full text-white"
         onClick={handleOpen}
       >
         Open note

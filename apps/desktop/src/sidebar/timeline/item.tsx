@@ -139,7 +139,7 @@ function ItemBase({
             {title || "Untitled"}
           </div>
           {displayTime && (
-            <div className="font-mono text-xs text-muted-foreground">
+            <div className="text-muted-foreground font-mono text-xs">
               {displayTime}
             </div>
           )}

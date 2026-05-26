@@ -1,6 +1,6 @@
 use async_openai::{
-    types::{CreateImageEditRequestArgs, DallE2ImageSize, ImageResponseFormat},
     Client,
+    types::{CreateImageEditRequestArgs, DallE2ImageSize, ImageResponseFormat},
 };
 use std::error::Error;
 

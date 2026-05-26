@@ -1,11 +1,11 @@
 use std::error::Error;
 
 use async_openai::{
+    Client,
     types::{
         ChatCompletionRequestSystemMessage, ChatCompletionRequestUserMessage,
         CreateChatCompletionRequestArgs, ResponseFormat, ResponseFormatJsonSchema,
     },
-    Client,
 };
 use serde_json::json;
 

@@ -95,7 +95,7 @@ export function DayCell({
   return (
     <div
       className={cn([
-        "border-r border-b border-border",
+        "border-border border-r border-b",
         "flex min-w-0 flex-col p-1.5",
         (day.getDay() === 0 || day.getDay() === 6) && "bg-muted",
       ])}
@@ -133,7 +133,7 @@ export function DayCell({
         {overflow > 0 && (
           <Popover>
             <PopoverTrigger asChild>
-              <button className="shrink-0 cursor-pointer pl-1 text-left text-xs text-muted-foreground hover:text-muted-foreground">
+              <button className="text-muted-foreground hover:text-muted-foreground shrink-0 cursor-pointer pl-1 text-left text-xs">
                 +{overflow} more
               </button>
             </PopoverTrigger>
@@ -144,7 +144,7 @@ export function DayCell({
               onClick={(e) => e.stopPropagation()}
             >
               <AppFloatingPanel className="p-2">
-                <div className="mb-2 text-sm font-medium text-foreground">
+                <div className="text-foreground mb-2 text-sm font-medium">
                   {format(day, "MMM d, yyyy")}
                 </div>
                 <div className="flex flex-col gap-0.5">

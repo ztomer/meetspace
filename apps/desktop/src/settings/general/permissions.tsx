@@ -22,7 +22,7 @@ function ActionLink({
       onClick={onClick}
       disabled={disabled}
       className={cn([
-        "underline transition-colors hover:text-foreground",
+        "hover:text-foreground underline transition-colors",
         disabled && "cursor-not-allowed opacity-50",
       ])}
     >
@@ -72,14 +72,14 @@ function PermissionRow({
           {!isAuthorized && <AlertCircleIcon className="size-4" />}
           <h3 className="text-sm font-medium">{title}</h3>
         </div>
-        <div className="text-xs text-muted-foreground">
+        <div className="text-muted-foreground text-xs">
           {!showActions ? (
             <div>
               {!isAuthorized && <span>{description} · </span>}
               <button
                 type="button"
                 onClick={() => setShowActions(true)}
-                className="underline transition-colors hover:text-foreground"
+                className="hover:text-foreground underline transition-colors"
               >
                 Having trouble?
               </button>
@@ -136,7 +136,7 @@ function PermissionGroup({
 }) {
   return (
     <div>
-      <h3 className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+      <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wide uppercase">
         {title}
       </h3>
       <div className="flex flex-col gap-4">{children}</div>

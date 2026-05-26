@@ -48,7 +48,7 @@ export function ChatToolbarControls({
         onClick={onCloseChat}
         title="Close chat"
         shortcutLabel={shortcutLabel}
-        className="absolute top-1/2 right-0 -translate-y-1/2 bg-muted text-foreground hover:bg-muted"
+        className="bg-muted text-foreground hover:bg-muted absolute top-1/2 right-0 -translate-y-1/2"
       />
     </div>
   );
@@ -83,7 +83,7 @@ function ChatActionButton({
       <TooltipContent side="bottom" className="flex items-center gap-2">
         <span>{title}</span>
         {shortcutLabel && (
-          <span className="rounded border border-border bg-muted px-1 py-0.5 text-[10px] text-muted-foreground">
+          <span className="border-border bg-muted text-muted-foreground rounded border px-1 py-0.5 text-[10px]">
             {shortcutLabel}
           </span>
         )}
@@ -126,12 +126,12 @@ function ChatGroups({
             "text-foreground",
           ])}
         >
-          <h3 className="min-w-0 flex-1 truncate text-xs font-medium text-foreground">
+          <h3 className="text-foreground min-w-0 flex-1 truncate text-xs font-medium">
             {currentChatTitle || "Ask Meetspace AI anything"}
           </h3>
           <ChevronDown
             className={cn([
-              "h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200",
+              "text-muted-foreground h-3.5 w-3.5 shrink-0 transition-transform duration-200",
               isDropdownOpen && "rotate-180",
             ])}
           />
@@ -145,7 +145,7 @@ function ChatGroups({
       >
         <AppFloatingPanel className="flex flex-col gap-0.5 p-1.5">
           <div className="px-2 py-1.5">
-            <h4 className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+            <h4 className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
               Recent Chats
             </h4>
           </div>
@@ -165,8 +165,8 @@ function ChatGroups({
             </div>
           ) : (
             <div className="px-3 py-6 text-center">
-              <MessageCircle className="mx-auto mb-1.5 h-6 w-6 text-muted-foreground/60" />
-              <p className="text-xs text-muted-foreground">No recent chats</p>
+              <MessageCircle className="text-muted-foreground/60 mx-auto mb-1.5 h-6 w-6" />
+              <p className="text-muted-foreground text-xs">No recent chats</p>
             </div>
           )}
         </AppFloatingPanel>
@@ -203,7 +203,7 @@ function ChatGroupItem({
       className={cn([
         "group h-auto w-full justify-start px-2.5 py-1.5",
         isActive
-          ? "bg-muted shadow-xs hover:bg-muted"
+          ? "bg-muted hover:bg-muted shadow-xs"
           : "hover:bg-muted active:bg-muted",
       ])}
     >
@@ -227,7 +227,7 @@ function ChatGroupItem({
           >
             {chatGroup.title}
           </div>
-          <div className="mt-0.5 text-[11px] text-muted-foreground">
+          <div className="text-muted-foreground mt-0.5 text-[11px]">
             {formattedTime}
           </div>
         </div>

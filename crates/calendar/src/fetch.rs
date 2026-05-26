@@ -26,14 +26,20 @@ pub async fn list_all_connection_ids(
     Ok(map.into_iter().collect())
 }
 
-fn make_client(api_base_url: &str, access_token: &str) -> Result<meetspace_api_client::Client, Error> {
+fn make_client(
+    api_base_url: &str,
+    access_token: &str,
+) -> Result<meetspace_api_client::Client, Error> {
     let auth_value = format!("Bearer {access_token}").parse()?;
     let mut headers = reqwest::header::HeaderMap::new();
     headers.insert(reqwest::header::AUTHORIZATION, auth_value);
     let http = reqwest::Client::builder()
         .default_headers(headers)
         .build()?;
-    Ok(meetspace_api_client::Client::new_with_client(api_base_url, http))
+    Ok(meetspace_api_client::Client::new_with_client(
+        api_base_url,
+        http,
+    ))
 }
 
 pub async fn list_google_calendars(

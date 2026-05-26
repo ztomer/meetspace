@@ -1,14 +1,14 @@
 use async_openai::{
+    Client,
     types::{
         ChatCompletionFunctionsArgs, ChatCompletionRequestFunctionMessageArgs,
         ChatCompletionRequestUserMessageArgs, CreateChatCompletionRequestArgs,
     },
-    Client,
 };
 use serde_json::json;
 use std::collections::HashMap;
 use std::error::Error;
-use tracing_subscriber::{fmt, prelude::*, EnvFilter};
+use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {

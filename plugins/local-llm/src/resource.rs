@@ -49,7 +49,8 @@ pub(crate) fn resolve_embedded_llm_args<R: Runtime, T: Manager<R>>(
     manager: &T,
 ) -> Result<(String, PathBuf), crate::Error> {
     let model = meetspace_local_model::CactusLlmModel::Lfm2Vl450mApple;
-    let meetspace_local_model::CactusModelSource::BundledResource { relative_path } = model.source()
+    let meetspace_local_model::CactusModelSource::BundledResource { relative_path } =
+        model.source()
     else {
         return Err(crate::Error::Other(format!(
             "embedded local LLM resource is unavailable for {}",
