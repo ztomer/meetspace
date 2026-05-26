@@ -195,7 +195,7 @@ export function DetailsColumn({
     <div className="flex h-full flex-1 flex-col">
       {selectedPersonData && selectedHumanId ? (
         <>
-          <div className="flex items-center justify-center border-b border-neutral-200 py-6">
+          <div className="flex items-center justify-center border-b border-border py-6">
             <div className={cn(["rounded-full", bgClass])}>
               <Facehash
                 name={facehashName}
@@ -209,7 +209,7 @@ export function DetailsColumn({
 
           <div className="flex-1 overflow-y-auto">
             {duplicatesWithData.length > 0 && (
-              <div className="border-b border-neutral-200 bg-red-50 px-6 py-4">
+              <div className="border-b border-border bg-red-50 px-6 py-4">
                 <h4 className="mb-1 text-sm font-semibold text-red-900">
                   Duplicate Contact
                   {duplicatesWithData.length > 1 ? "s" : ""} Found
@@ -226,7 +226,7 @@ export function DetailsColumn({
                   {duplicatesWithData.map((dup) => (
                     <div
                       key={dup.id}
-                      className="flex items-center justify-between rounded-md border border-neutral-200 bg-neutral-50 p-2"
+                      className="flex items-center justify-between rounded-md border border-border bg-muted p-2"
                     >
                       <div className="flex items-center gap-2">
                         <div
@@ -250,10 +250,10 @@ export function DetailsColumn({
                           />
                         </div>
                         <div>
-                          <div className="text-sm font-medium text-neutral-900">
+                          <div className="text-sm font-medium text-foreground">
                             {dup.name || "Unnamed Contact"}
                           </div>
-                          <div className="text-xs text-neutral-500">
+                          <div className="text-xs text-muted-foreground">
                             {dup.email}
                           </div>
                         </div>
@@ -272,16 +272,16 @@ export function DetailsColumn({
             )}
 
             <div>
-              <div className="flex items-center border-b border-neutral-200 px-4 py-3">
-                <div className="w-28 text-sm text-neutral-500">Name</div>
+              <div className="flex items-center border-b border-border px-4 py-3">
+                <div className="w-28 text-sm text-muted-foreground">Name</div>
                 <div className="flex-1">
                   <EditablePersonNameField personId={selectedHumanId} />
                 </div>
               </div>
               <EditablePersonJobTitleField personId={selectedHumanId} />
 
-              <div className="flex items-center border-b border-neutral-200 px-4 py-3">
-                <div className="w-28 text-sm text-neutral-500">Company</div>
+              <div className="flex items-center border-b border-border px-4 py-3">
+                <div className="w-28 text-sm text-muted-foreground">Company</div>
                 <div className="flex-1">
                   <EditPersonOrganizationSelector personId={selectedHumanId} />
                 </div>
@@ -293,12 +293,12 @@ export function DetailsColumn({
             </div>
 
             {personSessions.length > 0 && (
-              <div className="border-b border-neutral-200 p-6">
-                <h3 className="mb-3 text-sm font-medium text-neutral-600">
+              <div className="border-b border-border p-6">
+                <h3 className="mb-3 text-sm font-medium text-muted-foreground">
                   Summary
                 </h3>
-                <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
-                  <p className="text-sm leading-relaxed text-neutral-700">
+                <div className="rounded-lg border border-border bg-muted p-4">
+                  <p className="text-sm leading-relaxed text-foreground">
                     AI-generated summary of all interactions and notes with this
                     contact will appear here. This will synthesize key
                     discussion points, action items, and relationship context
@@ -309,7 +309,7 @@ export function DetailsColumn({
             )}
 
             <div className="p-6">
-              <h3 className="mb-4 text-sm font-medium text-neutral-600">
+              <h3 className="mb-4 text-sm font-medium text-muted-foreground">
                 Related Notes
               </h3>
               <div className="flex flex-col gap-2">
@@ -318,28 +318,28 @@ export function DetailsColumn({
                     <button
                       key={session.id}
                       onClick={() => handleSessionClick(session.id)}
-                      className="w-full rounded-md border border-neutral-200 p-3 text-left transition-colors hover:bg-neutral-50"
+                      className="w-full rounded-md border border-border p-3 text-left transition-colors hover:bg-muted"
                     >
                       <div className="mb-1 flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-neutral-500" />
+                        <FileText className="h-4 w-4 text-muted-foreground" />
                         <span className="text-sm font-medium">
                           {session.title || "Untitled Note"}
                         </span>
                       </div>
                       {session.summary && (
-                        <p className="mt-1 line-clamp-2 text-xs text-neutral-600">
+                        <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
                           {session.summary}
                         </p>
                       )}
                       {session.created_at && (
-                        <div className="mt-1 text-xs text-neutral-500">
+                        <div className="mt-1 text-xs text-muted-foreground">
                           {new Date(session.created_at).toLocaleDateString()}
                         </div>
                       )}
                     </button>
                   ))
                 ) : (
-                  <p className="text-sm text-neutral-500">
+                  <p className="text-sm text-muted-foreground">
                     No related notes found
                   </p>
                 )}
@@ -351,7 +351,7 @@ export function DetailsColumn({
         </>
       ) : (
         <div className="flex flex-1 items-center justify-center">
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm text-muted-foreground">
             Select a person to view details
           </p>
         </div>
@@ -395,8 +395,8 @@ function EditablePersonJobTitleField({ personId }: { personId: string }) {
   );
 
   return (
-    <div className="flex items-center border-b border-neutral-200 px-4 py-3">
-      <div className="w-28 text-sm text-neutral-500">Job Title</div>
+    <div className="flex items-center border-b border-border px-4 py-3">
+      <div className="w-28 text-sm text-muted-foreground">Job Title</div>
       <div className="flex-1">
         <Input
           value={(value as string) || ""}
@@ -422,8 +422,8 @@ function EditablePersonEmailField({ personId }: { personId: string }) {
   );
 
   return (
-    <div className="flex items-center border-b border-neutral-200 px-4 py-3">
-      <div className="w-28 text-sm text-neutral-500">Email</div>
+    <div className="flex items-center border-b border-border px-4 py-3">
+      <div className="w-28 text-sm text-muted-foreground">Email</div>
       <div className="flex-1">
         <Input
           type="email"
@@ -455,8 +455,8 @@ function EditablePersonLinkedInField({ personId }: { personId: string }) {
   );
 
   return (
-    <div className="flex items-center border-b border-neutral-200 px-4 py-3">
-      <div className="w-28 text-sm text-neutral-500">LinkedIn</div>
+    <div className="flex items-center border-b border-border px-4 py-3">
+      <div className="w-28 text-sm text-muted-foreground">LinkedIn</div>
       <div className="flex-1">
         <Input
           value={(value as string) || ""}
@@ -482,8 +482,8 @@ function EditablePersonMemoField({ personId }: { personId: string }) {
   );
 
   return (
-    <div className="flex border-b border-neutral-200 px-4 py-3">
-      <div className="w-28 pt-2 text-sm text-neutral-500">Notes</div>
+    <div className="flex border-b border-border px-4 py-3">
+      <div className="w-28 pt-2 text-sm text-muted-foreground">Notes</div>
       <div className="flex-1">
         <Textarea
           value={(value as string) || ""}
@@ -524,13 +524,13 @@ function EditPersonOrganizationSelector({ personId }: { personId: string }) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <div className="-mx-2 inline-flex cursor-pointer items-center rounded-lg px-2 py-1 transition-colors hover:bg-neutral-50">
+        <div className="-mx-2 inline-flex cursor-pointer items-center rounded-lg px-2 py-1 transition-colors hover:bg-muted">
           {organization?.name ? (
             <div className="flex items-center">
               <span className="text-base">{organization.name}</span>
-              <span className="group ml-2 text-neutral-400">
+              <span className="group ml-2 text-muted-foreground">
                 <CircleMinus
-                  className="size-4 cursor-pointer text-neutral-400 hover:text-red-600"
+                  className="size-4 cursor-pointer text-muted-foreground hover:text-destructive"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRemoveOrganization();
@@ -539,7 +539,7 @@ function EditPersonOrganizationSelector({ personId }: { personId: string }) {
               </span>
             </div>
           ) : (
-            <span className="flex items-center gap-1 text-base text-neutral-400">
+            <span className="flex items-center gap-1 text-base text-muted-foreground">
               <Plus className="size-4" />
               Add organization
             </span>
@@ -638,12 +638,12 @@ function OrganizationControl({
 
   return (
     <div className="flex max-w-[450px] flex-col gap-3">
-      <div className="text-sm font-medium text-neutral-700">Organization</div>
+      <div className="text-sm font-medium text-foreground">Organization</div>
 
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-2">
-          <div className="flex w-full items-center gap-2 rounded-xs border border-neutral-200 bg-neutral-50 px-2 py-1.5">
-            <span className="shrink-0 text-neutral-500">
+          <div className="flex w-full items-center gap-2 rounded-xs border border-border bg-muted px-2 py-1.5">
+            <span className="shrink-0 text-muted-foreground">
               <SearchIcon className="size-4" />
             </span>
             <input
@@ -655,12 +655,12 @@ function OrganizationControl({
               }}
               onKeyDown={handleKeyDown}
               placeholder="Search or add company"
-              className="w-full bg-transparent text-sm placeholder:text-neutral-400 focus:outline-hidden focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="w-full bg-transparent text-sm placeholder:text-muted-foreground focus:outline-hidden focus-visible:ring-0 focus-visible:ring-offset-0"
             />
           </div>
 
           {searchTerm.trim() && (
-            <div className="flex w-full flex-col overflow-hidden rounded-xs border border-neutral-200">
+            <div className="flex w-full flex-col overflow-hidden rounded-xs border border-border">
               {organizations.map((org: any, index: number) => (
                 <button
                   key={org.id}
@@ -668,13 +668,13 @@ function OrganizationControl({
                   className={[
                     "flex items-center px-3 py-2 text-sm text-left transition-colors w-full",
                     highlightedIndex === index
-                      ? "bg-neutral-100"
-                      : "hover:bg-neutral-100",
+                      ? "bg-muted"
+                      : "hover:bg-muted",
                   ].join(" ")}
                   onClick={() => selectOrganization(org.id)}
                   onMouseEnter={() => setHighlightedIndex(index)}
                 >
-                  <span className="mr-2 flex size-5 shrink-0 items-center justify-center rounded-full bg-neutral-100">
+                  <span className="mr-2 flex size-5 shrink-0 items-center justify-center rounded-full bg-muted">
                     <Building2 className="size-3" />
                   </span>
                   <span className="truncate font-medium">{org.name}</span>
@@ -687,18 +687,18 @@ function OrganizationControl({
                   className={[
                     "flex items-center px-3 py-2 text-sm text-left transition-colors w-full",
                     highlightedIndex === organizations.length
-                      ? "bg-neutral-100"
-                      : "hover:bg-neutral-100",
+                      ? "bg-muted"
+                      : "hover:bg-muted",
                   ].join(" ")}
                   onClick={() => handleCreateOrganization()}
                   onMouseEnter={() => setHighlightedIndex(organizations.length)}
                 >
-                  <span className="mr-2 flex size-5 shrink-0 items-center justify-center rounded-full bg-neutral-200">
+                  <span className="mr-2 flex size-5 shrink-0 items-center justify-center rounded-full bg-accent">
                     <span className="text-xs">+</span>
                   </span>
-                  <span className="flex items-center gap-1 font-medium text-neutral-600">
+                  <span className="flex items-center gap-1 font-medium text-muted-foreground">
                     Create
-                    <span className="max-w-[140px] truncate text-neutral-900">
+                    <span className="max-w-[140px] truncate text-foreground">
                       &quot;{searchTerm.trim()}&quot;
                     </span>
                   </span>
@@ -708,7 +708,7 @@ function OrganizationControl({
           )}
 
           {!searchTerm.trim() && organizations.length > 0 && (
-            <div className="custom-scrollbar flex max-h-[40vh] w-full flex-col overflow-hidden overflow-y-auto rounded-xs border border-neutral-200">
+            <div className="custom-scrollbar flex max-h-[40vh] w-full flex-col overflow-hidden overflow-y-auto rounded-xs border border-border">
               {organizations.map((org: any, index: number) => (
                 <button
                   key={org.id}
@@ -716,13 +716,13 @@ function OrganizationControl({
                   className={[
                     "flex items-center px-3 py-2 text-sm text-left transition-colors w-full",
                     highlightedIndex === index
-                      ? "bg-neutral-100"
-                      : "hover:bg-neutral-100",
+                      ? "bg-muted"
+                      : "hover:bg-muted",
                   ].join(" ")}
                   onClick={() => selectOrganization(org.id)}
                   onMouseEnter={() => setHighlightedIndex(index)}
                 >
-                  <span className="mr-2 flex size-5 shrink-0 items-center justify-center rounded-full bg-neutral-100">
+                  <span className="mr-2 flex size-5 shrink-0 items-center justify-center rounded-full bg-muted">
                     <Building2 className="size-3" />
                   </span>
                   <span className="truncate font-medium">{org.name}</span>

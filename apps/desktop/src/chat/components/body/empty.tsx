@@ -61,13 +61,13 @@ export function ChatBodyEmpty({
       <div className="flex justify-start py-2 pb-1">
         <div className="flex w-full flex-col">
           <div className="mb-2 flex items-center gap-2">
-            <MessageCircleIcon className="size-4 text-neutral-500" />
-            <span className="text-sm font-medium text-neutral-800">
+            <MessageCircleIcon className="size-4 text-muted-foreground" />
+            <span className="text-sm font-medium text-foreground">
               Meetspace AI
             </span>
             <BetaChip />
           </div>
-          <p className="mb-2 text-sm text-neutral-700">
+          <p className="mb-2 text-sm text-foreground">
             Hi, I'm Meetspace AI. Set up a language model and I'll be ready to
             help.
           </p>
@@ -90,13 +90,13 @@ export function ChatBodyEmpty({
     <div className="flex justify-start pb-1">
       <div className="flex w-full flex-col">
         <div className="mb-2 flex items-center gap-2">
-          <MessageCircleIcon className="size-4 text-neutral-500" />
-          <span className="text-sm font-medium text-neutral-800">
+          <MessageCircleIcon className="size-4 text-muted-foreground" />
+          <span className="text-sm font-medium text-foreground">
             Meetspace AI
           </span>
           <BetaChip />
         </div>
-        <p className="mb-2 text-sm text-neutral-700">
+        <p className="mb-2 text-sm text-foreground">
           Hi, I'm Meetspace AI. I can help you pull context from your notes, find
           key decisions, and draft what comes next.
         </p>
@@ -107,8 +107,8 @@ export function ChatBodyEmpty({
                 key={label}
                 onClick={() => handleSuggestionClick(prompt)}
                 className={cn([
-                  "inline-flex items-center gap-1 rounded-full border border-neutral-300 bg-white px-2 py-1 text-[11px] text-neutral-700",
-                  "transition-colors hover:bg-neutral-100",
+                  "inline-flex items-center gap-1 rounded-full border border-border bg-white px-2 py-1 text-[11px] text-foreground",
+                  "transition-colors hover:bg-muted",
                 ])}
               >
                 <Icon size={12} />

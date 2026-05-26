@@ -71,8 +71,8 @@ const TriggerInner = forwardRef<
       variant="ghost"
       size="sm"
       className={cn([
-        "text-neutral-600 hover:text-black",
-        open && "bg-neutral-100",
+        "text-muted-foreground hover:text-black",
+        open && "bg-muted",
         hasEvent && "max-w-50",
       ])}
     >
@@ -194,16 +194,16 @@ export function EventDisplay({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="text-base font-medium text-neutral-900">
+      <div className="text-base font-medium text-foreground">
         {event.title || "Untitled Event"}
       </div>
 
-      <div className="h-px bg-neutral-200" />
+      <div className="h-px bg-accent" />
 
       {shouldShowLocation && (
         <>
-          <div className="flex items-center gap-2 text-sm text-neutral-700">
-            <MapPinIcon size={16} className="shrink-0 text-neutral-500" />
+          <div className="flex items-center gap-2 text-sm text-foreground">
+            <MapPinIcon size={16} className="shrink-0 text-muted-foreground" />
             <span>{event.location}</span>
           </div>
         </>
@@ -212,8 +212,8 @@ export function EventDisplay({
       {event.meetingLink && (
         <>
           <div className="flex items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2 text-sm text-neutral-700">
-              <VideoIcon size={16} className="shrink-0 text-neutral-500" />
+            <div className="flex min-w-0 items-center gap-2 text-sm text-foreground">
+              <VideoIcon size={16} className="shrink-0 text-muted-foreground" />
               <span className="truncate">
                 {meetingDomain || "Meeting link"}
               </span>
@@ -231,15 +231,15 @@ export function EventDisplay({
       )}
 
       {event.startedAt && (
-        <div className="text-sm text-neutral-700">{formatEventDateTime()}</div>
+        <div className="text-sm text-foreground">{formatEventDateTime()}</div>
       )}
 
       {children}
 
       {event.description && (
         <>
-          <div className="h-px bg-neutral-200" />
-          <div className="select-text-deep max-h-40 overflow-y-auto text-sm break-words whitespace-pre-wrap text-neutral-700">
+          <div className="h-px bg-accent" />
+          <div className="select-text-deep max-h-40 overflow-y-auto text-sm break-words whitespace-pre-wrap text-foreground">
             {renderDescriptionWithLinks(event.description)}
           </div>
         </>
@@ -304,7 +304,7 @@ function renderDescriptionWithLinks(description: string): React.ReactNode {
       <a
         key={`description-link-${linkIndex}`}
         href={url}
-        className="cursor-pointer underline transition-colors hover:text-neutral-900"
+        className="cursor-pointer underline transition-colors hover:text-foreground"
         onClick={(e) => {
           e.preventDefault();
           void openerCommands.openUrl(url, null);

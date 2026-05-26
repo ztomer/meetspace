@@ -48,7 +48,7 @@ export function ChatToolbarControls({
         onClick={onCloseChat}
         title="Close chat"
         shortcutLabel={shortcutLabel}
-        className="absolute top-1/2 right-0 -translate-y-1/2 bg-neutral-100 text-neutral-900 hover:bg-neutral-100"
+        className="absolute top-1/2 right-0 -translate-y-1/2 bg-muted text-foreground hover:bg-muted"
       />
     </div>
   );
@@ -75,7 +75,7 @@ function ChatActionButton({
           title={title}
           size="icon"
           variant="ghost"
-          className={cn(["text-neutral-600", className])}
+          className={cn(["text-muted-foreground", className])}
         >
           {icon}
         </Button>
@@ -83,7 +83,7 @@ function ChatActionButton({
       <TooltipContent side="bottom" className="flex items-center gap-2">
         <span>{title}</span>
         {shortcutLabel && (
-          <span className="rounded border border-neutral-200 bg-neutral-50 px-1 py-0.5 text-[10px] text-neutral-500">
+          <span className="rounded border border-border bg-muted px-1 py-0.5 text-[10px] text-muted-foreground">
             {shortcutLabel}
           </span>
         )}
@@ -123,15 +123,15 @@ function ChatGroups({
           variant="ghost"
           className={cn([
             "group -ml-2 flex h-8 max-w-64 min-w-0 justify-start gap-2 px-2 py-0",
-            "text-neutral-700",
+            "text-foreground",
           ])}
         >
-          <h3 className="min-w-0 flex-1 truncate text-xs font-medium text-neutral-700">
+          <h3 className="min-w-0 flex-1 truncate text-xs font-medium text-foreground">
             {currentChatTitle || "Ask Meetspace AI anything"}
           </h3>
           <ChevronDown
             className={cn([
-              "h-3.5 w-3.5 shrink-0 text-neutral-400 transition-transform duration-200",
+              "h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200",
               isDropdownOpen && "rotate-180",
             ])}
           />
@@ -145,7 +145,7 @@ function ChatGroups({
       >
         <AppFloatingPanel className="flex flex-col gap-0.5 p-1.5">
           <div className="px-2 py-1.5">
-            <h4 className="text-[10px] font-semibold tracking-wider text-neutral-500 uppercase">
+            <h4 className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
               Recent Chats
             </h4>
           </div>
@@ -165,8 +165,8 @@ function ChatGroups({
             </div>
           ) : (
             <div className="px-3 py-6 text-center">
-              <MessageCircle className="mx-auto mb-1.5 h-6 w-6 text-neutral-300" />
-              <p className="text-xs text-neutral-400">No recent chats</p>
+              <MessageCircle className="mx-auto mb-1.5 h-6 w-6 text-muted-foreground/60" />
+              <p className="text-xs text-muted-foreground">No recent chats</p>
             </div>
           )}
         </AppFloatingPanel>
@@ -203,8 +203,8 @@ function ChatGroupItem({
       className={cn([
         "group h-auto w-full justify-start px-2.5 py-1.5",
         isActive
-          ? "bg-neutral-100 shadow-xs hover:bg-neutral-100"
-          : "hover:bg-neutral-50 active:bg-neutral-100",
+          ? "bg-muted shadow-xs hover:bg-muted"
+          : "hover:bg-muted active:bg-muted",
       ])}
     >
       <div className="flex w-full items-center gap-2.5">
@@ -213,8 +213,8 @@ function ChatGroupItem({
             className={cn([
               "h-3.5 w-3.5 transition-colors",
               isActive
-                ? "text-neutral-700"
-                : "text-neutral-400 group-hover:text-neutral-600",
+                ? "text-foreground"
+                : "text-muted-foreground group-hover:text-muted-foreground",
             ])}
           />
         </div>
@@ -222,12 +222,12 @@ function ChatGroupItem({
           <div
             className={cn([
               "truncate text-sm font-medium",
-              isActive ? "text-neutral-900" : "text-neutral-700",
+              isActive ? "text-foreground" : "text-foreground",
             ])}
           >
             {chatGroup.title}
           </div>
-          <div className="mt-0.5 text-[11px] text-neutral-500">
+          <div className="mt-0.5 text-[11px] text-muted-foreground">
             {formattedTime}
           </div>
         </div>

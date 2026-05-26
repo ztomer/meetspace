@@ -150,8 +150,8 @@ export function SelectProviderAndModel() {
       <div
         className={cn([
           "flex flex-col gap-4",
-          "rounded-xl border border-neutral-200 p-4",
-          !isConfigured || hasError ? "bg-red-50" : "bg-neutral-50",
+          "rounded-xl border border-border p-4",
+          !isConfigured || hasError ? "bg-red-50" : "bg-muted",
         ])}
       >
         <div className="flex flex-row items-center gap-4">
@@ -170,7 +170,7 @@ export function SelectProviderAndModel() {
                       <ProviderIconSlot>{provider.icon}</ProviderIconSlot>
                       <span>{provider.displayName}</span>
                       {provider.badge ? (
-                        <span className="rounded-full border border-neutral-200 px-2 py-0.5 text-[10px] tracking-wide text-neutral-500 uppercase">
+                        <span className="rounded-full border border-border px-2 py-0.5 text-[10px] tracking-wide text-muted-foreground uppercase">
                           {provider.badge}
                         </span>
                       ) : null}
@@ -181,7 +181,7 @@ export function SelectProviderAndModel() {
             </Select>
           </div>
 
-          <span className="text-neutral-500">/</span>
+          <span className="text-muted-foreground">/</span>
 
           <div className="min-w-0 flex-3">
             <ModelCombobox
@@ -201,8 +201,8 @@ export function SelectProviderAndModel() {
         </div>
 
         {!isConfigured && (
-          <div className="flex items-center gap-2 border-t border-red-200 pt-2">
-            <span className="text-sm text-red-600">
+          <div className="flex items-center gap-2 border-t border-destructive/30 pt-2">
+            <span className="text-sm text-destructive">
               <strong className="font-medium">Language model</strong> is needed
               to make Meetspace summarize and chat about your conversations.
             </span>
@@ -210,8 +210,8 @@ export function SelectProviderAndModel() {
         )}
 
         {hasError && health.message && (
-          <div className="flex items-center gap-2 border-t border-red-200 pt-2">
-            <span className="text-sm text-red-600">{health.message}</span>
+          <div className="flex items-center gap-2 border-t border-destructive/30 pt-2">
+            <span className="text-sm text-destructive">{health.message}</span>
           </div>
         )}
       </div>

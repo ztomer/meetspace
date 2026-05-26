@@ -19,7 +19,7 @@ export function ObsidianVaultList({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <p className="text-xs font-medium text-neutral-400">
+      <p className="text-xs font-medium text-muted-foreground">
         Detected Obsidian vaults
       </p>
       {vaults.map((vault) => (
@@ -28,7 +28,7 @@ export function ObsidianVaultList({
           disabled={disabled}
           onClick={() => onSelect(vault.path)}
           className={cn([
-            "flex items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-left text-sm text-neutral-500 transition-colors hover:border-neutral-300 hover:bg-neutral-100 disabled:opacity-50",
+            "flex items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2 text-left text-sm text-muted-foreground transition-colors hover:border-border hover:bg-muted disabled:opacity-50",
           ])}
         >
           <img
@@ -40,7 +40,7 @@ export function ObsidianVaultList({
             {displayPath(vault.path, home)}
           </span>
           {actionLabel && (
-            <span className="shrink-0 text-xs text-neutral-400">
+            <span className="shrink-0 text-xs text-muted-foreground">
               {actionLabel}
             </span>
           )}

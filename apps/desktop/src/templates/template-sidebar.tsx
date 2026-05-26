@@ -301,7 +301,7 @@ export function TemplatesSidebarContent({
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="text-neutral-600 hover:text-black"
+                    className="text-muted-foreground hover:text-black"
                   >
                     <ArrowDownUp size={16} />
                   </Button>
@@ -326,7 +326,7 @@ export function TemplatesSidebarContent({
             <Button
               size="icon"
               variant="ghost"
-              className="text-neutral-600 hover:text-black"
+              className="text-muted-foreground hover:text-black"
               onClick={createDefaultTemplate}
             >
               <Plus size={16} />
@@ -337,11 +337,11 @@ export function TemplatesSidebarContent({
         <div className="px-2 pb-2">
           <div
             className={cn([
-              "flex h-8 shrink-0 items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-200/50 px-3",
-              "transition-colors focus-within:bg-neutral-200",
+              "flex h-8 shrink-0 items-center gap-2 rounded-lg border border-border bg-accent/50 px-3",
+              "transition-colors focus-within:bg-accent",
             ])}
           >
-            <Search className="h-4 w-4 shrink-0 text-neutral-400" />
+            <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
             <input
               type="text"
               value={search}
@@ -352,14 +352,14 @@ export function TemplatesSidebarContent({
                 }
               }}
               placeholder="Search templates..."
-              className="min-w-0 flex-1 bg-transparent text-sm placeholder:text-sm placeholder:text-neutral-400 focus:outline-hidden"
+              className="min-w-0 flex-1 bg-transparent text-sm placeholder:text-sm placeholder:text-muted-foreground focus:outline-hidden"
             />
             {search && (
               <button
                 onClick={() => setSearch("")}
                 className={cn([
                   "h-4 w-4 shrink-0",
-                  "text-neutral-400 hover:text-neutral-600",
+                  "text-muted-foreground hover:text-muted-foreground",
                   "transition-colors",
                 ])}
                 aria-label="Clear search"
@@ -376,15 +376,15 @@ export function TemplatesSidebarContent({
         className="scrollbar-hide flex-1 overflow-y-auto"
       >
         {isEmpty ? (
-          <div className="px-3 py-8 text-center text-neutral-500">
-            <BookText size={32} className="mx-auto mb-2 text-neutral-300" />
+          <div className="px-3 py-8 text-center text-muted-foreground">
+            <BookText size={32} className="mx-auto mb-2 text-muted-foreground/60" />
             <p className="text-sm">
               {search ? "No templates found" : "No templates yet"}
             </p>
             {!search && (
               <button
                 onClick={createDefaultTemplate}
-                className="mt-3 text-sm text-neutral-600 underline hover:text-neutral-800"
+                className="mt-3 text-sm text-muted-foreground underline hover:text-foreground"
               >
                 Create my first template
               </button>
@@ -413,12 +413,12 @@ export function TemplatesSidebarContent({
                       className={cn([
                         "w-full rounded-lg px-3 py-2 text-left text-sm transition-colors select-none",
                         item.selected
-                          ? "bg-neutral-200"
-                          : "hover:bg-neutral-200/50",
+                          ? "bg-accent"
+                          : "hover:bg-accent/50",
                       ])}
                     >
                       <div className="flex items-center gap-2">
-                        <BookText className="h-4 w-4 shrink-0 text-neutral-500" />
+                        <BookText className="h-4 w-4 shrink-0 text-muted-foreground" />
                         <div className="min-w-0 flex-1">
                           <div className="truncate font-medium">
                             {item.title}
@@ -439,8 +439,8 @@ export function TemplatesSidebarContent({
                       key={index}
                       className="animate-pulse rounded-lg px-3 py-2"
                     >
-                      <div className="h-4 w-3/4 rounded-xs bg-neutral-200" />
-                      <div className="mt-1.5 h-3 w-1/3 rounded-xs bg-neutral-100" />
+                      <div className="h-4 w-3/4 rounded-xs bg-accent" />
+                      <div className="mt-1.5 h-3 w-1/3 rounded-xs bg-muted" />
                     </div>
                   ))}
                 </div>
@@ -501,11 +501,11 @@ function TemplateListItem({
       data-template-selected={selected}
       className={cn([
         "w-full rounded-lg px-3 py-2 text-left text-sm transition-colors select-none",
-        selected ? "bg-neutral-200" : "hover:bg-neutral-200/50",
+        selected ? "bg-accent" : "hover:bg-accent/50",
       ])}
     >
       <div className="flex items-center gap-2">
-        <BookText className="h-4 w-4 shrink-0 text-neutral-500" />
+        <BookText className="h-4 w-4 shrink-0 text-muted-foreground" />
         <div className="min-w-0 flex-1">
           <div className="truncate font-medium">
             {template.title?.trim() || "Untitled"}

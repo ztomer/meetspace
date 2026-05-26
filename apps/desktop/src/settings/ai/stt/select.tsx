@@ -94,8 +94,8 @@ export function SelectProviderAndModel() {
   return (
     <div className="flex flex-col gap-4">
       {!isConfigured && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3">
-          <span className="text-sm text-red-600">
+        <div className="rounded-lg border border-destructive/30 bg-red-50 px-4 py-3">
+          <span className="text-sm text-destructive">
             <strong className="font-medium">Transcription model</strong> is
             needed to make Meetspace listen to your conversations.
           </span>
@@ -103,8 +103,8 @@ export function SelectProviderAndModel() {
       )}
 
       {hasError && health.message && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3">
-          <span className="text-sm text-red-600">{health.message}</span>
+        <div className="rounded-lg border border-destructive/30 bg-red-50 px-4 py-3">
+          <span className="text-sm text-destructive">{health.message}</span>
         </div>
       )}
 
@@ -274,14 +274,14 @@ function ModelSelectItem({
               "rounded-md px-1.5 py-0.5 font-medium",
               model.mode === "realtime"
                 ? "bg-sky-50 text-sky-700"
-                : "bg-neutral-100 text-neutral-600",
+                : "bg-muted text-muted-foreground",
             ])}
           >
             {model.mode === "realtime" ? "Realtime" : "Batch"}
           </span>
         )}
         {!model.isDownloaded && sizeLabel && (
-          <span className="font-mono text-neutral-500">{sizeLabel}</span>
+          <span className="font-mono text-muted-foreground">{sizeLabel}</span>
         )}
       </div>
     </div>
@@ -323,13 +323,13 @@ function ModelSelectItem({
         "group",
       ])}
     >
-      <div className="min-w-0 flex-1 text-neutral-400">{content}</div>
+      <div className="min-w-0 flex-1 text-muted-foreground">{content}</div>
       {isDownloading ? (
         <span
           className={cn([
             "rounded-full px-2 py-0.5 text-[11px] font-medium",
             "flex items-center gap-1",
-            "bg-linear-to-t from-neutral-200 to-neutral-100 text-neutral-500",
+            "bg-linear-to-t from-neutral-200 to-neutral-100 text-muted-foreground",
           ])}
         >
           <Loader2 className="size-3 animate-spin" />
@@ -341,7 +341,7 @@ function ModelSelectItem({
             "rounded-full px-2 text-[11px] font-medium",
             "opacity-0 group-hover:opacity-100",
             "transition-all duration-150",
-            "bg-linear-to-t from-neutral-200 to-neutral-100 py-0.5 text-neutral-900 shadow-xs hover:shadow-md",
+            "bg-linear-to-t from-neutral-200 to-neutral-100 py-0.5 text-foreground shadow-xs hover:shadow-md",
           ])}
           onClick={handleAction}
         >
@@ -418,7 +418,7 @@ function LocalModelDropdownActions({ model }: { model: LocalModel }) {
         aria-label="Show in Finder"
         className={cn([
           "flex size-6 items-center justify-center rounded-md",
-          "text-neutral-500 hover:text-neutral-900",
+          "text-muted-foreground hover:text-foreground",
         ])}
         onPointerDown={stopSelect}
         onClick={(event) => {
@@ -433,7 +433,7 @@ function LocalModelDropdownActions({ model }: { model: LocalModel }) {
         aria-label="Delete model"
         className={cn([
           "flex size-6 items-center justify-center rounded-md",
-          "text-red-500 hover:text-red-600",
+          "text-destructive hover:text-destructive",
         ])}
         onPointerDown={stopSelect}
         onClick={(event) => {

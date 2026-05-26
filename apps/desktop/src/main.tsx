@@ -28,6 +28,7 @@ import { EventListeners } from "./services/event-listeners";
 import { TaskManager } from "./services/task-manager";
 import { RawEditorSyncBridge } from "./session/raw-editor-sync";
 import { ErrorComponent, NotFoundComponent } from "./shared/control";
+import { useApplyTheme } from "./shared/theme";
 import {
   type Store,
   STORE_ID,
@@ -59,6 +60,7 @@ declare module "@tanstack/react-router" {
 
 function App() {
   const stores = useStores();
+  useApplyTheme();
 
   const store = stores[STORE_ID] as unknown as Store;
   const settingsStore = stores[SETTINGS_STORE_ID] as unknown as SettingsStore;
@@ -71,7 +73,7 @@ function App() {
   }, [store, settingsStore]);
 
   if (!store || !settingsStore || !aiTaskStore) {
-    return <div className="h-screen w-screen bg-stone-50" />;
+    return <div className="h-screen w-screen bg-muted" />;
   }
 
   return (

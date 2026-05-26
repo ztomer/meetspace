@@ -68,7 +68,7 @@ function EmptyView() {
   );
 
   return (
-    <div className="mb-12 flex h-full flex-col items-center justify-center gap-6 text-neutral-600">
+    <div className="mb-12 flex h-full flex-col items-center justify-center gap-6 text-muted-foreground">
       <div className="flex min-w-[280px] flex-col gap-1 text-center">
         <ActionItem label="New Note" shortcut={["⌘", "N"]} onClick={newNote} />
         <ActionItem
@@ -76,7 +76,7 @@ function EmptyView() {
           shortcut={["⌘", "⇧", "N"]}
           onClick={newNoteAndListen}
         />
-        <div className="my-1 h-px bg-neutral-200" />
+        <div className="my-1 h-px bg-accent" />
         <ActionItem
           label="Contacts"
           shortcut={["⌘", "⇧", "O"]}
@@ -87,7 +87,7 @@ function EmptyView() {
           shortcut={["⌘", "⇧", "C"]}
           onClick={openCalendar}
         />
-        <div className="my-1 h-px bg-neutral-200" />
+        <div className="my-1 h-px bg-accent" />
         <ActionItem
           label="Settings"
           shortcut={["⌘", ","]}
@@ -117,7 +117,7 @@ function ActionItem({
         "flex items-center justify-between gap-8",
         "text-sm",
         "rounded-md px-4 py-2",
-        "cursor-pointer transition-colors hover:bg-neutral-100",
+        "cursor-pointer transition-colors hover:bg-muted",
       ])}
     >
       <span>{label}</span>

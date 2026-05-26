@@ -179,6 +179,7 @@ export const valueSchemaForTinybase = {
   obsidian_vault_path: { type: "string" },
   obsidian_subfolder: { type: "string" },
   obsidian_auto_export: { type: "boolean" },
+  theme: { type: "string" },
   notion_token: { type: "string" },
   notion_database_id: { type: "string" },
   linear_api_key: { type: "string" },

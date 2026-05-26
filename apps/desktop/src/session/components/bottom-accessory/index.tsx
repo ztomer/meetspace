@@ -107,8 +107,8 @@ export function useSessionBottomAccessory({
             isExpanded={effectiveExpanded}
             onToggle={() => setIsExpanded((v) => !v)}
             label="Live"
-            collapsedClassName="bg-neutral-50"
-            expandedClassName="bg-neutral-50"
+            collapsedClassName="bg-muted"
+            expandedClassName="bg-muted"
           />
         ) : null,
       bottomAccessoryState,
@@ -133,7 +133,7 @@ export function useSessionBottomAccessory({
           onToggle={() => setIsExpanded((v) => !v)}
           label="Transcript"
           showExpandedCloseIcon
-          collapsedClassName="bg-neutral-50"
+          collapsedClassName="bg-muted"
         />
       ),
       bottomAccessoryState,

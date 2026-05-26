@@ -74,7 +74,7 @@ export function createToastRegistry({
         id: "local-stt-unreachable",
         description: (
           <>
-            <strong className="text-red-600">Could not connect</strong> to the
+            <strong className="text-destructive">Could not connect</strong> to the
             local speech-to-text model. Please check your settings.
           </>
         ),

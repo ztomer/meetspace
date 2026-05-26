@@ -36,11 +36,11 @@ export function MessageBubble({
       className={cn([
         "select-text-deep text-sm",
         variant === "user" &&
-          "w-fit max-w-full rounded-2xl bg-blue-100 px-3 py-1 text-neutral-800 [&_p]:[text-wrap:wrap]",
-        variant === "assistant" && "text-neutral-800",
-        variant === "loading" && "text-neutral-800",
+          "w-fit max-w-full rounded-2xl bg-blue-100 px-3 py-1 text-foreground [&_p]:[text-wrap:wrap]",
+        variant === "assistant" && "text-foreground",
+        variant === "loading" && "text-foreground",
         variant === "error" &&
-          "rounded-2xl border border-red-200 bg-red-50 px-3 py-1 text-red-600",
+          "rounded-2xl border border-destructive/30 bg-red-50 px-3 py-1 text-destructive",
         withActionButton && "group relative",
       ])}
     >
@@ -70,12 +70,12 @@ export function ActionButton({
         "transition-opacity",
         "rounded-full p-1",
         variant === "default" && [
-          "bg-neutral-200 hover:bg-neutral-300",
-          "text-neutral-600 hover:text-neutral-800",
+          "bg-accent hover:bg-neutral-300",
+          "text-muted-foreground hover:text-foreground",
         ],
         variant === "error" && [
           "bg-red-100 hover:bg-red-200",
-          "text-red-600 hover:text-red-800",
+          "text-destructive hover:text-red-800",
         ],
       ])}
     >
@@ -99,7 +99,7 @@ export function Disclosure({
     <details
       className={cn([
         "group my-2 rounded-md border px-2 py-1 transition-colors",
-        "cursor-pointer border-neutral-200 hover:border-neutral-300",
+        "cursor-pointer border-border hover:border-border",
       ])}
     >
       <summary
@@ -110,7 +110,7 @@ export function Disclosure({
         }}
         className={cn([
           "w-full",
-          "text-xs text-neutral-500",
+          "text-xs text-muted-foreground",
           "list-none select-none marker:hidden",
           "flex items-center gap-2",
           disabled && "cursor-default",
@@ -123,7 +123,7 @@ export function Disclosure({
         </span>
         <ChevronRight className="h-3 w-3 shrink-0 transition-transform group-open:rotate-90" />
       </summary>
-      <div className="mt-1 border-t border-neutral-200 px-1 pt-2">
+      <div className="mt-1 border-t border-border px-1 pt-2">
         {children}
       </div>
     </details>

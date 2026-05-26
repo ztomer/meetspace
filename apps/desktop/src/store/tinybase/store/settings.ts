@@ -163,6 +163,11 @@ export const SETTINGS_MAPPING = {
       path: ["general", "obsidian_auto_export"],
       default: false as boolean,
     },
+    theme: {
+      type: "string",
+      path: ["general", "theme"],
+      default: "system" as string,
+    },
     notion_token: {
       type: "string",
       path: ["general", "notion_token"],

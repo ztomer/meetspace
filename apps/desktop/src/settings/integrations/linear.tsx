@@ -14,10 +14,10 @@ export function LinearIntegration() {
   );
 
   return (
-    <section className="rounded-lg border border-neutral-200 p-5">
+    <section className="rounded-lg border border-border p-5">
       <div className="mb-4">
         <h3 className="text-sm font-semibold">Linear</h3>
-        <p className="text-xs text-neutral-600">
+        <p className="text-xs text-muted-foreground">
           Create Linear issues from a session. Bring your own personal API
           key — it stays on this device.
         </p>
@@ -36,7 +36,7 @@ export function LinearIntegration() {
             placeholder="lin_api_..."
             className="shadow-none"
           />
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-muted-foreground">
             Create a key at{" "}
             <span className="font-mono">linear.app/settings/api</span>. You'll
             be prompted for a team when creating an issue from a session.

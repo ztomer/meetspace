@@ -51,7 +51,7 @@ function PermissionBlock({
       className={cn([
         "group flex min-w-0 flex-1 basis-0 items-center gap-3 rounded-xl px-3 py-3 text-left transition-all",
         isAuthorized
-          ? "border border-neutral-200 bg-white"
+          ? "border border-border bg-white"
           : "border border-stone-600 bg-stone-800 text-white shadow-[0_4px_14px_rgba(87,83,78,0.18)] hover:bg-stone-700 active:scale-[0.98]",
         (isPending || isAuthorized) && "cursor-default",
         isPending && "opacity-50",
@@ -80,7 +80,7 @@ function PermissionBlock({
         <span
           className={cn([
             "text-sm font-medium",
-            isAuthorized ? "text-neutral-900" : "text-white",
+            isAuthorized ? "text-foreground" : "text-white",
           ])}
         >
           {title}
@@ -88,7 +88,7 @@ function PermissionBlock({
         <p
           className={cn([
             "truncate text-xs @[480px]:block",
-            isAuthorized ? "text-neutral-500" : "text-white/70",
+            isAuthorized ? "text-muted-foreground" : "text-white/70",
           ])}
         >
           {body}

@@ -41,14 +41,14 @@ function DevtoolCard({
   return (
     <div
       className={cn([
-        "rounded-lg border border-neutral-200 bg-white",
+        "rounded-lg border border-border bg-white",
         "shadow-xs",
         "overflow-hidden",
         "shrink-0",
       ])}
     >
-      <div className="border-b border-neutral-100 bg-neutral-50 px-2 py-1.5">
-        <h2 className="text-xs font-semibold tracking-wide text-neutral-600 uppercase">
+      <div className="border-b border-border bg-muted px-2 py-1.5">
+        <h2 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
           {title}
         </h2>
       </div>
@@ -110,9 +110,9 @@ function NavigationCard() {
           className={cn([
             "w-full rounded-md px-2.5 py-1.5",
             "text-left text-xs font-medium",
-            "border border-neutral-200 text-neutral-700",
+            "border border-border text-foreground",
             "cursor-pointer transition-colors",
-            "hover:border-neutral-300 hover:bg-neutral-50",
+            "hover:border-border hover:bg-muted",
           ])}
         >
           Onboarding Tab
@@ -124,9 +124,9 @@ function NavigationCard() {
             className={cn([
               "w-full rounded-md px-2.5 py-1.5",
               "text-left text-xs font-medium",
-              "border border-neutral-200 text-neutral-700",
+              "border border-border text-foreground",
               "cursor-pointer transition-colors",
-              "hover:border-neutral-300 hover:bg-neutral-50",
+              "hover:border-border hover:bg-muted",
             ])}
           >
             Empty Tab
@@ -140,9 +140,9 @@ function NavigationCard() {
             className={cn([
               "w-full rounded-md px-2.5 py-1.5",
               "text-left text-xs font-medium",
-              "border border-neutral-200 text-neutral-700",
+              "border border-border text-foreground",
               "cursor-pointer transition-colors",
-              "hover:border-neutral-300 hover:bg-neutral-50",
+              "hover:border-border hover:bg-muted",
             ])}
           >
             Instruction: {type}
@@ -154,9 +154,9 @@ function NavigationCard() {
           className={cn([
             "w-full rounded-md px-2.5 py-1.5",
             "text-left text-xs font-medium",
-            "border border-neutral-200 text-neutral-700",
+            "border border-border text-foreground",
             "cursor-pointer transition-colors",
-            "hover:border-neutral-300 hover:bg-neutral-50",
+            "hover:border-border hover:bg-muted",
           ])}
         >
           Changelog
@@ -180,9 +180,9 @@ function ToastsCard() {
           className={cn([
             "w-full rounded-md px-2.5 py-1.5",
             "text-left text-xs font-medium",
-            "border border-neutral-200 text-neutral-700",
+            "border border-border text-foreground",
             "cursor-pointer transition-colors",
-            "hover:border-neutral-300 hover:bg-neutral-50",
+            "hover:border-border hover:bg-muted",
           ])}
         >
           Reset All Dismissed
@@ -333,9 +333,9 @@ function NotificationsCard() {
   const btnClass = cn([
     "w-full rounded-md px-2.5 py-1.5",
     "text-left text-xs font-medium",
-    "border border-neutral-200 text-neutral-700",
+    "border border-border text-foreground",
     "cursor-pointer transition-colors",
-    "hover:border-neutral-300 hover:bg-neutral-50",
+    "hover:border-border hover:bg-muted",
   ]);
 
   return (
@@ -426,9 +426,9 @@ function CountdownTestCard() {
   const btnClass = cn([
     "w-full rounded-md px-2.5 py-1.5",
     "text-left text-xs font-medium",
-    "border border-neutral-200 text-neutral-700",
+    "border border-border text-foreground",
     "cursor-pointer transition-colors",
-    "hover:border-neutral-300 hover:bg-neutral-50",
+    "hover:border-border hover:bg-muted",
     "disabled:cursor-not-allowed disabled:opacity-40",
   ]);
 
@@ -459,7 +459,7 @@ function CountdownTestCard() {
         >
           +Note starting in ~5m
         </button>
-        <hr className="border-neutral-100" />
+        <hr className="border-border" />
         <button
           type="button"
           disabled={!store}
@@ -505,9 +505,9 @@ function ErrorTestCard() {
           className={cn([
             "w-full rounded-md px-2.5 py-1.5",
             "text-left text-xs font-medium",
-            "border border-red-200 bg-red-50 text-red-700",
+            "border border-destructive/30 bg-red-50 text-destructive",
             "cursor-pointer transition-colors",
-            "hover:border-red-300 hover:bg-red-100",
+            "hover:border-destructive/40 hover:bg-red-100",
           ])}
         >
           Trigger Error

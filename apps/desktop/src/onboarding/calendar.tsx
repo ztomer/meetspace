@@ -65,7 +65,7 @@ function AppleCalendarProvider({
             onRequest();
           }}
           disabled={isPending}
-          className="flex h-full w-full items-center justify-center gap-3 border border-neutral-200 bg-white px-12 text-stone-800 shadow-[0_2px_6px_rgba(87,83,78,0.08),0_10px_18px_-10px_rgba(87,83,78,0.22)] transition-all duration-150 hover:bg-stone-100"
+          className="flex h-full w-full items-center justify-center gap-3 border border-border bg-white px-12 text-foreground shadow-[0_2px_6px_rgba(87,83,78,0.08),0_10px_18px_-10px_rgba(87,83,78,0.22)] transition-all duration-150 hover:bg-muted"
         >
           <img
             src="/assets/apple-calendar.png"
@@ -102,7 +102,7 @@ function CalendarSectionContent({ onContinue }: { onContinue: () => void }) {
           onReset={calendar.reset}
           onOpen={calendar.open}
           isPending={calendar.isPending}
-          className="text-sm text-neutral-500"
+          className="text-sm text-muted-foreground"
         />
       )}
 

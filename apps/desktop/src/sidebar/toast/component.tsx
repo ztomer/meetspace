@@ -41,8 +41,8 @@ export function Toast({
           "group relative z-50 overflow-visible rounded-lg",
           "bg-white p-4",
           toast.variant === "error"
-            ? "border border-red-300 shadow-xl shadow-red-200"
-            : "border border-neutral-200 shadow-xl",
+            ? "border border-destructive/40 shadow-xl shadow-red-200"
+            : "border border-border shadow-xl",
         ])}
       >
         {onDismiss && (
@@ -54,7 +54,7 @@ export function Toast({
               alwaysShowDismissButton
                 ? "opacity-100"
                 : "opacity-0 group-hover:opacity-50 hover:opacity-100!",
-              "hover:bg-neutral-200",
+              "hover:bg-accent",
               "transition-all duration-200",
             ])}
           >
@@ -86,7 +86,7 @@ export function Toast({
                     <div className="flex items-center gap-2">
                       {toast.icon}
                       {toast.title && (
-                        <h3 className="text-lg font-bold text-neutral-900">
+                        <h3 className="text-lg font-bold text-foreground">
                           {toast.title}
                         </h3>
                       )}
@@ -117,7 +117,7 @@ export function Toast({
                         onClick={action.onClick}
                         className={cn([
                           "flex w-full items-center justify-center gap-2",
-                          "rounded-full bg-neutral-200 py-2 text-sm font-medium text-neutral-900",
+                          "rounded-full bg-accent py-2 text-sm font-medium text-foreground",
                           "duration-150 hover:scale-[1.01] hover:bg-neutral-300 active:scale-[0.99]",
                         ])}
                       >
@@ -138,7 +138,7 @@ export function Toast({
                       {toast.secondaryAction && (
                         <button
                           onClick={toast.secondaryAction.onClick}
-                          className="w-full rounded-full bg-neutral-200 py-2 text-sm font-medium text-neutral-900 duration-150 hover:scale-[1.01] active:scale-[0.99]"
+                          className="w-full rounded-full bg-accent py-2 text-sm font-medium text-foreground duration-150 hover:scale-[1.01] active:scale-[0.99]"
                         >
                           {toast.secondaryAction.label}
                         </button>
@@ -165,7 +165,7 @@ function ProgressBar({ progress }: { progress: number }) {
       <span
         className={cn([
           "relative z-10 block text-center text-sm font-medium transition-colors duration-150",
-          progress >= 48 ? "text-white" : "text-neutral-900",
+          progress >= 48 ? "text-white" : "text-foreground",
         ])}
       >
         {Math.round(progress)}%
@@ -177,7 +177,7 @@ function ProgressBar({ progress }: { progress: number }) {
 function DownloadProgressBar({ download }: { download: DownloadProgress }) {
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex items-center justify-between text-xs text-neutral-600">
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span className="truncate font-medium">{download.displayName}</span>
         <span>{Math.round(download.progress)}%</span>
       </div>

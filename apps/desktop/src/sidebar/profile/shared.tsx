@@ -22,7 +22,7 @@ export function MenuItem({
           "group flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg",
           "px-3 py-1.5",
           "text-sm whitespace-nowrap text-black",
-          "transition-colors hover:bg-neutral-100",
+          "transition-colors hover:bg-muted",
         ])}
         onClick={onClick}
       >
@@ -46,7 +46,7 @@ export function MenuItem({
             badge
           ))}
         {SuffixIcon && (
-          <SuffixIcon className={cn("h-4 w-4 shrink-0", "text-neutral-400")} />
+          <SuffixIcon className={cn("h-4 w-4 shrink-0", "text-muted-foreground")} />
         )}
       </button>
     </div>

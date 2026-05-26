@@ -17,7 +17,7 @@ export function ToolCard({
     <div
       className={cn([
         "my-2.5 overflow-hidden rounded-xl border shadow-sm",
-        failed ? "border-red-200" : "border-neutral-200/80",
+        failed ? "border-destructive/30" : "border-border/80",
       ])}
     >
       {children}
@@ -42,20 +42,21 @@ export function ToolCardHeader({
     <div
       className={cn([
         "flex items-center gap-2.5 px-3.5 py-2 text-[13px]",
-        failed ? "bg-red-50 text-red-700" : "bg-neutral-50/80 text-neutral-600",
+        failed ? "bg-red-50 text-destructive" : "bg-muted/80 text-muted-foreground",
       ])}
     >
       {running ? (
         <Loader2Icon className="h-4 w-4 animate-spin" />
+
       ) : (
         <span
           className={cn([
             "shrink-0 [&>svg]:h-4 [&>svg]:w-4",
             failed
-              ? "text-red-500"
+              ? "text-destructive"
               : done
                 ? "text-emerald-500"
-                : "text-neutral-400",
+                : "text-muted-foreground",
           ])}
         >
           {icon}
@@ -72,17 +73,17 @@ export function ToolCardBody({ children }: { children: ReactNode }) {
 
 export function ToolCardFooterError({ text }: { text: string }) {
   return (
-    <div className="flex items-center gap-2 border-t border-red-200 bg-red-50 px-3.5 py-2.5">
-      <XCircleIcon className="h-4 w-4 shrink-0 text-red-500" />
-      <p className="text-[13px] text-red-600">{text}</p>
+    <div className="flex items-center gap-2 border-t border-destructive/30 bg-red-50 px-3.5 py-2.5">
+      <XCircleIcon className="h-4 w-4 shrink-0 text-destructive" />
+      <p className="text-[13px] text-destructive">{text}</p>
     </div>
   );
 }
 
 function ToolCardFooterRaw({ text }: { text: string }) {
   return (
-    <div className="border-t border-neutral-200/80 bg-neutral-50/80 px-3.5 py-2.5">
-      <p className="text-[13px] whitespace-pre-wrap text-neutral-600">{text}</p>
+    <div className="border-t border-border/80 bg-muted/80 px-3.5 py-2.5">
+      <p className="text-[13px] whitespace-pre-wrap text-muted-foreground">{text}</p>
     </div>
   );
 }
@@ -127,12 +128,13 @@ export function ToolCardFooters({
   );
 }
 
+
 export function MarkdownPreview({ children }: { children: string }) {
   return (
-    <div className="rounded-lg border border-neutral-200/80 bg-white">
+    <div className="rounded-lg border border-border/80 bg-white">
       <div className="max-h-64 overflow-y-auto px-3 py-2.5">
         <Streamdown
-          className="text-[13px] leading-relaxed text-neutral-700"
+          className="text-[13px] leading-relaxed text-foreground"
           linkSafety={{ enabled: false }}
         >
           {children}

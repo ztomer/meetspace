@@ -314,10 +314,10 @@ export function TimelineView() {
               <div
                 className={cn([
                   "sticky top-0 z-10",
-                  "bg-neutral-50 py-1 pr-1 pl-3",
+                  "bg-muted py-1 pr-1 pl-3",
                 ])}
               >
-                <div className="text-base font-bold text-neutral-900">
+                <div className="text-base font-bold text-foreground">
                   {bucket.label}
                 </div>
               </div>
@@ -368,8 +368,8 @@ export function TimelineView() {
               onClick={handleOpenCalendar}
               size="sm"
               className={cn([
-                "rounded-full bg-white hover:bg-neutral-50",
-                "border border-neutral-200 text-neutral-700",
+                "rounded-full bg-white hover:bg-muted",
+                "border border-border text-foreground",
                 "flex items-center gap-1",
                 "px-3",
                 "shadow-xs",
@@ -385,8 +385,8 @@ export function TimelineView() {
               onClick={scrollToToday}
               size="sm"
               className={cn([
-                "rounded-full bg-white hover:bg-neutral-50",
-                "border border-neutral-200 text-neutral-700",
+                "rounded-full bg-white hover:bg-muted",
+                "border border-border text-foreground",
                 "flex items-center gap-1",
                 "shadow-xs",
               ])}
@@ -405,8 +405,8 @@ export function TimelineView() {
           size="sm"
           className={cn([
             "absolute bottom-2 left-1/2 -translate-x-1/2 transform",
-            "rounded-full bg-white hover:bg-neutral-50",
-            "border border-neutral-200 text-neutral-700",
+            "rounded-full bg-white hover:bg-muted",
+            "border border-border text-foreground",
             "z-20 flex items-center gap-1",
             "shadow-xs",
           ])}
@@ -460,7 +460,7 @@ function TodayBucket({
       return (
         <>
           <CurrentTimeIndicator ref={registerIndicator} timezone={timezone} />
-          <div className="px-3 py-4 text-center text-sm text-neutral-400">
+          <div className="px-3 py-4 text-center text-sm text-muted-foreground">
             No items today
           </div>
         </>

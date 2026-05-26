@@ -49,7 +49,7 @@ function InstructionShell({
           type="button"
           onClick={onBack}
           className={cn([
-            "flex h-9 items-center gap-1.5 rounded-full px-3 text-stone-400 transition-colors hover:bg-stone-100/70 hover:text-stone-700",
+            "flex h-9 items-center gap-1.5 rounded-full px-3 text-stone-400 transition-colors hover:bg-muted/70 hover:text-foreground",
           ])}
         >
           <ChevronLeft className="h-4 w-4" />
@@ -62,7 +62,7 @@ function InstructionShell({
         className="relative z-10 flex flex-1 items-center justify-center p-6"
       >
         <div className="flex w-full max-w-sm flex-col items-center gap-6 px-10 pb-10 text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-[20px] border border-stone-200/70 bg-white/90 shadow-[0_6px_18px_rgba(28,25,23,0.05)]">
+          <div className="flex h-14 w-14 items-center justify-center rounded-[20px] border border-border/70 bg-white/90 shadow-[0_6px_18px_rgba(28,25,23,0.05)]">
             <img
               src="/assets/meetspace-icon.png"
               alt=""
@@ -77,7 +77,7 @@ function InstructionShell({
             <h2 className="font-sans text-[22px] leading-[1.15] font-semibold text-stone-900 sm:text-[28px]">
               {title}
             </h2>
-            <p className="text-sm leading-6 text-stone-500">{description}</p>
+            <p className="text-sm leading-6 text-muted-foreground">{description}</p>
           </div>
 
           <div className="flex items-center gap-2.5 pt-1">
@@ -121,7 +121,7 @@ function ExternalInstruction({
           <Button
             variant="outline"
             className={cn([
-              "h-10 w-full border-stone-300 bg-white text-stone-700 hover:bg-stone-50",
+              "h-10 w-full border-stone-300 bg-white text-foreground hover:bg-muted",
             ])}
             onClick={() => void openerCommands.openUrl(url, null)}
           >
@@ -211,7 +211,7 @@ function SignInInstruction({ onBack }: { onBack: () => void }) {
               Submit callback URL
             </Button>
           </div>
-          <p className="text-xs leading-5 text-neutral-500">
+          <p className="text-xs leading-5 text-muted-foreground">
             Paste the browser URL here if the browser button did not reopen
             Meetspace.
           </p>
@@ -221,7 +221,7 @@ function SignInInstruction({ onBack }: { onBack: () => void }) {
           type="button"
           onClick={() => setShowCallbackInput(true)}
           className={cn([
-            "text-xs font-medium text-neutral-500 underline underline-offset-4 transition-colors hover:text-neutral-700",
+            "text-xs font-medium text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground",
           ])}
         >
           Browser handoff not working? Paste the callback link instead

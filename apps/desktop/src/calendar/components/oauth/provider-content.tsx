@@ -55,7 +55,7 @@ export function OAuthProviderContent({
           <TooltipTrigger asChild>
             <span
               tabIndex={0}
-              className="cursor-not-allowed text-xs text-neutral-400 opacity-50"
+              className="cursor-not-allowed text-xs text-muted-foreground opacity-50"
             >
               Connect {config.displayName} Calendar
             </span>
@@ -73,7 +73,7 @@ export function OAuthProviderContent({
       <div className="pt-1 pb-2">
         <button
           onClick={upgradeToPro}
-          className="cursor-pointer text-xs text-neutral-600 underline transition-colors hover:text-neutral-900"
+          className="cursor-pointer text-xs text-muted-foreground underline transition-colors hover:text-foreground"
         >
           Upgrade to connect
         </button>
@@ -124,7 +124,7 @@ export function OAuthProviderContent({
   if (isError) {
     return (
       <div className="pt-1 pb-2">
-        <span className="text-xs text-red-600">
+        <span className="text-xs text-destructive">
           Failed to load integration status
         </span>
       </div>
@@ -135,7 +135,7 @@ export function OAuthProviderContent({
     <div className="pt-1 pb-2">
       <button
         onClick={handleAddAccount}
-        className="cursor-pointer text-xs text-neutral-600 underline transition-colors hover:text-neutral-900"
+        className="cursor-pointer text-xs text-muted-foreground underline transition-colors hover:text-foreground"
       >
         Connect {config.displayName} Calendar
       </button>
@@ -162,20 +162,20 @@ function ReconnectRequiredContent({
       </div>
 
       {errorDescription && (
-        <p className="text-xs text-neutral-600">{errorDescription}</p>
+        <p className="text-xs text-muted-foreground">{errorDescription}</p>
       )}
 
       <div className="flex items-center gap-2">
         <button
           onClick={onReconnect}
-          className="cursor-pointer text-xs text-neutral-600 underline transition-colors hover:text-neutral-900"
+          className="cursor-pointer text-xs text-muted-foreground underline transition-colors hover:text-foreground"
         >
           Reconnect
         </button>
-        <span className="text-xs text-neutral-400">or</span>
+        <span className="text-xs text-muted-foreground">or</span>
         <button
           onClick={onDisconnect}
-          className="cursor-pointer text-xs text-red-500 underline transition-colors hover:text-red-700"
+          className="cursor-pointer text-xs text-destructive underline transition-colors hover:text-destructive"
         >
           Disconnect
         </button>

@@ -72,7 +72,7 @@ export function TabContentChangelog({
         </div>
 
         <div className="mt-2 shrink-0 px-3">
-          <h1 className="text-xl font-semibold text-neutral-900">
+          <h1 className="text-xl font-semibold text-foreground">
             What's new in {current}?
           </h1>
         </div>
@@ -116,7 +116,7 @@ function ChangelogBody({
   loading: boolean;
 }) {
   if (loading) {
-    return <p className="text-neutral-500">Loading...</p>;
+    return <p className="text-muted-foreground">Loading...</p>;
   }
 
   if (content) {
@@ -142,7 +142,7 @@ function ChangelogBody({
   }
 
   return (
-    <p className="text-neutral-500">No changelog available for this version.</p>
+    <p className="text-muted-foreground">No changelog available for this version.</p>
   );
 }
 
@@ -161,9 +161,9 @@ function ChangelogHeader({
       <div className="flex items-center gap-2">
         <div className="min-w-0 flex-1">
           <Breadcrumb className="ml-1.5 min-w-0">
-            <BreadcrumbList className="flex-nowrap gap-0.5 overflow-hidden text-xs text-neutral-700">
+            <BreadcrumbList className="flex-nowrap gap-0.5 overflow-hidden text-xs text-foreground">
               <BreadcrumbItem className="shrink-0">
-                <span className="text-neutral-500">Changelog</span>
+                <span className="text-muted-foreground">Changelog</span>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="shrink-0" />
               <BreadcrumbItem className="overflow-hidden">
@@ -178,7 +178,7 @@ function ChangelogHeader({
             <Button
               size="sm"
               variant="ghost"
-              className="pointer-events-none text-neutral-600"
+              className="pointer-events-none text-muted-foreground"
             >
               <CalendarIcon size={14} className="shrink-0" />
               <span>{formattedDate}</span>
@@ -187,7 +187,7 @@ function ChangelogHeader({
           <Button
             size="sm"
             variant="ghost"
-            className="gap-1.5 text-neutral-600 hover:text-black"
+            className="gap-1.5 text-muted-foreground hover:text-black"
             onClick={() => openerCommands.openUrl(webUrl, null)}
           >
             <ExternalLinkIcon size={14} />

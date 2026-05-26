@@ -39,28 +39,28 @@ const accentColors: Record<
 > = {
   neutral: {
     selected: [
-      "bg-neutral-200/50",
-      "hover:bg-neutral-200",
+      "bg-accent/50",
+      "hover:bg-accent",
       "text-black",
       "border-stone-400",
     ],
     unselected: [
-      "bg-neutral-50",
-      "hover:bg-stone-100",
-      "text-neutral-500",
+      "bg-muted",
+      "hover:bg-muted",
+      "text-muted-foreground",
       "border-transparent",
     ],
     hover: {
-      selected: "text-neutral-700 hover:text-neutral-900",
-      unselected: "text-neutral-500 hover:text-neutral-700",
+      selected: "text-foreground hover:text-foreground",
+      unselected: "text-muted-foreground hover:text-foreground",
     },
   },
   red: {
-    selected: ["bg-red-50", "text-red-600", "border-red-400"],
-    unselected: ["bg-red-50", "text-red-500", "border-transparent"],
+    selected: ["bg-red-50", "text-destructive", "border-red-400"],
+    unselected: ["bg-red-50", "text-destructive", "border-transparent"],
     hover: {
-      selected: "text-red-600 hover:text-red-700",
-      unselected: "text-red-600 hover:text-red-700",
+      selected: "text-destructive hover:text-destructive",
+      unselected: "text-destructive hover:text-destructive",
     },
   },
   amber: {
@@ -411,7 +411,7 @@ export function TabItemBase({
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <AppFloatingPanel className="flex flex-col gap-2 p-3">
-            <p className="text-sm text-neutral-700">
+            <p className="text-sm text-foreground">
               Are you sure you want to close this tab? This will stop Meetspace
               from listening.
             </p>
@@ -427,7 +427,7 @@ export function TabItemBase({
               <Kbd
                 className={cn([
                   "absolute right-2",
-                  "border-red-200/30 bg-red-200/20 text-red-100",
+                  "border-destructive/30/30 bg-red-200/20 text-red-100",
                   "transition-all duration-100",
                   "group-hover:-translate-y-0.5 group-hover:shadow-[0_2px_0_0_rgba(0,0,0,0.15),inset_0_1px_0_0_rgba(255,255,255,0.8)]",
                   "group-active:translate-y-0.5 group-active:shadow-none",

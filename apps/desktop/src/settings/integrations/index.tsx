@@ -7,7 +7,7 @@ export function SettingsIntegrations() {
     <div className="flex flex-col gap-8">
       <div>
         <h2 className="mb-4 font-sans text-lg font-semibold">Integrations</h2>
-        <p className="mb-6 text-sm text-neutral-600">
+        <p className="mb-6 text-sm text-muted-foreground">
           Connect Meetspace to other tools you use. All integrations run locally;
           API tokens stay on this device.
         </p>

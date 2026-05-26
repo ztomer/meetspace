@@ -219,7 +219,7 @@ export function ModelCombobox({
                     }}
                     className={cn([
                       "cursor-pointer",
-                      "hover:bg-neutral-200! focus:bg-neutral-200! aria-selected:bg-transparent",
+                      "hover:bg-accent! focus:bg-accent! aria-selected:bg-transparent",
                     ])}
                   >
                     <span className="truncate">
@@ -247,7 +247,7 @@ export function ModelCombobox({
                       }}
                       className={cn([
                         "cursor-pointer opacity-50",
-                        "hover:bg-neutral-200! focus:bg-neutral-200! aria-selected:bg-transparent",
+                        "hover:bg-accent! focus:bg-accent! aria-selected:bg-transparent",
                       ])}
                     >
                       <Tooltip delayDuration={10}>
@@ -283,7 +283,7 @@ export function ModelCombobox({
                     }}
                     className={cn([
                       "cursor-pointer",
-                      "hover:bg-neutral-200! focus:bg-neutral-200! aria-selected:bg-transparent",
+                      "hover:bg-accent! focus:bg-accent! aria-selected:bg-transparent",
                     ])}
                   >
                     <CirclePlus className="mr-2 h-4 w-4" />

@@ -95,9 +95,9 @@ export function DayCell({
   return (
     <div
       className={cn([
-        "border-r border-b border-neutral-100",
+        "border-r border-b border-border",
         "flex min-w-0 flex-col p-1.5",
-        (day.getDay() === 0 || day.getDay() === 6) && "bg-neutral-50",
+        (day.getDay() === 0 || day.getDay() === 6) && "bg-muted",
       ])}
     >
       <div className="flex shrink-0 justify-end">
@@ -105,16 +105,16 @@ export function DayCell({
           className={cn([
             "mb-1 flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium",
             today && "bg-neutral-900 text-white",
-            !today && !isCurrentMonth && "text-neutral-300",
+            !today && !isCurrentMonth && "text-muted-foreground/60",
             !today &&
               isCurrentMonth &&
               (day.getDay() === 0 || day.getDay() === 6) &&
-              "text-neutral-400",
+              "text-muted-foreground",
             !today &&
               isCurrentMonth &&
               day.getDay() !== 0 &&
               day.getDay() !== 6 &&
-              "text-neutral-900",
+              "text-foreground",
           ])}
         >
           {format(day, "d")}
@@ -133,7 +133,7 @@ export function DayCell({
         {overflow > 0 && (
           <Popover>
             <PopoverTrigger asChild>
-              <button className="shrink-0 cursor-pointer pl-1 text-left text-xs text-neutral-400 hover:text-neutral-600">
+              <button className="shrink-0 cursor-pointer pl-1 text-left text-xs text-muted-foreground hover:text-muted-foreground">
                 +{overflow} more
               </button>
             </PopoverTrigger>
@@ -144,7 +144,7 @@ export function DayCell({
               onClick={(e) => e.stopPropagation()}
             >
               <AppFloatingPanel className="p-2">
-                <div className="mb-2 text-sm font-medium text-neutral-900">
+                <div className="mb-2 text-sm font-medium text-foreground">
                   {format(day, "MMM d, yyyy")}
                 </div>
                 <div className="flex flex-col gap-0.5">
