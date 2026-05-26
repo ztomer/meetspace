@@ -30,7 +30,7 @@ export function AppSettingsView({
       <section>
         <div className="flex flex-col gap-4">
           <SettingRow
-            title={<Trans>Start Anarlog at login</Trans>}
+            title={<Trans>Start Meetspace at login</Trans>}
             description={
               <Trans>Always ready without manually launching.</Trans>
             }
@@ -51,7 +51,7 @@ export function AppSettingsView({
             title={<Trans>Share usage data</Trans>}
             description={
               <Trans>
-                Send anonymous usage analytics to help improve Anarlog.
+                Send anonymous usage analytics to help improve Meetspace.
               </Trans>
             }
             checked={telemetryConsent.value}

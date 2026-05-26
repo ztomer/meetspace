@@ -71,7 +71,7 @@ describe("ChatToolbarControls", () => {
       />,
     );
 
-    const title = screen.getByText("Ask Anarlog AI anything");
+    const title = screen.getByText("Ask Meetspace AI anything");
     const titleButton = title.closest("button");
     expect(container.firstElementChild?.className).toContain("px-3");
     expect(container.firstElementChild?.className).not.toContain("pl-2");
@@ -161,7 +161,7 @@ describe("ChatToolbarControls", () => {
     );
 
     const titleButton = screen
-      .getByText("Ask Anarlog AI anything")
+      .getByText("Ask Meetspace AI anything")
       .closest("button");
 
     expect(container.firstElementChild?.className).toContain("px-3");
