@@ -246,6 +246,7 @@ tauri-plugin-network = { path = "plugins/network" }
 tauri-plugin-notification = { path = "plugins/notification" }
 tauri-plugin-notify = { path = "plugins/notify" }
 tauri-plugin-opener2 = { path = "plugins/opener2" }
+tauri-plugin-oauth = { path = "plugins/oauth" }
 tauri-plugin-overlay = { path = "plugins/overlay" }
 tauri-plugin-path2 = { path = "plugins/path2" }
 tauri-plugin-permissions = { path = "plugins/permissions" }
