@@ -296,6 +296,16 @@ export const generalSchema = z.object({
   notion_database_id: z.string().optional(),
   linear_api_key: z.string().optional(),
   linear_team_id: z.string().optional(),
+  // OAuth — calendar integrations. Tokens persisted via tinybase for now
+  // (TODO: move to OS keychain when @tauri-apps/plugin-stronghold or similar lands).
+  google_client_id: z.string().optional(),
+  google_refresh_token: z.string().optional(),
+  google_access_token: z.string().optional(),
+  google_token_expires_at: z.number().optional(),
+  outlook_client_id: z.string().optional(),
+  outlook_refresh_token: z.string().optional(),
+  outlook_access_token: z.string().optional(),
+  outlook_token_expires_at: z.number().optional(),
 });
 
 export const aiProviderSchema = z

@@ -4852,6 +4852,7 @@ dependencies = [
  "tauri-plugin-network",
  "tauri-plugin-notification",
  "tauri-plugin-notify",
+ "tauri-plugin-oauth",
  "tauri-plugin-opener",
  "tauri-plugin-opener2",
  "tauri-plugin-os",
@@ -18528,6 +18529,29 @@ dependencies = [
  "thiserror 2.0.18",
  "tokio",
  "tracing",
+]
+
+[[package]]
+name = "tauri-plugin-oauth"
+version = "0.1.0"
+dependencies = [
+ "axum 0.8.9",
+ "base64 0.22.1",
+ "getrandom 0.2.17",
+ "reqwest 0.13.2",
+ "serde",
+ "serde_json",
+ "sha2 0.11.0",
+ "specta",
+ "specta-typescript",
+ "tauri",
+ "tauri-plugin",
+ "tauri-plugin-opener2",
+ "tauri-specta",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "url",
 ]
 
 [[package]]
