@@ -1,10 +1,7 @@
 import { useCallback, useState } from "react";
 
 import { commands as notificationCommands } from "@meetspace/plugin-notification";
-import {
-  commands as windowsCommands,
-  openUrlWithInstruction,
-} from "@meetspace/plugin-windows";
+import { commands as windowsCommands } from "@meetspace/plugin-windows";
 import { cn } from "@meetspace/utils";
 
 import { getLatestVersion } from "~/changelog";
@@ -78,19 +75,6 @@ function NavigationCard() {
     openNew({ type: "empty" });
   }, [openNew, showMainWindow]);
 
-  const handleShowOnboarding = useCallback(async () => {
-    await showMainWindow();
-    openNew({ type: "onboarding" });
-  }, [openNew, showMainWindow]);
-
-  const showInstruction = useCallback(
-    (type: string) =>
-      openUrlWithInstruction(`https://example.com/${type}`, type, async () => ({
-        status: "ok" as const,
-      })),
-    [],
-  );
-
   const handleShowChangelog = useCallback(() => {
     const latestVersion = getLatestVersion();
     if (latestVersion) {
@@ -104,19 +88,6 @@ function NavigationCard() {
   return (
     <DevtoolCard title="Navigation">
       <div className="flex flex-col gap-1.5">
-        <button
-          type="button"
-          onClick={() => void handleShowOnboarding()}
-          className={cn([
-            "w-full rounded-md px-2.5 py-1.5",
-            "text-left text-xs font-medium",
-            "border-border text-foreground border",
-            "cursor-pointer transition-colors",
-            "hover:border-border hover:bg-muted",
-          ])}
-        >
-          Onboarding Tab
-        </button>
         {isClassicMain && (
           <button
             type="button"
@@ -132,22 +103,6 @@ function NavigationCard() {
             Empty Tab
           </button>
         )}
-        {["billing", "integration"].map((type) => (
-          <button
-            key={type}
-            type="button"
-            onClick={() => void showInstruction(type)}
-            className={cn([
-              "w-full rounded-md px-2.5 py-1.5",
-              "text-left text-xs font-medium",
-              "border-border text-foreground border",
-              "cursor-pointer transition-colors",
-              "hover:border-border hover:bg-muted",
-            ])}
-          >
-            Instruction: {type}
-          </button>
-        ))}
         <button
           type="button"
           onClick={handleShowChangelog}
