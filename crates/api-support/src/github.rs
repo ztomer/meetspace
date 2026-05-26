@@ -50,8 +50,8 @@ pub(crate) async fn submit_bug_report(
 ) -> Result<String> {
     let (description, title) = make_title(input.description, "Bug Report");
 
-    let body = hypr_template_support::render(hypr_template_support::SupportTemplate::BugReport(
-        hypr_template_support::BugReport {
+    let body = meetspace_template_support::render(meetspace_template_support::SupportTemplate::BugReport(
+        meetspace_template_support::BugReport {
             description,
             platform: input.platform.to_string(),
             arch: input.arch.to_string(),
@@ -88,8 +88,8 @@ pub(crate) async fn submit_feature_request(
     let (description, title) = make_title(input.description, "Feature Request");
 
     let body =
-        hypr_template_support::render(hypr_template_support::SupportTemplate::FeatureRequest(
-            hypr_template_support::FeatureRequest {
+        meetspace_template_support::render(meetspace_template_support::SupportTemplate::FeatureRequest(
+            meetspace_template_support::FeatureRequest {
                 description,
                 platform: input.platform.to_string(),
                 arch: input.arch.to_string(),
@@ -299,8 +299,8 @@ async fn attach_log_analysis(state: &AppState, issue_number: u64, log_text: &str
     };
 
     let tail = logs::safe_tail(&clean_logs, 10000);
-    let log_comment = hypr_template_support::render(
-        hypr_template_support::SupportTemplate::LogAnalysis(hypr_template_support::LogAnalysis {
+    let log_comment = meetspace_template_support::render(
+        meetspace_template_support::SupportTemplate::LogAnalysis(meetspace_template_support::LogAnalysis {
             summary_section,
             tail: tail.to_string(),
         }),

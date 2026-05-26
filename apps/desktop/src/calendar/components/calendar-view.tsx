@@ -13,15 +13,15 @@ import {
 import { ChevronLeftIcon, ChevronRightIcon, RefreshCwIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { Button } from "@hypr/ui/components/ui/button";
-import { ButtonGroup } from "@hypr/ui/components/ui/button-group";
-import { Spinner } from "@hypr/ui/components/ui/spinner";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { ButtonGroup } from "@meetspace/ui/components/ui/button-group";
+import { Spinner } from "@meetspace/ui/components/ui/spinner";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/tooltip";
+import { cn } from "@meetspace/utils";
 
 import { useSync } from "./context";
 import { DayCell } from "./day-cell";

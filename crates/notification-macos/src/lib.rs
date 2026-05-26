@@ -4,7 +4,7 @@ use std::sync::Mutex;
 
 use swift_rs::{Bool, SRString, swift};
 
-pub use hypr_notification_interface::*;
+pub use meetspace_notification_interface::*;
 
 swift!(fn _show_notification(json_payload: &SRString) -> Bool);
 
@@ -87,8 +87,8 @@ struct NotificationPayload<'a> {
 }
 
 fn resolve_default_icon(
-    notification: &hypr_notification_interface::Notification,
-) -> hypr_notification_interface::Notification {
+    notification: &meetspace_notification_interface::Notification,
+) -> meetspace_notification_interface::Notification {
     let mut resolved = notification.clone();
 
     if resolved.icon.is_none() {
@@ -101,7 +101,7 @@ fn resolve_default_icon(
     resolved
 }
 
-pub fn show(notification: &hypr_notification_interface::Notification) {
+pub fn show(notification: &meetspace_notification_interface::Notification) {
     let notification = resolve_default_icon(notification);
 
     let key = notification

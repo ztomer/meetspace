@@ -2,9 +2,9 @@ import { open as selectFolder } from "@tauri-apps/plugin-dialog";
 import { FolderOpenIcon } from "lucide-react";
 import { useCallback } from "react";
 
-import { Button } from "@hypr/ui/components/ui/button";
-import { Input } from "@hypr/ui/components/ui/input";
-import { Switch } from "@hypr/ui/components/ui/switch";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { Input } from "@meetspace/ui/components/ui/input";
+import { Switch } from "@meetspace/ui/components/ui/switch";
 
 import { useConfigValues } from "~/shared/config";
 import * as settings from "~/store/tinybase/store/settings";
@@ -97,15 +97,15 @@ export function ObsidianIntegration() {
           </label>
           <Input
             id="obsidian-subfolder"
-            value={obsidian_subfolder ?? "Anarlog"}
+            value={obsidian_subfolder ?? "Meetspace"}
             onChange={(e) => setSubfolder(e.target.value)}
-            placeholder="Anarlog"
+            placeholder="Meetspace"
             className="shadow-none"
           />
           <p className="text-xs text-neutral-500">
             Files are written to{" "}
             <code className="rounded bg-neutral-100 px-1 py-0.5 text-[10px]">
-              vault/{obsidian_subfolder || "Anarlog"}/YYYY-MM-DD-title.md
+              vault/{obsidian_subfolder || "Meetspace"}/YYYY-MM-DD-title.md
             </code>
             .
           </p>

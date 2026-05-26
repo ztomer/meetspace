@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useCallback } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { type SettingsTab, useTabs } from "~/store/zustand/tabs";
 

@@ -2,28 +2,28 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { CircleDotIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { Button } from "@hypr/ui/components/ui/button";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@hypr/ui/components/ui/dialog";
-import { DropdownMenuItem } from "@hypr/ui/components/ui/dropdown-menu";
+} from "@meetspace/ui/components/ui/dialog";
+import { DropdownMenuItem } from "@meetspace/ui/components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@hypr/ui/components/ui/select";
+} from "@meetspace/ui/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
+} from "@meetspace/ui/components/ui/tooltip";
 
 import { createLinearIssue, listLinearTeams } from "~/integrations/linear";
 import { useConfigValues } from "~/shared/config";

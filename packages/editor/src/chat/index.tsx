@@ -26,8 +26,8 @@ import { EditorState, Plugin, PluginKey } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
 import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 
-import "@hypr/tiptap/styles.css";
-import { cn } from "@hypr/utils";
+import "@meetspace/tiptap/styles.css";
+import { cn } from "@meetspace/utils";
 
 import { EditorErrorBoundary } from "../editor-error-boundary";
 import {

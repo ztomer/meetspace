@@ -1,17 +1,17 @@
 import { CalendarIcon, ExternalLinkIcon, SparklesIcon } from "lucide-react";
 import { useEffect } from "react";
 
-import { ChangelogContent } from "@hypr/changelog";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
+import { ChangelogContent } from "@meetspace/changelog";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@hypr/ui/components/ui/breadcrumb";
-import { Button } from "@hypr/ui/components/ui/button";
-import { safeFormat } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/breadcrumb";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { safeFormat } from "@meetspace/utils";
 
 import { useChangelogContent } from "./data";
 
@@ -154,7 +154,7 @@ function ChangelogHeader({
   date: string | null;
 }) {
   const formattedDate = date ? safeFormat(date, "MMM d, yyyy") : null;
-  const webUrl = `https://anarlog.so/changelog/${version}`;
+  const webUrl = `https://meetspace.so/changelog/${version}`;
 
   return (
     <div className="w-full pt-1">

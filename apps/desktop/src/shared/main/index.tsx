@@ -5,8 +5,8 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@hypr/ui/components/ui/resizable";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/resizable";
+import { cn } from "@meetspace/utils";
 
 const RESIZABLE_AFTER_BORDER_EXPANDED_SIZE = 22;
 

@@ -3,8 +3,8 @@ use std::sync::Arc;
 use futures_util::StreamExt;
 use owhisper_interface::MixedMessage;
 
-use hypr_audio::{AudioProvider, CaptureConfig};
-use hypr_audio_utils::{chunk_size_for_stt, f32_to_i16_bytes};
+use meetspace_audio::{AudioProvider, CaptureConfig};
+use meetspace_audio_utils::{chunk_size_for_stt, f32_to_i16_bytes};
 use transcribe_cactus::CactusConfig;
 
 use crate::{AudioSource, SAMPLE_RATE};

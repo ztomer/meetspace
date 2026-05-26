@@ -18,7 +18,7 @@ fn silero_cactus_model() -> Model {
     let path = std::env::var("SILERO_CACTUS_VAD_MODEL").unwrap_or_else(|_| {
         let home = std::env::var("HOME").unwrap();
         format!(
-            "{}/Library/Application Support/com.hyprnote.dev/models/cactus/whisper-medium-int8-apple/vad",
+            "{}/Library/Application Support/com.meetspace.dev/models/cactus/whisper-medium-int8-apple/vad",
             home
         )
     });
@@ -26,7 +26,7 @@ fn silero_cactus_model() -> Model {
 }
 
 fn bench_earshot(c: &mut Criterion) {
-    let pcm_bytes = hypr_data::english_1::AUDIO;
+    let pcm_bytes = meetspace_data::english_1::AUDIO;
     let samples: Vec<i16> = pcm_bytes_to_i16(pcm_bytes);
     let frame_size = choose_optimal_frame_size(samples.len());
 
@@ -50,7 +50,7 @@ fn bench_earshot(c: &mut Criterion) {
 }
 
 fn bench_silero_onnx(c: &mut Criterion) {
-    let pcm_bytes = hypr_data::english_1::AUDIO;
+    let pcm_bytes = meetspace_data::english_1::AUDIO;
 
     c.bench_function("silero_onnx english_1", |b| {
         b.iter_batched(
@@ -66,7 +66,7 @@ fn bench_silero_onnx(c: &mut Criterion) {
                 let mut probs = Vec::new();
                 for chunk in black_box(&samples_f32).chunks(CHUNK_SIZE_16KHZ) {
                     if chunk.len() == CHUNK_SIZE_16KHZ {
-                        let view = hypr_onnx::ndarray::ArrayView1::from(chunk);
+                        let view = meetspace_onnx::ndarray::ArrayView1::from(chunk);
                         probs.push(model.process_chunk(&view, 16000).unwrap());
                     }
                 }
@@ -80,7 +80,7 @@ fn bench_silero_onnx(c: &mut Criterion) {
 fn bench_silero_cactus(c: &mut Criterion) {
     let model = silero_cactus_model();
     let options = VadOptions::default();
-    let pcm = hypr_data::english_1::AUDIO;
+    let pcm = meetspace_data::english_1::AUDIO;
 
     c.bench_function("silero_cactus english_1", |b| {
         b.iter_batched(

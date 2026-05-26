@@ -10,13 +10,13 @@ use axum::{
     http::{HeaderMap, StatusCode},
     response::{IntoResponse, Response},
 };
-use hypr_api_auth::AuthContext;
+use meetspace_api_auth::AuthContext;
 use owhisper_client::normalize_listen_params;
 use owhisper_interface::ListenParams;
 
-use hypr_audio_mime::content_type_to_extension;
+use meetspace_audio_mime::content_type_to_extension;
 
-use crate::hyprnote_routing::should_use_hyprnote_routing;
+use crate::meetspace_routing::should_use_meetspace_routing;
 use crate::query_params::QueryParams;
 
 use super::AppState;
@@ -53,10 +53,10 @@ pub async fn handler(
     let listen_params = build_listen_params(&params);
 
     let provider_param = params.get_first("provider").map(|s| s.to_string());
-    let use_hyprnote_routing = should_use_hyprnote_routing(provider_param.as_deref());
+    let use_meetspace_routing = should_use_meetspace_routing(provider_param.as_deref());
 
-    if use_hyprnote_routing {
-        return sync::handle_hyprnote_batch(&state, &params, listen_params, body, content_type)
+    if use_meetspace_routing {
+        return sync::handle_meetspace_batch(&state, &params, listen_params, body, content_type)
             .await;
     }
 
@@ -66,9 +66,9 @@ pub async fn handler(
     };
 
     tracing::info!(
-        hyprnote.stt.provider.name = ?selected.provider(),
-        hyprnote.file.mime_type = %content_type,
-        hyprnote.payload.size_bytes = %body.len(),
+        meetspace.stt.provider.name = ?selected.provider(),
+        meetspace.file.mime_type = %content_type,
+        meetspace.payload.size_bytes = %body.len(),
         "batch_transcription_request_received"
     );
 
@@ -85,7 +85,7 @@ pub async fn handler(
         Err((e, _retries)) => {
             tracing::error!(
                 error = %e,
-                hyprnote.stt.provider.name = ?selected.provider(),
+                meetspace.stt.provider.name = ?selected.provider(),
                 "batch_transcription_failed"
             );
             (
@@ -132,7 +132,7 @@ fn write_to_temp_file(
 mod tests {
     use super::*;
     use crate::query_params::QueryValue;
-    use hypr_language::ISO639;
+    use meetspace_language::ISO639;
 
     #[test]
     fn test_build_listen_params_normalizes_duplicate_base_languages() {

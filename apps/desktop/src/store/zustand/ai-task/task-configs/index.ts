@@ -5,7 +5,7 @@ import type {
   EnhanceUser,
   TitleSystem,
   TitleUser,
-} from "@hypr/plugin-template";
+} from "@meetspace/plugin-template";
 
 import { enhanceSuccess } from "./enhance-success";
 import { enhanceTransform } from "./enhance-transform";

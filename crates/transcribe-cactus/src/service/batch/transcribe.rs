@@ -4,8 +4,8 @@ use std::path::Path;
 use rodio::Source;
 use tokio::sync::mpsc;
 
-use hypr_audio_utils::content_type_to_extension;
-use hypr_transcribe_core::{
+use meetspace_audio_utils::content_type_to_extension;
+use meetspace_transcribe_core::{
     ProgressTracker, TARGET_SAMPLE_RATE, channel_duration_sec, chunk_channel_audio,
     initial_resolved_until, next_resolved_until, split_resampled_channels,
 };
@@ -18,16 +18,16 @@ use super::response::{build_batch_words, build_segment_stream_response};
 #[tracing::instrument(
     skip(audio_data, model, event_tx),
     fields(
-        hyprnote.audio.size_bytes = audio_data.len(),
-        hyprnote.file.mime_type = content_type,
-        hyprnote.model.path = %model_path.display()
+        meetspace.audio.size_bytes = audio_data.len(),
+        meetspace.file.mime_type = content_type,
+        meetspace.model.path = %model_path.display()
     )
 )]
 pub(super) fn transcribe_batch(
     audio_data: &[u8],
     content_type: &str,
     params: &ListenParams,
-    model: &hypr_cactus::Model,
+    model: &meetspace_cactus::Model,
     model_path: &Path,
     event_tx: Option<mpsc::UnboundedSender<BatchSseMessage>>,
 ) -> Result<batch::Response, crate::Error> {
@@ -40,9 +40,9 @@ pub(super) fn transcribe_batch(
     temp_file.write_all(audio_data)?;
     temp_file.flush()?;
 
-    let source = hypr_audio_utils::source_from_path(temp_file.path())?;
+    let source = meetspace_audio_utils::source_from_path(temp_file.path())?;
     let channel_count = u16::from(source.channels()).max(1) as usize;
-    let resampled = hypr_audio_utils::resample_audio(source, TARGET_SAMPLE_RATE)?;
+    let resampled = meetspace_audio_utils::resample_audio(source, TARGET_SAMPLE_RATE)?;
     let channel_samples = split_resampled_channels(&resampled, channel_count);
     let total_duration = channel_samples
         .iter()
@@ -117,10 +117,10 @@ pub(super) fn transcribe_batch(
 #[allow(clippy::too_many_arguments)]
 fn transcribe_chunks(
     channel_idx: usize,
-    chunks: &[hypr_audio_chunking::AudioChunk],
+    chunks: &[meetspace_audio_chunking::AudioChunk],
     channel_duration: f64,
-    model: &hypr_cactus::Model,
-    options: &hypr_cactus::TranscribeOptions,
+    model: &meetspace_cactus::Model,
+    options: &meetspace_cactus::TranscribeOptions,
     progress: &mut ProgressTracker,
     metadata: &owhisper_interface::stream::Metadata,
     channel_index: &[i32],
@@ -130,7 +130,7 @@ fn transcribe_chunks(
     let mut cumulative_confidence = 0.0;
 
     for (chunk_idx, chunk) in chunks.iter().enumerate() {
-        let pcm_i16 = hypr_audio_utils::f32_to_i16_samples(&chunk.samples);
+        let pcm_i16 = meetspace_audio_utils::f32_to_i16_samples(&chunk.samples);
         let pcm_bytes: Vec<u8> = pcm_i16.iter().flat_map(|s| s.to_le_bytes()).collect();
 
         let chunk_start_sec = chunk.sample_start as f64 / TARGET_SAMPLE_RATE as f64;
@@ -235,8 +235,8 @@ fn resolved_audio_for_chunk_progress(
 mod tests {
     use std::path::Path;
 
-    use hypr_language::ISO639;
-    use hypr_transcribe_core::{
+    use meetspace_language::ISO639;
+    use meetspace_transcribe_core::{
         overall_resolved_audio, overall_resolved_with_channel, record_progress,
     };
     use owhisper_interface::ListenParams;
@@ -261,7 +261,7 @@ mod tests {
 
     #[test]
     fn initial_resolved_until_uses_leading_silence() {
-        let chunks = vec![hypr_audio_chunking::AudioChunk {
+        let chunks = vec![meetspace_audio_chunking::AudioChunk {
             samples: vec![],
             sample_start: 12 * TARGET_SAMPLE_RATE as usize,
             sample_end: 15 * TARGET_SAMPLE_RATE as usize,
@@ -344,7 +344,7 @@ mod tests {
         let model_path_str = std::env::var("CACTUS_STT_MODEL").unwrap_or_else(|_| {
             dirs::data_dir()
                 .expect("could not find data dir")
-                .join("com.hyprnote.dev/models/cactus/whisper-small-int8-apple")
+                .join("com.meetspace.dev/models/cactus/whisper-small-int8-apple")
                 .to_string_lossy()
                 .into_owned()
         });
@@ -355,7 +355,7 @@ mod tests {
             model_path.display()
         );
 
-        let wav_bytes = std::fs::read(hypr_data::english_1::AUDIO_PATH)
+        let wav_bytes = std::fs::read(meetspace_data::english_1::AUDIO_PATH)
             .unwrap_or_else(|e| panic!("failed to read fixture wav: {e}"));
 
         let params = ListenParams {
@@ -363,7 +363,7 @@ mod tests {
             ..Default::default()
         };
 
-        let model = hypr_cactus::Model::new(model_path)
+        let model = meetspace_cactus::Model::new(model_path)
             .unwrap_or_else(|e| panic!("failed to load model: {e}"));
 
         let response = transcribe_batch(&wav_bytes, "audio/wav", &params, &model, model_path, None)

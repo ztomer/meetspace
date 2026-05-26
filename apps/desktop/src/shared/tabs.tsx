@@ -1,17 +1,17 @@
 import { AlertCircleIcon, Pin, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-import { Button } from "@hypr/ui/components/ui/button";
-import { Kbd } from "@hypr/ui/components/ui/kbd";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { Kbd } from "@meetspace/ui/components/ui/kbd";
 import {
   AppFloatingPanel,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@hypr/ui/components/ui/popover";
-import { Spinner } from "@hypr/ui/components/ui/spinner";
-import { useCmdKeyPressed } from "@hypr/ui/hooks/use-cmd-key-pressed";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/popover";
+import { Spinner } from "@meetspace/ui/components/ui/spinner";
+import { useCmdKeyPressed } from "@meetspace/ui/hooks/use-cmd-key-pressed";
+import { cn } from "@meetspace/utils";
 
 import { InteractiveButton } from "~/shared/ui/interactive-button";
 import { type Tab } from "~/store/zustand/tabs";
@@ -412,7 +412,7 @@ export function TabItemBase({
         >
           <AppFloatingPanel className="flex flex-col gap-2 p-3">
             <p className="text-sm text-neutral-700">
-              Are you sure you want to close this tab? This will stop Anarlog
+              Are you sure you want to close this tab? This will stop Meetspace
               from listening.
             </p>
             <Button

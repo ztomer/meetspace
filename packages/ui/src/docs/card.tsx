@@ -1,4 +1,4 @@
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 interface CardProps {
   title?: string;

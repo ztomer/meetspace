@@ -7,8 +7,8 @@ import {
   useState,
 } from "react";
 
-import { Button } from "@hypr/ui/components/ui/button";
-import { cn, startOfDay } from "@hypr/utils";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { cn, startOfDay } from "@meetspace/utils";
 
 import { useAnchor, useAutoScrollToAnchor } from "./anchor";
 import { TimelineItemComponent } from "./item";

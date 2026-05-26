@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { useCallback } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import type { ContextRef } from "~/chat/context/entities";
 import { useTabs } from "~/store/zustand/tabs";
@@ -63,12 +63,12 @@ export function ChatBodyEmpty({
           <div className="mb-2 flex items-center gap-2">
             <MessageCircleIcon className="size-4 text-neutral-500" />
             <span className="text-sm font-medium text-neutral-800">
-              Anarlog AI
+              Meetspace AI
             </span>
             <BetaChip />
           </div>
           <p className="mb-2 text-sm text-neutral-700">
-            Hi, I'm Anarlog AI. Set up a language model and I'll be ready to
+            Hi, I'm Meetspace AI. Set up a language model and I'll be ready to
             help.
           </p>
           <button
@@ -92,12 +92,12 @@ export function ChatBodyEmpty({
         <div className="mb-2 flex items-center gap-2">
           <MessageCircleIcon className="size-4 text-neutral-500" />
           <span className="text-sm font-medium text-neutral-800">
-            Anarlog AI
+            Meetspace AI
           </span>
           <BetaChip />
         </div>
         <p className="mb-2 text-sm text-neutral-700">
-          Hi, I'm Anarlog AI. I can help you pull context from your notes, find
+          Hi, I'm Meetspace AI. I can help you pull context from your notes, find
           key decisions, and draft what comes next.
         </p>
         {hasContext && (

@@ -15,8 +15,8 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/tooltip";
+import { cn } from "@meetspace/utils";
 
 import { useTitleGenerating } from "~/ai/hooks";
 import * as main from "~/store/tinybase/store/main";

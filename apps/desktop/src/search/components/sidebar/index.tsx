@@ -2,7 +2,7 @@ import { SearchXIcon } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { forwardRef } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { SearchResultGroup } from "./group";
 

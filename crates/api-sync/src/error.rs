@@ -18,8 +18,8 @@ pub enum SyncError {
     Internal(String),
 }
 
-impl From<hypr_supabase_auth::server::Error> for SyncError {
-    fn from(err: hypr_supabase_auth::server::Error) -> Self {
+impl From<meetspace_supabase_auth::server::Error> for SyncError {
+    fn from(err: meetspace_supabase_auth::server::Error) -> Self {
         Self::Auth(err.to_string())
     }
 }
@@ -36,6 +36,6 @@ impl IntoResponse for SyncError {
             ),
         };
 
-        hypr_api_error::error_response(status, code, &message)
+        meetspace_api_error::error_response(status, code, &message)
     }
 }

@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 
 use cidre::core_audio as ca;
-use hypr_bundle::{is_app_bundle, read_bundle_info};
+use meetspace_bundle::{is_app_bundle, read_bundle_info};
 use objc2_app_kit::NSRunningApplication;
 use sysinfo::{Pid, System};
 

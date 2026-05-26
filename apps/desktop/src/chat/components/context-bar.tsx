@@ -7,13 +7,13 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@hypr/ui/components/ui/popover";
+} from "@meetspace/ui/components/ui/popover";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
-import { cn, safeParseDate } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/tooltip";
+import { cn, safeParseDate } from "@meetspace/utils";
 
 import type { ContextRef } from "~/chat/context/entities";
 import { type ContextChipProps, renderChip } from "~/chat/context/registry";

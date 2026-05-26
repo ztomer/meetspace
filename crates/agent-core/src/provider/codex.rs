@@ -4,7 +4,7 @@ use crate::{
 };
 
 pub fn health(options: &HealthCheckOptions) -> ProviderHealth {
-    let health = hypr_codex::health_check_with_options(&hypr_codex::CodexOptions {
+    let health = meetspace_codex::health_check_with_options(&meetspace_codex::CodexOptions {
         codex_path_override: options.codex_path_override.clone(),
         ..Default::default()
     });
@@ -22,20 +22,20 @@ pub fn health(options: &HealthCheckOptions) -> ProviderHealth {
 }
 
 pub fn install_cli() -> Result<InstallCliResponse, String> {
-    let config_path = hypr_codex::config_path();
-    let command = hypr_codex::notify_command();
+    let config_path = meetspace_codex::config_path();
+    let command = meetspace_codex::notify_command();
 
-    let mut table = hypr_codex::read_config(&config_path)?;
+    let mut table = meetspace_codex::read_config(&config_path)?;
 
-    if table.contains_key("notify") && !hypr_codex::has_notify(&table, &command) {
+    if table.contains_key("notify") && !meetspace_codex::has_notify(&table, &command) {
         return Err(format!(
             "refusing to replace existing notify handler in {}",
             config_path.display()
         ));
     }
 
-    hypr_codex::set_notify(&mut table, command);
-    hypr_codex::write_config(&config_path, &table)?;
+    meetspace_codex::set_notify(&mut table, command);
+    meetspace_codex::write_config(&config_path, &table)?;
 
     Ok(InstallCliResponse {
         provider: ProviderKind::Codex,
@@ -48,35 +48,35 @@ pub fn install_cli() -> Result<InstallCliResponse, String> {
 }
 
 pub fn upgrade() {
-    upgrade_at(&hypr_codex::config_path());
+    upgrade_at(&meetspace_codex::config_path());
 }
 
 fn upgrade_at(config_path: &std::path::Path) {
-    let command = hypr_codex::notify_command();
-    let Ok(mut table) = hypr_codex::read_config(config_path) else {
+    let command = meetspace_codex::notify_command();
+    let Ok(mut table) = meetspace_codex::read_config(config_path) else {
         return;
     };
-    if !hypr_codex::has_notify(&table, &command) {
+    if !meetspace_codex::has_notify(&table, &command) {
         return;
     }
-    hypr_codex::set_notify(&mut table, command);
-    let _ = hypr_codex::write_config(config_path, &table);
+    meetspace_codex::set_notify(&mut table, command);
+    let _ = meetspace_codex::write_config(config_path, &table);
 }
 
 pub fn uninstall_cli() -> Result<UninstallCliResponse, String> {
-    let config_path = hypr_codex::config_path();
-    let command = hypr_codex::notify_command();
-    let mut table = hypr_codex::read_config(&config_path)?;
+    let config_path = meetspace_codex::config_path();
+    let command = meetspace_codex::notify_command();
+    let mut table = meetspace_codex::read_config(&config_path)?;
 
-    if table.contains_key("notify") && !hypr_codex::has_notify(&table, &command) {
+    if table.contains_key("notify") && !meetspace_codex::has_notify(&table, &command) {
         return Err(format!(
             "refusing to remove existing notify handler in {}",
             config_path.display()
         ));
     }
 
-    hypr_codex::remove_notify(&mut table);
-    hypr_codex::write_config(&config_path, &table)?;
+    meetspace_codex::remove_notify(&mut table);
+    meetspace_codex::write_config(&config_path, &table)?;
 
     Ok(UninstallCliResponse {
         provider: ProviderKind::Codex,
@@ -89,30 +89,30 @@ pub fn uninstall_cli() -> Result<UninstallCliResponse, String> {
 }
 
 fn integration_installed() -> Result<bool, String> {
-    let config_path = hypr_codex::config_path();
-    let table = hypr_codex::read_config(&config_path)?;
-    Ok(hypr_codex::has_notify(
+    let config_path = meetspace_codex::config_path();
+    let table = meetspace_codex::read_config(&config_path)?;
+    Ok(meetspace_codex::has_notify(
         &table,
-        &hypr_codex::notify_command(),
+        &meetspace_codex::notify_command(),
     ))
 }
 
-impl From<hypr_codex::HealthStatus> for ProviderHealthStatus {
-    fn from(value: hypr_codex::HealthStatus) -> Self {
+impl From<meetspace_codex::HealthStatus> for ProviderHealthStatus {
+    fn from(value: meetspace_codex::HealthStatus) -> Self {
         match value {
-            hypr_codex::HealthStatus::Ready => Self::Ready,
-            hypr_codex::HealthStatus::Warning => Self::Warning,
-            hypr_codex::HealthStatus::Error => Self::Error,
+            meetspace_codex::HealthStatus::Ready => Self::Ready,
+            meetspace_codex::HealthStatus::Warning => Self::Warning,
+            meetspace_codex::HealthStatus::Error => Self::Error,
         }
     }
 }
 
-impl From<hypr_codex::HealthAuthStatus> for ProviderAuthStatus {
-    fn from(value: hypr_codex::HealthAuthStatus) -> Self {
+impl From<meetspace_codex::HealthAuthStatus> for ProviderAuthStatus {
+    fn from(value: meetspace_codex::HealthAuthStatus) -> Self {
         match value {
-            hypr_codex::HealthAuthStatus::Authenticated => Self::Authenticated,
-            hypr_codex::HealthAuthStatus::Unauthenticated => Self::Unauthenticated,
-            hypr_codex::HealthAuthStatus::Unknown => Self::Unknown,
+            meetspace_codex::HealthAuthStatus::Authenticated => Self::Authenticated,
+            meetspace_codex::HealthAuthStatus::Unauthenticated => Self::Unauthenticated,
+            meetspace_codex::HealthAuthStatus::Unknown => Self::Unknown,
         }
     }
 }
@@ -139,10 +139,10 @@ mod tests {
 
         upgrade_at(&path);
 
-        let table = hypr_codex::read_config(&path).unwrap();
-        assert!(!hypr_codex::has_notify(
+        let table = meetspace_codex::read_config(&path).unwrap();
+        assert!(!meetspace_codex::has_notify(
             &table,
-            &hypr_codex::notify_command()
+            &meetspace_codex::notify_command()
         ));
     }
 
@@ -152,13 +152,13 @@ mod tests {
         let path = dir.path().join("config.toml");
 
         let mut table = toml::Table::new();
-        let command = hypr_codex::notify_command();
-        hypr_codex::set_notify(&mut table, command.clone());
-        hypr_codex::write_config(&path, &table).unwrap();
+        let command = meetspace_codex::notify_command();
+        meetspace_codex::set_notify(&mut table, command.clone());
+        meetspace_codex::write_config(&path, &table).unwrap();
 
         upgrade_at(&path);
 
-        let table = hypr_codex::read_config(&path).unwrap();
-        assert!(hypr_codex::has_notify(&table, &command));
+        let table = meetspace_codex::read_config(&path).unwrap();
+        assert!(meetspace_codex::has_notify(&table, &command));
     }
 }

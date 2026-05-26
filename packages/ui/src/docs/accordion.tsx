@@ -3,7 +3,7 @@
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { ChevronDown } from "lucide-react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 interface AccordionProps {
   title: string;

@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 
-import { commands as windowsCommands } from "@hypr/plugin-windows";
+import { commands as windowsCommands } from "@meetspace/plugin-windows";
 import {
   type ImperativePanelHandle,
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@hypr/ui/components/ui/resizable";
+} from "@meetspace/ui/components/ui/resizable";
 
 import { PersistentChatPanel } from "~/chat/components/persistent-chat";
 

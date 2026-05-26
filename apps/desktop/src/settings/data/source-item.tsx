@@ -1,8 +1,8 @@
 import { CheckIcon, Loader2Icon } from "lucide-react";
 
-import { type ImportSourceInfo } from "@hypr/plugin-importer";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { Button } from "@hypr/ui/components/ui/button";
+import { type ImportSourceInfo } from "@meetspace/plugin-importer";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { Button } from "@meetspace/ui/components/ui/button";
 
 export function SourceItem({
   source,

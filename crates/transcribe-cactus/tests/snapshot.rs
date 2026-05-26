@@ -6,24 +6,24 @@ use futures_util::{SinkExt, StreamExt};
 use tokio_tungstenite::connect_async;
 use tokio_tungstenite::tungstenite::Message as WsMessage;
 
-use hypr_cactus::CloudConfig;
+use meetspace_cactus::CloudConfig;
 use transcribe_cactus::CactusConfig;
 
 fn load_english_10_mono_pcm() -> Vec<u8> {
-    let mic = hypr_audio_utils::source_from_path(hypr_data::english_10::AUDIO_MIC_MP3_PATH)
+    let mic = meetspace_audio_utils::source_from_path(meetspace_data::english_10::AUDIO_MIC_MP3_PATH)
         .expect("failed to open mic audio");
-    let mic_f32 = hypr_audio_utils::resample_audio(mic, 16_000).expect("failed to resample mic");
+    let mic_f32 = meetspace_audio_utils::resample_audio(mic, 16_000).expect("failed to resample mic");
 
-    let spk = hypr_audio_utils::source_from_path(hypr_data::english_10::AUDIO_SPK_MP3_PATH)
+    let spk = meetspace_audio_utils::source_from_path(meetspace_data::english_10::AUDIO_SPK_MP3_PATH)
         .expect("failed to open spk audio");
-    let spk_f32 = hypr_audio_utils::resample_audio(spk, 16_000).expect("failed to resample spk");
+    let spk_f32 = meetspace_audio_utils::resample_audio(spk, 16_000).expect("failed to resample spk");
 
-    let mixed = hypr_audio_utils::mix_audio_f32(&mic_f32, &spk_f32);
+    let mixed = meetspace_audio_utils::mix_audio_f32(&mic_f32, &spk_f32);
 
     // First 60 seconds (16000 samples/s × 60s)
     let limit = 16_000 * 60;
     let samples = &mixed[..mixed.len().min(limit)];
-    hypr_audio_utils::f32_to_i16_bytes(samples.iter().copied()).to_vec()
+    meetspace_audio_utils::f32_to_i16_bytes(samples.iter().copied()).to_vec()
 }
 
 fn snapshot_settings() -> insta::Settings {

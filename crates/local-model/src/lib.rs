@@ -1,10 +1,10 @@
 use std::path::{Path, PathBuf};
 
-pub use hypr_am::AmModel;
-pub use hypr_cactus_model::{CactusLlmModel, CactusModel, CactusModelSource, CactusSttModel};
-use hypr_model_downloader::{DownloadableModel, Error, extract_zip};
-pub use hypr_transcribe_soniqo::SoniqoModel;
-pub use hypr_whisper_local_model::WhisperModel;
+pub use meetspace_am::AmModel;
+pub use meetspace_cactus_model::{CactusLlmModel, CactusModel, CactusModelSource, CactusSttModel};
+use meetspace_model_downloader::{DownloadableModel, Error, extract_zip};
+pub use meetspace_transcribe_soniqo::SoniqoModel;
+pub use meetspace_whisper_local_model::WhisperModel;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, specta::Type, Eq, Hash, PartialEq)]
 pub enum GgufLlmModel {
@@ -17,7 +17,7 @@ impl GgufLlmModel {
     pub fn file_name(&self) -> &str {
         match self {
             GgufLlmModel::Llama3p2_3bQ4 => "llm.gguf",
-            GgufLlmModel::HyprLLM => "hypr-llm.gguf",
+            GgufLlmModel::HyprLLM => "meetspace-llm.gguf",
             GgufLlmModel::Gemma3_4bQ4 => "gemma-3-4b-it-Q4_K_M.gguf",
         }
     }
@@ -25,13 +25,13 @@ impl GgufLlmModel {
     pub fn model_url(&self) -> &str {
         match self {
             GgufLlmModel::Llama3p2_3bQ4 => {
-                "https://hyprnote.s3.us-east-1.amazonaws.com/v0/lmstudio-community/Llama-3.2-3B-Instruct-GGUF/main/Llama-3.2-3B-Instruct-Q4_K_M.gguf"
+                "https://meetspace.s3.us-east-1.amazonaws.com/v0/lmstudio-community/Llama-3.2-3B-Instruct-GGUF/main/Llama-3.2-3B-Instruct-Q4_K_M.gguf"
             }
             GgufLlmModel::HyprLLM => {
-                "https://hyprnote.s3.us-east-1.amazonaws.com/v0/yujonglee/hypr-llm-sm/model_q4_k_m.gguf"
+                "https://meetspace.s3.us-east-1.amazonaws.com/v0/yujonglee/meetspace-llm-sm/model_q4_k_m.gguf"
             }
             GgufLlmModel::Gemma3_4bQ4 => {
-                "https://hyprnote.s3.us-east-1.amazonaws.com/v0/unsloth/gemma-3-4b-it-GGUF/gemma-3-4b-it-Q4_K_M.gguf"
+                "https://meetspace.s3.us-east-1.amazonaws.com/v0/unsloth/gemma-3-4b-it-GGUF/gemma-3-4b-it-Q4_K_M.gguf"
             }
         }
     }
@@ -199,7 +199,7 @@ impl LocalModel {
                 }
             },
             LocalModel::GgufLlm(GgufLlmModel::Llama3p2_3bQ4) => "llm-llama3-2-3b-q4",
-            LocalModel::GgufLlm(GgufLlmModel::HyprLLM) => "llm-hypr-llm",
+            LocalModel::GgufLlm(GgufLlmModel::HyprLLM) => "llm-meetspace-llm",
             LocalModel::GgufLlm(GgufLlmModel::Gemma3_4bQ4) => "llm-gemma3-4b-q4",
             LocalModel::CactusLlm(model) => match model {
                 CactusLlmModel::Gemma3_270m => "cactus-gemma3-270m",
@@ -296,7 +296,7 @@ impl DownloadableModel for GgufLlmModel {
         }
 
         let actual =
-            hypr_file::file_size(&path).map_err(|e| Error::OperationFailed(e.to_string()))?;
+            meetspace_file::file_size(&path).map_err(|e| Error::OperationFailed(e.to_string()))?;
         Ok(actual == self.model_size())
     }
 
@@ -374,7 +374,7 @@ impl DownloadableModel for LocalModel {
 
     fn is_downloaded(&self, models_base: &Path) -> Result<bool, Error> {
         match self {
-            LocalModel::Soniqo(model) => hypr_transcribe_soniqo::is_model_downloaded(*model)
+            LocalModel::Soniqo(model) => meetspace_transcribe_soniqo::is_model_downloaded(*model)
                 .map_err(|e| Error::OperationFailed(e.to_string())),
             LocalModel::Cactus(model) => {
                 let model_dir = models_base
@@ -436,7 +436,7 @@ impl DownloadableModel for LocalModel {
 
     fn delete_downloaded(&self, models_base: &Path) -> Result<(), Error> {
         match self {
-            LocalModel::Soniqo(model) => hypr_transcribe_soniqo::delete_model(*model)
+            LocalModel::Soniqo(model) => meetspace_transcribe_soniqo::delete_model(*model)
                 .map_err(|e| Error::DeleteFailed(e.to_string())),
             LocalModel::Cactus(model) => {
                 let model_dir = models_base

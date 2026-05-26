@@ -9,11 +9,11 @@ use super::LanguageSupport;
 pub struct AssemblyAIAdapter;
 
 impl AssemblyAIAdapter {
-    pub fn language_support_live(languages: &[hypr_language::Language]) -> LanguageSupport {
+    pub fn language_support_live(languages: &[meetspace_language::Language]) -> LanguageSupport {
         LanguageSupport::min(languages.iter().map(language::single_language_support_live))
     }
 
-    pub fn language_support_batch(languages: &[hypr_language::Language]) -> LanguageSupport {
+    pub fn language_support_batch(languages: &[meetspace_language::Language]) -> LanguageSupport {
         LanguageSupport::min(
             languages
                 .iter()
@@ -21,11 +21,11 @@ impl AssemblyAIAdapter {
         )
     }
 
-    pub fn is_supported_languages_live(languages: &[hypr_language::Language]) -> bool {
+    pub fn is_supported_languages_live(languages: &[meetspace_language::Language]) -> bool {
         Self::language_support_live(languages).is_supported()
     }
 
-    pub fn is_supported_languages_batch(languages: &[hypr_language::Language]) -> bool {
+    pub fn is_supported_languages_batch(languages: &[meetspace_language::Language]) -> bool {
         Self::language_support_batch(languages).is_supported()
     }
 }
@@ -117,8 +117,8 @@ mod tests {
     #[test]
     fn test_streaming_ws_url_proxy() {
         let (url, params) =
-            AssemblyAIAdapter::streaming_ws_url("https://api.hyprnote.com?provider=assemblyai");
-        assert_eq!(url.as_str(), "wss://api.hyprnote.com/listen");
+            AssemblyAIAdapter::streaming_ws_url("https://api.meetspace.com?provider=assemblyai");
+        assert_eq!(url.as_str(), "wss://api.meetspace.com/listen");
         assert_eq!(params, vec![("provider".into(), "assemblyai".into())]);
     }
 

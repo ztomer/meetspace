@@ -10,13 +10,13 @@ import {
   type ValuesSchema,
 } from "tinybase/with-schemas";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import { commands as detectCommands } from "@hypr/plugin-detect";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as detectCommands } from "@meetspace/plugin-detect";
 import {
   commands as localSttCommands,
   type LocalModel,
-} from "@hypr/plugin-local-stt";
-import { getCurrentWebviewWindowLabel } from "@hypr/plugin-windows";
+} from "@meetspace/plugin-local-stt";
+import { getCurrentWebviewWindowLabel } from "@meetspace/plugin-windows";
 
 import { registerSaveHandler } from "./save";
 
@@ -156,7 +156,7 @@ export const SETTINGS_MAPPING = {
     obsidian_subfolder: {
       type: "string",
       path: ["general", "obsidian_subfolder"],
-      default: "Anarlog" as string,
+      default: "Meetspace" as string,
     },
     obsidian_auto_export: {
       type: "boolean",
@@ -283,7 +283,7 @@ export const StoreComponent = () => {
   }, [store]);
 
   const synchronizer = useCreateSynchronizer(store, async (store) =>
-    createBroadcastChannelSynchronizer(store, "hypr-sync-settings").startSync(),
+    createBroadcastChannelSynchronizer(store, "meetspace-sync-settings").startSync(),
   );
 
   const queries = useCreateQueries(store, (store) =>
@@ -365,7 +365,7 @@ const SETTINGS_LISTENERS: SettingsListeners = {
       | undefined;
     const model = store.getValue("current_stt_model") as string | undefined;
 
-    if (provider === "hyprnote" && model && model !== "cloud") {
+    if (provider === "meetspace" && model && model !== "cloud") {
       localSttCommands.startServer(model as LocalModel).catch(console.error);
     }
   },
@@ -375,7 +375,7 @@ const SETTINGS_LISTENERS: SettingsListeners = {
       | undefined;
     const model = store.getValue("current_stt_model") as string | undefined;
 
-    if (provider === "hyprnote" && model && model !== "cloud") {
+    if (provider === "meetspace" && model && model !== "cloud") {
       localSttCommands.startServer(model as LocalModel).catch(console.error);
     } else {
       localSttCommands.stopServer(null).catch(console.error);

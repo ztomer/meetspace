@@ -1,4 +1,4 @@
-pub use hypr_local_model::{AmModel, CactusSttModel, LocalModel, SoniqoModel, WhisperModel};
+pub use meetspace_local_model::{AmModel, CactusSttModel, LocalModel, SoniqoModel, WhisperModel};
 
 pub static SUPPORTED_MODELS: &[LocalModel] = &[
     LocalModel::Soniqo(SoniqoModel::ParakeetStreaming),

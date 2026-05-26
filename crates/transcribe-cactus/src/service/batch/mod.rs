@@ -11,8 +11,8 @@ use axum::{
 use bytes::Bytes;
 use tokio::sync::mpsc;
 
-use hypr_model_manager::ModelManager;
-use hypr_transcribe_core::{batch_sse_response, json_error_response};
+use meetspace_model_manager::ModelManager;
+use meetspace_transcribe_core::{batch_sse_response, json_error_response};
 use owhisper_interface::ListenParams;
 use owhisper_interface::batch_sse::BatchSseMessage;
 
@@ -22,9 +22,9 @@ pub async fn handle_batch(
     body: Bytes,
     content_type: &str,
     params: &ListenParams,
-    manager: &ModelManager<hypr_cactus::Model>,
+    manager: &ModelManager<meetspace_cactus::Model>,
     model_path: &Path,
-    health: &hypr_cactus::ServiceHealthTracker,
+    health: &meetspace_cactus::ServiceHealthTracker,
 ) -> Response {
     let model = match manager.get(None).await {
         Ok(m) => {
@@ -78,9 +78,9 @@ pub async fn handle_batch_sse(
     body: Bytes,
     content_type: &str,
     params: &ListenParams,
-    manager: &ModelManager<hypr_cactus::Model>,
+    manager: &ModelManager<meetspace_cactus::Model>,
     model_path: &Path,
-    health: &hypr_cactus::ServiceHealthTracker,
+    health: &meetspace_cactus::ServiceHealthTracker,
 ) -> Response {
     let model = match manager.get(None).await {
         Ok(m) => {

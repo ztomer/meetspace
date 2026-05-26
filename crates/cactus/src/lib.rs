@@ -12,7 +12,7 @@ pub use error::{Error, JsonSchemaViolation};
 pub use health::{
     ServiceHealthTracker, ffi_last_error, init_runtime, latest_error, latest_errors_snapshot,
 };
-pub use hypr_language::Language;
+pub use meetspace_language::Language;
 pub use llm::{
     CompleteOptions, CompletionResult, CompletionStream, LlmContext, Message, ToolCall, complete,
     complete_stream, validate_messages,
@@ -28,4 +28,4 @@ pub use stt::{
 };
 pub use vad::{VadOptions, VadResult, VadSegment};
 
-pub use hypr_llm_types::{Response, StreamingParser};
+pub use meetspace_llm_types::{Response, StreamingParser};

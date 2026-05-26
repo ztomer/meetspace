@@ -2,7 +2,7 @@ use std::net::{Ipv4Addr, SocketAddr};
 use std::path::{Path, PathBuf};
 
 use axum::http::StatusCode;
-use hypr_llm_types::ImageDetail;
+use meetspace_llm_types::ImageDetail;
 use llm_cactus::{CompleteService, ModelManagerBuilder};
 use url::Url;
 

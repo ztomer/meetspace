@@ -2,13 +2,13 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { XCircleIcon } from "lucide-react";
 import { useState } from "react";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 import {
   commands,
   type ImportSourceInfo,
   type ImportSourceKind,
   type ImportStats,
-} from "@hypr/plugin-importer";
+} from "@meetspace/plugin-importer";
 
 import { ImportPreview } from "./import-preview";
 import { SourceItem } from "./source-item";

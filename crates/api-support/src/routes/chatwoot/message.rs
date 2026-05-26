@@ -54,10 +54,10 @@ pub async fn send_message(
     if payload.message_type == "outgoing" {
         let account_id = state.config.chatwoot.chatwoot_account_id as i64;
 
-        let body = hypr_chatwoot::types::ConversationMessageCreatePayload {
+        let body = meetspace_chatwoot::types::ConversationMessageCreatePayload {
             content: payload.content,
             message_type: Some(
-                hypr_chatwoot::types::ConversationMessageCreatePayloadMessageType::Outgoing,
+                meetspace_chatwoot::types::ConversationMessageCreatePayloadMessageType::Outgoing,
             ),
             private: None,
             content_type: None,
@@ -85,7 +85,7 @@ pub async fn send_message(
         SupportError::InvalidRequest("source_id required for incoming messages".into())
     })?;
 
-    let body = hypr_chatwoot::types::PublicMessageCreatePayload {
+    let body = meetspace_chatwoot::types::PublicMessageCreatePayload {
         content: Some(payload.content),
         echo_id: None,
     };

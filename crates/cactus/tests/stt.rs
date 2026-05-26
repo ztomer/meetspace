@@ -5,7 +5,7 @@ use cactus::{CloudConfig, Model, TranscribeOptions, Transcriber};
 fn stt_model() -> Model {
     let home = std::env::var("HOME").unwrap_or_default();
     let default = format!(
-        "{}/Library/Application Support/com.hyprnote.dev/models/cactus/whisper-small-int8-apple",
+        "{}/Library/Application Support/com.meetspace.dev/models/cactus/whisper-small-int8-apple",
         home
     );
     let path = std::env::var("CACTUS_STT_MODEL").unwrap_or(default);
@@ -27,7 +27,7 @@ fn test_transcribe_file() {
     let options = en_options();
 
     let r = model
-        .transcribe_file(hypr_data::english_1::AUDIO_PATH, &options)
+        .transcribe_file(meetspace_data::english_1::AUDIO_PATH, &options)
         .unwrap();
 
     assert!(!r.text.is_empty());
@@ -43,7 +43,7 @@ fn test_transcribe_file_with_callback() {
 
     let mut tokens: Vec<String> = Vec::new();
     let r = model
-        .transcribe_file_with_callback(hypr_data::english_1::AUDIO_PATH, &options, |token| {
+        .transcribe_file_with_callback(meetspace_data::english_1::AUDIO_PATH, &options, |token| {
             tokens.push(token.to_string());
             print!("{}", token);
             std::io::stdout().flush().ok();
@@ -66,7 +66,7 @@ fn test_transcribe_pcm() {
     let options = en_options();
 
     let r = model
-        .transcribe_pcm(hypr_data::english_1::AUDIO, &options)
+        .transcribe_pcm(meetspace_data::english_1::AUDIO, &options)
         .unwrap();
 
     assert!(!r.text.is_empty());
@@ -85,7 +85,7 @@ fn test_transcribe_with_language() {
     };
 
     let r = model
-        .transcribe_file(hypr_data::english_1::AUDIO_PATH, &options)
+        .transcribe_file(meetspace_data::english_1::AUDIO_PATH, &options)
         .unwrap();
     assert!(!r.text.is_empty());
     println!("en transcription: {:?}", r.text);
@@ -96,7 +96,7 @@ fn test_transcribe_with_language() {
 #[test]
 fn test_stream_transcriber() {
     let model = stt_model();
-    let pcm = hypr_data::english_1::AUDIO;
+    let pcm = meetspace_data::english_1::AUDIO;
     let options = en_options();
 
     let mut transcriber = Transcriber::new(&model, &options, CloudConfig::default()).unwrap();
@@ -123,7 +123,7 @@ fn test_stream_transcriber() {
 #[test]
 fn test_stream_transcriber_segments() {
     let model = stt_model();
-    let pcm = hypr_data::english_1::AUDIO;
+    let pcm = meetspace_data::english_1::AUDIO;
     let options = en_options();
 
     let mut transcriber = Transcriber::new(&model, &options, CloudConfig::default()).unwrap();

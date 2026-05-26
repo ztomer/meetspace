@@ -1,6 +1,6 @@
 import { AlertCircle, Info as InfoIcon, Lightbulb } from "lucide-react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 interface CalloutProps {
   children: React.ReactNode;

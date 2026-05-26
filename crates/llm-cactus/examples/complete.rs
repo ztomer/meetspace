@@ -70,13 +70,13 @@ async fn run() -> Result<(), String> {
 }
 
 /// Text only:
-/// cargo run -p llm-cactus --example complete -- --model ~/Library/Application\ Support/hyprnote/models/cactus/qwen2.5-3b-instruct-q4km --prompt "Write a haiku about note taking"
+/// cargo run -p llm-cactus --example complete -- --model ~/Library/Application\ Support/meetspace/models/cactus/qwen2.5-3b-instruct-q4km --prompt "Write a haiku about note taking"
 ///
 /// JSON schema:
-/// cargo run -p llm-cactus --example complete -- --model ~/Library/Application\ Support/hyprnote/models/cactus/qwen2.5-3b-instruct-q4km --prompt "Return a person object" --response-format json-schema --schema-file /tmp/person.schema.json
+/// cargo run -p llm-cactus --example complete -- --model ~/Library/Application\ Support/meetspace/models/cactus/qwen2.5-3b-instruct-q4km --prompt "Return a person object" --response-format json-schema --schema-file /tmp/person.schema.json
 ///
 /// Text + image:
-/// cargo run -p llm-cactus --example complete -- --model ~/Library/Application\ Support/hyprnote/models/cactus/qwen2.5-3b-instruct-q4km --prompt "Describe this image" --image /tmp/example.png --image-detail high
+/// cargo run -p llm-cactus --example complete -- --model ~/Library/Application\ Support/meetspace/models/cactus/qwen2.5-3b-instruct-q4km --prompt "Describe this image" --image /tmp/example.png --image-detail high
 #[tokio::main(flavor = "current_thread")]
 async fn main() {
     if let Err(error) = run().await {

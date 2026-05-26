@@ -15,15 +15,15 @@ import { Reorder } from "motion/react";
 import { useCallback, useMemo, useRef } from "react";
 import { useShallow } from "zustand/shallow";
 
-import { commands as flagCommands } from "@hypr/plugin-flag";
-import { Button } from "@hypr/ui/components/ui/button";
-import { Kbd } from "@hypr/ui/components/ui/kbd";
+import { commands as flagCommands } from "@meetspace/plugin-flag";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { Kbd } from "@meetspace/ui/components/ui/kbd";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/tooltip";
+import { cn } from "@meetspace/utils";
 
 import { useNotifications } from "~/contexts/notifications";
 import { useShell } from "~/contexts/shell";

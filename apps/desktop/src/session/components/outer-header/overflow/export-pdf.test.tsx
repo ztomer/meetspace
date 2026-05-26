@@ -36,23 +36,23 @@ vi.mock("lucide-react", () => ({
   Loader2Icon: () => <span data-testid="loader-icon" />,
 }));
 
-vi.mock("@hypr/plugin-analytics", () => ({
+vi.mock("@meetspace/plugin-analytics", () => ({
   commands: { event: vi.fn() },
 }));
 
-vi.mock("@hypr/plugin-export", () => ({
+vi.mock("@meetspace/plugin-export", () => ({
   commands: { export: vi.fn() },
 }));
 
-vi.mock("@hypr/plugin-opener2", () => ({
+vi.mock("@meetspace/plugin-opener2", () => ({
   commands: { revealItemInDir: vi.fn() },
 }));
 
-vi.mock("@hypr/editor/markdown", () => ({
+vi.mock("@meetspace/editor/markdown", () => ({
   json2md: vi.fn(() => ""),
 }));
 
-vi.mock("@hypr/ui/components/ui/dropdown-menu", () => ({
+vi.mock("@meetspace/ui/components/ui/dropdown-menu", () => ({
   DropdownMenuItem: ({
     disabled,
     onClick,

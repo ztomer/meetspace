@@ -1,7 +1,7 @@
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { SearchResultItem } from "./item";
 

@@ -24,7 +24,7 @@ const {
   useSettingsStoreMock: vi.fn(() => null),
 }));
 
-vi.mock("@hypr/plugin-detect", () => ({
+vi.mock("@meetspace/plugin-detect", () => ({
   commands: {
     listMicUsingApplications: listMicUsingApplicationsMock,
   },
@@ -35,7 +35,7 @@ vi.mock("@hypr/plugin-detect", () => ({
   },
 }));
 
-vi.mock("@hypr/plugin-notification", () => ({
+vi.mock("@meetspace/plugin-notification", () => ({
   commands: {
     showNotification: showNotificationMock,
   },

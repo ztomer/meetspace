@@ -10,7 +10,7 @@ import {
 } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 
 import type {
   SearchDocument,

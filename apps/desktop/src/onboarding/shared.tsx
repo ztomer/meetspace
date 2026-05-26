@@ -9,7 +9,7 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import { type ReactNode, useEffect, useRef } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 const SCROLL_DELAY_MS = 350;
 
@@ -162,10 +162,10 @@ export function OnboardingButton({
   );
 }
 
-export function OnboardingAnarlogIcon() {
+export function OnboardingMeetspaceIcon() {
   return (
     <img
-      src="/assets/anarlog-icon.png"
+      src="/assets/meetspace-icon.png"
       alt=""
       aria-hidden="true"
       className="size-4 object-contain object-center"

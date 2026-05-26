@@ -9,7 +9,7 @@ import {
 import {
   commands as localSttCommands,
   type LocalModel,
-} from "@hypr/plugin-local-stt";
+} from "@meetspace/plugin-local-stt";
 
 import { useToastAction } from "~/store/zustand/toast-action";
 

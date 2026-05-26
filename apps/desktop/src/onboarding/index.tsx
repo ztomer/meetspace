@@ -4,9 +4,9 @@ import { Volume2Icon, VolumeXIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import { commands as sfxCommands } from "@hypr/plugin-sfx";
-import { cn } from "@hypr/utils";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as sfxCommands } from "@meetspace/plugin-sfx";
+import { cn } from "@meetspace/utils";
 
 import { CalendarSection } from "./calendar";
 import {
@@ -208,7 +208,7 @@ function OnboardingScreenContent({
           ])}
         >
           <h1 className="font-sans text-3xl font-semibold text-neutral-900">
-            Welcome to Anarlog
+            Welcome to Meetspace
           </h1>
           <button
             onClick={() => setIsMuted((prev) => !prev)}
@@ -229,7 +229,7 @@ function OnboardingScreenContent({
             <OnboardingSection
               title="Start with permissions"
               completedTitle="Permissions granted"
-              description="Anarlog needs access to your microphone and system audio to record and transcribe your meetings"
+              description="Meetspace needs access to your microphone and system audio to record and transcribe your meetings"
               status={getStepStatus("permissions", currentStep)}
               skippable={false}
               onBack={goBack}
@@ -240,7 +240,7 @@ function OnboardingScreenContent({
 
             <OnboardingSection
               title="Connect calendar"
-              description="Anarlog will sync your calendar to get meeting reminders"
+              description="Meetspace will sync your calendar to get meeting reminders"
               completedTitle="Calendar connected"
               status={getStepStatus("calendar", currentStep)}
               onBack={goBack}

@@ -3,15 +3,15 @@ import { downloadDir, join } from "@tauri-apps/api/path";
 import { FileTextIcon, Loader2Icon } from "lucide-react";
 import { useMemo } from "react";
 
-import { json2md } from "@hypr/editor/markdown";
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
+import { json2md } from "@meetspace/editor/markdown";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 import {
   commands as exportCommands,
   type ExportMetadata,
   type TranscriptItem,
-} from "@hypr/plugin-export";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { DropdownMenuItem } from "@hypr/ui/components/ui/dropdown-menu";
+} from "@meetspace/plugin-export";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { DropdownMenuItem } from "@meetspace/ui/components/ui/dropdown-menu";
 
 import { formatDate, formatDuration } from "./export-utils";
 

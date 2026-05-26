@@ -1,8 +1,8 @@
 use std::path::Path;
 
-use hypr_db_core::{Db, DbOpenOptions, DbStorage};
-use hypr_db_execute::{DbExecutor, ProxyQueryMethod, ProxyQueryResult};
-use hypr_db_reactive::{LiveQueryRuntime, QueryEventSink, SubscriptionRegistration};
+use meetspace_db_core::{Db, DbOpenOptions, DbStorage};
+use meetspace_db_execute::{DbExecutor, ProxyQueryMethod, ProxyQueryResult};
+use meetspace_db_reactive::{LiveQueryRuntime, QueryEventSink, SubscriptionRegistration};
 use tauri::ipc::Channel;
 
 use crate::{QueryEvent, Result};
@@ -47,7 +47,7 @@ impl PluginDbRuntime {
         &self,
         sql: String,
         params: Vec<serde_json::Value>,
-    ) -> hypr_db_execute::Result<Vec<serde_json::Value>> {
+    ) -> meetspace_db_execute::Result<Vec<serde_json::Value>> {
         self.executor.execute(sql, params).await
     }
 
@@ -56,7 +56,7 @@ impl PluginDbRuntime {
         sql: String,
         params: Vec<serde_json::Value>,
         method: ProxyQueryMethod,
-    ) -> hypr_db_execute::Result<ProxyQueryResult> {
+    ) -> meetspace_db_execute::Result<ProxyQueryResult> {
         self.executor.execute_proxy(sql, params, method).await
     }
 
@@ -65,11 +65,11 @@ impl PluginDbRuntime {
         sql: String,
         params: Vec<serde_json::Value>,
         sink: QueryEventChannel,
-    ) -> hypr_db_reactive::Result<SubscriptionRegistration> {
+    ) -> meetspace_db_reactive::Result<SubscriptionRegistration> {
         self.live_query_runtime.subscribe(sql, params, sink).await
     }
 
-    pub async fn unsubscribe(&self, subscription_id: &str) -> hypr_db_reactive::Result<()> {
+    pub async fn unsubscribe(&self, subscription_id: &str) -> meetspace_db_reactive::Result<()> {
         self.live_query_runtime.unsubscribe(subscription_id).await
     }
 }
@@ -89,7 +89,7 @@ pub async fn open_app_db(db_path: Option<&Path>) -> Result<Db> {
     })
     .await?;
 
-    hypr_db_migrate::migrate(&db, hypr_db_app::schema()).await?;
+    meetspace_db_migrate::migrate(&db, meetspace_db_app::schema()).await?;
 
     Ok(db)
 }

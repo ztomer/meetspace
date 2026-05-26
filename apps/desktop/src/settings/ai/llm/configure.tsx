@@ -1,6 +1,6 @@
 import {
   Accordion,
-} from "@hypr/ui/components/ui/accordion";
+} from "@meetspace/ui/components/ui/accordion";
 
 import { useLlmSettings } from "./context";
 import { ProviderId, PROVIDERS } from "./shared";

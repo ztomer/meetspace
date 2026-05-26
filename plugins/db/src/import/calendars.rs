@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::path::Path;
 
-use hypr_db_app::UpsertCalendar;
+use meetspace_db_app::UpsertCalendar;
 use sqlx::SqlitePool;
 
 pub async fn import_legacy_calendars_from_path(
@@ -14,7 +14,7 @@ pub async fn import_legacy_calendars_from_path(
 
     let calendars = read_calendars_file(path)?;
     for calendar in calendars {
-        hypr_db_app::insert_calendar_if_missing(
+        meetspace_db_app::insert_calendar_if_missing(
             pool,
             UpsertCalendar {
                 id: &calendar.id,
@@ -97,11 +97,11 @@ fn read_calendars_file(path: &Path) -> crate::Result<Vec<LegacyCalendar>> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use hypr_db_core::Db;
+    use meetspace_db_core::Db;
 
     async fn test_db() -> Db {
         let db = Db::connect_memory_plain().await.unwrap();
-        hypr_db_migrate::migrate(&db, hypr_db_app::schema())
+        meetspace_db_migrate::migrate(&db, meetspace_db_app::schema())
             .await
             .unwrap();
         db
@@ -133,7 +133,7 @@ mod tests {
             .await
             .unwrap();
 
-        let rows = hypr_db_app::list_calendars(db.pool()).await.unwrap();
+        let rows = meetspace_db_app::list_calendars(db.pool()).await.unwrap();
         assert_eq!(rows.len(), 1);
         assert_eq!(rows[0].id, "cal-1");
         assert_eq!(rows[0].name, "Work");
