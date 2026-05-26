@@ -24,7 +24,19 @@ Goal: turn Anarlog into a fully local desktop app with all commercial features e
 
 **Workflow rule:** Update this Status table and commit after every milestone.
 
-**🎉 All phases complete.** The fork is local-only, typecheck-green, and rebase-tooled. Remaining manual work: re-test the desktop app end-to-end before tagging, and add a new origin remote before the first push.
+**🎉 Phase 0–6 complete.** The fork is local-only, typecheck-green, and rebase-tooled.
+
+---
+
+## Phase 7 — Rebrand & polish
+
+| # | Item | Status |
+|---|---|---|
+| 1 | Rename **Anarlog / Hyprnote / @hypr/* / hypr_* / com.hyprnote.\*** → **Meetspace** everywhere (full sweep including bundle ids, package scope, Rust crate aliases, asset filenames, flatpak manifests). Leave historical refs alone: `docs/FORK_PLAN.md`, `docs/COMMERCIAL_FEATURES.md`, `docs/_REMOVED_AUTH.md`, `packages/changelog/content/*.md`, `apps/api/openapi.gen.json`. | ⏳ Pending |
+| 2 | **App icon** — red sofa with a vague "meat" look. Design the icon, replace all sizes under `apps/desktop/src-tauri/icons/` and the macOS `.iconset`. | ⏳ Pending |
+| 3 | **Whisper Large** STT support — surface Whisper Large variants in the local STT picker. Verify `crates/local-stt-core` already lists them (`AmModel::WhisperLargeV3`) and that the desktop picker shows them as a downloadable option alongside Parakeet. | ⏳ Pending |
+| 4 | **Dark mode** — audit current theming (Tailwind classes are `neutral-*`/`stone-*` light-only), add a theme toggle in Settings → App, gate styles on a `data-theme` attribute or class, validate against all major surfaces (session view, settings, sidebar, dialogs). | ⏳ Pending |
+| 5 | **New origin** = `https://github.com/ztomer/meetspace`. Add as `meetspace` remote (NOT push) until cleared. Once approved, push `MIT_BACK` (likely renamed to `main` or `meetspace`) there. | ⏳ Pending |
 
 ---
 
