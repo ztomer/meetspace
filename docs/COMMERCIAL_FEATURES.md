@@ -1,6 +1,6 @@
 # Commercial Features Inventory
 
-Snapshot of every commercial/paid surface in upstream Anarlog, with this fork's disposition.
+Snapshot of every commercial/paid surface in [upstream Anarlog](https://github.com/fastrepl/anarlog), with the Meetspace fork's disposition.
 
 **Legend** — Fork decision:
 - **Enable** — already implemented upstream, just gated. Ungate.
@@ -30,7 +30,7 @@ Defined in [packages/pricing/src/tiers.ts](../packages/pricing/src/tiers.ts).
 |---|---|---|
 | [apps/desktop/src/auth/billing.tsx:89](../apps/desktop/src/auth/billing.tsx) | `BillingInfo` derived from Supabase JWT claims (`entitlements`, `subscription_status`, `trial_end`) | **Delete** — entire file removed in Phase 1 |
 | [apps/desktop/src/settings/ai/shared/eligibility.ts:9](../apps/desktop/src/settings/ai/shared/eligibility.ts) | `requiresEntitlement()` helper | **Delete** the `requires_entitlement` arm; collapse `ProviderRequirement` union |
-| [apps/desktop/src/settings/ai/llm/shared.tsx:46](../apps/desktop/src/settings/ai/llm/shared.tsx) | `hyprnote` LLM provider requires auth + entitlement `"pro"` | **Delete** the provider entry (Phase 3b) |
+| `apps/desktop/src/settings/ai/llm/shared.tsx` | `hyprnote` LLM provider requires auth + entitlement `"pro"` *(legacy upstream provider id)* | **Delete** the provider entry (Phase 3b) |
 | [apps/desktop/src/sidebar/toast/registry.tsx](../apps/desktop/src/sidebar/toast/registry.tsx) | `hasProSttConfigured`, `hasProLlmConfigured` toasts | **Delete** toasts (Phase 2) |
 | `apps/desktop/src/shared/config/configure-paid-settings.ts` | Auto-configures Pro STT/LLM when entitlement appears | **Delete** (Phase 1) |
 
@@ -54,7 +54,7 @@ Source: [apps/desktop/src/settings/ai/stt/shared.tsx](../apps/desktop/src/settin
 
 | Provider ID | Type | Disposition |
 |---|---|---|
-| `hyprnote` | Anarlog cloud STT | **Delete** |
+| `hyprnote` | upstream cloud STT | **Delete** |
 | `deepgram`, `assemblyai`, `openai`, `gladia`, `soniox`, `elevenlabs`, `mistral`, `aquavoice`, `fireworks`, `custom` | Cloud BYO-key | **Delete** (local-only fork, per decision) |
 | `pyannote` | Local (Parakeet + Faster Whisper) | **Keep**, flatten under new local-models picker |
 
@@ -75,7 +75,7 @@ Source: [apps/desktop/src/settings/ai/llm/shared.tsx](../apps/desktop/src/settin
 
 | Provider ID | Type | Disposition |
 |---|---|---|
-| `hyprnote` | Anarlog cloud LLM (Pro entitlement) | **Delete** |
+| `hyprnote` | upstream cloud LLM (Pro entitlement) | **Delete** |
 | `lmstudio`, `ollama` | Local OpenAI-compatible | **Keep** |
 | `openrouter`, `openai`, `anthropic`, `mistral`, `azure_openai`, `azure_ai`, `google_generative_ai` | Cloud BYO-key | **Delete** (covered by Custom OpenAI-compatible escape hatch) |
 | `custom` | Manual baseUrl + key | **Keep** as escape hatch |

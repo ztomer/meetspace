@@ -1,49 +1,39 @@
-> **Note:** The team is now building **[char](https://char.com)**. **meetspace** remains open-source, MIT-licensed, and maintained as the local-first meeting notetaker in this repo.
-
-![meetspace](https://repository-images.githubusercontent.com/900550981/a4267a9f-414b-4c36-965c-419313ce2417)
-
 <p align="center">
-  <p align="center">
-   <a href="https://deepwiki.com/fastrepl/meetspace"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
-  </p>
+  <img src="apps/desktop/src-tauri/icons/src/meetspace-prod.png" alt="Meetspace" width="200" />
 </p>
 
-# meetspace
+# Meetspace
 
-An open-source AI meeting notetaker that is local-first, privacy-first, and yours to fork.
+A local-only AI meeting notetaker. Your audio, transcripts, and notes never leave your machine.
 
-Granola, rearranged.
+- **On-device transcription.** Parakeet, Whisper Large, or any of the local Whisper variants — runs entirely on your hardware.
+- **Bring your own LLM.** Osaurus (default, `localhost:1337`), Ollama, LM Studio, or any OpenAI-compatible endpoint.
+- **Notes as markdown on disk.** `cat` them, grep them, sync via Dropbox / iCloud / Syncthing / git. No cloud, no accounts, no tracking.
+- **Integrations that respect locality.** Obsidian (write to your vault), Notion (your token), Linear (your key). OAuth-only services are deliberately out of scope.
+- **Light and dark mode.** Theme toggle in Settings → App → Appearance; follows your OS by default.
 
-## How to use it
+## Run it
 
-Download the latest release for your platform:
+```bash
+./scripts/run.sh        # launch in dev mode (vite + tauri)
+./scripts/build.sh      # install + typecheck + cargo check + vite bundle
+./scripts/package.sh    # produce .dmg / .app / .deb / .msi
+```
 
-→ [github.com/fastrepl/anarlog/releases/latest](https://github.com/fastrepl/anarlog/releases/latest)
+First cold start of `run.sh` takes ~10 minutes because cargo compiles the full Tauri + Rust dependency tree. JS/TS hot-reloads after that.
 
-Open it and join a meeting. meetspace records, transcribes locally, and saves your notes as markdown on disk. Bring your own LLM: OpenAI, Anthropic, Gemini, OpenRouter, Ollama, LM Studio, or anything OpenAI-compatible.
+Binaries are unsigned — Gatekeeper will warn on first launch unless you configure signing yourself.
 
-To self-host, clone the repo, build it, and run it.
+## What's local-only
 
-## Why use it
+Everything. There is no Meetspace cloud, no signup, no billing, no telemetry beyond what your chosen LLM provider sees.
 
-- **Your data, your disk.** Every meeting is a `.md` file you can inspect, search, and sync through Dropbox, iCloud, Syncthing, or git. No cloud backend means no cloud lock-in.
-- **Local transcription.** Transcription runs on-device, so audio never leaves your machine.
-- **Bring your own AI.** Use any LLM provider, including OpenAI-compatible services and local models.
-- **Open source, MIT.** Fork it, sell it, or self-host it.
-- **No accounts or tracking.** There is no hosted account model.
+The picker for STT and LLM only offers providers that run on your machine, plus a "Custom (OpenAI-compatible)" escape hatch you can point at any HTTP endpoint (your own proxy, a cloud provider, whatever — Meetspace doesn't care).
 
-## Name history
+## Lineage
 
-**meetspace** started as **Hyprnote**, then briefly used the **char** name.
+Meetspace is a fork of the open-source [Anarlog](https://github.com/fastrepl/anarlog) project (originally `hyprnote`), with all cloud / Pro / billing / OAuth surface removed and a centralized theming layer added. See [`docs/FORK_PLAN.md`](docs/FORK_PLAN.md) for the phased rewrite and [`docs/COMMERCIAL_FEATURES.md`](docs/COMMERCIAL_FEATURES.md) for the upstream feature inventory.
 
-We later split the work into two projects. **[char](https://char.com)** is the team's current productivity app. **anarlog** is this open-source, local-first meeting notetaker.
+## License
 
-This repository is not the current char codebase, and meetspace is not being retired. It keeps the open-source path: MIT-licensed, forkable, self-hostable, and built for local notes you control.
-
-If you came here from Granola, welcome. If you came here from Meetspace, welcome back.
-
-Either way, it's yours.
-
----
-
-**License:** MIT · **Maintainers:** [fastrepl](https://github.com/fastrepl)
+MIT. See [`LICENSE`](LICENSE). Original upstream copyright (Fastrepl, Inc.) is preserved per MIT terms.

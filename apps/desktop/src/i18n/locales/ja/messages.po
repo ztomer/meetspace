@@ -25,27 +25,27 @@ msgstr "音声言語を追加"
 msgid "Additional spoken languages"
 msgstr "追加の音声言語"
 
-#: src/settings/general/index.tsx:152
+#: src/settings/general/index.tsx:158
 msgid "Always ready without manually launching."
 msgstr "手動で起動しなくても常に準備できます。"
 
-#: src/settings/general/index.tsx:136
+#: src/settings/general/app-settings.tsx:30
 msgid "App"
 msgstr "アプリ"
 
-#: src/settings/general/index.tsx:159
+#: src/settings/general/index.tsx:165
 msgid "Automatically start listening when an event-backed note reaches its scheduled start time."
 msgstr "予定に紐づいたノートが開始時刻になると、自動的にリスニングを開始します。"
 
-#: src/settings/general/index.tsx:169
+#: src/settings/general/index.tsx:175
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "会議アプリがマイクを解放すると、自動的にリスニングを停止します。"
 
-#: src/settings/general/index.tsx:265
+#: src/settings/general/index.tsx:259
 msgid "Data"
 msgstr "データ"
 
-#: src/settings/general/index.tsx:214
+#: src/settings/general/index.tsx:208
 msgid "Language & Region"
 msgstr "言語と地域"
 
@@ -57,16 +57,12 @@ msgstr "要約、チャット、AI生成応答に使用する言語"
 msgid "Main language"
 msgstr "メイン言語"
 
-#: src/settings/general/app-settings.tsx:56
-msgid "Meetings"
-msgstr "会議"
-
 #: src/settings/general/main-language.tsx:64
 #: src/settings/general/spoken-languages.tsx:218
 msgid "No matching languages found"
 msgstr "一致する言語が見つかりません"
 
-#: src/settings/general/index.tsx:277
+#: src/settings/general/index.tsx:271
 msgid "Notifications"
 msgstr "通知"
 
@@ -78,42 +74,38 @@ msgstr "言語を検索..."
 msgid "Select language"
 msgstr "言語を選択"
 
-#: src/settings/general/index.tsx:193
-msgid "Send anonymous usage analytics to help improve Anarlog."
-msgstr "Anarlog の改善に役立てるため、匿名の使用状況データを送信します。"
+#: src/settings/general/index.tsx:189
+msgid "Send anonymous usage analytics to help improve Meetspace."
+msgstr "Meetspace の改善に役立てるため、匿名の使用状況データを送信します。"
 
-#: src/settings/general/index.tsx:192
+#: src/settings/index.tsx:36
+msgid "Settings"
+msgstr "設定"
+
+#: src/settings/general/index.tsx:188
 msgid "Share usage data"
 msgstr "使用状況データを共有"
 
-#: src/settings/general/index.tsx:175
+#: src/settings/general/index.tsx:181
 msgid "Show floating bar"
-msgstr "フローティングバーを表示"
-
-#: src/settings/general/index.tsx:176
-msgid "Show the compact floating control while listening."
-msgstr "リスニング中にコンパクトなフローティングコントロールを表示します。"
+msgstr ""
 
 #: src/settings/general/index.tsx:182
-msgid "Show timeline in sidebar"
-msgstr "タイムラインをサイドバーに表示"
+msgid "Show the compact floating control while listening."
+msgstr ""
 
-#: src/settings/general/index.tsx:151
-msgid "Start Anarlog at login"
-msgstr "ログイン時に Anarlog を起動"
+#: src/settings/general/index.tsx:157
+msgid "Start Meetspace at login"
+msgstr "ログイン時に Meetspace を起動"
 
-#: src/settings/general/index.tsx:158
+#: src/settings/general/index.tsx:164
 msgid "Start when meeting begins"
 msgstr "会議開始時に開始"
 
-#: src/settings/general/index.tsx:168
+#: src/settings/general/index.tsx:174
 msgid "Stop when meeting ends"
 msgstr "会議終了時に停止"
 
 #: src/settings/general/spoken-languages.tsx:119
 msgid "The main language is always included for transcription"
 msgstr "メイン言語は文字起こしに常に含まれます"
-
-#: src/settings/general/index.tsx:183
-msgid "Use the left sidebar timeline instead of the top timeline."
-msgstr "上部のタイムラインの代わりに左サイドバーのタイムラインを使用します。"
