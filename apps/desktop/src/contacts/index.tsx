@@ -1,7 +1,7 @@
 import { Contact2Icon } from "lucide-react";
 import { useCallback, useEffect } from "react";
 
-import type { ContactsSelection } from "@hypr/plugin-windows";
+import type { ContactsSelection } from "@meetspace/plugin-windows";
 
 import { DetailsColumn } from "./details";
 import { OrganizationDetailsColumn } from "./organization-details";

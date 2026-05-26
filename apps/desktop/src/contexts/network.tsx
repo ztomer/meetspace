@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-import { events } from "@hypr/plugin-network";
+import { events } from "@meetspace/plugin-network";
 
 interface NetworkContextValue {
   isOnline: boolean;

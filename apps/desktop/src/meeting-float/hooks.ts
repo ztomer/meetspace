@@ -8,7 +8,7 @@ import {
   type CaptureLifecycleEvent,
   type LiveTranscriptDelta,
   type LiveTranscriptSegmentDelta,
-} from "@hypr/plugin-transcription";
+} from "@meetspace/plugin-transcription";
 
 import { getSessionEvent } from "~/session/utils";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";

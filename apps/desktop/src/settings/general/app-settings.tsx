@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/react/macro";
 
-import { Switch } from "@hypr/ui/components/ui/switch";
+import { Switch } from "@meetspace/ui/components/ui/switch";
 
 interface SettingItem {
   title: string;

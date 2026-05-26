@@ -1,5 +1,5 @@
-import type { OrganizationStorage } from "@hypr/store";
-import type { Schemas } from "@hypr/store";
+import type { OrganizationStorage } from "@meetspace/store";
+import type { Schemas } from "@meetspace/store";
 
 import { parseOrganizationIdFromPath } from "./changes";
 import {

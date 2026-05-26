@@ -2,8 +2,8 @@ import { AppWindowIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { Kbd } from "@hypr/ui/components/ui/kbd";
-import { cn } from "@hypr/utils";
+import { Kbd } from "@meetspace/ui/components/ui/kbd";
+import { cn } from "@meetspace/utils";
 
 import { StandardTabWrapper } from "~/shared/main";
 import { OpenNoteDialog } from "~/shared/open-note-dialog";

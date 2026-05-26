@@ -21,14 +21,14 @@ pub struct LocalSttServer {
 impl LocalSttServer {
     #[cfg(feature = "cactus")]
     pub async fn start_cactus(model_path: PathBuf) -> std::io::Result<Self> {
-        Self::start_cactus_with_config(model_path, hypr_transcribe_cactus::CactusConfig::default())
+        Self::start_cactus_with_config(model_path, meetspace_transcribe_cactus::CactusConfig::default())
             .await
     }
 
     #[cfg(feature = "cactus")]
     pub async fn start_cactus_with_config(
         model_path: PathBuf,
-        cactus_config: hypr_transcribe_cactus::CactusConfig,
+        cactus_config: meetspace_transcribe_cactus::CactusConfig,
     ) -> std::io::Result<Self> {
         Self::start_cactus_with_runtime(Arc::new(NoopRuntime), model_path, cactus_config).await
     }
@@ -37,11 +37,11 @@ impl LocalSttServer {
     pub async fn start_cactus_with_runtime(
         runtime: Arc<dyn LocalServerRuntime>,
         model_path: PathBuf,
-        cactus_config: hypr_transcribe_cactus::CactusConfig,
+        cactus_config: meetspace_transcribe_cactus::CactusConfig,
     ) -> std::io::Result<Self> {
         tracing::info!(model_path = %model_path.display(), "starting local cactus server");
 
-        let router = hypr_transcribe_cactus::TranscribeService::builder()
+        let router = meetspace_transcribe_cactus::TranscribeService::builder()
             .model_path(model_path)
             .cactus_config(cactus_config)
             .build()
@@ -51,7 +51,7 @@ impl LocalSttServer {
         let inner = LocalAxumServer::start_with_runtime(
             runtime,
             router,
-            hypr_transcribe_cactus::LISTEN_PATH,
+            meetspace_transcribe_cactus::LISTEN_PATH,
         )
         .await?;
 
@@ -75,7 +75,7 @@ impl LocalSttServer {
         tracing::info!(model_path = %model_path.display(), "starting local whisper server");
 
         let service = HandleError::new(
-            hypr_transcribe_whisper_local::TranscribeService::builder()
+            meetspace_transcribe_whisper_local::TranscribeService::builder()
                 .model_path(model_path)
                 .build(),
             move |err: String| async move { (StatusCode::INTERNAL_SERVER_ERROR, err) },

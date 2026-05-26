@@ -1,6 +1,6 @@
 import { join } from "@tauri-apps/api/path";
 
-import { commands as fs2Commands } from "@hypr/plugin-fs2";
+import { commands as fs2Commands } from "@meetspace/plugin-fs2";
 
 export type ObsidianExportInput = {
   vaultPath: string;
@@ -35,14 +35,14 @@ function isoDatePrefix(created: string): string {
 
 export function buildObsidianMarkdown(input: ObsidianExportInput): string {
   const datePrefix = isoDatePrefix(input.sessionCreatedAt);
-  const tags = ["anarlog"];
+  const tags = ["meetspace"];
   const frontmatter = [
     "---",
     `date: ${datePrefix}`,
     `created: ${input.sessionCreatedAt}`,
     `title: "${input.sessionTitle.replace(/"/g, '\\"')}"`,
     `tags: [${tags.join(", ")}]`,
-    "source: anarlog",
+    "source: meetspace",
     ...(input.participantNames && input.participantNames.length > 0
       ? [
           `participants: [${input.participantNames

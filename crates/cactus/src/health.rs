@@ -2,7 +2,7 @@ use std::ffi::CStr;
 use std::os::raw::{c_char, c_int, c_void};
 use std::sync::{Arc, Mutex, Once};
 
-use hypr_cactus_model::{CactusServiceHealth, CactusServiceStatus};
+use meetspace_cactus_model::{CactusServiceHealth, CactusServiceStatus};
 
 static RUNTIME_INIT: Once = Once::new();
 static SHARED_STATE: Mutex<SharedHealthState> = Mutex::new(SharedHealthState::new());

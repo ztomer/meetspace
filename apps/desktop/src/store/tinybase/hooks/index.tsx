@@ -8,7 +8,7 @@ import type {
   OrganizationStorage,
   SessionEvent,
   SessionStorage,
-} from "@hypr/store";
+} from "@meetspace/store";
 
 import { getSessionEvent } from "~/session/utils";
 import * as main from "~/store/tinybase/store/main";

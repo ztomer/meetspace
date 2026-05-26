@@ -15,8 +15,8 @@ pub struct SessionState {
     source_cell: Option<ActorCell>,
     listener_cell: Option<ActorCell>,
     recorder_cell: Option<ActorCell>,
-    source_restarts: hypr_supervisor::RestartTracker,
-    recorder_restarts: hypr_supervisor::RestartTracker,
+    source_restarts: meetspace_supervisor::RestartTracker,
+    recorder_restarts: meetspace_supervisor::RestartTracker,
     mode: SessionModeState,
     shutting_down: bool,
 }
@@ -66,8 +66,8 @@ impl Actor for SessionActor {
                 source_cell: Some(source_ref.get_cell()),
                 listener_cell: None,
                 recorder_cell,
-                source_restarts: hypr_supervisor::RestartTracker::new(),
-                recorder_restarts: hypr_supervisor::RestartTracker::new(),
+                source_restarts: meetspace_supervisor::RestartTracker::new(),
+                recorder_restarts: meetspace_supervisor::RestartTracker::new(),
                 mode,
                 shutting_down: false,
             })
@@ -299,8 +299,8 @@ mod tests {
     use std::sync::Arc;
     use std::time::{Instant, SystemTime};
 
-    use hypr_audio::{AudioProvider, CaptureConfig, CaptureStream};
-    use hypr_supervisor::RestartTracker;
+    use meetspace_audio::{AudioProvider, CaptureConfig, CaptureStream};
+    use meetspace_supervisor::RestartTracker;
     use ractor::ActorStatus;
 
     use super::*;
@@ -311,12 +311,12 @@ mod tests {
 
     struct TestRuntime;
 
-    impl hypr_storage::StorageRuntime for TestRuntime {
-        fn global_base(&self) -> Result<PathBuf, hypr_storage::Error> {
+    impl meetspace_storage::StorageRuntime for TestRuntime {
+        fn global_base(&self) -> Result<PathBuf, meetspace_storage::Error> {
             Ok(std::env::temp_dir())
         }
 
-        fn vault_base(&self) -> Result<PathBuf, hypr_storage::Error> {
+        fn vault_base(&self) -> Result<PathBuf, meetspace_storage::Error> {
             Ok(std::env::temp_dir())
         }
     }
@@ -332,14 +332,14 @@ mod tests {
     }
 
     impl AudioProvider for TestRuntime {
-        fn open_capture(&self, _config: CaptureConfig) -> Result<CaptureStream, hypr_audio::Error> {
+        fn open_capture(&self, _config: CaptureConfig) -> Result<CaptureStream, meetspace_audio::Error> {
             unimplemented!()
         }
         fn open_speaker_capture(
             &self,
             _sample_rate: u32,
             _chunk_size: usize,
-        ) -> Result<CaptureStream, hypr_audio::Error> {
+        ) -> Result<CaptureStream, meetspace_audio::Error> {
             unimplemented!()
         }
         fn open_mic_capture(
@@ -347,7 +347,7 @@ mod tests {
             _device: Option<String>,
             _sample_rate: u32,
             _chunk_size: usize,
-        ) -> Result<CaptureStream, hypr_audio::Error> {
+        ) -> Result<CaptureStream, meetspace_audio::Error> {
             unimplemented!()
         }
         fn default_device_name(&self) -> String {
@@ -364,10 +364,10 @@ mod tests {
             let (tx, _rx) = std::sync::mpsc::channel();
             tx
         }
-        fn probe_mic(&self, _device: Option<String>) -> Result<(), hypr_audio::Error> {
+        fn probe_mic(&self, _device: Option<String>) -> Result<(), meetspace_audio::Error> {
             Ok(())
         }
-        fn probe_speaker(&self) -> Result<(), hypr_audio::Error> {
+        fn probe_speaker(&self) -> Result<(), meetspace_audio::Error> {
             Ok(())
         }
     }
@@ -422,12 +422,12 @@ mod tests {
         lifecycle_events: std::sync::Mutex<Vec<crate::SessionLifecycleEvent>>,
     }
 
-    impl hypr_storage::StorageRuntime for RecordingRuntime {
-        fn global_base(&self) -> Result<PathBuf, hypr_storage::Error> {
+    impl meetspace_storage::StorageRuntime for RecordingRuntime {
+        fn global_base(&self) -> Result<PathBuf, meetspace_storage::Error> {
             Ok(std::env::temp_dir())
         }
 
-        fn vault_base(&self) -> Result<PathBuf, hypr_storage::Error> {
+        fn vault_base(&self) -> Result<PathBuf, meetspace_storage::Error> {
             Ok(std::env::temp_dir())
         }
     }
@@ -483,7 +483,7 @@ mod tests {
     #[test]
     fn local_soniqo_live_listener_failure_stops_session() {
         let mut ctx = test_ctx();
-        ctx.params.base_url = hypr_transcribe_soniqo::LOCAL_BASE_URL.to_string();
+        ctx.params.base_url = meetspace_transcribe_soniqo::LOCAL_BASE_URL.to_string();
         ctx.params.model = "soniqo-parakeet-streaming".to_string();
         let state = test_state(ctx);
 

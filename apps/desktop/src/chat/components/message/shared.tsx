@@ -1,7 +1,7 @@
 import { ChevronRight, Loader2 } from "lucide-react";
 import { type ReactNode } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 export function MessageContainer({
   align = "start",

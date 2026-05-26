@@ -3,7 +3,7 @@ use std::io::BufWriter;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 
-use hypr_audio_utils::{
+use meetspace_audio_utils::{
     decode_vorbis_to_mono_wav_file, decode_vorbis_to_wav_file, mix_audio_f32,
     ogg_has_identical_channels,
 };
@@ -129,7 +129,7 @@ pub(super) fn finalize_disk_sink(sink: &mut DiskSink) -> Result<(), ActorProcess
 
     if sink.wav_path.exists() {
         let encoded_path = sink.wav_path.with_extension("mp3");
-        match hypr_mp3::encode_wav(&sink.wav_path, &encoded_path) {
+        match meetspace_mp3::encode_wav(&sink.wav_path, &encoded_path) {
             Ok(()) => {
                 sync_file(&encoded_path);
                 sync_dir(&encoded_path);
@@ -153,7 +153,7 @@ fn prepare_existing_audio_state(
     wav_path: &Path,
 ) -> Result<bool, ActorProcessingErr> {
     if encoded_path.exists() && !wav_path.exists() {
-        hypr_mp3::decode_to_wav(encoded_path, wav_path).map_err(into_actor_err)?;
+        meetspace_mp3::decode_to_wav(encoded_path, wav_path).map_err(into_actor_err)?;
         std::fs::remove_file(encoded_path)?;
     }
 
@@ -280,7 +280,7 @@ mod tests {
         let session_dir = dir.path().join("session");
         std::fs::create_dir_all(&session_dir).unwrap();
         std::fs::copy(
-            hypr_data::english_1::AUDIO_MP3_PATH,
+            meetspace_data::english_1::AUDIO_MP3_PATH,
             session_dir.join(FINAL_AUDIO_FILE),
         )
         .unwrap();
@@ -296,7 +296,7 @@ mod tests {
         let dir = tempdir().unwrap();
         let session_dir = dir.path().join("session");
         std::fs::create_dir_all(&session_dir).unwrap();
-        std::fs::copy(hypr_data::english_1::AUDIO_PATH, session_dir.join(WAV_FILE)).unwrap();
+        std::fs::copy(meetspace_data::english_1::AUDIO_PATH, session_dir.join(WAV_FILE)).unwrap();
 
         let _sink = create_disk_sink(&session_dir).unwrap();
 

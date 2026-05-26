@@ -102,7 +102,7 @@ impl AppWindow {
 impl WindowImpl for AppWindow {
     fn title(&self) -> String {
         match self {
-            Self::Main => "Anarlog".into(),
+            Self::Main => "Meetspace".into(),
             Self::Composer => "Composer".into(),
             Self::Floating => "Meeting Float".into(),
         }

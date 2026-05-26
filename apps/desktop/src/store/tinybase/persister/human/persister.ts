@@ -1,5 +1,5 @@
-import type { HumanStorage } from "@hypr/store";
-import type { Schemas } from "@hypr/store";
+import type { HumanStorage } from "@meetspace/store";
+import type { Schemas } from "@meetspace/store";
 
 import { parseHumanIdFromPath } from "./changes";
 import { frontmatterToHuman, humanToFrontmatter } from "./transform";

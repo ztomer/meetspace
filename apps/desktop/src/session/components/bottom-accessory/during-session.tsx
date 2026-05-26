@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLayoutEffect, useMemo, useRef } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { getSegmentColor } from "~/session/components/note-input/transcript/renderer/utils";
 import * as main from "~/store/tinybase/store/main";

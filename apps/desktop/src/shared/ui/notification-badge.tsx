@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "motion/react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 interface NotificationBadgeProps {
   show: boolean;

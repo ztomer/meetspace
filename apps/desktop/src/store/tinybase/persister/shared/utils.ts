@@ -5,7 +5,7 @@ export {
   asTablesChanges,
   toPersistedChanges,
   toContent,
-} from "@hypr/tinybase-utils";
+} from "@meetspace/tinybase-utils";
 
 type TableRowType<K extends keyof TablesContent> =
   NonNullable<TablesContent[K]> extends Record<string, infer R> ? R : never;

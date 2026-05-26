@@ -1,7 +1,7 @@
 import type {
   MappingSessionParticipantStorage,
   SessionStorage,
-} from "@hypr/store";
+} from "@meetspace/store";
 
 export type ParticipantData = MappingSessionParticipantStorage & { id: string };
 

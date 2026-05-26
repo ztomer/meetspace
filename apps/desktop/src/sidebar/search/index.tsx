@@ -1,9 +1,9 @@
 import { Loader2Icon, SearchIcon, XIcon } from "lucide-react";
 import { useEffect } from "react";
 
-import { Kbd } from "@hypr/ui/components/ui/kbd";
-import { useCmdKeyPressed } from "@hypr/ui/hooks/use-cmd-key-pressed";
-import { cn } from "@hypr/utils";
+import { Kbd } from "@meetspace/ui/components/ui/kbd";
+import { useCmdKeyPressed } from "@meetspace/ui/hooks/use-cmd-key-pressed";
+import { cn } from "@meetspace/utils";
 
 import { useSearchKeyboard } from "./use-search-keyboard";
 

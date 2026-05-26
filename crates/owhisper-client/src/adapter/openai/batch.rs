@@ -29,7 +29,7 @@ impl BatchSttAdapter for OpenAIAdapter {
 
     fn is_supported_languages(
         &self,
-        languages: &[hypr_language::Language],
+        languages: &[meetspace_language::Language],
         _model: Option<&str>,
     ) -> bool {
         OpenAIAdapter::is_supported_languages_batch(languages)

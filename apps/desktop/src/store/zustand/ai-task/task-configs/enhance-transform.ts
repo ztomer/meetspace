@@ -3,7 +3,7 @@ import type {
   Segment,
   Session,
   Transcript,
-} from "@hypr/plugin-template";
+} from "@meetspace/plugin-template";
 
 import type { TaskArgsMap, TaskArgsMapTransformed, TaskConfig } from ".";
 

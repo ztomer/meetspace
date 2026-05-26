@@ -1,4 +1,4 @@
-import type { ServerStatus } from "@hypr/plugin-local-stt";
+import type { ServerStatus } from "@meetspace/plugin-local-stt";
 
 import type { DownloadProgress, ToastCondition, ToastType } from "./types";
 
@@ -97,7 +97,7 @@ export function createToastRegistry({
         description: (
           <>
             <strong className="font-mono">Transcription model</strong> is needed
-            to make Anarlog listen to your conversations.
+            to make Meetspace listen to your conversations.
           </>
         ),
         primaryAction: {
@@ -114,7 +114,7 @@ export function createToastRegistry({
         description: (
           <>
             <strong className="font-mono">Language model</strong> is needed to
-            make Anarlog summarize and chat about your conversations.
+            make Meetspace summarize and chat about your conversations.
           </>
         ),
         primaryAction: {

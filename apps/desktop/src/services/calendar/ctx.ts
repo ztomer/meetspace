@@ -1,11 +1,11 @@
 import type { Queries } from "tinybase/with-schemas";
 
-import { commands as calendarCommands } from "@hypr/plugin-calendar";
+import { commands as calendarCommands } from "@meetspace/plugin-calendar";
 import type {
   CalendarListItem,
   CalendarProviderType,
   ProviderConnectionIds,
-} from "@hypr/plugin-calendar";
+} from "@meetspace/plugin-calendar";
 
 import {
   findCalendarByTrackingId,

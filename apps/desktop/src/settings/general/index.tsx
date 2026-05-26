@@ -3,9 +3,9 @@ import { useForm } from "@tanstack/react-form";
 import { useQuery } from "@tanstack/react-query";
 import { disable, enable } from "@tauri-apps/plugin-autostart";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import { commands as listenerCommands } from "@hypr/plugin-transcription";
-import type { General, GeneralStorage } from "@hypr/store";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as listenerCommands } from "@meetspace/plugin-transcription";
+import type { General, GeneralStorage } from "@meetspace/store";
 
 import { AppSettingsView } from "./app-settings";
 import { getAdditionalSpokenLanguages } from "./language";
@@ -148,7 +148,7 @@ export function SettingsApp() {
                     {(telemetryConsentField) => (
                       <AppSettingsView
                         autostart={{
-                          title: t`Start Anarlog at login`,
+                          title: t`Start Meetspace at login`,
                           description: t`Always ready without manually launching.`,
                           value: autostartField.state.value,
                           onChange: (val) => autostartField.handleChange(val),
@@ -169,7 +169,7 @@ export function SettingsApp() {
                         }}
                         telemetryConsent={{
                           title: t`Share usage data`,
-                          description: t`Send anonymous usage analytics to help improve Anarlog.`,
+                          description: t`Send anonymous usage analytics to help improve Meetspace.`,
                           value: telemetryConsentField.state.value,
                           onChange: (val) =>
                             telemetryConsentField.handleChange(val),

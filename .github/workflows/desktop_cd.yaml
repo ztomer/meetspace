@@ -18,7 +18,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.channel }}
   cancel-in-progress: true
 env:
-  CN_APPLICATION: "fastrepl/hyprnote2"
+  CN_APPLICATION: "fastrepl/meetspace2"
   RELEASE_CHANNEL: ${{ inputs.channel }}
   TAURI_CONF_PATH: ./src-tauri/tauri.conf.${{ inputs.channel }}.json
   NODE_OPTIONS: "--max-old-space-size=4096"
@@ -121,10 +121,10 @@ jobs:
           # https://v2.tauri.app/reference/environment-variables/
           CI: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CACTUS_CLOUD_API_BASE: "https://api.anarlog.so/cactus"
+          CACTUS_CLOUD_API_BASE: "https://api.meetspace.so/cactus"
           POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
           VITE_POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN_HYPRNOTE_2 }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN_MEETSPACE_2 }}
           APP_VERSION: ${{ needs.compute-version.outputs.version }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
@@ -136,8 +136,8 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_APP_URL: "https://anarlog.so"
-          VITE_API_URL: "https://api.anarlog.so"
+          VITE_APP_URL: "https://meetspace.so"
+          VITE_API_URL: "https://api.meetspace.so"
           VITE_PRO_PRODUCT_ID: ${{ secrets.VITE_PRO_PRODUCT_ID }}
           VITE_APP_VERSION: ${{ needs.compute-version.outputs.version }}
       - id: find-dmg
@@ -173,7 +173,7 @@ jobs:
       - if: ${{ inputs.channel == 'staging' }}
         uses: actions/upload-artifact@v4
         with:
-          name: hyprnote-staging-macos-${{ matrix.artifact_name }}
+          name: meetspace-staging-macos-${{ matrix.artifact_name }}
           path: apps/desktop/src-tauri/target/${{ matrix.target }}/release/bundle/dmg/*.dmg
           retention-days: 3
       - if: ${{ inputs.channel == 'staging' }}
@@ -181,10 +181,10 @@ jobs:
           TIMESTAMP=$(date -u +"%Y%m%d%H%M%S")
           COMMIT_HASH=$(git rev-parse --short HEAD)
           DMG_FILE=$(find "apps/desktop/src-tauri/target/${{ matrix.target }}/release/bundle/dmg/" -name "*.dmg" -type f)
-          FILENAME="hyprnote-staging-${TIMESTAMP}-${COMMIT_HASH}-macos-${{ matrix.arch }}.dmg"
+          FILENAME="meetspace-staging-${TIMESTAMP}-${COMMIT_HASH}-macos-${{ matrix.arch }}.dmg"
           cp "$DMG_FILE" "$FILENAME"
           aws s3 cp "$FILENAME" \
-            "s3://hyprnote-build/desktop/staging/$FILENAME" \
+            "s3://meetspace-build/desktop/staging/$FILENAME" \
             --endpoint-url ${{ secrets.CLOUDFLARE_R2_ENDPOINT_URL }} \
             --region auto
         env:
@@ -240,7 +240,7 @@ jobs:
           version: ${{ needs.compute-version.outputs.version }}
           channel: ${{ env.RELEASE_CHANNEL }}
           platform: dmg-aarch64
-          output: hyprnote-macos-aarch64.dmg
+          output: meetspace-macos-aarch64.dmg
           key: ${{ secrets.CN_API_KEY }}
       - if: ${{ needs.build-macos.result == 'success' }}
         uses: ./.github/actions/cn_download
@@ -249,19 +249,19 @@ jobs:
           version: ${{ needs.compute-version.outputs.version }}
           channel: ${{ env.RELEASE_CHANNEL }}
           platform: dmg-x86_64
-          output: hyprnote-macos-x86_64.dmg
+          output: meetspace-macos-x86_64.dmg
           key: ${{ secrets.CN_API_KEY }}
       - id: checksums
         uses: ./.github/actions/generate_checksums
         with:
           files: |
-            ${{ needs.build-macos.result == 'success' && 'hyprnote-macos-aarch64.dmg' || '' }}
-            ${{ needs.build-macos.result == 'success' && 'hyprnote-macos-x86_64.dmg' || '' }}
+            ${{ needs.build-macos.result == 'success' && 'meetspace-macos-aarch64.dmg' || '' }}
+            ${{ needs.build-macos.result == 'success' && 'meetspace-macos-x86_64.dmg' || '' }}
       - id: artifacts
         run: |
           ARTIFACTS=""
           if [[ "${{ needs.build-macos.result }}" == "success" ]]; then
-            ARTIFACTS="hyprnote-macos-aarch64.dmg,hyprnote-macos-x86_64.dmg"
+            ARTIFACTS="meetspace-macos-aarch64.dmg,meetspace-macos-x86_64.dmg"
           fi
           if [[ -z "$ARTIFACTS" ]]; then
             echo "No artifacts to release" >&2
@@ -273,7 +273,7 @@ jobs:
           echo "list=$ARTIFACTS" >> $GITHUB_OUTPUT
       - id: release-body
         run: |
-          echo "value=https://anarlog.so/changelog/${{ needs.compute-version.outputs.version }}" >> "$GITHUB_OUTPUT"
+          echo "value=https://meetspace.so/changelog/${{ needs.compute-version.outputs.version }}" >> "$GITHUB_OUTPUT"
       - uses: ncipollo/release-action@v1
         with:
           tag: desktop_v${{ needs.compute-version.outputs.version }}

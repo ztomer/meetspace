@@ -6,7 +6,7 @@ use tauri_specta::Event;
 use tauri::{Manager, Runtime};
 use tauri_plugin_sidecar2::Sidecar2PluginExt;
 
-use hypr_model_downloader::{DownloadStatus, ModelDownloadManager, ModelDownloaderRuntime};
+use meetspace_model_downloader::{DownloadStatus, ModelDownloadManager, ModelDownloaderRuntime};
 
 #[cfg(feature = "whisper-cpp")]
 use crate::server::internal;
@@ -23,7 +23,7 @@ struct TauriModelRuntime<R: Runtime> {
 }
 
 impl<R: Runtime> ModelDownloaderRuntime<LocalModel> for TauriModelRuntime<R> {
-    fn models_base(&self) -> Result<PathBuf, hypr_model_downloader::Error> {
+    fn models_base(&self) -> Result<PathBuf, meetspace_model_downloader::Error> {
         use tauri_plugin_settings::SettingsPluginExt;
         Ok(self
             .app_handle
@@ -33,7 +33,7 @@ impl<R: Runtime> ModelDownloaderRuntime<LocalModel> for TauriModelRuntime<R> {
             .unwrap_or_else(|_| dirs::data_dir().unwrap_or_default().join("models")))
     }
 
-    fn emit_progress(&self, model: &LocalModel, status: hypr_model_downloader::DownloadStatus) {
+    fn emit_progress(&self, model: &LocalModel, status: meetspace_model_downloader::DownloadStatus) {
         let payload = DownloadProgressPayload {
             model: model.clone(),
             status,
@@ -108,7 +108,7 @@ impl<'a, R: Runtime, M: Manager<R>> LocalStt<'a, R, M> {
             LocalModel::Soniqo(model) => {
                 let model = *model;
                 run_soniqo_blocking(
-                    move || hypr_transcribe_soniqo::model_cache_dir(model),
+                    move || meetspace_transcribe_soniqo::model_cache_dir(model),
                     crate::Error::ServerStartFailed,
                 )
                 .await
@@ -155,7 +155,7 @@ impl<'a, R: Runtime, M: Manager<R>> LocalStt<'a, R, M> {
                 .await
                 .map_err(|e| crate::Error::ServerStopFailed(e.to_string()))?;
 
-            return Ok(hypr_transcribe_soniqo::LOCAL_BASE_URL.to_string());
+            return Ok(meetspace_transcribe_soniqo::LOCAL_BASE_URL.to_string());
         }
 
         let server_type = match &model {
@@ -200,7 +200,7 @@ impl<'a, R: Runtime, M: Manager<R>> LocalStt<'a, R, M> {
             ServerType::Internal => {
                 #[cfg(target_arch = "aarch64")]
                 {
-                    use hypr_transcribe_cactus::CactusConfig;
+                    use meetspace_transcribe_cactus::CactusConfig;
 
                     let cache_dir = self.cactus_models_dir();
                     let cactus_model = match model {
@@ -208,11 +208,11 @@ impl<'a, R: Runtime, M: Manager<R>> LocalStt<'a, R, M> {
                         _ => return Err(crate::Error::UnsupportedModelType),
                     };
                     let cactus_config = CactusConfig {
-                        cloud: hypr_transcribe_cactus::CloudConfig {
+                        cloud: meetspace_transcribe_cactus::CloudConfig {
                             base_url: option_env!("CACTUS_CLOUD_API_BASE").map(ToString::to_string),
                             headers: vec![(
                                 "x-device-fingerprint".to_string(),
-                                hypr_host::fingerprint(),
+                                meetspace_host::fingerprint(),
                             )],
                             ..Default::default()
                         },
@@ -269,7 +269,7 @@ impl<'a, R: Runtime, M: Manager<R>> LocalStt<'a, R, M> {
             let downloading = state.status == "downloading";
 
             return Ok(Some(ServerInfo {
-                url: downloaded.then(|| hypr_transcribe_soniqo::LOCAL_BASE_URL.to_string()),
+                url: downloaded.then(|| meetspace_transcribe_soniqo::LOCAL_BASE_URL.to_string()),
                 status: if downloaded {
                     ServerStatus::Ready
                 } else if downloading {
@@ -335,7 +335,7 @@ impl<'a, R: Runtime, M: Manager<R>> LocalStt<'a, R, M> {
 
         if let LocalModel::Soniqo(soniqo_model) = model.clone() {
             run_soniqo_blocking(
-                move || hypr_transcribe_soniqo::start_model_download(soniqo_model),
+                move || meetspace_transcribe_soniqo::start_model_download(soniqo_model),
                 crate::Error::ServerStartFailed,
             )
             .await?;
@@ -392,7 +392,7 @@ impl<'a, R: Runtime, M: Manager<R>> LocalStt<'a, R, M> {
         if let LocalModel::Soniqo(model) = model {
             let model = *model;
             return run_soniqo_blocking(
-                move || hypr_transcribe_soniqo::delete_model(model),
+                move || meetspace_transcribe_soniqo::delete_model(model),
                 crate::Error::ServerStopFailed,
             )
             .await;
@@ -409,7 +409,7 @@ impl<'a, R: Runtime, M: Manager<R>> LocalStt<'a, R, M> {
 }
 
 async fn run_soniqo_blocking<T>(
-    task: impl FnOnce() -> hypr_transcribe_soniqo::Result<T> + Send + 'static,
+    task: impl FnOnce() -> meetspace_transcribe_soniqo::Result<T> + Send + 'static,
     map_error: fn(String) -> crate::Error,
 ) -> Result<T, crate::Error>
 where
@@ -422,10 +422,10 @@ where
 }
 
 async fn soniqo_download_state(
-    model: hypr_transcribe_soniqo::SoniqoModel,
-) -> Result<hypr_transcribe_soniqo::ModelDownloadState, crate::Error> {
+    model: meetspace_transcribe_soniqo::SoniqoModel,
+) -> Result<meetspace_transcribe_soniqo::ModelDownloadState, crate::Error> {
     run_soniqo_blocking(
-        move || hypr_transcribe_soniqo::model_download_state(model),
+        move || meetspace_transcribe_soniqo::model_download_state(model),
         crate::Error::ServerStartFailed,
     )
     .await
@@ -434,12 +434,12 @@ async fn soniqo_download_state(
 fn spawn_soniqo_progress_poller<R: Runtime>(
     app_handle: tauri::AppHandle<R>,
     model: LocalModel,
-    soniqo_model: hypr_transcribe_soniqo::SoniqoModel,
+    soniqo_model: meetspace_transcribe_soniqo::SoniqoModel,
 ) {
     tokio::spawn(async move {
         for _ in 0..7200 {
             let status = tokio::task::spawn_blocking(move || {
-                hypr_transcribe_soniqo::model_download_state(soniqo_model)
+                meetspace_transcribe_soniqo::model_download_state(soniqo_model)
             })
             .await;
 
@@ -504,8 +504,8 @@ impl<R: Runtime, T: Manager<R>> LocalSttPluginExt<R> for T {
 async fn start_internal2_server(
     supervisor: &supervisor::SupervisorRef,
     cache_dir: PathBuf,
-    model: hypr_cactus_model::CactusSttModel,
-    cactus_config: hypr_transcribe_cactus::CactusConfig,
+    model: meetspace_cactus_model::CactusSttModel,
+    cactus_config: meetspace_transcribe_cactus::CactusConfig,
 ) -> Result<String, crate::Error> {
     supervisor::start_internal2_stt(
         supervisor,
@@ -528,7 +528,7 @@ async fn start_internal2_server(
 async fn start_internal_server(
     supervisor: &supervisor::SupervisorRef,
     cache_dir: PathBuf,
-    model: hypr_whisper_local_model::WhisperModel,
+    model: meetspace_whisper_local_model::WhisperModel,
 ) -> Result<String, crate::Error> {
     supervisor::start_internal_stt(
         supervisor,
@@ -550,7 +550,7 @@ async fn start_external_server<R: Runtime, T: Manager<R>>(
     manager: &T,
     supervisor: &supervisor::SupervisorRef,
     data_dir: PathBuf,
-    model: hypr_am::AmModel,
+    model: meetspace_am::AmModel,
 ) -> Result<String, crate::Error> {
     let am_key = {
         let state = manager.state::<crate::SharedState>();

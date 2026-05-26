@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { getCurrentWebviewWindowLabel } from "@hypr/plugin-windows";
+import { getCurrentWebviewWindowLabel } from "@meetspace/plugin-windows";
 
 import { useInitializeStore } from "./initialize";
 import { type Store } from "./main";

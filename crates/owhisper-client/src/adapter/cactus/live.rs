@@ -1,4 +1,4 @@
-use hypr_ws_client::client::Message;
+use meetspace_ws_client::client::Message;
 use owhisper_interface::ListenParams;
 use owhisper_interface::stream::StreamResponse;
 
@@ -15,7 +15,7 @@ impl RealtimeSttAdapter for CactusAdapter {
 
     fn is_supported_languages(
         &self,
-        languages: &[hypr_language::Language],
+        languages: &[meetspace_language::Language],
         model: Option<&str>,
     ) -> bool {
         CactusAdapter::is_supported_languages_live(languages, model)
@@ -72,7 +72,7 @@ impl RealtimeSttAdapter for CactusAdapter {
                     }]
                 } else {
                     tracing::warn!(
-                        hyprnote.payload.size_bytes = raw.len() as u64,
+                        meetspace.payload.size_bytes = raw.len() as u64,
                         "cactus_unknown_message"
                     );
                     vec![]

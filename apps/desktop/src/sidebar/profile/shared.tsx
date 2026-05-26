@@ -1,6 +1,6 @@
 import { Facehash } from "facehash";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 export function MenuItem({
   icon: Icon,

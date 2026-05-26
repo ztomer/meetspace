@@ -1,10 +1,10 @@
 import { ChevronLeft, ExternalLink } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { Button } from "@hypr/ui/components/ui/button";
-import { Input } from "@hypr/ui/components/ui/input";
-import { cn } from "@hypr/utils";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { Input } from "@meetspace/ui/components/ui/input";
+import { cn } from "@meetspace/utils";
 
 import { useAuth } from "~/auth";
 
@@ -64,7 +64,7 @@ function InstructionShell({
         <div className="flex w-full max-w-sm flex-col items-center gap-6 px-10 pb-10 text-center">
           <div className="flex h-14 w-14 items-center justify-center rounded-[20px] border border-stone-200/70 bg-white/90 shadow-[0_6px_18px_rgba(28,25,23,0.05)]">
             <img
-              src="/assets/anarlog-icon.png"
+              src="/assets/meetspace-icon.png"
               alt=""
               className="h-7 w-7 object-contain object-center"
             />
@@ -155,7 +155,7 @@ export function InstructionScreen({
     return (
       <ExternalInstruction
         title="Complete your purchase"
-        description="Finish checkout in your browser, then return to Anarlog."
+        description="Finish checkout in your browser, then return to Meetspace."
         actionLabel="Reopen checkout page"
         onBack={onBack}
         url={url}
@@ -166,7 +166,7 @@ export function InstructionScreen({
   return (
     <ExternalInstruction
       title="Connect your integration"
-      description="Authorize access in your browser, then return to Anarlog."
+      description="Authorize access in your browser, then return to Meetspace."
       actionLabel="Reopen in browser"
       onBack={onBack}
       url={url}
@@ -190,7 +190,7 @@ function SignInInstruction({ onBack }: { onBack: () => void }) {
   return (
     <InstructionShell
       title="Sign in to your account"
-      description="Complete sign-in in your browser, then return to Anarlog."
+      description="Complete sign-in in your browser, then return to Meetspace."
       onBack={onBack}
     >
       {showCallbackInput ? (
@@ -199,7 +199,7 @@ function SignInInstruction({ onBack }: { onBack: () => void }) {
             <Input
               type="text"
               className="h-10 font-mono text-xs"
-              placeholder="hyprnote://deeplink/auth?access_token=..."
+              placeholder="meetspace://deeplink/auth?access_token=..."
               value={callbackUrl}
               onChange={(e) => setCallbackUrl(e.target.value)}
             />
@@ -213,7 +213,7 @@ function SignInInstruction({ onBack }: { onBack: () => void }) {
           </div>
           <p className="text-xs leading-5 text-neutral-500">
             Paste the browser URL here if the browser button did not reopen
-            Anarlog.
+            Meetspace.
           </p>
         </>
       ) : (

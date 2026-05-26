@@ -1,10 +1,10 @@
 import { Loader2Icon, SearchIcon, XIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-import { Button } from "@hypr/ui/components/ui/button";
-import { Kbd } from "@hypr/ui/components/ui/kbd";
-import { useCmdKeyPressed } from "@hypr/ui/hooks/use-cmd-key-pressed";
-import { cn } from "@hypr/utils";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { Kbd } from "@meetspace/ui/components/ui/kbd";
+import { useCmdKeyPressed } from "@meetspace/ui/hooks/use-cmd-key-pressed";
+import { cn } from "@meetspace/utils";
 
 import { useSearch } from "~/search/contexts/ui";
 import { useTabs } from "~/store/zustand/tabs";

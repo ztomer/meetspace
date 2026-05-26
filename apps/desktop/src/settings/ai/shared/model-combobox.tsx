@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
-import { Button } from "@hypr/ui/components/ui/button";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -16,19 +16,19 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@hypr/ui/components/ui/command";
+} from "@meetspace/ui/components/ui/command";
 import {
   AppFloatingPanel,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@hypr/ui/components/ui/popover";
+} from "@meetspace/ui/components/ui/popover";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/tooltip";
+import { cn } from "@meetspace/utils";
 
 import type { ListModelsResult, ModelIgnoreReason } from "./list-common";
 
@@ -67,7 +67,7 @@ const formatIgnoreReason = (reason: ModelIgnoreReason): string => {
 };
 
 const getDisplayName = (providerId: string, model: string): string => {
-  if (providerId === "hyprnote" && model === "Auto") {
+  if (providerId === "meetspace" && model === "Auto") {
     return "Pro (Cloud)";
   }
   return model;

@@ -2,7 +2,7 @@ import DOMPurify from "dompurify";
 import { Facehash } from "facehash";
 import { useCallback, useMemo } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { type SearchResult } from "~/search/contexts/ui";
 import * as main from "~/store/tinybase/store/main";

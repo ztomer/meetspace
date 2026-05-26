@@ -9,20 +9,20 @@ pub trait ModelLoader: Send + Sync + 'static {
 }
 
 #[cfg(feature = "cactus")]
-impl ModelLoader for hypr_cactus::Model {
-    type Error = hypr_cactus::Error;
+impl ModelLoader for meetspace_cactus::Model {
+    type Error = meetspace_cactus::Error;
 
     fn load(path: &Path) -> Result<Self, Self::Error> {
-        hypr_cactus::Model::new(path)
+        meetspace_cactus::Model::new(path)
     }
 }
 
 #[cfg(feature = "whisper-local")]
-impl ModelLoader for hypr_whisper_local::LoadedWhisper {
-    type Error = hypr_whisper_local::Error;
+impl ModelLoader for meetspace_whisper_local::LoadedWhisper {
+    type Error = meetspace_whisper_local::Error;
 
     fn load(path: &Path) -> Result<Self, Self::Error> {
-        hypr_whisper_local::LoadedWhisper::builder()
+        meetspace_whisper_local::LoadedWhisper::builder()
             .model_path(path.to_string_lossy().into_owned())
             .build()
     }

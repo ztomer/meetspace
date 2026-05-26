@@ -2,9 +2,9 @@ import { type UnlistenFn } from "@tauri-apps/api/event";
 import { message } from "@tauri-apps/plugin-dialog";
 import { useCallback, useEffect, useState } from "react";
 
-import { commands, events } from "@hypr/plugin-updater2";
-import { Button } from "@hypr/ui/components/ui/button";
-import { cn } from "@hypr/utils";
+import { commands, events } from "@meetspace/plugin-updater2";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { cn } from "@meetspace/utils";
 
 export function Update() {
   const { version } = useUpdate();

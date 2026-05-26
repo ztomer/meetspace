@@ -6,8 +6,8 @@ import { useEffect, useMemo, useState } from "react";
 import {
   type AudioDevice,
   commands as audioPriorityCommands,
-} from "@hypr/plugin-audio-priority";
-import { cn } from "@hypr/utils";
+} from "@meetspace/plugin-audio-priority";
+import { cn } from "@meetspace/utils";
 
 export function Audio() {
   return (

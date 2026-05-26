@@ -1,7 +1,7 @@
 import { isTauri } from "@tauri-apps/api/core";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 export function TrafficLights({ className }: { className?: string }) {
   const withWindow = async (

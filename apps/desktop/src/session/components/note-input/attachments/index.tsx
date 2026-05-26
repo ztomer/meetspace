@@ -3,9 +3,9 @@ import { platform } from "@tauri-apps/plugin-os";
 import { ImageIcon, LinkIcon, X } from "lucide-react";
 import { useCallback, useMemo } from "react";
 
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { sonnerToast } from "@hypr/ui/components/ui/toast";
-import { formatDistanceToNow } from "@hypr/utils";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { sonnerToast } from "@meetspace/ui/components/ui/toast";
+import { formatDistanceToNow } from "@meetspace/utils";
 
 import { useNativeContextMenu } from "~/shared/hooks/useNativeContextMenu";
 

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 
-import { Spinner } from "@hypr/ui/components/ui/spinner";
+import { Spinner } from "@meetspace/ui/components/ui/spinner";
 
 import { useConfigValues } from "~/shared/config";
 import { useSTTConnection } from "~/stt/useSTTConnection";
@@ -53,8 +53,8 @@ export function useConnectionHealth(): HealthStatus {
   ] as const);
 
   const isCloud =
-    (current_stt_provider === "hyprnote" && current_stt_model === "cloud") ||
-    current_stt_provider !== "hyprnote";
+    (current_stt_provider === "meetspace" && current_stt_model === "cloud") ||
+    current_stt_provider !== "meetspace";
   const isDeepgram = current_stt_provider === "deepgram";
 
   const deepgramHealth = useDeepgramHealth(isDeepgram && !!conn, conn?.apiKey);

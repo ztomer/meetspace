@@ -1,8 +1,8 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import type { MouseEvent } from "react";
 
-import { DancingSticks } from "@hypr/ui/components/ui/dancing-sticks";
-import { cn } from "@hypr/utils";
+import { DancingSticks } from "@meetspace/ui/components/ui/dancing-sticks";
+import { cn } from "@meetspace/utils";
 
 import {
   useFloatingMeetingTitle,

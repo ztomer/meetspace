@@ -3,7 +3,7 @@ import { convertFileSrc } from "@tauri-apps/api/core";
 import { PictureInPicture2Icon, StickyNoteIcon } from "lucide-react";
 import React, { useCallback, useEffect, useRef } from "react";
 
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
+import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
 
 import { useSessionBottomAccessory } from "./components/bottom-accessory";
 import { CaretPositionProvider } from "./components/caret-position-context";

@@ -1,19 +1,19 @@
 import { ChevronDown, MessageCircle, Plus } from "lucide-react";
 import { useState } from "react";
 
-import { Button } from "@hypr/ui/components/ui/button";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   AppFloatingPanel,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@hypr/ui/components/ui/dropdown-menu";
+} from "@meetspace/ui/components/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
-import { cn, formatDistanceToNow } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/tooltip";
+import { cn, formatDistanceToNow } from "@meetspace/utils";
 
 import * as main from "~/store/tinybase/store/main";
 
@@ -127,7 +127,7 @@ function ChatGroups({
           ])}
         >
           <h3 className="min-w-0 flex-1 truncate text-xs font-medium text-neutral-700">
-            {currentChatTitle || "Ask Anarlog AI anything"}
+            {currentChatTitle || "Ask Meetspace AI anything"}
           </h3>
           <ChevronDown
             className={cn([

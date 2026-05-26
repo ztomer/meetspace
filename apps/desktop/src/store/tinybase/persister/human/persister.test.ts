@@ -11,7 +11,7 @@ import {
 const settingsMocks = vi.hoisted(() => ({
   vaultBase: vi
     .fn()
-    .mockResolvedValue({ status: "ok", data: "/mock/data/dir/hyprnote" }),
+    .mockResolvedValue({ status: "ok", data: "/mock/data/dir/meetspace" }),
 }));
 
 const fsSyncMocks = vi.hoisted(() => ({
@@ -26,9 +26,9 @@ const fs2Mocks = vi.hoisted(() => ({
   remove: vi.fn(),
 }));
 
-vi.mock("@hypr/plugin-settings", () => ({ commands: settingsMocks }));
-vi.mock("@hypr/plugin-fs-sync", () => ({ commands: fsSyncMocks }));
-vi.mock("@hypr/plugin-fs2", () => ({ commands: fs2Mocks }));
+vi.mock("@meetspace/plugin-settings", () => ({ commands: settingsMocks }));
+vi.mock("@meetspace/plugin-fs-sync", () => ({ commands: fsSyncMocks }));
+vi.mock("@meetspace/plugin-fs2", () => ({ commands: fs2Mocks }));
 
 describe("createHumanPersister", () => {
   let store: ReturnType<typeof createTestMainStore>;

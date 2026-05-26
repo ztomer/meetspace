@@ -1,9 +1,9 @@
 import { AlertCircleIcon, ArrowRightIcon, CheckIcon } from "lucide-react";
 import { useState } from "react";
 
-import type { PermissionStatus } from "@hypr/plugin-permissions";
-import { Button } from "@hypr/ui/components/ui/button";
-import { cn } from "@hypr/utils";
+import type { PermissionStatus } from "@meetspace/plugin-permissions";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { cn } from "@meetspace/utils";
 
 import { usePermission } from "~/shared/hooks/usePermissions";
 
@@ -202,7 +202,7 @@ export function Permissions() {
         <PermissionGroup title="Others">
           <PermissionRow
             title="Calendar"
-            description="Required to sync Apple Calendar events into Anarlog"
+            description="Required to sync Apple Calendar events into Meetspace"
             status={calendar.status}
             isPending={calendar.isPending}
             onRequest={calendar.request}
@@ -211,7 +211,7 @@ export function Permissions() {
           />
           <PermissionRow
             title="Reminders"
-            description="Required to sync Apple Reminders into Anarlog"
+            description="Required to sync Apple Reminders into Meetspace"
             status={reminders.status}
             isPending={reminders.isPending}
             onRequest={reminders.request}

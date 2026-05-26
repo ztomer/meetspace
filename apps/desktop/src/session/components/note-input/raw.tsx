@@ -1,13 +1,13 @@
 import { forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
 
-import { parseJsonContent } from "@hypr/editor/markdown";
+import { parseJsonContent } from "@meetspace/editor/markdown";
 import {
   NoteEditor,
   type JSONContent,
   type NoteEditorRef,
   type PlaceholderFunction,
-} from "@hypr/editor/note";
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
+} from "@meetspace/editor/note";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 
 import { AppLinkView } from "~/editor-bridge/app-link-view";
 import { useMentionConfig } from "~/editor-bridge/mention-config";
@@ -136,7 +136,7 @@ const Placeholder: PlaceholderFunction = ({ node, pos }) => {
   }
 
   if (pos === 0) {
-    return "Take notes to guide Anarlog's meeting notes. Press / for commands.";
+    return "Take notes to guide Meetspace's meeting notes. Press / for commands.";
   }
 
   return "Press / for commands.";

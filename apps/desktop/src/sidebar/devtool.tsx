@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react";
 
-import { commands as notificationCommands } from "@hypr/plugin-notification";
+import { commands as notificationCommands } from "@meetspace/plugin-notification";
 import {
   commands as windowsCommands,
   openUrlWithInstruction,
-} from "@hypr/plugin-windows";
-import { cn } from "@hypr/utils";
+} from "@meetspace/plugin-windows";
+import { cn } from "@meetspace/utils";
 
 import { getLatestVersion } from "~/changelog";
 import * as main from "~/store/tinybase/store/main";

@@ -9,7 +9,7 @@ const { showNotificationMock } = vi.hoisted(() => ({
   showNotificationMock: vi.fn(),
 }));
 
-vi.mock("@hypr/plugin-notification", () => ({
+vi.mock("@meetspace/plugin-notification", () => ({
   commands: {
     showNotification: showNotificationMock,
   },

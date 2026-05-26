@@ -20,7 +20,7 @@ fn source_tree_resource_path(relative_path: &str) -> PathBuf {
 pub(crate) fn resolve_resource_path<R: Runtime, T: Manager<R>>(
     manager: &T,
     relative_path: &str,
-) -> Result<Option<PathBuf>, hypr_local_llm_core::Error> {
+) -> Result<Option<PathBuf>, meetspace_local_llm_core::Error> {
     use tauri::path::BaseDirectory;
 
     #[cfg(debug_assertions)]
@@ -35,7 +35,7 @@ pub(crate) fn resolve_resource_path<R: Runtime, T: Manager<R>>(
         let path = manager
             .path()
             .resolve(&candidate, BaseDirectory::Resource)
-            .map_err(|error| hypr_local_llm_core::Error::Other(error.to_string()))?;
+            .map_err(|error| meetspace_local_llm_core::Error::Other(error.to_string()))?;
         if path.exists() {
             return Ok(Some(path));
         }
@@ -48,8 +48,8 @@ pub(crate) fn resolve_resource_path<R: Runtime, T: Manager<R>>(
 pub(crate) fn resolve_embedded_llm_args<R: Runtime, T: Manager<R>>(
     manager: &T,
 ) -> Result<(String, PathBuf), crate::Error> {
-    let model = hypr_local_model::CactusLlmModel::Lfm2Vl450mApple;
-    let hypr_local_model::CactusModelSource::BundledResource { relative_path } = model.source()
+    let model = meetspace_local_model::CactusLlmModel::Lfm2Vl450mApple;
+    let meetspace_local_model::CactusModelSource::BundledResource { relative_path } = model.source()
     else {
         return Err(crate::Error::Other(format!(
             "embedded local LLM resource is unavailable for {}",

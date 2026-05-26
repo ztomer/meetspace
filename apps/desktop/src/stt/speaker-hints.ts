@@ -2,7 +2,7 @@ import {
   type ProviderSpeakerIndexHint,
   providerSpeakerIndexSchema,
   type SpeakerHintStorage,
-} from "@hypr/store";
+} from "@meetspace/store";
 
 import type { RuntimeSpeakerHint } from "./segment";
 

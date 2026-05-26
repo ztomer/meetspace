@@ -4,7 +4,7 @@ const { isSupportedLanguagesLiveMock } = vi.hoisted(() => ({
   isSupportedLanguagesLiveMock: vi.fn(),
 }));
 
-vi.mock("@hypr/plugin-transcription", () => ({
+vi.mock("@meetspace/plugin-transcription", () => ({
   commands: {
     isSupportedLanguagesLive: isSupportedLanguagesLiveMock,
   },

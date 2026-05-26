@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Launch the Anarlog desktop app in dev mode.
+# Launch the Meetspace desktop app in dev mode.
 #
-# This wraps `pnpm -F @hypr/desktop tauri:dev`. It:
+# This wraps `pnpm -F @meetspace/desktop tauri:dev`. It:
 #   - Starts the Vite dev server on the configured port.
 #   - Compiles the Rust side and launches the Tauri window.
 #   - Hot-reloads JS/TS but not Rust (--no-watch is set upstream).
@@ -18,11 +18,11 @@ if [ ! -d node_modules ]; then
   pnpm install
 fi
 
-# Vite needs @hypr/ui's compiled globals.css to resolve the import in
+# Vite needs @meetspace/ui's compiled globals.css to resolve the import in
 # main.tsx. The file is in .gitignore'd dist/, so build it if missing.
 if [ ! -f packages/ui/dist/globals.css ]; then
-  echo "==> Prebuilding @hypr/ui (Tailwind globals.css)"
-  pnpm -F @hypr/ui build
+  echo "==> Prebuilding @meetspace/ui (Tailwind globals.css)"
+  pnpm -F @meetspace/ui build
 fi
 
-exec pnpm -F @hypr/desktop tauri:dev
+exec pnpm -F @meetspace/desktop tauri:dev

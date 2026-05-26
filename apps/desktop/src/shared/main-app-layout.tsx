@@ -2,7 +2,7 @@ import { Outlet, useNavigate } from "@tanstack/react-router";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useEffect } from "react";
 
-import { events as windowsEvents } from "@hypr/plugin-windows";
+import { events as windowsEvents } from "@meetspace/plugin-windows";
 
 import { useNewNote } from "./useNewNote";
 
@@ -41,7 +41,7 @@ const useNavigationEvents = () => {
   const openNewNote = useNewNote({ behavior: "new" });
 
   useEffect(() => {
-    (window as any).__HYPR_NAVIGATE__ = (path: string) => {
+    (window as any).__MEETSPACE_NAVIGATE__ = (path: string) => {
       const match = path.match(/^\/app\/([^/]+)\/(.+)$/);
       if (!match) return;
       const [, type, id] = match;
@@ -100,7 +100,7 @@ const useNavigationEvents = () => {
       });
 
     return () => {
-      delete (window as any).__HYPR_NAVIGATE__;
+      delete (window as any).__MEETSPACE_NAVIGATE__;
       unlistenNavigate?.();
       unlistenOpenTab?.();
     };

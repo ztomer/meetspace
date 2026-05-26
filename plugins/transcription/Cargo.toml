@@ -14,12 +14,12 @@ tauri-plugin = { workspace = true, features = ["build"] }
 specta-typescript = { workspace = true }
 
 [dependencies]
-hypr-audio = { workspace = true }
-hypr-language = { workspace = true }
-hypr-storage = { workspace = true }
-hypr-transcribe-soniqo = { workspace = true }
-hypr-transcript = { workspace = true }
-hypr-transcription-core = { workspace = true, features = ["specta", "tauri-event"] }
+meetspace-audio = { workspace = true }
+meetspace-language = { workspace = true }
+meetspace-storage = { workspace = true }
+meetspace-transcribe-soniqo = { workspace = true }
+meetspace-transcript = { workspace = true }
+meetspace-transcription-core = { workspace = true, features = ["specta", "tauri-event"] }
 
 owhisper-client = { workspace = true }
 owhisper-interface = { workspace = true }

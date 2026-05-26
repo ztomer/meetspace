@@ -1,14 +1,14 @@
-> **Note:** We're now working primarily on **[char](https://v2.char.com)** — a new productivity-focused product that's where most of our active development goes. **anarlog** stays open-source, MIT-licensed, and maintained. The cross-link to char lives here so you know where the team's attention is. Same team, different bets.
+> **Note:** We're now working primarily on **[char](https://v2.char.com)** — a new productivity-focused product that's where most of our active development goes. **meetspace** stays open-source, MIT-licensed, and maintained. The cross-link to char lives here so you know where the team's attention is. Same team, different bets.
 
-![anarlog](https://repository-images.githubusercontent.com/900550981/a4267a9f-414b-4c36-965c-419313ce2417)
+![meetspace](https://repository-images.githubusercontent.com/900550981/a4267a9f-414b-4c36-965c-419313ce2417)
 
 <p align="center">
   <p align="center">
-   <a href="https://deepwiki.com/fastrepl/anarlog"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+   <a href="https://deepwiki.com/fastrepl/meetspace"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
   </p>
 </p>
 
-# anarlog
+# meetspace
 
 The open-source AI meeting notetaker. Local-first. Privacy-first. Yours to fork.
 
@@ -20,7 +20,7 @@ Download the latest release for your platform:
 
 → [github.com/fastrepl/char/releases/latest](https://github.com/fastrepl/char/releases/latest)
 
-Open it. Join a meeting. anarlog records, transcribes locally, and saves your notes as markdown on disk. Bring your own LLM (OpenAI, Anthropic, Gemini, OpenRouter, Ollama, LM Studio, anything OpenAI-compatible).
+Open it. Join a meeting. meetspace records, transcribes locally, and saves your notes as markdown on disk. Bring your own LLM (OpenAI, Anthropic, Gemini, OpenRouter, Ollama, LM Studio, anything OpenAI-compatible).
 
 Self-host? Clone the repo, build, run.
 
@@ -34,13 +34,13 @@ Self-host? Clone the repo, build, run.
 
 ## A short essay
 
-We started this as **Hyprnote**. It became **char**. Now it's **anarlog**.
+We started this as **Meetspace**. It became **char**. Now it's **meetspace**.
 
 Each name change came from a different reason — a legal one, a strategic one, a brand one. The product underneath kept getting clearer: a notetaker that respects your time, your data, and your right to walk away with both.
 
-We're now building [**char**](https://v2.char.com) — a new product, productivity-focused, where most of our active development happens. **anarlog** isn't a sunset. It's the open-source companion we promised to keep alive, and we will. This repository keeps its full history, its stars, and its trajectory. Same team. Same standards. Just a clearer split between what's open and what's experimental.
+We're now building [**char**](https://v2.char.com) — a new product, productivity-focused, where most of our active development happens. **meetspace** isn't a sunset. It's the open-source companion we promised to keep alive, and we will. This repository keeps its full history, its stars, and its trajectory. Same team. Same standards. Just a clearer split between what's open and what's experimental.
 
-If you came here from Granola, welcome. If you came here from Hyprnote, welcome back.
+If you came here from Granola, welcome. If you came here from Meetspace, welcome back.
 
 Either way: it's yours.
 

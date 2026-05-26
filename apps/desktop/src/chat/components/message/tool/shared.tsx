@@ -8,7 +8,7 @@ import {
 import type { ReactNode } from "react";
 import { Streamdown } from "streamdown";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { extractMcpOutputText } from "~/chat/mcp/mcp-output-parser";
 import { useElicitation } from "~/contexts/elicitation";

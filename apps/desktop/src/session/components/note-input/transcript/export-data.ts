@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-import type { TranscriptItem } from "@hypr/plugin-export";
+import type { TranscriptItem } from "@meetspace/plugin-export";
 
 import * as main from "~/store/tinybase/store/main";
 import {

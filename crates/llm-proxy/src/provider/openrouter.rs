@@ -1,4 +1,4 @@
-use hypr_openrouter::{
+use meetspace_openrouter::{
     Client as OpenRouterClient, Error as OpenRouterError, ProviderPreferences, ProviderSort,
     ProviderSortUnion,
 };

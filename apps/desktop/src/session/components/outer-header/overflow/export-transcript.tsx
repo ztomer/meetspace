@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { FileTextIcon, Loader2Icon } from "lucide-react";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { commands as listener2Commands } from "@hypr/plugin-transcription";
-import { DropdownMenuItem } from "@hypr/ui/components/ui/dropdown-menu";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { commands as listener2Commands } from "@meetspace/plugin-transcription";
+import { DropdownMenuItem } from "@meetspace/ui/components/ui/dropdown-menu";
 
 import { useTranscriptExportSegments } from "~/session/components/note-input/transcript/export-data";
 

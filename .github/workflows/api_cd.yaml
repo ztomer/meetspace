@@ -61,7 +61,7 @@ jobs:
                   target.write(f"{key}={value}\n")
           PY
 
-          flyctl secrets import --app hyprnote-ai --stage < "$secrets_file"
+          flyctl secrets import --app meetspace-ai --stage < "$secrets_file"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
           INFISICAL_TOKEN: ${{ secrets.INFISICAL_TOKEN }}
@@ -70,7 +70,7 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
       - if: failure()
-        run: timeout 60s flyctl logs --app hyprnote-ai --no-tail || true
+        run: timeout 60s flyctl logs --app meetspace-ai --no-tail || true
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 

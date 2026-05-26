@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 
-import { Badge } from "@hypr/ui/components/ui/badge";
-import { Button } from "@hypr/ui/components/ui/button";
+import { Badge } from "@meetspace/ui/components/ui/badge";
+import { Button } from "@meetspace/ui/components/ui/button";
 
 import * as main from "~/store/tinybase/store/main";
 

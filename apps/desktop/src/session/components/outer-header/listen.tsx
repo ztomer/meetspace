@@ -1,7 +1,7 @@
 import { MicOff } from "lucide-react";
 
-import { DancingSticks } from "@hypr/ui/components/ui/dancing-sticks";
-import { cn } from "@hypr/utils";
+import { DancingSticks } from "@meetspace/ui/components/ui/dancing-sticks";
+import { cn } from "@meetspace/utils";
 
 import { useListenButtonState } from "~/session/components/shared";
 import { useListener } from "~/stt/contexts";

@@ -13,7 +13,7 @@ import {
   events as localSttEvents,
   type ServerStatus,
   type LocalModel,
-} from "@hypr/plugin-local-stt";
+} from "@meetspace/plugin-local-stt";
 
 import { useConfigValues } from "~/shared/config";
 import type { DownloadProgress } from "~/sidebar/toast/types";
@@ -63,7 +63,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
   const sttModel = current_stt_model as string | undefined;
   const isLocalSttModel =
-    current_stt_provider === "hyprnote" && !!sttModel && sttModel !== "cloud";
+    current_stt_provider === "meetspace" && !!sttModel && sttModel !== "cloud";
 
   const localSttQuery = useQuery({
     enabled: isLocalSttModel,

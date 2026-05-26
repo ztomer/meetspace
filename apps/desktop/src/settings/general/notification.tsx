@@ -7,10 +7,10 @@ import {
   commands as detectCommands,
   type InstalledApp,
   type Result,
-} from "@hypr/plugin-detect";
-import { commands as notificationCommands } from "@hypr/plugin-notification";
-import { Badge } from "@hypr/ui/components/ui/badge";
-import { Button } from "@hypr/ui/components/ui/button";
+} from "@meetspace/plugin-detect";
+import { commands as notificationCommands } from "@meetspace/plugin-notification";
+import { Badge } from "@meetspace/ui/components/ui/badge";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -18,22 +18,22 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@hypr/ui/components/ui/command";
+} from "@meetspace/ui/components/ui/command";
 import {
   AppFloatingPanel,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@hypr/ui/components/ui/popover";
+} from "@meetspace/ui/components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@hypr/ui/components/ui/select";
-import { Switch } from "@hypr/ui/components/ui/switch";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/select";
+import { Switch } from "@meetspace/ui/components/ui/switch";
+import { cn } from "@meetspace/utils";
 
 import {
   getIgnoredBundleIds,

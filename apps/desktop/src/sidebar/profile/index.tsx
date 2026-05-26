@@ -8,8 +8,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useResizeObserver } from "usehooks-ts";
 
-import { Kbd } from "@hypr/ui/components/ui/kbd";
-import { cn } from "@hypr/utils";
+import { Kbd } from "@meetspace/ui/components/ui/kbd";
+import { cn } from "@meetspace/utils";
 
 import { NotificationsMenuContent } from "./notification";
 import { MenuItem, ProfileFacehash } from "./shared";

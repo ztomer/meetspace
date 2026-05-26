@@ -333,7 +333,7 @@ fn test_llm_context_invalid_request_preserves_history() {
 
     let mut context = model.llm_context(vec![
         Message::system("You are a helpful assistant."),
-        Message::user(vec![hypr_llm_types::MessagePart::image_url(
+        Message::user(vec![meetspace_llm_types::MessagePart::image_url(
             "https://example.com/test.png",
         )]),
     ]);

@@ -124,165 +124,6 @@ importers:
       '@handlewithcare/react-prosemirror':
         specifier: ^3.0.1
         version: 3.0.1(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.7)(react-dom@19.2.5(react@19.2.5))(react-reconciler@0.33.0(react@19.2.5))(react@19.2.5)
-      '@hypr/api-client':
-        specifier: workspace:*
-        version: link:../../packages/api-client
-      '@hypr/changelog':
-        specifier: workspace:^
-        version: link:../../packages/changelog
-      '@hypr/codemirror':
-        specifier: workspace:^
-        version: link:../../packages/codemirror
-      '@hypr/db':
-        specifier: workspace:*
-        version: link:../../packages/db
-      '@hypr/db-react':
-        specifier: workspace:*
-        version: link:../../packages/db-react
-      '@hypr/db-tauri':
-        specifier: workspace:*
-        version: link:../../packages/db-tauri
-      '@hypr/editor':
-        specifier: workspace:^
-        version: link:../../packages/editor
-      '@hypr/plugin-agent':
-        specifier: workspace:*
-        version: link:../../plugins/agent
-      '@hypr/plugin-analytics':
-        specifier: workspace:*
-        version: link:../../plugins/analytics
-      '@hypr/plugin-audio-priority':
-        specifier: workspace:*
-        version: link:../../plugins/audio-priority
-      '@hypr/plugin-auth':
-        specifier: workspace:*
-        version: link:../../plugins/auth
-      '@hypr/plugin-bedrock':
-        specifier: workspace:*
-        version: link:../../plugins/bedrock
-      '@hypr/plugin-calendar':
-        specifier: workspace:*
-        version: link:../../plugins/calendar
-      '@hypr/plugin-db':
-        specifier: workspace:*
-        version: link:../../plugins/db
-      '@hypr/plugin-deeplink2':
-        specifier: workspace:*
-        version: link:../../plugins/deeplink2
-      '@hypr/plugin-detect':
-        specifier: workspace:*
-        version: link:../../plugins/detect
-      '@hypr/plugin-export':
-        specifier: workspace:*
-        version: link:../../plugins/export
-      '@hypr/plugin-flag':
-        specifier: workspace:*
-        version: link:../../plugins/flag
-      '@hypr/plugin-fs-sync':
-        specifier: workspace:*
-        version: link:../../plugins/fs-sync
-      '@hypr/plugin-fs2':
-        specifier: workspace:*
-        version: link:../../plugins/fs2
-      '@hypr/plugin-git':
-        specifier: workspace:*
-        version: link:../../plugins/git
-      '@hypr/plugin-hooks':
-        specifier: workspace:*
-        version: link:../../plugins/hooks
-      '@hypr/plugin-icon':
-        specifier: workspace:*
-        version: link:../../plugins/icon
-      '@hypr/plugin-importer':
-        specifier: workspace:*
-        version: link:../../plugins/importer
-      '@hypr/plugin-js':
-        specifier: workspace:*
-        version: link:../../plugins/js
-      '@hypr/plugin-local-stt':
-        specifier: workspace:*
-        version: link:../../plugins/local-stt
-      '@hypr/plugin-mcp':
-        specifier: workspace:*
-        version: link:../../plugins/mcp
-      '@hypr/plugin-messenger':
-        specifier: workspace:*
-        version: link:../../plugins/messenger
-      '@hypr/plugin-misc':
-        specifier: workspace:*
-        version: link:../../plugins/misc
-      '@hypr/plugin-network':
-        specifier: workspace:*
-        version: link:../../plugins/network
-      '@hypr/plugin-notification':
-        specifier: workspace:*
-        version: link:../../plugins/notification
-      '@hypr/plugin-notify':
-        specifier: workspace:*
-        version: link:../../plugins/notify
-      '@hypr/plugin-opener2':
-        specifier: workspace:*
-        version: link:../../plugins/opener2
-      '@hypr/plugin-overlay':
-        specifier: workspace:*
-        version: link:../../plugins/overlay
-      '@hypr/plugin-path2':
-        specifier: workspace:*
-        version: link:../../plugins/path2
-      '@hypr/plugin-permissions':
-        specifier: workspace:*
-        version: link:../../plugins/permissions
-      '@hypr/plugin-relay':
-        specifier: workspace:*
-        version: link:../../plugins/relay
-      '@hypr/plugin-screen':
-        specifier: workspace:*
-        version: link:../../plugins/screen
-      '@hypr/plugin-settings':
-        specifier: workspace:*
-        version: link:../../plugins/settings
-      '@hypr/plugin-sfx':
-        specifier: workspace:*
-        version: link:../../plugins/sfx
-      '@hypr/plugin-store2':
-        specifier: workspace:*
-        version: link:../../plugins/store2
-      '@hypr/plugin-tantivy':
-        specifier: workspace:*
-        version: link:../../plugins/tantivy
-      '@hypr/plugin-template':
-        specifier: workspace:*
-        version: link:../../plugins/template
-      '@hypr/plugin-todo':
-        specifier: workspace:*
-        version: link:../../plugins/todo
-      '@hypr/plugin-tracing':
-        specifier: workspace:*
-        version: link:../../plugins/tracing
-      '@hypr/plugin-transcription':
-        specifier: workspace:*
-        version: link:../../plugins/transcription
-      '@hypr/plugin-updater2':
-        specifier: workspace:*
-        version: link:../../plugins/updater2
-      '@hypr/plugin-windows':
-        specifier: workspace:*
-        version: link:../../plugins/windows
-      '@hypr/store':
-        specifier: workspace:*
-        version: link:../../packages/store
-      '@hypr/tinybase-utils':
-        specifier: workspace:*
-        version: link:../../packages/tinybase-utils
-      '@hypr/tiptap':
-        specifier: workspace:^
-        version: link:../../packages/tiptap
-      '@hypr/ui':
-        specifier: workspace:^
-        version: link:../../packages/ui
-      '@hypr/utils':
-        specifier: workspace:^
-        version: link:../../packages/utils
       '@iconify-icon/react':
         specifier: ^3.0.3
         version: 3.0.3(react@19.2.5)
@@ -301,6 +142,165 @@ importers:
       '@lobehub/icons':
         specifier: ^3.0.2
         version: 3.0.2(@lobehub/ui@3.4.0(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.1.1(date-fns@4.1.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(micromark-util-types@2.0.2)(micromark@4.0.2)(motion@11.18.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@types/react@19.2.14)(antd@6.1.1(date-fns@4.1.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@meetspace/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
+      '@meetspace/changelog':
+        specifier: workspace:^
+        version: link:../../packages/changelog
+      '@meetspace/codemirror':
+        specifier: workspace:^
+        version: link:../../packages/codemirror
+      '@meetspace/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@meetspace/db-react':
+        specifier: workspace:*
+        version: link:../../packages/db-react
+      '@meetspace/db-tauri':
+        specifier: workspace:*
+        version: link:../../packages/db-tauri
+      '@meetspace/editor':
+        specifier: workspace:^
+        version: link:../../packages/editor
+      '@meetspace/plugin-agent':
+        specifier: workspace:*
+        version: link:../../plugins/agent
+      '@meetspace/plugin-analytics':
+        specifier: workspace:*
+        version: link:../../plugins/analytics
+      '@meetspace/plugin-audio-priority':
+        specifier: workspace:*
+        version: link:../../plugins/audio-priority
+      '@meetspace/plugin-auth':
+        specifier: workspace:*
+        version: link:../../plugins/auth
+      '@meetspace/plugin-bedrock':
+        specifier: workspace:*
+        version: link:../../plugins/bedrock
+      '@meetspace/plugin-calendar':
+        specifier: workspace:*
+        version: link:../../plugins/calendar
+      '@meetspace/plugin-db':
+        specifier: workspace:*
+        version: link:../../plugins/db
+      '@meetspace/plugin-deeplink2':
+        specifier: workspace:*
+        version: link:../../plugins/deeplink2
+      '@meetspace/plugin-detect':
+        specifier: workspace:*
+        version: link:../../plugins/detect
+      '@meetspace/plugin-export':
+        specifier: workspace:*
+        version: link:../../plugins/export
+      '@meetspace/plugin-flag':
+        specifier: workspace:*
+        version: link:../../plugins/flag
+      '@meetspace/plugin-fs-sync':
+        specifier: workspace:*
+        version: link:../../plugins/fs-sync
+      '@meetspace/plugin-fs2':
+        specifier: workspace:*
+        version: link:../../plugins/fs2
+      '@meetspace/plugin-git':
+        specifier: workspace:*
+        version: link:../../plugins/git
+      '@meetspace/plugin-hooks':
+        specifier: workspace:*
+        version: link:../../plugins/hooks
+      '@meetspace/plugin-icon':
+        specifier: workspace:*
+        version: link:../../plugins/icon
+      '@meetspace/plugin-importer':
+        specifier: workspace:*
+        version: link:../../plugins/importer
+      '@meetspace/plugin-js':
+        specifier: workspace:*
+        version: link:../../plugins/js
+      '@meetspace/plugin-local-stt':
+        specifier: workspace:*
+        version: link:../../plugins/local-stt
+      '@meetspace/plugin-mcp':
+        specifier: workspace:*
+        version: link:../../plugins/mcp
+      '@meetspace/plugin-messenger':
+        specifier: workspace:*
+        version: link:../../plugins/messenger
+      '@meetspace/plugin-misc':
+        specifier: workspace:*
+        version: link:../../plugins/misc
+      '@meetspace/plugin-network':
+        specifier: workspace:*
+        version: link:../../plugins/network
+      '@meetspace/plugin-notification':
+        specifier: workspace:*
+        version: link:../../plugins/notification
+      '@meetspace/plugin-notify':
+        specifier: workspace:*
+        version: link:../../plugins/notify
+      '@meetspace/plugin-opener2':
+        specifier: workspace:*
+        version: link:../../plugins/opener2
+      '@meetspace/plugin-overlay':
+        specifier: workspace:*
+        version: link:../../plugins/overlay
+      '@meetspace/plugin-path2':
+        specifier: workspace:*
+        version: link:../../plugins/path2
+      '@meetspace/plugin-permissions':
+        specifier: workspace:*
+        version: link:../../plugins/permissions
+      '@meetspace/plugin-relay':
+        specifier: workspace:*
+        version: link:../../plugins/relay
+      '@meetspace/plugin-screen':
+        specifier: workspace:*
+        version: link:../../plugins/screen
+      '@meetspace/plugin-settings':
+        specifier: workspace:*
+        version: link:../../plugins/settings
+      '@meetspace/plugin-sfx':
+        specifier: workspace:*
+        version: link:../../plugins/sfx
+      '@meetspace/plugin-store2':
+        specifier: workspace:*
+        version: link:../../plugins/store2
+      '@meetspace/plugin-tantivy':
+        specifier: workspace:*
+        version: link:../../plugins/tantivy
+      '@meetspace/plugin-template':
+        specifier: workspace:*
+        version: link:../../plugins/template
+      '@meetspace/plugin-todo':
+        specifier: workspace:*
+        version: link:../../plugins/todo
+      '@meetspace/plugin-tracing':
+        specifier: workspace:*
+        version: link:../../plugins/tracing
+      '@meetspace/plugin-transcription':
+        specifier: workspace:*
+        version: link:../../plugins/transcription
+      '@meetspace/plugin-updater2':
+        specifier: workspace:*
+        version: link:../../plugins/updater2
+      '@meetspace/plugin-windows':
+        specifier: workspace:*
+        version: link:../../plugins/windows
+      '@meetspace/store':
+        specifier: workspace:*
+        version: link:../../packages/store
+      '@meetspace/tinybase-utils':
+        specifier: workspace:*
+        version: link:../../packages/tinybase-utils
+      '@meetspace/tiptap':
+        specifier: workspace:^
+        version: link:../../packages/tiptap
+      '@meetspace/ui':
+        specifier: workspace:^
+        version: link:../../packages/ui
+      '@meetspace/utils':
+        specifier: workspace:^
+        version: link:../../packages/utils
       '@openrouter/ai-sdk-provider':
         specifier: ^2.5.1
         version: 2.5.1(ai@6.0.158(zod@4.3.6))(zod@4.3.6)
@@ -638,7 +638,7 @@ importers:
 
   examples/plugins/hello-world:
     devDependencies:
-      '@hypr/plugin-sdk':
+      '@meetspace/plugin-sdk':
         specifier: workspace:*
         version: link:../../../packages/plugin-sdk
       '@types/react':
@@ -693,9 +693,6 @@ importers:
 
   packages/agent-designer:
     dependencies:
-      '@hypr/agent-core':
-        specifier: workspace:^
-        version: link:../agent-core
       '@langchain/core':
         specifier: ^1.1.39
         version: 1.1.39(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@2.2.0(@opentelemetry/api@1.9.1))(openai@6.34.0(ws@8.20.0)(zod@4.3.6))(ws@8.20.0)
@@ -708,6 +705,9 @@ importers:
       '@langchain/openai':
         specifier: ^1.4.4
         version: 1.4.4(@langchain/core@1.1.39(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@2.2.0(@opentelemetry/api@1.9.1))(openai@6.34.0(ws@8.20.0)(zod@4.3.6))(ws@8.20.0))(ws@8.20.0)
+      '@meetspace/agent-core':
+        specifier: workspace:^
+        version: link:../agent-core
       '@t3-oss/env-core':
         specifier: ^0.13.11
         version: 0.13.11(typescript@5.9.3)(zod@4.3.6)
@@ -739,9 +739,6 @@ importers:
 
   packages/agent-support:
     dependencies:
-      '@hypr/agent-core':
-        specifier: workspace:^
-        version: link:../agent-core
       '@langchain/core':
         specifier: ^1.1.39
         version: 1.1.39(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@2.2.0(@opentelemetry/api@1.9.1))(openai@6.34.0(ws@8.20.0)(zod@4.3.6))(ws@8.20.0)
@@ -754,6 +751,9 @@ importers:
       '@langchain/openai':
         specifier: ^1.4.4
         version: 1.4.4(@langchain/core@1.1.39(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@2.2.0(@opentelemetry/api@1.9.1))(openai@6.34.0(ws@8.20.0)(zod@4.3.6))(ws@8.20.0))(ws@8.20.0)
+      '@meetspace/agent-core':
+        specifier: workspace:^
+        version: link:../agent-core
       '@t3-oss/env-core':
         specifier: ^0.13.11
         version: 0.13.11(typescript@5.9.3)(zod@4.3.6)
@@ -803,7 +803,7 @@ importers:
 
   packages/changelog:
     dependencies:
-      '@hypr/utils':
+      '@meetspace/utils':
         specifier: workspace:^
         version: link:../utils
       react:
@@ -859,7 +859,7 @@ importers:
 
   packages/db:
     dependencies:
-      '@hypr/db-runtime':
+      '@meetspace/db-runtime':
         specifier: workspace:*
         version: link:../db-runtime
       drizzle-orm:
@@ -878,7 +878,7 @@ importers:
 
   packages/db-react:
     dependencies:
-      '@hypr/db-runtime':
+      '@meetspace/db-runtime':
         specifier: workspace:*
         version: link:../db-runtime
       react:
@@ -909,10 +909,10 @@ importers:
 
   packages/db-tauri:
     dependencies:
-      '@hypr/db-runtime':
+      '@meetspace/db-runtime':
         specifier: workspace:*
         version: link:../db-runtime
-      '@hypr/plugin-db':
+      '@meetspace/plugin-db':
         specifier: workspace:*
         version: link:../../plugins/db
     devDependencies:
@@ -931,16 +931,16 @@ importers:
       '@handlewithcare/react-prosemirror':
         specifier: ^3.0.1
         version: 3.0.1(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.7)(react-dom@19.2.5(react@19.2.5))(react-reconciler@0.33.0(react@19.2.5))(react@19.2.5)
-      '@hypr/plugin-opener2':
+      '@meetspace/plugin-opener2':
         specifier: workspace:*
         version: link:../../plugins/opener2
-      '@hypr/store':
+      '@meetspace/store':
         specifier: workspace:*
         version: link:../store
-      '@hypr/tiptap':
+      '@meetspace/tiptap':
         specifier: workspace:^
         version: link:../tiptap
-      '@hypr/utils':
+      '@meetspace/utils':
         specifier: workspace:^
         version: link:../utils
       facehash:
@@ -1067,7 +1067,7 @@ importers:
 
   packages/tiptap:
     dependencies:
-      '@hypr/utils':
+      '@meetspace/utils':
         specifier: workspace:^
         version: link:../utils
       '@tiptap/core':
@@ -1137,7 +1137,7 @@ importers:
 
   packages/ui:
     dependencies:
-      '@hypr/utils':
+      '@meetspace/utils':
         specifier: workspace:^
         version: link:../utils
       '@radix-ui/react-accordion':
@@ -1228,10 +1228,10 @@ importers:
       '@date-fns/tz':
         specifier: ^1.4.1
         version: 1.4.1
-      '@hypr/plugin-transcription':
+      '@meetspace/plugin-transcription':
         specifier: workspace:^
         version: link:../../plugins/transcription
-      '@hypr/plugin-windows':
+      '@meetspace/plugin-windows':
         specifier: workspace:^
         version: link:../../plugins/windows
       '@tauri-apps/api':
