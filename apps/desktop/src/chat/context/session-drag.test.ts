@@ -49,7 +49,7 @@ describe("session drag context", () => {
     const dataTransfer = new FakeDataTransfer() as unknown as DataTransfer;
 
     dataTransfer.setData(
-      "application/x-anarlog-session-context",
+      "application/x-meetspace-session-context",
       JSON.stringify({ sessionId: "session-1" }),
     );
 

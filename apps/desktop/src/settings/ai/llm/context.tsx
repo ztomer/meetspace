@@ -7,7 +7,7 @@ type LlmSettingsContextType = {
   accordionValue: string;
   setAccordionValue: (value: string) => void;
   shouldHighlight: boolean;
-  hyprAccordionRef: React.RefObject<HTMLDivElement | null>;
+  meetspaceAccordionRef: React.RefObject<HTMLDivElement | null>;
 };
 
 const LlmSettingsContext = createContext<LlmSettingsContextType | null>(null);
@@ -29,7 +29,7 @@ export function LlmSettingsProvider({
     hasLlmConfigured ? "" : DEFAULT_PROVIDER,
   );
   const [shouldHighlight, setShouldHighlight] = useState(false);
-  const hyprAccordionRef = useRef<HTMLDivElement | null>(null);
+  const meetspaceAccordionRef = useRef<HTMLDivElement | null>(null);
 
   const toastActionTarget = useToastAction((state) => state.target);
   const clearToastActionTarget = useToastAction((state) => state.clearTarget);
@@ -40,7 +40,7 @@ export function LlmSettingsProvider({
       setShouldHighlight(true);
 
       const timer = setTimeout(() => {
-        hyprAccordionRef.current?.scrollIntoView({
+        meetspaceAccordionRef.current?.scrollIntoView({
           behavior: "smooth",
           block: "center",
         });
@@ -63,7 +63,7 @@ export function LlmSettingsProvider({
         accordionValue,
         setAccordionValue,
         shouldHighlight,
-        hyprAccordionRef,
+        meetspaceAccordionRef,
       }}
     >
       {children}

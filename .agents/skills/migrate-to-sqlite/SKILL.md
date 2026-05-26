@@ -65,7 +65,7 @@ out of scope for this migration.
 Why: one storage-swap PR per domain touches 1 file (the hook module),
 not 20–50 consumer files.
 
-Enforced by `hypr/no-raw-tinybase` in `eslint-plugin-hypr.mjs`.
+Enforced by `meetspace/no-raw-tinybase` in `eslint-plugin-meetspace.mjs`.
 `.oxlintrc.json` keeps a `TINYBASE_MIGRATION_PENDING` override that
 shrinks as each domain is cleaned. CI gates this via
 `.github/workflows/lint.yaml`.
@@ -166,5 +166,5 @@ swapped.
 - `cargo check` and `cargo test -p db-app -p tauri-plugin-db`
 - `pnpm -F @meetspace/desktop typecheck`
 - `pnpm -F @meetspace/desktop test`
-- `npx oxlint --quiet apps/desktop/src/` (the `hypr/no-raw-tinybase` CI gate)
+- `npx oxlint --quiet apps/desktop/src/` (the `meetspace/no-raw-tinybase` CI gate)
 - `pnpm exec dprint fmt`

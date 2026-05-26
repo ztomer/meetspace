@@ -13,9 +13,9 @@ export const getScheme = async (): Promise<string> => {
   const schemes: Record<string, string> = {
     "com.meetspace.stable": "meetspace",
     "com.meetspace.staging": "meetspace-staging",
-    "com.meetspace.dev": "hypr",
+    "com.meetspace.dev": "meetspace",
   };
-  return schemes[id] ?? "hypr";
+  return schemes[id] ?? "meetspace";
 };
 
 type DesktopFlowPath =

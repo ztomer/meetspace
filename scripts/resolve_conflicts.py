@@ -91,25 +91,25 @@ def should_delete(filepath):
     return False
 
 REPLACEMENTS = [
-    ("__HYPR_NAVIGATE__", "__MEETSPACE_NAVIGATE__"),
-    ("com.hyprnote", "com.meetspace"),
-    ("@hypr/", "@meetspace/"),
-    ("hypr-", "meetspace-"),
-    ("hypr_", "meetspace_"),
-    ("HYPR_", "MEETSPACE_"),
-    ("Hyprnote", "Meetspace"),
-    ("hyprnote", "meetspace"),
-    ("HYPRNOTE", "MEETSPACE"),
-    ("Anarlog", "Meetspace"),
-    ("anarlog", "meetspace"),
-    ("ANARLOG", "MEETSPACE"),
-    ("hypr", "meetspace"),
-    ("HYPR", "MEETSPACE"),
+    ("__MEETSPACE_NAVIGATE__", "__MEETSPACE_NAVIGATE__"),
+    ("com.meetspace", "com.meetspace"),
+    ("@meetspace/", "@meetspace/"),
+    ("meetspace-", "meetspace-"),
+    ("meetspace_", "meetspace_"),
+    ("MEETSPACE_", "MEETSPACE_"),
+    ("Meetspace", "Meetspace"),
+    ("meetspace", "meetspace"),
+    ("MEETSPACE", "MEETSPACE"),
+    ("Meetspace", "Meetspace"),
+    ("meetspace", "meetspace"),
+    ("MEETSPACE", "MEETSPACE"),
+    ("meetspace", "meetspace"),
+    ("MEETSPACE", "MEETSPACE"),
 ]
 
 def is_rebrand_commit():
     code, stdout, stderr = run_command("git log -1 REBASE_HEAD")
-    if code == 0 and ("rename Anarlog/Hyprnote" in stdout or "fork(phase 7.1): rename" in stdout):
+    if code == 0 and ("rename Meetspace/Meetspace" in stdout or "fork(phase 7.1): rename" in stdout):
         return True
     return False
 
