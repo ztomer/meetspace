@@ -26,6 +26,7 @@ use super::tools::{
 #[derive(Clone)]
 pub(crate) struct SupportMcpServer {
     state: AppState,
+    #[allow(dead_code)] // Held for the #[tool_router] macro's resolution; not read directly.
     tool_router: ToolRouter<Self>,
 }
 

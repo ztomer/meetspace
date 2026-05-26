@@ -1,3 +1,8 @@
+// fork(meetspace): silence upstream warnings (named-lifetime hiding and
+// self-deprecations of ChatCompletionFunctions). Re-apply this `#![allow(..)]`
+// after running scripts/refresh-vendor.sh.
+#![allow(mismatched_lifetime_syntaxes, deprecated)]
+
 //! Rust library for OpenAI
 //!
 //! ## Creating client

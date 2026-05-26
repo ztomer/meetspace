@@ -1,18 +1,8 @@
-use std::path::PathBuf;
-use std::sync::Arc;
-
-use axum::http::StatusCode;
-use tower_http::cors::{self, CorsLayer};
-
 mod axum_server;
 pub mod events;
 pub mod runtime;
 
 pub use axum_server::LocalAxumServer;
-
-use runtime::{LocalServerRuntime, NoopRuntime};
-
-const WHISPER_LISTEN_PATH: &str = "/v1";
 
 pub struct LocalSttServer {
     inner: LocalAxumServer,
@@ -109,11 +99,4 @@ impl Drop for LocalSttServer {
     fn drop(&mut self) {
         self.stop();
     }
-}
-
-fn cors_layer() -> CorsLayer {
-    CorsLayer::new()
-        .allow_origin(cors::Any)
-        .allow_methods(cors::Any)
-        .allow_headers(cors::Any)
 }

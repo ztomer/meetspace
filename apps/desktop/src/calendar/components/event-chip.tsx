@@ -181,7 +181,7 @@ function EventPopoverContent({ eventId }: { eventId: string }) {
       <EventDisplay event={event} />
       <Button
         size="sm"
-        className="bg-primary hover:bg-primary min-h-8 w-full text-white"
+        className="bg-primary hover:bg-primary text-primary-foreground min-h-8 w-full"
         onClick={handleOpen}
       >
         Open note
