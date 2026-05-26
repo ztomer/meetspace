@@ -1,14 +1,17 @@
-import { useMutation } from "@tanstack/react-query";
-import { CheckCircle2Icon, ExternalLinkIcon, LogInIcon, LogOutIcon } from "lucide-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  CheckCircle2Icon,
+  ExternalLinkIcon,
+  LogInIcon,
+  LogOutIcon,
+} from "lucide-react";
 
 import { commands as openerCommands } from "@meetspace/plugin-opener2";
 import { Button } from "@meetspace/ui/components/ui/button";
 import { Input } from "@meetspace/ui/components/ui/input";
 
-import {
-  OAUTH_PROVIDERS,
-  signIn,
-} from "~/integrations/oauth-providers";
+import { listGoogleCalendars } from "~/integrations/calendar-api";
+import { OAUTH_PROVIDERS, signIn } from "~/integrations/oauth-providers";
 import { useConfigValues } from "~/shared/config";
 import * as settings from "~/store/tinybase/store/settings";
 
@@ -17,9 +20,13 @@ export function GoogleCalendarIntegration() {
   const {
     google_client_id,
     google_refresh_token,
+    google_access_token,
+    google_token_expires_at,
   } = useConfigValues([
     "google_client_id",
     "google_refresh_token",
+    "google_access_token",
+    "google_token_expires_at",
   ] as const);
 
   const setClientId = settings.UI.useSetValueCallback(
@@ -67,6 +74,23 @@ export function GoogleCalendarIntegration() {
     setAccessToken("");
     setExpiresAt(0);
   };
+
+  const calendarsQuery = useQuery({
+    queryKey: ["google-calendars", google_refresh_token],
+    enabled: connected && !!google_access_token,
+    queryFn: () =>
+      listGoogleCalendars({
+        clientId,
+        accessToken: google_access_token!,
+        refreshTokenValue: google_refresh_token ?? null,
+        expiresAt: google_token_expires_at ?? null,
+        onTokenRefresh: (next) => {
+          setAccessToken(next.accessToken);
+          if (next.refreshToken) setRefreshToken(next.refreshToken);
+          if (next.expiresAt) setExpiresAt(next.expiresAt);
+        },
+      }),
+  });
 
   return (
     <section className="rounded-lg border border-border p-5">
@@ -146,6 +170,39 @@ export function GoogleCalendarIntegration() {
           <p className="text-xs text-destructive">
             {(connect.error as Error).message}
           </p>
+        ) : null}
+
+        {connected ? (
+          <div className="mt-2 flex flex-col gap-1.5 border-t border-border pt-3">
+            <p className="text-xs font-medium text-muted-foreground">
+              Your calendars
+            </p>
+            {calendarsQuery.isPending ? (
+              <p className="text-xs text-muted-foreground">Loading…</p>
+            ) : calendarsQuery.isError ? (
+              <p className="text-xs text-destructive">
+                {(calendarsQuery.error as Error).message}
+              </p>
+            ) : calendarsQuery.data && calendarsQuery.data.length > 0 ? (
+              <ul className="flex flex-col gap-0.5 text-xs">
+                {calendarsQuery.data.map((c) => (
+                  <li key={c.id} className="flex items-center gap-2">
+                    <span className="size-1.5 rounded-full bg-foreground/40" />
+                    <span className="truncate">{c.name}</span>
+                    {c.primary ? (
+                      <span className="rounded bg-muted px-1 text-[10px]">
+                        primary
+                      </span>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                No calendars found.
+              </p>
+            )}
+          </div>
         ) : null}
       </div>
     </section>
