@@ -152,7 +152,7 @@ export function OnboardingButton({
       className={cn([
         "w-fit rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-200",
         variant === "primary" &&
-          "border-border bg-primary hover:bg-primary border-2 text-white shadow-[0_2px_6px_rgba(87,83,78,0.22),0_10px_18px_-10px_rgba(87,83,78,0.65)]",
+          "border-border bg-primary hover:bg-primary text-primary-foreground border-2 shadow-[0_2px_6px_rgba(87,83,78,0.22),0_10px_18px_-10px_rgba(87,83,78,0.65)]",
         variant === "secondary" &&
           "border-border text-muted-foreground hover:border-border hover:text-foreground border",
         variant === "ghost" && "text-muted-foreground hover:text-foreground",

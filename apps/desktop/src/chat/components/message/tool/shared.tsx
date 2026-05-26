@@ -184,7 +184,7 @@ export function ToolCardApproval() {
         Decline
       </button>
       <button
-        className="bg-primary hover:bg-primary rounded-md px-3 py-1 text-[13px] text-white transition-colors"
+        className="bg-primary hover:bg-primary text-primary-foreground rounded-md px-3 py-1 text-[13px] transition-colors"
         onClick={() => respond(true)}
         autoFocus
       >

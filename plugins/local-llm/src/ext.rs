@@ -1,4 +1,4 @@
-use std::{collections::HashMap, future::Future, path::PathBuf, sync::Arc};
+use std::{collections::HashMap, path::PathBuf, sync::Arc};
 use tauri::{Manager, Runtime, ipc::Channel};
 
 use meetspace_model_downloader::{DownloadableModel, ModelDownloadManager, ModelDownloaderRuntime};
