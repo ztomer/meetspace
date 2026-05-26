@@ -24,7 +24,7 @@
     }
   },
   "bundle": {
-    "publisher": "Fastrepl",
+    "publisher": "Meetspace",
     "active": true,
     "createUpdaterArtifacts": true,
     "targets": "all",

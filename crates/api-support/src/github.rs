@@ -4,8 +4,8 @@ use crate::state::AppState;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-const GITHUB_OWNER: &str = "fastrepl";
-const GITHUB_REPO: &str = "char";
+const GITHUB_OWNER: &str = "ztomer";
+const GITHUB_REPO: &str = "meetspace";
 const DEFAULT_ISSUE_LABELS: &[&str] = &[
     "area/backend",
     "area/ui",

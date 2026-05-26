@@ -28,12 +28,12 @@
   <launchable type="desktop-id">com.meetspace.Meetspace.desktop</launchable>
 
   <url type="homepage">https://meetspace.com</url>
-  <url type="bugtracker">https://github.com/fastrepl/char/issues</url>
-  <url type="vcs-browser">https://github.com/fastrepl/char</url>
-  <url type="contribute">https://github.com/fastrepl/char/blob/main/CONTRIBUTING.md</url>
+  <url type="bugtracker">https://github.com/ztomer/meetspace/issues</url>
+  <url type="vcs-browser">https://github.com/ztomer/meetspace</url>
+  <url type="contribute">https://github.com/ztomer/meetspace/blob/main/CONTRIBUTING.md</url>
 
   <developer id="com.meetspace">
-    <name>Fastrepl</name>
+    <name>Meetspace</name>
   </developer>
 
   <branding>

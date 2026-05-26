@@ -75,8 +75,8 @@ msgid "Select language"
 msgstr "言語を選択"
 
 #: src/settings/general/index.tsx:189
-msgid "Send anonymous usage analytics to help improve Anarlog."
-msgstr "Anarlog の改善に役立てるため、匿名の使用状況データを送信します。"
+msgid "Send anonymous usage analytics to help improve Meetspace."
+msgstr "Meetspace の改善に役立てるため、匿名の使用状況データを送信します。"
 
 #: src/settings/index.tsx:36
 msgid "Settings"
@@ -95,8 +95,8 @@ msgid "Show the compact floating control while listening."
 msgstr ""
 
 #: src/settings/general/index.tsx:157
-msgid "Start Anarlog at login"
-msgstr "ログイン時に Anarlog を起動"
+msgid "Start Meetspace at login"
+msgstr "ログイン時に Meetspace を起動"
 
 #: src/settings/general/index.tsx:164
 msgid "Start when meeting begins"
