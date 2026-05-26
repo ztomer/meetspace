@@ -2,7 +2,6 @@ import { platform } from "@tauri-apps/plugin-os";
 import { ChevronDown, PlusIcon } from "lucide-react";
 import { useCallback, useMemo, type MouseEvent } from "react";
 
-import type { ConnectionItem } from "@meetspace/api-client";
 import {
   Accordion,
   AccordionContent,
@@ -20,16 +19,17 @@ import { type CalendarProvider, PROVIDERS } from "./shared";
 import { useAuth } from "~/auth";
 import { useBillingAccess } from "~/auth/billing";
 import { useConnections } from "~/auth/useConnections";
+import type { ConnectionItem } from "~/shared/api-types";
 import { useNativeContextMenu } from "~/shared/hooks/useNativeContextMenu";
 import { usePermission } from "~/shared/hooks/usePermissions";
 import { openIntegrationUrl } from "~/shared/integration";
 
 function getProviderBadgeClassName(badge: string) {
   if (badge === "Beta") {
-    return "text-xs font-medium text-stone-600";
+    return "text-xs font-medium text-muted-foreground";
   }
 
-  return "rounded-full border border-neutral-300 px-2 text-xs font-light text-neutral-500";
+  return "rounded-full border border-border px-2 text-xs font-light text-muted-foreground";
 }
 
 function getDefaultOpenProviderIds(
@@ -76,14 +76,6 @@ function getProviderAccordionKey(
     .join("|");
 }
 
-function ProviderIcon({ provider }: { provider: CalendarProvider }) {
-  return (
-    <span className="flex size-5 shrink-0 items-center justify-center">
-      {provider.icon}
-    </span>
-  );
-}
-
 export function CalendarSidebarContent({
   returnTo = "calendar",
 }: {
@@ -124,9 +116,9 @@ export function CalendarSidebarContent({
         provider.disabled ? (
           <div
             key={provider.id}
-            className="flex items-center gap-2 border-b border-neutral-100 py-3 opacity-50 last:border-none"
+            className="border-border flex items-center gap-2 border-b py-3 opacity-50 last:border-none"
           >
-            <ProviderIcon provider={provider} />
+            {provider.icon}
             <span className="text-sm font-medium">{provider.displayName}</span>
             {provider.badge && (
               <span className={getProviderBadgeClassName(provider.badge)}>
@@ -240,23 +232,17 @@ function ProviderAccordionItem({
     ],
   );
   const showProviderMenu = useNativeContextMenu(providerMenuItems);
-  const hasAddAccountButton = canAddAccount && !requiresPro;
 
   return (
     <AccordionItem
       value={provider.id}
-      className="group/provider border-b border-neutral-100 last:border-none"
+      className="group/provider border-border border-b last:border-none"
     >
       <div
         onContextMenu={
           providerMenuItems.length > 0 ? showProviderMenu : undefined
         }
-        className={cn([
-          "group/row relative grid items-center gap-1 rounded-md hover:bg-neutral-50",
-          hasAddAccountButton
-            ? "grid-cols-[minmax(0,1fr)_auto_auto]"
-            : "grid-cols-[minmax(0,1fr)_auto]",
-        ])}
+        className="group/row hover:bg-muted relative grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1 rounded-md"
       >
         <AccordionHeader
           className={cn(["min-w-0", requiresPro && "opacity-60"])}
@@ -266,7 +252,7 @@ function ProviderAccordionItem({
             onClick={handleTriggerClick}
           >
             <div className="flex min-w-0 items-center gap-2">
-              <ProviderIcon provider={provider} />
+              {provider.icon}
               <span
                 className={cn([
                   "flex min-w-0 items-center gap-2 transition-opacity duration-150",
@@ -291,16 +277,16 @@ function ProviderAccordionItem({
           <button
             type="button"
             onClick={handleUpgradeToPro}
-            className="pointer-events-none absolute top-1/2 right-1 z-10 shrink-0 translate-x-1 -translate-y-1/2 rounded-full border-2 border-stone-600 bg-stone-800 px-3 py-1 text-xs font-medium text-white opacity-0 shadow-[0_4px_14px_rgba(87,83,78,0.18)] transition-all duration-150 group-focus-within/row:pointer-events-auto group-focus-within/row:translate-x-0 group-focus-within/row:opacity-100 group-hover/row:pointer-events-auto group-hover/row:translate-x-0 group-hover/row:opacity-100 hover:bg-stone-700 focus-visible:ring-2 focus-visible:ring-stone-500 focus-visible:outline-none"
+            className="border-border bg-primary hover:bg-primary text-primary-foreground pointer-events-none absolute top-1/2 right-1 z-10 shrink-0 translate-x-1 -translate-y-1/2 rounded-full border-2 px-3 py-1 text-xs font-medium opacity-0 shadow-[0_4px_14px_rgba(87,83,78,0.18)] transition-all duration-150 group-focus-within/row:pointer-events-auto group-focus-within/row:translate-x-0 group-focus-within/row:opacity-100 group-hover/row:pointer-events-auto group-hover/row:translate-x-0 group-hover/row:opacity-100 focus-visible:ring-2 focus-visible:ring-stone-500 focus-visible:outline-none"
             aria-label={`Upgrade to Pro for ${provider.displayName}`}
           >
             Upgrade to Pro
           </button>
-        ) : hasAddAccountButton ? (
+        ) : canAddAccount ? (
           <button
             type="button"
             onClick={handleAddAccount}
-            className="shrink-0 rounded p-1 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-900"
+            className="text-muted-foreground hover:bg-accent hover:text-foreground shrink-0 rounded p-1 transition-colors"
             aria-label={`Add ${provider.displayName} account`}
           >
             <PlusIcon className="size-4" />
@@ -310,7 +296,7 @@ function ProviderAccordionItem({
         {!requiresPro && (
           <ChevronDown
             className={cn([
-              "size-4 shrink-0 text-neutral-500 opacity-0 transition-all duration-200 group-focus-within/row:opacity-100 group-hover/row:opacity-100",
+              "text-muted-foreground size-4 shrink-0 opacity-0 transition-all duration-200 group-focus-within/row:opacity-100 group-hover/row:opacity-100",
               "group-data-[state=open]/provider:rotate-180",
             ])}
           />

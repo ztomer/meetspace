@@ -1,6 +1,12 @@
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { arch } from "@tauri-apps/plugin-os";
-import { AlertTriangle, Check, FolderOpen, Loader2, Trash2 } from "lucide-react";
+import {
+  AlertTriangle,
+  Check,
+  FolderOpen,
+  Loader2,
+  Trash2,
+} from "lucide-react";
 import { useEffect } from "react";
 
 import {
@@ -94,8 +100,8 @@ export function SelectProviderAndModel() {
   return (
     <div className="flex flex-col gap-4">
       {!isConfigured && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3">
-          <span className="text-sm text-red-600">
+        <div className="border-destructive/30 bg-destructive-bg rounded-lg border px-4 py-3">
+          <span className="text-destructive text-sm">
             <strong className="font-medium">Transcription model</strong> is
             needed to make Meetspace listen to your conversations.
           </span>
@@ -103,8 +109,8 @@ export function SelectProviderAndModel() {
       )}
 
       {hasError && health.message && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3">
-          <span className="text-sm text-red-600">{health.message}</span>
+        <div className="border-destructive/30 bg-destructive-bg rounded-lg border px-4 py-3">
+          <span className="text-destructive text-sm">{health.message}</span>
         </div>
       )}
 
@@ -117,17 +123,19 @@ export function SelectProviderAndModel() {
         >
           <SelectTrigger
             className={cn([
-              "bg-white text-left shadow-none focus:ring-0",
+              "bg-background text-left shadow-none focus:ring-0",
               "[&>span]:flex [&>span]:w-full [&>span]:items-center [&>span]:justify-between [&>span]:gap-2",
               isConfigured && "[&>svg:last-child]:hidden",
             ])}
           >
             <SelectValue placeholder="Select a model">
-              {selectedModel ? <ModelSelectedValue model={selectedModel} /> : undefined}
+              {selectedModel ? (
+                <ModelSelectedValue model={selectedModel} />
+              ) : undefined}
             </SelectValue>
             {isConfigured && <HealthStatusIndicator />}
             {isConfigured && health.status === "success" && (
-              <Check className="-mr-1 h-4 w-4 shrink-0 text-green-600" />
+              <Check className="text-success-fg -mr-1 h-4 w-4 shrink-0" />
             )}
           </SelectTrigger>
           <SelectContent align="end">
@@ -153,8 +161,8 @@ export function TranscriptionLanguageWarningBanner() {
   }
 
   return (
-    <div className="-mx-6 -mt-6 mb-6 border-b border-amber-200 bg-amber-50 px-6 py-3">
-      <span className="flex items-center justify-center gap-2 text-center text-sm text-amber-600">
+    <div className="border-warning-border bg-warning-bg -mx-6 -mt-3 mb-6 border-b px-6 py-3">
+      <span className="text-warning-fg flex items-center justify-center gap-2 text-center text-sm">
         <AlertTriangle className="size-4 shrink-0" />
         Selected model may not support all your spoken languages.
       </span>
@@ -273,15 +281,15 @@ function ModelSelectItem({
             className={cn([
               "rounded-md px-1.5 py-0.5 font-medium",
               model.mode === "realtime"
-                ? "bg-sky-50 text-sky-700"
-                : "bg-neutral-100 text-neutral-600",
+                ? "bg-info-bg text-info-fg"
+                : "bg-muted text-muted-foreground",
             ])}
           >
             {model.mode === "realtime" ? "Realtime" : "Batch"}
           </span>
         )}
         {!model.isDownloaded && sizeLabel && (
-          <span className="font-mono text-neutral-500">{sizeLabel}</span>
+          <span className="text-muted-foreground font-mono">{sizeLabel}</span>
         )}
       </div>
     </div>
@@ -317,19 +325,19 @@ function ModelSelectItem({
     <div
       className={cn([
         "relative flex items-center justify-between",
-        "rounded-full px-2 py-1.5 text-sm outline-hidden",
+        "rounded-xs px-2 py-1.5 text-sm outline-hidden",
         "cursor-pointer select-none",
         "hover:bg-accent hover:text-accent-foreground",
         "group",
       ])}
     >
-      <div className="min-w-0 flex-1 text-neutral-400">{content}</div>
+      <div className="text-muted-foreground min-w-0 flex-1">{content}</div>
       {isDownloading ? (
         <span
           className={cn([
             "rounded-full px-2 py-0.5 text-[11px] font-medium",
             "flex items-center gap-1",
-            "bg-linear-to-t from-neutral-200 to-neutral-100 text-neutral-500",
+            "bg-secondary text-secondary-foreground border-border border",
           ])}
         >
           <Loader2 className="size-3 animate-spin" />
@@ -341,7 +349,7 @@ function ModelSelectItem({
             "rounded-full px-2 text-[11px] font-medium",
             "opacity-0 group-hover:opacity-100",
             "transition-all duration-150",
-            "bg-linear-to-t from-neutral-200 to-neutral-100 py-0.5 text-neutral-900 shadow-xs hover:shadow-md",
+            "bg-secondary text-secondary-foreground border-border border py-0.5 shadow-xs hover:shadow-md",
           ])}
           onClick={handleAction}
         >
@@ -417,8 +425,8 @@ function LocalModelDropdownActions({ model }: { model: LocalModel }) {
         type="button"
         aria-label="Show in Finder"
         className={cn([
-          "flex size-6 items-center justify-center rounded-full",
-          "text-neutral-500 hover:text-neutral-900",
+          "flex size-6 items-center justify-center rounded-md",
+          "text-muted-foreground hover:text-foreground",
         ])}
         onPointerDown={stopSelect}
         onClick={(event) => {
@@ -432,8 +440,8 @@ function LocalModelDropdownActions({ model }: { model: LocalModel }) {
         type="button"
         aria-label="Delete model"
         className={cn([
-          "flex size-6 items-center justify-center rounded-full",
-          "text-red-500 hover:text-red-600",
+          "flex size-6 items-center justify-center rounded-md",
+          "text-destructive hover:text-destructive",
         ])}
         onPointerDown={stopSelect}
         onClick={(event) => {

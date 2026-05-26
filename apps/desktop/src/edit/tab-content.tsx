@@ -48,7 +48,7 @@ export function TabContentEdit({ tab }: { tab: EditTab }) {
   if (!edit) {
     return (
       <StandardTabWrapper>
-        <div className="flex h-full items-center justify-center text-neutral-400">
+        <div className="flex h-full items-center justify-center text-muted-foreground">
           This edit is no longer pending.
         </div>
       </StandardTabWrapper>
@@ -58,18 +58,18 @@ export function TabContentEdit({ tab }: { tab: EditTab }) {
   return (
     <StandardTabWrapper>
       <div className="flex h-full flex-col">
-        <div className="flex items-start justify-between gap-3 border-b border-neutral-200 px-4 py-3">
+        <div className="flex items-start justify-between gap-3 border-b border-border px-4 py-3">
           <div className="min-w-0 flex-1">
-            <div className="text-[13px] font-medium text-neutral-900">
+            <div className="text-[13px] font-medium text-foreground">
               {sessionTitle ?? "Untitled session"}
             </div>
-            <div className="text-[12px] text-neutral-500">
+            <div className="text-[12px] text-muted-foreground">
               {summaryTitle ?? "Summary"}
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <button
-              className="rounded-md border border-neutral-300 bg-white px-4 py-1.5 text-[13px] text-neutral-600 transition-colors hover:bg-neutral-50"
+              className="rounded-md border border-border bg-white px-4 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-muted"
               onClick={() => {
                 resolveEdit(tab.requestId, false);
                 useTabs.getState().close(tab);

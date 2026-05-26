@@ -1,5 +1,4 @@
 import {
-  CopyIcon,
   Loader2Icon,
   Pencil,
   RefreshCw,
@@ -21,14 +20,10 @@ import { cn } from "@meetspace/utils";
 import * as AudioPlayer from "~/audio-player";
 import { getEnhancerService } from "~/services/enhancer";
 import { Transcript } from "~/session/components/note-input/transcript";
-import {
-  formatTranscriptExportSegments,
-  useTranscriptExportSegments,
-} from "~/session/components/note-input/transcript/export-data";
 import { useTranscriptScreen } from "~/session/components/note-input/transcript/state";
-import { showTransientToast } from "~/sidebar/toast/transient";
 import { useListener } from "~/stt/contexts";
 import { isStoppedTranscriptionError, useRunBatch } from "~/stt/useRunBatch";
+import { useUploadFile } from "~/stt/useUploadFile";
 
 export function PostSessionAccessory({
   sessionId,
@@ -45,7 +40,6 @@ export function PostSessionAccessory({
 }) {
   const screen = useTranscriptScreen({ sessionId });
   const isBatching = screen.kind === "running_batch";
-  const shouldFillTranscriptPanel = fillHeight && (hasTranscript || isBatching);
   const timeline = isBatching ? (
     <BatchProgressTimeline sessionId={sessionId} screen={screen} />
   ) : hasAudio ? (
@@ -66,9 +60,7 @@ export function PostSessionAccessory({
       {isTranscriptExpanded ? (
         <div
           className={cn([
-            shouldFillTranscriptPanel
-              ? "min-h-[114px] flex-1 overflow-hidden"
-              : "shrink-0",
+            fillHeight ? "min-h-[114px] flex-1 overflow-hidden" : "shrink-0",
           ])}
         >
           <TranscriptPanel
@@ -77,33 +69,18 @@ export function PostSessionAccessory({
             hasAudio={hasAudio}
             hasTranscript={hasTranscript}
             isExpanded={isTranscriptExpanded}
-            fillHeight={shouldFillTranscriptPanel}
+            fillHeight={fillHeight}
           />
         </div>
       ) : null}
-      {timeline ? (
-        <TimelineSlot flushTop={!isTranscriptExpanded}>{timeline}</TimelineSlot>
-      ) : null}
+      {timeline ? <TimelineSlot>{timeline}</TimelineSlot> : null}
     </div>
   );
 }
 
-function TimelineSlot({
-  children,
-  flushTop = false,
-}: {
-  children: ReactNode;
-  flushTop?: boolean;
-}) {
+function TimelineSlot({ children }: { children: ReactNode }) {
   return (
-    <div
-      className={cn([
-        "flex h-10 w-full shrink-0 items-center",
-        flushTop && "-mt-1.5",
-      ])}
-    >
-      {children}
-    </div>
+    <div className="flex h-10 w-full shrink-0 items-center">{children}</div>
   );
 }
 
@@ -206,13 +183,15 @@ function BatchingTranscriptPanel({
   return (
     <TranscriptCard fillHeight={fillHeight}>
       <div className="flex shrink-0 items-center justify-between px-3 py-1.5">
-        <span className="text-xs font-medium text-neutral-500">Transcript</span>
+        <span className="text-muted-foreground text-xs font-medium">
+          Transcript
+        </span>
         <div className="flex items-center gap-1 px-1 py-0.5">
           <Spinner size={10} />
-          <span className="text-[11px] text-neutral-500">
+          <span className="text-muted-foreground text-[11px]">
             {phaseLabel}
             {typeof percentage === "number" && percentage > 0 && (
-              <span className="ml-1 text-neutral-400 tabular-nums">
+              <span className="text-muted-foreground ml-1 tabular-nums">
                 {Math.round(percentage * 100)}%
               </span>
             )}
@@ -264,14 +243,14 @@ function BatchTranscriptSkeleton({ fillHeight }: { fillHeight: boolean }) {
             <div className="flex w-[72px] shrink-0 flex-col gap-3 pt-0.5">
               <div
                 className={cn([
-                  "h-2.5 rounded-full bg-neutral-200/80",
+                  "bg-accent/80 h-2.5 rounded-full",
                   "animate-pulse",
                   row.speaker,
                 ])}
               />
               <div
                 className={cn([
-                  "h-1.5 rounded-full bg-neutral-100",
+                  "bg-muted h-1.5 rounded-full",
                   "animate-pulse",
                   row.time,
                 ])}
@@ -282,7 +261,7 @@ function BatchTranscriptSkeleton({ fillHeight }: { fillHeight: boolean }) {
                 <div
                   key={lineIndex}
                   className={cn([
-                    "h-2.5 rounded-full bg-neutral-100",
+                    "bg-muted h-2.5 rounded-full",
                     "animate-pulse",
                     lineWidth,
                   ])}
@@ -325,7 +304,7 @@ function BatchProgressTimeline({
         <div
           className={cn([
             "flex h-7 w-7 items-center justify-center rounded-full",
-            "border border-neutral-200 bg-white shadow-xs",
+            "border-border bg-background border shadow-xs",
             "shrink-0",
           ])}
         >
@@ -342,13 +321,13 @@ function BatchProgressTimeline({
       }
       main={
         <div className="flex h-6 items-center">
-          <div className="relative h-2 w-full overflow-hidden rounded-full bg-neutral-200/80">
+          <div className="bg-accent/80 relative h-2 w-full overflow-hidden rounded-full">
             <div
-              className="absolute inset-y-0 left-0 rounded-full bg-neutral-400 transition-[width] duration-300 ease-out"
+              className="bg-muted-foreground/40 absolute inset-y-0 left-0 rounded-full transition-[width] duration-300 ease-out"
               style={{ width: `${Math.max(progress * 100, 8)}%` }}
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="px-2 text-[10px] font-medium tracking-[0.02em] text-neutral-500">
+              <span className="text-muted-foreground px-2 text-[10px] font-medium tracking-[0.02em]">
                 {phaseLabel}
               </span>
             </div>
@@ -374,7 +353,7 @@ function StopTranscriptionButton({
           variant="ghost"
           size="icon"
           className={cn([
-            "text-neutral-500 hover:text-neutral-700",
+            "text-muted-foreground hover:text-foreground",
             compact ? "h-5 w-5" : "h-6 w-6",
           ])}
           onClick={onClick}
@@ -401,19 +380,8 @@ function TranscriptReadyPanel({
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const regenerate = useRegenerateTranscript(sessionId);
-  const { data: transcriptSegments, isLoading: isTranscriptLoading } =
-    useTranscriptExportSegments(sessionId);
   const { audioExists, deleteRecording, isDeletingRecording } =
     AudioPlayer.useAudioPlayer();
-  const transcriptText = formatTranscriptExportSegments(transcriptSegments);
-  const canCopyTranscript = transcriptText.length > 0 && !isTranscriptLoading;
-  const handleCopyTranscript = useCallback(() => {
-    if (!canCopyTranscript) {
-      return;
-    }
-
-    void copyTranscriptToClipboard(transcriptText);
-  }, [canCopyTranscript, transcriptText]);
 
   if (!isExpanded) {
     return null;
@@ -429,8 +397,8 @@ function TranscriptReadyPanel({
                 type="button"
                 disabled
                 className={cn([
-                  "flex items-center gap-1 rounded-full px-1.5 py-0.5",
-                  "text-[11px] font-medium text-neutral-300",
+                  "flex items-center gap-1 rounded px-1.5 py-0.5",
+                  "text-muted-foreground/60 text-[11px] font-medium",
                   "cursor-not-allowed",
                 ])}
               >
@@ -444,27 +412,11 @@ function TranscriptReadyPanel({
           </Tooltip>
           <button
             type="button"
-            onClick={handleCopyTranscript}
-            disabled={!canCopyTranscript}
-            aria-label="Copy transcript"
-            className={cn([
-              "flex items-center gap-1 rounded-full px-1.5 py-0.5",
-              "text-[11px] font-medium text-neutral-500",
-              "transition-colors hover:bg-neutral-200/60 hover:text-neutral-700",
-              "disabled:cursor-not-allowed disabled:text-neutral-300",
-              "disabled:hover:bg-transparent disabled:hover:text-neutral-300",
-            ])}
-          >
-            <CopyIcon size={10} />
-            {isTranscriptLoading ? "Loading..." : "Copy"}
-          </button>
-          <button
-            type="button"
             onClick={regenerate}
             className={cn([
-              "flex items-center gap-1 rounded-full px-1.5 py-0.5",
-              "text-[11px] font-medium text-neutral-500",
-              "transition-colors hover:bg-neutral-200/60 hover:text-neutral-700",
+              "flex items-center gap-1 rounded px-1.5 py-0.5",
+              "text-muted-foreground text-[11px] font-medium",
+              "hover:bg-accent/60 hover:text-foreground transition-colors",
             ])}
           >
             <RefreshCw size={10} />
@@ -477,10 +429,10 @@ function TranscriptReadyPanel({
             onClick={() => void deleteRecording()}
             disabled={isDeletingRecording}
             className={cn([
-              "flex items-center gap-1 rounded-full px-1.5 py-0.5",
-              "text-[11px] font-medium text-red-600",
-              "transition-colors hover:bg-red-50 hover:text-red-700",
-              "disabled:cursor-not-allowed disabled:text-red-300",
+              "flex items-center gap-1 rounded px-1.5 py-0.5",
+              "text-destructive text-[11px] font-medium",
+              "hover:bg-destructive-bg hover:text-destructive transition-colors",
+              "disabled:text-destructive disabled:cursor-not-allowed",
             ])}
           >
             {isDeletingRecording ? (
@@ -500,23 +452,6 @@ function TranscriptReadyPanel({
   );
 }
 
-async function copyTranscriptToClipboard(text: string) {
-  try {
-    await navigator.clipboard.writeText(text);
-    showTransientToast({
-      id: "transcript-copy-success",
-      description: "Transcript copied to clipboard",
-    });
-  } catch (error) {
-    console.error("Failed to copy transcript", error);
-    showTransientToast({
-      id: "transcript-copy-error",
-      description: "Failed to copy transcript",
-      variant: "error",
-    });
-  }
-}
-
 function TranscriptEmptyPanel({
   sessionId,
   hasAudio,
@@ -529,6 +464,7 @@ function TranscriptEmptyPanel({
   fillHeight: boolean;
 }) {
   const screen = useTranscriptScreen({ sessionId });
+  const { uploadAudio } = useUploadFile(sessionId);
   const regenerate = useRegenerateTranscript(sessionId);
 
   const error = screen.kind === "empty" ? screen.error : null;
@@ -538,12 +474,14 @@ function TranscriptEmptyPanel({
   }
 
   return (
-    <TranscriptCard fillHeight={fillHeight} reserveMinHeight={false}>
+    <TranscriptCard fillHeight={fillHeight}>
       <div className="flex min-h-0 flex-1 items-center justify-between px-4 py-3">
         {error ? (
-          <span className="text-xs text-red-500">{error}</span>
+          <span className="text-destructive text-xs">{error}</span>
         ) : (
-          <span className="text-xs text-neutral-400">No transcript yet</span>
+          <span className="text-muted-foreground text-xs">
+            No transcript yet
+          </span>
         )}
 
         <div className="flex items-center gap-1.5">
@@ -551,13 +489,21 @@ function TranscriptEmptyPanel({
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 gap-1.5 text-xs text-neutral-500"
+              className="text-muted-foreground h-7 gap-1.5 text-xs"
               onClick={regenerate}
             >
               <RefreshCw size={12} />
-              Regenerate
+              Generate
             </Button>
           )}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground h-7 text-xs"
+            onClick={uploadAudio}
+          >
+            Upload audio
+          </Button>
         </div>
       </div>
     </TranscriptCard>
@@ -586,20 +532,15 @@ function TranscriptScrollArea({
 function TranscriptCard({
   children,
   fillHeight = false,
-  reserveMinHeight = true,
 }: {
   children: ReactNode;
   fillHeight?: boolean;
-  reserveMinHeight?: boolean;
 }) {
   return (
     <div
-      data-session-transcript-card
       className={cn([
-        "overflow-hidden rounded-b-xl border border-neutral-200 bg-white",
-        fillHeight && "flex h-full flex-col",
-        fillHeight && reserveMinHeight && "min-h-[114px]",
-        !fillHeight && reserveMinHeight && "min-h-[96px]",
+        "border-border bg-background overflow-hidden rounded-b-xl border-x border-b",
+        fillHeight ? "flex h-full min-h-[114px] flex-col" : "min-h-[96px]",
       ])}
     >
       {children}

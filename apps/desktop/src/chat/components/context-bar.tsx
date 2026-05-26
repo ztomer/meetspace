@@ -163,15 +163,15 @@ function ContextChip({
           className={cn([
             "group max-w-48 min-w-0 rounded-md px-1.5 py-0.5 text-xs",
             pending
-              ? "bg-neutral-500/5 text-neutral-400"
-              : "bg-white text-neutral-600 shadow-xs",
+              ? "bg-muted-foreground/5 text-muted-foreground"
+              : "bg-background text-muted-foreground shadow-xs",
             "inline-flex shrink items-center gap-1",
             isClickable
-              ? "cursor-pointer hover:bg-neutral-500/20"
+              ? "hover:bg-muted-foreground/20 cursor-pointer"
               : "cursor-default",
           ])}
         >
-          {Icon && <Icon className="size-3 shrink-0 text-neutral-400" />}
+          {Icon && <Icon className="text-muted-foreground size-3 shrink-0" />}
           <span className="truncate">{chip.label}</span>
           {chip.removable && onRemove && (
             <button
@@ -180,7 +180,7 @@ function ContextChip({
                 e.stopPropagation();
                 onRemove(chip.key);
               }}
-              className="ml-0.5 hidden items-center justify-center rounded-sm group-hover:inline-flex hover:bg-neutral-500/20"
+              className="hover:bg-muted-foreground/20 ml-0.5 hidden items-center justify-center rounded-sm group-hover:inline-flex"
             >
               <XIcon className="size-2.5" />
             </button>
@@ -234,7 +234,7 @@ function ChipList({
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className="inline-flex shrink-0 items-center gap-0.5 rounded-md bg-neutral-500/10 px-1 py-0.5 text-xs text-neutral-400 transition-colors hover:bg-neutral-500/20 hover:text-neutral-600"
+          className="bg-muted-foreground/10 text-muted-foreground hover:bg-muted-foreground/20 hover:text-muted-foreground inline-flex shrink-0 items-center gap-0.5 rounded-md px-1 py-0.5 text-xs transition-colors"
         >
           {!expanded && hiddenCount > 0 && <span>+{hiddenCount}</span>}
           <ChevronDownIcon
@@ -291,7 +291,7 @@ function SessionPicker({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search sessions..."
-        className="w-full rounded-md border border-neutral-200 bg-white px-2.5 py-1.5 text-xs outline-none focus:border-neutral-400"
+        className="border-border bg-background focus:border-border w-full rounded-md border px-2.5 py-1.5 text-xs outline-none"
       />
       <div className="flex max-h-48 flex-col gap-0.5 overflow-y-auto">
         {results.map((result) => (
@@ -302,18 +302,18 @@ function SessionPicker({
               onSelect(result.id);
               onClose();
             }}
-            className="flex flex-col items-start rounded-md px-2 py-1.5 text-left transition-colors hover:bg-neutral-100"
+            className="hover:bg-muted flex flex-col items-start rounded-md px-2 py-1.5 text-left transition-colors"
           >
-            <span className="w-full truncate text-xs font-medium text-neutral-700">
+            <span className="text-foreground w-full truncate text-xs font-medium">
               {result.title || "Untitled"}
             </span>
-            <span className="text-[10px] text-neutral-400">
+            <span className="text-muted-foreground text-[10px]">
               {result.dateLabel ?? "Unknown date"}
             </span>
           </button>
         ))}
         {results.length === 0 && (
-          <span className="px-2 py-1.5 text-xs text-neutral-400">
+          <span className="text-muted-foreground px-2 py-1.5 text-xs">
             {searchResults.isFetching ? "Searching..." : "No sessions found"}
           </span>
         )}
@@ -330,7 +330,7 @@ function AddSessionButton({ onAdd }: { onAdd: (sessionId: string) => void }) {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="inline-flex shrink-0 items-center justify-center rounded-md bg-neutral-500/10 p-0.5 text-neutral-400 transition-colors hover:bg-neutral-500/20 hover:text-neutral-600"
+          className="bg-muted-foreground/10 text-muted-foreground hover:bg-muted-foreground/20 hover:text-muted-foreground inline-flex shrink-0 items-center justify-center rounded-md p-0.5 transition-colors"
         >
           <PlusIcon className="size-3.5" />
         </button>
@@ -354,7 +354,6 @@ export function ContextBar({
   onAddEntity?: (ref: ContextRef) => void;
 }) {
   const { chat } = useShell();
-  const isRightPanel = chat.mode === "RightPanelOpen";
   const chips = useMemo(
     () =>
       entities
@@ -375,10 +374,9 @@ export function ContextBar({
 
   return (
     <div
-      data-chat-context-bar
       className={cn([
-        "shrink-0 rounded-t-xl border-t border-r border-l border-neutral-200 bg-white",
-        isRightPanel ? "mx-3" : "mx-2",
+        "border-border bg-background shrink-0 rounded-t-xl border-t border-r border-l",
+        chat.mode !== "RightPanelOpen" && "mx-2",
       ])}
     >
       <div className="flex items-start gap-1.5 px-2 py-2">

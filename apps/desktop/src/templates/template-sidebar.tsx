@@ -16,7 +16,6 @@ import { getTemplateCopyTitle, type UserTemplate } from "./queries";
 import { useTemplateTab } from "./utils";
 
 import { useNativeContextMenu } from "~/shared/hooks/useNativeContextMenu";
-import { CustomSidebarHeader } from "~/sidebar/custom-sidebar-header";
 import { type Tab } from "~/store/zustand/tabs";
 
 type SortOption = "alphabetical" | "reverse-alphabetical";
@@ -293,53 +292,56 @@ export function TemplatesSidebarContent({
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
       <div>
-        <CustomSidebarHeader title="Templates">
-          {userTemplates.length > 1 && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="relative z-[60] text-neutral-600 hover:text-black"
-                >
-                  <ArrowDownUp size={16} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent variant="app" align="end">
-                <AppFloatingPanel className="overflow-hidden p-1">
-                  <DropdownMenuItem
-                    onClick={() => setSortOption("alphabetical")}
+        <div className="flex h-12 items-center justify-between py-2 pr-1 pl-3">
+          <h3 className="font-sans text-sm font-medium">Templates</h3>
+          <div className="flex items-center">
+            {userTemplates.length > 1 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="text-muted-foreground hover:text-foreground"
                   >
-                    A to Z
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setSortOption("reverse-alphabetical")}
-                  >
-                    Z to A
-                  </DropdownMenuItem>
-                </AppFloatingPanel>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+                    <ArrowDownUp size={16} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent variant="app" align="end">
+                  <AppFloatingPanel className="overflow-hidden p-1">
+                    <DropdownMenuItem
+                      onClick={() => setSortOption("alphabetical")}
+                    >
+                      A to Z
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setSortOption("reverse-alphabetical")}
+                    >
+                      Z to A
+                    </DropdownMenuItem>
+                  </AppFloatingPanel>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
-          <Button
-            size="icon"
-            variant="ghost"
-            className="relative z-[60] text-neutral-600 hover:text-black"
-            onClick={createDefaultTemplate}
-          >
-            <Plus size={16} />
-          </Button>
-        </CustomSidebarHeader>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="text-muted-foreground hover:text-foreground"
+              onClick={createDefaultTemplate}
+            >
+              <Plus size={16} />
+            </Button>
+          </div>
+        </div>
 
-        <div className="pb-2">
+        <div className="px-2 pb-2">
           <div
             className={cn([
-              "flex h-8 w-full shrink-0 items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-200/50 px-3",
-              "transition-colors focus-within:bg-neutral-200",
+              "border-border bg-accent/50 flex h-8 shrink-0 items-center gap-2 rounded-lg border px-3",
+              "focus-within:bg-accent transition-colors",
             ])}
           >
-            <Search className="h-4 w-4 shrink-0 text-neutral-400" />
+            <Search className="text-muted-foreground h-4 w-4 shrink-0" />
             <input
               type="text"
               value={search}
@@ -350,14 +352,14 @@ export function TemplatesSidebarContent({
                 }
               }}
               placeholder="Search templates..."
-              className="min-w-0 flex-1 bg-transparent text-sm placeholder:text-sm placeholder:text-neutral-400 focus:outline-hidden"
+              className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-sm placeholder:text-sm focus:outline-hidden"
             />
             {search && (
               <button
                 onClick={() => setSearch("")}
                 className={cn([
                   "h-4 w-4 shrink-0",
-                  "text-neutral-400 hover:text-neutral-600",
+                  "text-muted-foreground hover:text-muted-foreground",
                   "transition-colors",
                 ])}
                 aria-label="Clear search"
@@ -374,15 +376,18 @@ export function TemplatesSidebarContent({
         className="scrollbar-hide flex-1 overflow-y-auto"
       >
         {isEmpty ? (
-          <div className="px-3 py-8 text-center text-neutral-500">
-            <BookText size={32} className="mx-auto mb-2 text-neutral-300" />
+          <div className="text-muted-foreground px-3 py-8 text-center">
+            <BookText
+              size={32}
+              className="text-muted-foreground/60 mx-auto mb-2"
+            />
             <p className="text-sm">
               {search ? "No templates found" : "No templates yet"}
             </p>
             {!search && (
               <button
                 onClick={createDefaultTemplate}
-                className="mt-3 text-sm text-neutral-600 underline hover:text-neutral-800"
+                className="text-muted-foreground hover:text-foreground mt-3 text-sm underline"
               >
                 Create my first template
               </button>
@@ -410,13 +415,11 @@ export function TemplatesSidebarContent({
                       data-template-selected={item.selected}
                       className={cn([
                         "w-full rounded-lg px-3 py-2 text-left text-sm transition-colors select-none",
-                        item.selected
-                          ? "bg-neutral-200"
-                          : "hover:bg-neutral-200/50",
+                        item.selected ? "bg-accent" : "hover:bg-accent/50",
                       ])}
                     >
                       <div className="flex items-center gap-2">
-                        <BookText className="h-4 w-4 shrink-0 text-neutral-500" />
+                        <BookText className="text-muted-foreground h-4 w-4 shrink-0" />
                         <div className="min-w-0 flex-1">
                           <div className="truncate font-medium">
                             {item.title}
@@ -437,8 +440,8 @@ export function TemplatesSidebarContent({
                       key={index}
                       className="animate-pulse rounded-lg px-3 py-2"
                     >
-                      <div className="h-4 w-3/4 rounded-xs bg-neutral-200" />
-                      <div className="mt-1.5 h-3 w-1/3 rounded-xs bg-neutral-100" />
+                      <div className="bg-accent h-4 w-3/4 rounded-xs" />
+                      <div className="bg-muted mt-1.5 h-3 w-1/3 rounded-xs" />
                     </div>
                   ))}
                 </div>
@@ -499,11 +502,11 @@ function TemplateListItem({
       data-template-selected={selected}
       className={cn([
         "w-full rounded-lg px-3 py-2 text-left text-sm transition-colors select-none",
-        selected ? "bg-neutral-200" : "hover:bg-neutral-200/50",
+        selected ? "bg-accent" : "hover:bg-accent/50",
       ])}
     >
       <div className="flex items-center gap-2">
-        <BookText className="h-4 w-4 shrink-0 text-neutral-500" />
+        <BookText className="text-muted-foreground h-4 w-4 shrink-0" />
         <div className="min-w-0 flex-1">
           <div className="truncate font-medium">
             {template.title?.trim() || "Untitled"}

@@ -111,18 +111,18 @@ export function FolderLocationSection({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-3">
-        <FolderIcon className="size-4 shrink-0 text-neutral-500" />
+      <div className="flex items-center gap-3 rounded-lg border border-border bg-muted px-4 py-3">
+        <FolderIcon className="size-4 shrink-0 text-muted-foreground" />
         <button
           onClick={handleOpenPath}
-          className="min-w-0 flex-1 truncate text-left text-sm text-neutral-600 hover:underline"
+          className="min-w-0 flex-1 truncate text-left text-sm text-muted-foreground hover:underline"
         >
           {displayPath(vaultBase, home)}
         </button>
         <button
           onClick={handleChange}
           disabled={isPending}
-          className="shrink-0 text-sm text-neutral-500 transition-colors hover:text-neutral-700 disabled:opacity-50"
+          className="shrink-0 text-sm text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
         >
           Change
         </button>

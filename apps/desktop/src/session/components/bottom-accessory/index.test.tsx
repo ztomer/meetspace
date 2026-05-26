@@ -347,7 +347,7 @@ describe("useSessionBottomAccessory", () => {
     }
 
     expect(toggle.props.label).toBe("Live");
-    expect(toggle.props.expandedClassName).toBe("bg-neutral-50");
+    expect(toggle.props.expandedClassName).toBe("bg-muted");
 
     act(() => {
       toggle.props.onToggle();

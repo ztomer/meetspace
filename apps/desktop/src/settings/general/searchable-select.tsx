@@ -133,12 +133,12 @@ export function SearchableSelect({
                     onSelect={() => handleSelect(option.value)}
                     className={cn([
                       "cursor-pointer",
-                      "hover:bg-neutral-200! focus:bg-neutral-200! aria-selected:bg-transparent",
+                      "hover:bg-accent! focus:bg-accent! aria-selected:bg-transparent",
                     ])}
                   >
                     <span className="flex-1 truncate">{option.label}</span>
                     {option.detail && (
-                      <span className="shrink-0 font-mono text-[10px] text-neutral-400">
+                      <span className="shrink-0 font-mono text-[10px] text-muted-foreground">
                         {option.detail}
                       </span>
                     )}

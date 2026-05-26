@@ -12,19 +12,17 @@ import {
   DropdownMenuTrigger,
 } from "@meetspace/ui/components/ui/dropdown-menu";
 
-import { CustomSidebarHeader } from "~/sidebar/custom-sidebar-header";
-
 const COLOR_PALETTES = [
-  "bg-amber-50",
+  "bg-warning-bg",
   "bg-rose-50",
   "bg-violet-50",
-  "bg-blue-50",
+  "bg-info-bg",
   "bg-teal-50",
-  "bg-green-50",
+  "bg-success-bg",
   "bg-cyan-50",
   "bg-fuchsia-50",
   "bg-indigo-50",
-  "bg-yellow-50",
+  "bg-warning-bg",
 ];
 
 export function getContactBgClass(name: string) {
@@ -38,7 +36,7 @@ export type SortOption =
   | "oldest"
   | "newest";
 
-function SortDropdown({
+export function SortDropdown({
   sortOption,
   setSortOption,
 }: {
@@ -114,7 +112,8 @@ export function ColumnHeader({
 
   return (
     <div className="@container">
-      <CustomSidebarHeader title={title} showHistoryControls>
+      <div className="flex h-12 min-w-0 items-center justify-between py-2 pr-1 pl-3">
+        <h3 className="font-sans text-sm font-medium select-none">{title}</h3>
         <div className="flex shrink-0 items-center">
           {sortOption && setSortOption && (
             <div className="hidden @[220px]:block">
@@ -128,11 +127,11 @@ export function ColumnHeader({
             <Plus size={16} />
           </Button>
         </div>
-      </CustomSidebarHeader>
+      </div>
       {onSearchChange && (
-        <div className="pb-2">
-          <div className="flex h-8 w-full items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-200/50 px-3 transition-colors focus-within:bg-neutral-200">
-            <Search className="h-4 w-4 shrink-0 text-neutral-400" />
+        <div className="px-2 pb-2">
+          <div className="border-border bg-accent/50 focus-within:bg-accent flex h-8 items-center gap-2 rounded-lg border px-3 transition-colors">
+            <Search className="text-muted-foreground h-4 w-4 shrink-0" />
             <input
               ref={searchInputRef}
               type="text"
@@ -140,12 +139,12 @@ export function ColumnHeader({
               onChange={(e) => onSearchChange(e.target.value)}
               onKeyDown={handleSearchKeyDown}
               placeholder="Search contacts..."
-              className="min-w-0 flex-1 bg-transparent text-sm placeholder:text-sm placeholder:text-neutral-400 focus:outline-hidden"
+              className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-sm placeholder:text-sm focus:outline-hidden"
             />
             {searchValue && (
               <button
                 onClick={() => onSearchChange("")}
-                className="h-4 w-4 shrink-0 text-neutral-400 transition-colors hover:text-neutral-600"
+                className="text-muted-foreground hover:text-muted-foreground h-4 w-4 shrink-0 transition-colors"
                 aria-label="Clear search"
               >
                 <X className="h-4 w-4" />
