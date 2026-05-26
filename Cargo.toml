@@ -19,6 +19,10 @@ exclude = [
   "plugins/apple-calendar",
   "plugins/extensions",
   "crates/vad-ext",
+  # Vendored upstream crates with their own Cargo workspaces — keep them
+  # out of ours so they don't try to inherit our [workspace.dependencies]
+  # or pull in our patched lockfile.
+  "vendor",
 ]
 
 [workspace.dependencies]
@@ -349,11 +353,11 @@ utoipa = { version = "5", features = ["axum_extras"] }
 chrono = "0.4"
 chrono-tz = "0.10"
 
-async-openai = { git = "https://github.com/fastrepl/async-openai", rev = "6404d307f3f706e818ad91544dc82fac5c545aee", default-features = false }
+async-openai = { path = "vendor/async-openai/async-openai", default-features = false }
 async-stripe = { version = "1.0.0-rc.0" }
 async-stripe-billing = { version = "1.0.0-rc.1", default-features = false }
 async-stripe-core = { version = "1.0.0-rc.1", default-features = false }
-gbnf-validator = { git = "https://github.com/fastrepl/gbnf-validator", rev = "3dec055" }
+gbnf-validator = { path = "vendor/gbnf-validator/gbnf-validator" }
 
 jsonwebtoken = { version = "10", features = ["rust_crypto"] }
 sentry = "=0.42.0"
