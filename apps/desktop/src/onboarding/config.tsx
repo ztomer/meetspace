@@ -8,11 +8,7 @@ export type OnboardingStep =
   | "folder-location"
   | "final";
 
-const STEPS_MACOS: OnboardingStep[] = [
-  "permissions",
-  "calendar",
-  "final",
-];
+const STEPS_MACOS: OnboardingStep[] = ["permissions", "calendar", "final"];
 const STEPS_OTHER: OnboardingStep[] = ["calendar", "final"];
 
 function getOnboardingSteps(): OnboardingStep[] {

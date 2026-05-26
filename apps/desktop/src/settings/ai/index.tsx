@@ -26,9 +26,7 @@ export function Intelligence() {
           <SettingsPageTitle title="Intelligence" />
 
           <section className="flex flex-col gap-6">
-            <h2 className="text-md font-sans font-semibold">
-              Speech-to-text
-            </h2>
+            <h2 className="text-md font-sans font-semibold">Speech-to-text</h2>
             <SttSelectProviderAndModel />
             <SttConfigureProviders />
           </section>
@@ -36,9 +34,7 @@ export function Intelligence() {
           <DiarizationSetting />
 
           <section className="flex flex-col gap-6">
-            <h2 className="text-md font-sans font-semibold">
-              Language model
-            </h2>
+            <h2 className="text-md font-sans font-semibold">Language model</h2>
             <LlmSelectProviderAndModel />
             <LlmConfigureProviders />
           </section>

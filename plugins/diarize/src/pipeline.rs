@@ -125,7 +125,9 @@ fn merge_adjacent(turns: Vec<SpeakerTurn>) -> Vec<SpeakerTurn> {
     let mut out: Vec<SpeakerTurn> = Vec::with_capacity(turns.len());
     for t in turns {
         match out.last_mut() {
-            Some(prev) if prev.speaker_index == t.speaker_index && t.start_ms <= prev.end_ms + 250 => {
+            Some(prev)
+                if prev.speaker_index == t.speaker_index && t.start_ms <= prev.end_ms + 250 =>
+            {
                 prev.end_ms = t.end_ms;
             }
             _ => out.push(t),
@@ -140,8 +142,7 @@ fn merge_adjacent(turns: Vec<SpeakerTurn>) -> Vec<SpeakerTurn> {
 /// for speech and an order of magnitude simpler than polyphase.
 fn load_mono_16k(path: impl AsRef<Path>) -> Result<Vec<i16>> {
     let file = File::open(path.as_ref())?;
-    let decoded = Decoder::try_from(file)
-        .map_err(|e| Error::Decode(e.to_string()))?;
+    let decoded = Decoder::try_from(file).map_err(|e| Error::Decode(e.to_string()))?;
 
     let source_rate = decoded.sample_rate().get();
     let source_channels = decoded.channels().get() as usize;
@@ -159,8 +160,7 @@ fn load_mono_16k(path: impl AsRef<Path>) -> Result<Vec<i16>> {
     let resampled: Vec<f32> = if source_rate == SAMPLE_RATE {
         mono
     } else {
-        let target_len =
-            (mono.len() as u64 * SAMPLE_RATE as u64 / source_rate as u64) as usize;
+        let target_len = (mono.len() as u64 * SAMPLE_RATE as u64 / source_rate as u64) as usize;
         let ratio = source_rate as f64 / SAMPLE_RATE as f64;
         (0..target_len)
             .map(|i| {

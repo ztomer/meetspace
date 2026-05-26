@@ -144,7 +144,8 @@ async fn health_starts_loading_then_fails_for_invalid_model_path() {
         .unwrap();
     assert_eq!(response.status(), StatusCode::OK);
     let body = to_bytes(response.into_body(), 1024 * 1024).await.unwrap();
-    let health: meetspace_cactus_model::CactusServiceHealth = serde_json::from_slice(&body).unwrap();
+    let health: meetspace_cactus_model::CactusServiceHealth =
+        serde_json::from_slice(&body).unwrap();
     assert_eq!(
         health.status,
         meetspace_cactus_model::CactusServiceStatus::Loading
@@ -163,7 +164,8 @@ async fn health_starts_loading_then_fails_for_invalid_model_path() {
         .unwrap();
     assert_eq!(response.status(), StatusCode::OK);
     let body = to_bytes(response.into_body(), 1024 * 1024).await.unwrap();
-    let health: meetspace_cactus_model::CactusServiceHealth = serde_json::from_slice(&body).unwrap();
+    let health: meetspace_cactus_model::CactusServiceHealth =
+        serde_json::from_slice(&body).unwrap();
     assert_eq!(
         health.status,
         meetspace_cactus_model::CactusServiceStatus::Failed

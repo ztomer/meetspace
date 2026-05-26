@@ -145,7 +145,7 @@ export function Data() {
         )}
 
         {(importMutation.isError || dryImportMutation.isError) && (
-          <div className="flex items-center gap-2 text-xs text-destructive">
+          <div className="text-destructive flex items-center gap-2 text-xs">
             <XCircleIcon size={14} />
             <span>
               {importMutation.isError

@@ -23,10 +23,10 @@ export function NotionIntegration() {
   );
 
   return (
-    <section className="rounded-lg border border-border p-5">
+    <section className="border-border rounded-lg border p-5">
       <div className="mb-4">
         <h3 className="text-sm font-semibold">Notion</h3>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           Export sessions as new pages in a Notion database. Bring your own
           integration token — it stays on this device.
         </p>
@@ -34,10 +34,7 @@ export function NotionIntegration() {
 
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
-          <label
-            htmlFor="notion-token"
-            className="text-sm font-medium"
-          >
+          <label htmlFor="notion-token" className="text-sm font-medium">
             Integration token
           </label>
           <Input
@@ -48,20 +45,15 @@ export function NotionIntegration() {
             placeholder="secret_..."
             className="shadow-none"
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Create an internal integration at{" "}
-            <span className="font-mono">
-              notion.so/profile/integrations
-            </span>{" "}
+            <span className="font-mono">notion.so/profile/integrations</span>{" "}
             and share your target database with it.
           </p>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label
-            htmlFor="notion-db"
-            className="text-sm font-medium"
-          >
+          <label htmlFor="notion-db" className="text-sm font-medium">
             Database ID
           </label>
           <Input
@@ -71,10 +63,10 @@ export function NotionIntegration() {
             placeholder="32-char database id"
             className="shadow-none"
           />
-          <p className="text-xs text-muted-foreground">
-            Open the database in Notion and copy the 32-character id from
-            the URL. The database needs a title property called{" "}
-            <code className="rounded bg-muted px-1 py-0.5 text-[10px]">
+          <p className="text-muted-foreground text-xs">
+            Open the database in Notion and copy the 32-character id from the
+            URL. The database needs a title property called{" "}
+            <code className="bg-muted rounded px-1 py-0.5 text-[10px]">
               Name
             </code>
             .

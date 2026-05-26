@@ -85,6 +85,8 @@ export const StoreComponent = () => {
           select("has_recurrence_rules");
           select("recurrence_series_id");
           select("is_all_day");
+          // Needed by useCalendarData's cross-provider dedup pass (Phase 10.3).
+          select("provider");
         })
         .setQueryDefinition(
           QUERIES.timelineSessions,
@@ -366,6 +368,7 @@ interface _QueryResultRows {
     has_recurrence_rules: boolean;
     recurrence_series_id: string;
     is_all_day: boolean;
+    provider: string;
   };
   timelineSessions: {
     title: string;

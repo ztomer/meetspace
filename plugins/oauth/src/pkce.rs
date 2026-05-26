@@ -23,9 +23,11 @@ impl Pkce {
 
         let mut hasher = Sha256::new();
         hasher.update(verifier.as_bytes());
-        let challenge =
-            base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(hasher.finalize());
+        let challenge = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(hasher.finalize());
 
-        Ok(Self { verifier, challenge })
+        Ok(Self {
+            verifier,
+            challenge,
+        })
     }
 }

@@ -228,3 +228,16 @@ Upstream gated "speaker identification" behind the Lite tier and used cloud Pyan
 |---|---|---|
 | 9.1 | **Local Pyannote diarization** wired into the post-stop pipeline. | ✅ New `tauri-plugin-diarize`. `diarize_audio(path)` → `Vec<SpeakerTurn>` via rodio decode (mono 16k resample) → bundled Pyannote segmentation + ECAPA embedding ONNX → online greedy cosine clustering. `diarize_auto` setting (off by default). On session-stop, midpoint-matches each transcript word to the covering turn and writes `speaker_hints`. No model download UX needed — ONNX is `include_bytes!`'d. |
 | 9.2 | **LLM-driven name resolution** on top of 9.1. | ✅ `services/name-resolve-on-stop.ts`. After diarization, asks the configured LLM via the existing `useLanguageModel()` chain to map `Speaker N` → human ids from the session's participant roster (`mapping_session_participant` + `humans`). `temperature: 0` + a strict JSON-only system prompt; robust parsing (direct → fenced → `{…}` match); ids validated against the roster. Rewrites resolved `provider_speaker_index` hints as `user_speaker_assignment`. No-ops without LLM or with a single speaker. Chained: diarize → name-resolve → Obsidian export. |
+
+---
+
+## Phase 10 — Full calendar runtime + cross-provider deduplication
+
+The smoke-test fetcher from Phase 8.4b/8.5b proves OAuth tokens work, but the sidebar agenda + event sync still go through `crates/calendar/src/{lib,fetch,runtime}.rs` — which calls the deleted upstream Nango proxy. Replacing it cleanly is its own focused effort, plus the user wants cross-provider dedup (same event showing up in both Apple and Google = one row, with a user-selectable primary provider).
+
+| # | Item | Status |
+|---|---|---|
+| 10.1 | **Google Calendar TS-side sync.** | ✅ `services/calendar/google-sync.ts` + `use-google-sync.ts`. Reads `google_access_token` from tinybase, fetches `/calendar/v3/users/me/calendarList`, upserts the `calendars` table (matching the Apple shape). For enabled calendars fetches a sliding-window range via `/calendarList/{id}/events`; 401 auto-refreshes via the existing helper. Prunes stale rows that vanished upstream. Periodic 5min hook mounted in `main.tsx`. Bypasses the Rust runtime. |
+| 10.2 | **Outlook Calendar TS-side sync.** | ✅ `services/calendar/outlook-sync.ts` + `use-outlook-sync.ts`. Same shape against MS Graph `/me/calendars` + `/me/calendarview`. |
+| 10.3 | **Cross-provider event deduplication.** | ✅ `services/calendar/dedup.ts` + integration in `calendar/hooks.ts`. Fuzzy match on `(roundedStart \| roundedEnd \| normalizedTitle)` with a 5-minute bucket; winner picked by provider precedence, losers hidden. Pure read-side filter — duplicate rows stay in the table so flipping precedence rebinds instantly. Required adding `provider` to the `timelineEvents` query. |
+| 10.4 | **Per-source primary-provider setting.** | ✅ `settings/integrations/calendar-precedence.tsx` + `calendar_provider_precedence` value (default `["apple","google","outlook"]`) wired through `packages/store` schema and tinybase settings store. Click-to-reorder Up/Down list — DnD avoided since three items don't justify the cross-platform fiddliness. |

@@ -46,7 +46,7 @@ export function useCurrentNoteTab(
 }
 
 export function RecordingIcon() {
-  return <div className="size-3 rounded-full bg-destructive" />;
+  return <div className="bg-destructive size-3 rounded-full" />;
 }
 
 export function useListenButtonState(sessionId: string) {
@@ -89,7 +89,7 @@ export function ActionableTooltipContent({
         <Button
           size="sm"
           variant="outline"
-          className="rounded-md text-foreground"
+          className="text-foreground rounded-md"
           onClick={action.handleClick}
         >
           {action.label}

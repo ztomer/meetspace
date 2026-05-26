@@ -15,7 +15,7 @@ export function HealthStatusIndicator() {
   const health = useConnectionHealth();
 
   if (health.status === "pending") {
-    return <Spinner size={14} className="shrink-0 text-muted-foreground" />;
+    return <Spinner size={14} className="text-muted-foreground shrink-0" />;
   }
 
   return null;

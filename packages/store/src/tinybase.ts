@@ -195,4 +195,5 @@ export const valueSchemaForTinybase = {
   outlook_access_token: { type: "string" },
   outlook_token_expires_at: { type: "number" },
   diarize_auto: { type: "boolean" },
+  calendar_provider_precedence: { type: "string" },
 } as const satisfies InferTinyBaseSchema<typeof generalSchema>;

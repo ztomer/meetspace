@@ -12,11 +12,11 @@ pub use error::{Error, JsonSchemaViolation};
 pub use health::{
     ServiceHealthTracker, ffi_last_error, init_runtime, latest_error, latest_errors_snapshot,
 };
-pub use meetspace_language::Language;
 pub use llm::{
     CompleteOptions, CompletionResult, CompletionStream, LlmContext, Message, ToolCall, complete,
     complete_stream, validate_messages,
 };
+pub use meetspace_language::Language;
 pub use model::{Model, ModelBuilder, ModelKind};
 pub use pyannote::{
     DiarizeOptions, DiarizeResult, SpeakerEmbeddingOptions, SpeakerEmbeddingResult,

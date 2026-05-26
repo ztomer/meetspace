@@ -3,7 +3,6 @@ import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 import { extractReasoningMiddleware, wrapLanguageModel } from "ai";
 import { useMemo } from "react";
 
-import type { CharTask } from "~/shared/api-types";
 import type { AIProviderStorage } from "@meetspace/store";
 
 import { createTracedFetch, tracedFetch } from "../traced-fetch";
@@ -14,6 +13,7 @@ import {
   getProviderSelectionBlockers,
   type ProviderEligibilityContext,
 } from "~/settings/ai/shared/eligibility";
+import type { CharTask } from "~/shared/api-types";
 import * as settings from "~/store/tinybase/store/settings";
 
 type LanguageModelV3 = Parameters<typeof wrapLanguageModel>[0]["model"];
@@ -175,9 +175,8 @@ const createLanguageModel = (
   const isOllama = conn.providerId === "ollama";
   const fetchImpl: typeof fetch = isOllama
     ? async (input, init) => {
-        const ollamaOrigin = new URL(
-          conn.baseUrl.replace(/\/v1\/?$/, ""),
-        ).origin;
+        const ollamaOrigin = new URL(conn.baseUrl.replace(/\/v1\/?$/, ""))
+          .origin;
         const headers = new Headers(init?.headers);
         headers.set("Origin", ollamaOrigin);
         return tauriFetch(input as RequestInfo | URL, { ...init, headers });

@@ -1,12 +1,12 @@
 use std::error::Error;
 
 use async_openai::{
+    Client,
     types::{
         ChatCompletionRequestMessageContentPartImageArgs,
         ChatCompletionRequestMessageContentPartTextArgs, ChatCompletionRequestUserMessageArgs,
         CreateChatCompletionRequestArgs, ImageDetail, ImageUrlArgs,
     },
-    Client,
 };
 
 /// https://platform.openai.com/docs/guides/vision - quickstart

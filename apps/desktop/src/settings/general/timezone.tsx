@@ -58,7 +58,7 @@ export function TimezoneSelector() {
     <div className="flex flex-row items-center justify-between">
       <div>
         <h3 className="mb-1 text-sm font-medium">Timezone</h3>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           Override the timezone used for the sidebar timeline
         </p>
       </div>

@@ -117,8 +117,8 @@ async fn run_passthrough_batch_test(provider: Provider) {
         .unwrap_or_else(|_| panic!("{} must be set", provider.env_key_name()));
     let addr = start_server_with_provider(provider, api_key).await;
 
-    let audio_bytes =
-        std::fs::read(meetspace_data::english_1::AUDIO_PATH).expect("failed to read test audio file");
+    let audio_bytes = std::fs::read(meetspace_data::english_1::AUDIO_PATH)
+        .expect("failed to read test audio file");
 
     let model = provider.default_batch_model();
     let url = format!(
@@ -136,8 +136,8 @@ async fn run_meetspace_batch_test(provider: Provider) {
         .unwrap_or_else(|_| panic!("{} must be set", provider.env_key_name()));
     let addr = start_server_with_provider(provider, api_key).await;
 
-    let audio_bytes =
-        std::fs::read(meetspace_data::english_1::AUDIO_PATH).expect("failed to read test audio file");
+    let audio_bytes = std::fs::read(meetspace_data::english_1::AUDIO_PATH)
+        .expect("failed to read test audio file");
 
     let model = provider.default_batch_model();
     let url = format!(

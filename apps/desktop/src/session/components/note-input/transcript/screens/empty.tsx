@@ -23,19 +23,19 @@ export function TranscriptEmptyState({
   if (error) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
-        <AlertCircleIcon className="h-8 w-8 text-destructive" />
+        <AlertCircleIcon className="text-destructive h-8 w-8" />
         <div className="flex max-w-md flex-col gap-1">
-          <p className="text-sm font-medium text-foreground">
+          <p className="text-foreground text-sm font-medium">
             Batch transcription failed
           </p>
-          <p className="text-xs text-muted-foreground">{error}</p>
+          <p className="text-muted-foreground text-xs">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-3 text-muted-foreground">
+    <div className="text-muted-foreground flex h-full flex-col items-center justify-center gap-3">
       {isBatching ? (
         <Spinner size={28} />
       ) : (
@@ -44,7 +44,7 @@ export function TranscriptEmptyState({
       {isBatching ? (
         <div className="flex flex-col items-center gap-1">
           {typeof percentage === "number" && percentage > 0 ? (
-            <p className="text-2xl font-medium text-muted-foreground tabular-nums">
+            <p className="text-muted-foreground text-2xl font-medium tabular-nums">
               {Math.round(percentage * 100)}%
             </p>
           ) : null}
@@ -56,10 +56,10 @@ export function TranscriptEmptyState({
         </div>
       ) : (
         <div className="flex max-w-sm flex-col items-center gap-1 text-center">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {hasAudio ? "Recording available" : "No transcript available"}
           </p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             {hasAudio
               ? "Use the refresh button above to generate a transcript, or upload a file."
               : "Upload audio or a transcript file to populate this note."}

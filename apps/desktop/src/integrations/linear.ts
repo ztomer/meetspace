@@ -13,7 +13,11 @@ type LinearGraphQLResponse<T> = {
   errors?: Array<{ message: string }>;
 };
 
-async function linearGraphQL<T>(apiKey: string, query: string, variables: unknown): Promise<T> {
+async function linearGraphQL<T>(
+  apiKey: string,
+  query: string,
+  variables: unknown,
+): Promise<T> {
   const res = await tauriFetch("https://api.linear.app/graphql", {
     method: "POST",
     headers: {

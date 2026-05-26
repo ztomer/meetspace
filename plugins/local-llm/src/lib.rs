@@ -65,7 +65,9 @@ pub(crate) fn spawn_llm_server<R: tauri::Runtime>(
             }
         };
 
-        match meetspace_local_llm_core::LlmServer::start_with_model_path(model_name, &model_path).await {
+        match meetspace_local_llm_core::LlmServer::start_with_model_path(model_name, &model_path)
+            .await
+        {
             Ok(server) => {
                 let mut guard = state.lock().await;
                 guard.server = Some(server);

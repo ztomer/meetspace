@@ -69,19 +69,19 @@ export function CalendarSelection({
       >
         {isLoading ? (
           <>
-            <Loader2Icon className="mb-2 size-6 animate-spin text-muted-foreground/60" />
-            <p className="text-xs text-muted-foreground">Loading calendars…</p>
+            <Loader2Icon className="text-muted-foreground/60 mb-2 size-6 animate-spin" />
+            <p className="text-muted-foreground text-xs">Loading calendars…</p>
           </>
         ) : (
           <>
-            <CalendarOffIcon className="mb-2 size-6 text-muted-foreground/60" />
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <CalendarOffIcon className="text-muted-foreground/60 mb-2 size-6" />
+            <div className="text-muted-foreground flex items-center gap-1 text-xs">
               <p>No calendars found</p>
               {onRefresh ? (
                 <button
                   type="button"
                   onClick={onRefresh}
-                  className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  className="text-muted-foreground hover:bg-muted hover:text-foreground rounded p-1 transition-colors"
                   aria-label="Refresh calendars"
                 >
                   <RefreshCwIcon className="size-3" />
@@ -168,7 +168,7 @@ function CalendarGroupAccordionHeader({
     >
       <AccordionHeader className="max-w-full min-w-0">
         <AccordionTriggerPrimitive className="flex max-w-full min-w-0 cursor-pointer items-center py-2 text-left hover:no-underline">
-          <span className="truncate text-xs font-medium text-muted-foreground">
+          <span className="text-muted-foreground truncate text-xs font-medium">
             {group.sourceName}
           </span>
         </AccordionTriggerPrimitive>
@@ -178,7 +178,7 @@ function CalendarGroupAccordionHeader({
 
       <ChevronDown
         className={cn([
-          "size-4 shrink-0 text-muted-foreground opacity-0 transition-all duration-200 group-hover:opacity-100 focus-within:opacity-100",
+          "text-muted-foreground size-4 shrink-0 opacity-0 transition-all duration-200 group-hover:opacity-100 focus-within:opacity-100",
           "group-data-[state=open]/group:rotate-180",
         ])}
       />
@@ -197,7 +197,7 @@ function CalendarGroupHeader({ group }: { group: CalendarGroup }) {
       onContextMenu={showContextMenu}
       className="group flex items-center justify-between gap-2 py-1"
     >
-      <span className="truncate text-xs font-medium text-muted-foreground">
+      <span className="text-muted-foreground truncate text-xs font-medium">
         {group.sourceName}
       </span>
       <CalendarGroupMenuButton onClick={showContextMenu} />
@@ -215,7 +215,7 @@ function CalendarGroupMenuButton({
       type="button"
       onClick={onClick}
       className={cn([
-        "shrink-0 rounded p-1 text-muted-foreground transition-colors",
+        "text-muted-foreground shrink-0 rounded p-1 transition-colors",
         "opacity-0 group-hover:opacity-100 focus-visible:opacity-100",
         "hover:bg-accent hover:text-foreground",
       ])}

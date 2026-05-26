@@ -150,9 +150,9 @@ function LinearTeamPickerDialog({
           <DialogTitle>Pick a Linear team</DialogTitle>
         </DialogHeader>
         {teams.isPending && open ? (
-          <p className="text-sm text-muted-foreground">Loading teams…</p>
+          <p className="text-muted-foreground text-sm">Loading teams…</p>
         ) : teams.isError ? (
-          <p className="text-sm text-destructive">
+          <p className="text-destructive text-sm">
             Could not load teams. Check the API key.
           </p>
         ) : (

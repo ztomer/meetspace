@@ -61,14 +61,19 @@ export async function maybeDiarizeAndPersist(
   // session; if more we pick the latest.
   let transcriptId: string | null = null;
   let latestStart = -1;
-  mainStore.forEachRow("transcripts", (rowId: string, _forEachCell: unknown) => {
-    if (mainStore.getCell("transcripts", rowId, "session_id") !== sessionId) return;
-    const started = (mainStore.getCell("transcripts", rowId, "started_at") as number) ?? 0;
-    if (started > latestStart) {
-      latestStart = started;
-      transcriptId = rowId;
-    }
-  });
+  mainStore.forEachRow(
+    "transcripts",
+    (rowId: string, _forEachCell: unknown) => {
+      if (mainStore.getCell("transcripts", rowId, "session_id") !== sessionId)
+        return;
+      const started =
+        (mainStore.getCell("transcripts", rowId, "started_at") as number) ?? 0;
+      if (started > latestStart) {
+        latestStart = started;
+        transcriptId = rowId;
+      }
+    },
+  );
 
   if (!transcriptId) {
     console.warn("[diarize] no transcript row for session", { sessionId });
@@ -89,7 +94,8 @@ export async function maybeDiarizeAndPersist(
   const hints: SpeakerHint[] = [];
   for (let i = 0; i < words.length; i++) {
     const w = words[i];
-    if (typeof w.start_ms !== "number" || typeof w.end_ms !== "number") continue;
+    if (typeof w.start_ms !== "number" || typeof w.end_ms !== "number")
+      continue;
     const mid = (w.start_ms + w.end_ms) / 2;
     const turn = turns.find((t) => mid >= t.startMs && mid <= t.endMs);
     if (!turn) continue;

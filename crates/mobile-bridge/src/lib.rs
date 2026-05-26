@@ -113,7 +113,8 @@ impl MobileDbBridge {
             .block_on(live_query_runtime.subscribe(sql, params, ListenerSink::new(listener)))
             .map_err(reactive_error)?;
 
-        if let meetspace_db_reactive::DependencyAnalysis::NonReactive { reason } = &registration.analysis
+        if let meetspace_db_reactive::DependencyAnalysis::NonReactive { reason } =
+            &registration.analysis
         {
             eprintln!(
                 "[mobile-bridge] live query subscription is non-reactive for SQL {:?}: {}",
@@ -515,7 +516,8 @@ mod tests {
                 "all".to_string(),
             )
             .unwrap();
-        let result: meetspace_db_execute::ProxyQueryResult = serde_json::from_str(&result_json).unwrap();
+        let result: meetspace_db_execute::ProxyQueryResult =
+            serde_json::from_str(&result_json).unwrap();
 
         assert_eq!(
             result.rows,

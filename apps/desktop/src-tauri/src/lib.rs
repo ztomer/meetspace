@@ -16,7 +16,9 @@ use tauri_plugin_windows::{AppWindow, WindowsPluginExt};
 #[cfg(any(feature = "dev", feature = "devtools"))]
 const STAGING_BUNDLE_ID: &str = "com.meetspace.staging";
 
-fn create_audio_provider(_bundle_id: &str) -> std::sync::Arc<dyn meetspace_audio_actual::AudioProvider> {
+fn create_audio_provider(
+    _bundle_id: &str,
+) -> std::sync::Arc<dyn meetspace_audio_actual::AudioProvider> {
     #[cfg(any(feature = "dev", feature = "devtools"))]
     {
         let bundle_id = _bundle_id;

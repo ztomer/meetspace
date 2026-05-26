@@ -25,9 +25,9 @@ export function ChatCTA({
       type="button"
       onClick={handleClick}
       className={cn([
-        "inline-flex max-w-full items-center gap-2 rounded-full border-2 border-border bg-primary",
+        "border-border bg-primary inline-flex max-w-full items-center gap-2 rounded-full border-2",
         "px-4 py-2 text-sm text-white shadow-[0_4px_14px_rgba(87,83,78,0.4)]",
-        "transition-colors hover:bg-primary",
+        "hover:bg-primary transition-colors",
       ])}
     >
       <MessageCircle className="size-4 shrink-0" aria-hidden="true" />

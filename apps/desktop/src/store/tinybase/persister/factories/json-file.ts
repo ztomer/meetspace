@@ -13,7 +13,10 @@ import {
 import { commands as fs2Commands } from "@meetspace/plugin-fs2";
 import { events as notifyEvents } from "@meetspace/plugin-notify";
 import { commands as settingsCommands } from "@meetspace/plugin-settings";
-import { asTablesChanges, extractChangedTables } from "@meetspace/tinybase-utils";
+import {
+  asTablesChanges,
+  extractChangedTables,
+} from "@meetspace/tinybase-utils";
 
 import { isFileNotFoundError } from "~/store/tinybase/persister/shared/fs";
 import type { ChangedTables } from "~/store/tinybase/persister/shared/types";
