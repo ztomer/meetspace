@@ -47,7 +47,7 @@ export function SourceItem({
             </>
           ) : isSuccess ? (
             <>
-              <CheckIcon size={14} className="mr-1 text-green-600" />
+              <CheckIcon size={14} className="mr-1 text-success-fg" />
             </>
           ) : (
             "Scan"

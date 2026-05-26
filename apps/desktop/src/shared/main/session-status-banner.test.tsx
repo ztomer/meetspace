@@ -69,7 +69,7 @@ describe("MainSessionStatusBannerHost", () => {
 
     const banner = screen.getByText("Microphone access is disabled");
     expect(banner.className).toContain("bottom-1");
-    expect(banner.className).toContain("text-red-400");
+    expect(banner.className).toContain("text-destructive");
   });
 
   it("positions skip reasons above the bottom accessory", () => {

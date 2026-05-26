@@ -77,7 +77,7 @@ export function NormalMessage({
           <div className="mt-1 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
             <button
               onClick={handleCopy}
-              className={`p-1 transition-colors ${copied ? "text-green-500" : "text-muted-foreground hover:text-muted-foreground"}`}
+              className={`p-1 transition-colors ${copied ? "text-success" : "text-muted-foreground hover:text-muted-foreground"}`}
               aria-label="Copy message"
             >
               {copied ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
