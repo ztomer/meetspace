@@ -126,7 +126,7 @@ export function OpenNoteDialog({ open, onOpenChange }: OpenNoteDialogProps) {
       <div className="absolute top-[15%] left-1/2 w-full max-w-lg -translate-x-1/2 px-4">
         <div
           className={cn([
-            "border-border/80 rounded-xl border bg-[#faf8f5]",
+            "border-border/80 bg-popover text-popover-foreground rounded-xl border",
             "shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]",
             "overflow-hidden",
           ])}

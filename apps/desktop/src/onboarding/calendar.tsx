@@ -113,13 +113,7 @@ function CalendarSectionContent({ onContinue }: { onContinue: () => void }) {
   );
 }
 
-export function CalendarSection({
-  onContinue,
-  onSignIn: _onSignIn,
-}: {
-  onContinue: () => void;
-  onSignIn?: () => void;
-}) {
+export function CalendarSection({ onContinue }: { onContinue: () => void }) {
   return (
     <SyncProvider>
       <CalendarSectionContent onContinue={onContinue} />
