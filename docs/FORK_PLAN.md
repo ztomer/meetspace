@@ -241,3 +241,19 @@ The smoke-test fetcher from Phase 8.4b/8.5b proves OAuth tokens work, but the si
 | 10.2 | **Outlook Calendar TS-side sync.** | ✅ `services/calendar/outlook-sync.ts` + `use-outlook-sync.ts`. Same shape against MS Graph `/me/calendars` + `/me/calendarview`. |
 | 10.3 | **Cross-provider event deduplication.** | ✅ `services/calendar/dedup.ts` + integration in `calendar/hooks.ts`. Fuzzy match on `(roundedStart \| roundedEnd \| normalizedTitle)` with a 5-minute bucket; winner picked by provider precedence, losers hidden. Pure read-side filter — duplicate rows stay in the table so flipping precedence rebinds instantly. Required adding `provider` to the `timelineEvents` query. |
 | 10.4 | **Per-source primary-provider setting.** | ✅ `settings/integrations/calendar-precedence.tsx` + `calendar_provider_precedence` value (default `["apple","google","outlook"]`) wired through `packages/store` schema and tinybase settings store. Click-to-reorder Up/Down list — DnD avoided since three items don't justify the cross-platform fiddliness. |
+
+---
+
+## Phase 11 — Interactive Rebase, Sync Pipeline & DMG Release Automation
+
+We successfully completed the synchronization of `MIT_BACK` with the latest upstream release `desktop_v1.0.32`, verified compilation, pushed the branch to the `meetspace` GitHub remote, and automated the whole workflow.
+
+| # | Item | Status |
+|---|---|---|
+| 1 | **Rebase onto `desktop_v1.0.32`** | ✅ Cleanly rebased. Resolved subtree squashing quirks where git merges vendor directories (`async-openai`, `gbnf-validator`) into the root by restoring `./vendor/` from the pre-rebase tree backup (`ba09818e9`). |
+| 2 | **Branding Rename Sweep Fixes** | ✅ Resolved missed branding renames: `legacy/db-parser` now uses `meetspace_importer_core` instead of `hypr_importer_core`, and `plugins/importer` maps `MeetspaceV0` instead of `HyprnoteV0`. |
+| 3 | **Tauri Icon Path Typo** | ✅ Corrected `"Resources/AppIcon.incs"` to `"Resources/AppIcon.icns"` in both tauri configurations (`tauri.conf.json` and `tauri.conf.staging.json`) to package the custom app icon. |
+| 4 | **Compile-Time Env Var Crashes** | ✅ Replaced rigid `env!` macro checks for `POSTHOG_API_KEY` and `VITE_API_URL` in `tauri-plugin-analytics`, `tauri-plugin-todo`, and `tauri-plugin-calendar` with compile-safe `option_env!` fallbacks. Release builds compile cleanly without requiring backend secrets. |
+| 5 | **Unified Automation Pipeline** | ✅ Created `scripts/rebase-push-release.sh` to fully automate the rebase check, git push, and DMG package pipeline. |
+| 6 | **Repository Agent Skill** | ✅ Created `.agents/skills/rebase-and-release/SKILL.md` to equip any future agent with the exact downstream synchronization knowledge. |
+
