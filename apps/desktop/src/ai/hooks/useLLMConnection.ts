@@ -151,7 +151,6 @@ const resolveLLMConnection = (params: {
   };
 };
 
-
 const wrapWithThinkingMiddleware = (
   model: LanguageModelV3,
 ): LanguageModelV3 => {
