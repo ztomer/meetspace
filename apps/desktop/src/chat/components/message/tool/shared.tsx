@@ -42,7 +42,9 @@ export function ToolCardHeader({
     <div
       className={cn([
         "flex items-center gap-2.5 px-3.5 py-2 text-[13px]",
-        failed ? "bg-red-50 text-red-700" : "bg-muted/80 text-muted-foreground",
+        failed
+          ? "bg-destructive-bg text-destructive"
+          : "bg-muted/80 text-muted-foreground",
       ])}
     >
       {running ? (
