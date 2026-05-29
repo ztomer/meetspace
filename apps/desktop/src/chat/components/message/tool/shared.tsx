@@ -42,12 +42,13 @@ export function ToolCardHeader({
     <div
       className={cn([
         "flex items-center gap-2.5 px-3.5 py-2 text-[13px]",
-        failed ? "bg-destructive-bg text-destructive" : "bg-muted/80 text-muted-foreground",
+        failed
+          ? "bg-destructive-bg text-destructive"
+          : "bg-muted/80 text-muted-foreground",
       ])}
     >
       {running ? (
         <Loader2Icon className="h-4 w-4 animate-spin" />
-
       ) : (
         <span
           className={cn([
@@ -73,17 +74,19 @@ export function ToolCardBody({ children }: { children: ReactNode }) {
 
 export function ToolCardFooterError({ text }: { text: string }) {
   return (
-    <div className="flex items-center gap-2 border-t border-destructive/30 bg-destructive-bg px-3.5 py-2.5">
-      <XCircleIcon className="h-4 w-4 shrink-0 text-destructive" />
-      <p className="text-[13px] text-destructive">{text}</p>
+    <div className="border-destructive/30 bg-destructive-bg flex items-center gap-2 border-t px-3.5 py-2.5">
+      <XCircleIcon className="text-destructive h-4 w-4 shrink-0" />
+      <p className="text-destructive text-[13px]">{text}</p>
     </div>
   );
 }
 
 function ToolCardFooterRaw({ text }: { text: string }) {
   return (
-    <div className="border-t border-border/80 bg-muted/80 px-3.5 py-2.5">
-      <p className="text-[13px] whitespace-pre-wrap text-muted-foreground">{text}</p>
+    <div className="border-border/80 bg-muted/80 border-t px-3.5 py-2.5">
+      <p className="text-muted-foreground text-[13px] whitespace-pre-wrap">
+        {text}
+      </p>
     </div>
   );
 }
@@ -128,14 +131,12 @@ export function ToolCardFooters({
   );
 }
 
-
-
 export function MarkdownPreview({ children }: { children: string }) {
   return (
-    <div className="rounded-lg border border-border/80 bg-background">
+    <div className="border-border/80 bg-background rounded-lg border">
       <div className="max-h-64 overflow-y-auto px-3 py-2.5">
         <Streamdown
-          className="text-[13px] leading-relaxed text-foreground"
+          className="text-foreground text-[13px] leading-relaxed"
           linkSafety={{ enabled: false }}
         >
           {children}

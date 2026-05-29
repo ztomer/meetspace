@@ -36,10 +36,12 @@ export function DuringSessionAccessory({
   if (isFinalizing) {
     return (
       <div className="relative w-full pt-1 select-none">
-        <div className="rounded-xl bg-muted">
+        <div className="bg-muted rounded-xl">
           <div className="flex min-h-9 items-center gap-2 px-2 py-1">
             <div className="min-w-0 flex-1">
-              <span className="text-xs text-muted-foreground">Finalizing...</span>
+              <span className="text-muted-foreground text-xs">
+                Finalizing...
+              </span>
             </div>
           </div>
         </div>
@@ -119,10 +121,7 @@ function LiveTranscriptFooterContent({
   return (
     <div className={cn(["w-full select-none", fillHeight && "h-full min-h-0"])}>
       <div
-        className={cn([
-          "rounded-xl bg-muted",
-          fillHeight && "h-full min-h-0",
-        ])}
+        className={cn(["bg-muted rounded-xl", fillHeight && "h-full min-h-0"])}
       >
         <LiveTranscriptContent
           fillHeight={fillHeight}
@@ -191,7 +190,7 @@ function LiveTranscriptContent({
       ])}
     >
       {segments.length === 0 ? (
-        <span className="py-4 text-center text-xs text-muted-foreground">
+        <span className="text-muted-foreground py-4 text-center text-xs">
           Transcript will appear here as you speak.
         </span>
       ) : (
@@ -240,7 +239,7 @@ function CollapsedFooterMessage({ message }: { message: string }) {
       ])}
     >
       <div className="min-w-0 flex-1 select-none">
-        <p className="truncate text-left text-xs text-muted-foreground [direction:rtl]">
+        <p className="text-muted-foreground truncate text-left text-xs [direction:rtl]">
           {message}
         </p>
       </div>
@@ -379,7 +378,7 @@ function TranscriptSegmentRow({
       >
         <span className="min-w-0 truncate">{label}</span>
       </span>
-      <span className="min-w-0 text-xs leading-5 text-foreground">
+      <span className="text-foreground min-w-0 text-xs leading-5">
         {getSegmentText(segment)}
       </span>
     </div>
