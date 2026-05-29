@@ -16,7 +16,7 @@ pub async fn import_all(source: &ImportSource) -> Result<Collection, crate::Erro
 
 pub async fn import_stats(source: &ImportSource) -> Result<ImportStats, crate::Error> {
     match source.transform {
-        TransformKind::HyprnoteV0 => hyprnote::v0::import_stats_from_path(&source.path).await,
+        TransformKind::MeetspaceV0 => meetspace::v0::import_stats_from_path(&source.path).await,
         TransformKind::Granola | TransformKind::AsIs => {
             let data = import_all(source).await?;
             Ok(ImportStats::from_data(&data))

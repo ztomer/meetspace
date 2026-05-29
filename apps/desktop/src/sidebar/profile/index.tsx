@@ -7,7 +7,6 @@ import { cn } from "@meetspace/utils";
 
 import { MenuItem, ProfileFacehash } from "./shared";
 
-import { useAuth } from "~/auth";
 import { useAutoCloser } from "~/shared/hooks/useAutoCloser";
 import * as main from "~/store/tinybase/store/main";
 import { useTabs } from "~/store/zustand/tabs";
@@ -15,9 +14,6 @@ import { useTabs } from "~/store/zustand/tabs";
 export function ProfileMenu() {
   const [isExpanded, setIsExpanded] = useState(false);
   const openNew = useTabs((state) => state.openNew);
-  const auth = useAuth();
-
-  const isAuthenticated = !!auth?.session;
 
   const closeMenu = useCallback(() => {
     setIsExpanded(false);
@@ -96,7 +92,7 @@ export function ProfileMenu() {
             className="absolute top-full left-0 mt-1 w-56"
             data-tauri-drag-region="false"
           >
-            <div className="overflow-hidden rounded-2xl border bg-background shadow-[0_10px_30px_rgba(0,0,0,0.14)]">
+            <div className="bg-background overflow-hidden rounded-2xl border shadow-[0_10px_30px_rgba(0,0,0,0.14)]">
               <div className="py-1">
                 {menuItems.map((item) => (
                   <MenuItem key={item.label} {...item} />
@@ -143,13 +139,8 @@ function ProfileButton({
           "transition-transform duration-300",
         ])}
       >
-        <ProfileFacehash
-          name={facehashName}
-          size={18}
-          className="rounded-md"
-        />
+        <ProfileFacehash name={facehashName} size={18} className="rounded-md" />
       </div>
-
     </button>
   );
 }

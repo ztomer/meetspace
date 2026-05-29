@@ -76,7 +76,7 @@ function EmptyView() {
           shortcut={["⌘", "⇧", "N"]}
           onClick={newNoteAndListen}
         />
-        <div className="my-1 h-px bg-accent" />
+        <div className="bg-accent my-1 h-px" />
         <ActionItem
           label="Contacts"
           shortcut={["⌘", "⇧", "O"]}

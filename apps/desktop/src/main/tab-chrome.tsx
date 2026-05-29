@@ -158,11 +158,20 @@ export function ClassicMainTabChrome({ tabs }: { tabs: Tab[] }) {
                 onClick={leftsidebar.toggleExpanded}
               >
                 {leftsidebar.expanded && togglesTopTimeline ? (
-                  <PanelTopCloseIcon size={16} className="text-muted-foreground" />
+                  <PanelTopCloseIcon
+                    size={16}
+                    className="text-muted-foreground"
+                  />
                 ) : leftsidebar.expanded ? (
-                  <PanelLeftCloseIcon size={16} className="text-muted-foreground" />
+                  <PanelLeftCloseIcon
+                    size={16}
+                    className="text-muted-foreground"
+                  />
                 ) : togglesTopTimeline ? (
-                  <PanelTopOpenIcon size={16} className="text-muted-foreground" />
+                  <PanelTopOpenIcon
+                    size={16}
+                    className="text-muted-foreground"
+                  />
                 ) : (
                   <PanelLeftOpenIcon
                     size={16}

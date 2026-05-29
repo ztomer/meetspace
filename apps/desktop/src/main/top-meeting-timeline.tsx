@@ -1,3 +1,15 @@
+import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
+import { commands as openerCommands } from "@hypr/plugin-opener2";
+import { Spinner } from "@hypr/ui/components/ui/spinner";
+import {
+  addDays,
+  cn,
+  differenceInCalendarDays,
+  format,
+  safeParseDate,
+  startOfDay,
+  TZDate,
+} from "@hypr/utils";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -16,19 +28,6 @@ import {
   useRef,
   useState,
 } from "react";
-
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { Spinner } from "@hypr/ui/components/ui/spinner";
-import {
-  addDays,
-  cn,
-  differenceInCalendarDays,
-  format,
-  safeParseDate,
-  startOfDay,
-  TZDate,
-} from "@hypr/utils";
 
 import {
   normalizeEndMs,

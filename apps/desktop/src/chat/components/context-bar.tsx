@@ -307,13 +307,13 @@ function SessionPicker({
             <span className="text-foreground w-full truncate text-xs font-medium">
               {result.title || "Untitled"}
             </span>
-            <span className="text-[10px] text-muted-foreground">
+            <span className="text-muted-foreground text-[10px]">
               {result.dateLabel ?? "Unknown date"}
             </span>
           </button>
         ))}
         {results.length === 0 && (
-          <span className="px-2 py-1.5 text-xs text-muted-foreground">
+          <span className="text-muted-foreground px-2 py-1.5 text-xs">
             {searchResults.isFetching ? "Searching..." : "No sessions found"}
           </span>
         )}

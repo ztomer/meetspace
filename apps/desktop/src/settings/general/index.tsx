@@ -196,8 +196,6 @@ export function SettingsApp() {
                       </form.Field>
                     )}
                   </form.Field>
-                    )}
-                  </form.Field>
                 )}
               </form.Field>
             )}
