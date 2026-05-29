@@ -75,6 +75,10 @@ else
   yellow "==> Skipping push to meetspace remote (--no-push)."
 fi
 
+bold "==> Wiping stale Tauri and cargo build caches"
+rm -rf apps/desktop/src-tauri/target
+cargo clean
+
 bold "==> Building macOS release DMG installer"
 if ! ./scripts/package.sh dmg; then
   red "Error: DMG packaging failed!"
