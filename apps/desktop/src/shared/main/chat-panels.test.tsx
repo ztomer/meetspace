@@ -8,7 +8,7 @@ const { getSizeMock, resizeMock, windowExpandWidthMock } = vi.hoisted(() => ({
   windowExpandWidthMock: vi.fn(() => Promise.resolve()),
 }));
 
-vi.mock("@hypr/plugin-windows", () => ({
+vi.mock("@meetspace/plugin-windows", () => ({
   commands: {
     windowExpandWidth: windowExpandWidthMock,
     windowRestoreWidth: vi.fn(() => Promise.resolve()),
@@ -19,7 +19,7 @@ vi.mock("~/chat/components/persistent-chat", () => ({
   PersistentChatPanel: () => null,
 }));
 
-vi.mock("@hypr/ui/components/ui/resizable", async () => {
+vi.mock("@meetspace/ui/components/ui/resizable", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
 
   return {
