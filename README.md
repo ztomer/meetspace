@@ -30,6 +30,16 @@ Simply download the latest `.dmg` installer from the [Meetspace GitHub Releases]
 > [!NOTE]
 > Since Meetspace releases are packaged locally and are unsigned, macOS Gatekeeper may display a warning on first launch. You can bypass this by holding Control while clicking the app and choosing **Open**.
 
+### 🍺 Install via Homebrew (Recommended)
+You can install Meetspace instantly using our custom Homebrew Cask. This installer runs a `postflight` hook that recursively strips macOS quarantine flags from the app bundle, **completely bypassing Gatekeeper unsigned app warnings**:
+
+```bash
+brew tap ztomer/tap
+brew install --cask meetspace
+```
+
+Once installed, simply launch **Meetspace** from your Applications folder or Spotlight search without any security prompts!
+
 ---
 
 ## Technical & Development Guide

@@ -1,3 +1,4 @@
+import { BarChart3Icon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { useMotionValue, useSpring, useTransform } from "motion/react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { defaultRehypePlugins, Streamdown } from "streamdown";
@@ -10,6 +11,8 @@ import {
   HoverCardTrigger,
 } from "@meetspace/ui/components/ui/hover-card";
 import { cn, format, safeParseDate } from "@meetspace/utils";
+
+import { SessionAnalytics } from "./analytics";
 
 import { extractPlainText } from "~/search/contexts/engine/utils";
 import { streamdownComponents } from "~/session/components/streamdown";
@@ -318,6 +321,7 @@ export function SessionPreviewCard({
   const [openDelay, setOpenDelay] = useState(
     isWarmedUp() ? OPEN_DELAY_WARM : OPEN_DELAY_COLD,
   );
+  const [showAnalytics, setShowAnalytics] = useState(false);
 
   const handleOpenChange = useCallback((open: boolean) => {
     if (open) {
@@ -325,6 +329,7 @@ export function SessionPreviewCard({
     } else {
       markPreviewClosed();
       setOpenDelay(OPEN_DELAY_WARM);
+      setShowAnalytics(false);
     }
   }, []);
 
@@ -357,7 +362,10 @@ export function SessionPreviewCard({
         side={side}
         sideOffset={8}
         followStyle={style}
-        className={cn(["w-[228px] pb-0!", "pointer-events-none"])}
+        className={cn([
+          "border-border/40 pointer-events-auto! w-80 border pb-3! shadow-2xl backdrop-blur-xl",
+          showAnalytics && "max-h-[85vh] overflow-y-auto",
+        ])}
       >
         <div className="flex flex-col gap-1">
           {dateDisplay && (
@@ -393,6 +401,33 @@ export function SessionPreviewCard({
             </div>
           ) : (
             <div className="h-4" />
+          )}
+
+          <div className="border-border/10 mt-2 flex shrink-0 items-center justify-between border-t pt-2">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowAnalytics(!showAnalytics);
+              }}
+              className="text-muted-foreground hover:text-foreground flex cursor-pointer items-center gap-1.5 text-[11px] font-medium transition-colors select-none"
+            >
+              <BarChart3Icon size={12} className="text-muted-foreground/75" />
+              <span>
+                {showAnalytics ? "Hide Analytics" : "Show Speaker Analytics"}
+              </span>
+              {showAnalytics ? (
+                <ChevronUpIcon size={12} />
+              ) : (
+                <ChevronDownIcon size={12} />
+              )}
+            </button>
+          </div>
+
+          {showAnalytics && (
+            <div className="border-border/10 mt-3 flex shrink-0 flex-col gap-2 border-t pt-3">
+              <SessionAnalytics sessionId={sessionId} />
+            </div>
           )}
         </div>
       </HoverCardContent>
