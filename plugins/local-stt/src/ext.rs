@@ -572,6 +572,7 @@ async fn start_external_server<R: Runtime, T: Manager<R>>(
 
     let app_handle = manager.app_handle().clone();
     let cmd_builder = external::CommandBuilder::new(move || {
+        #[allow(unused_mut)]
         let mut cmd = app_handle
             .sidecar2()
             .sidecar("char-sidecar-stt")?
