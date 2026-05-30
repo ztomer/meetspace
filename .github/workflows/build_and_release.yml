@@ -1,0 +1,125 @@
+name: Build & Release Artifacts
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Existing release tag to attach the built artifacts to (e.g. v1.0.32). Leave blank to only build artifacts."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    name: Build macOS (DMG)
+    runs-on: ${{ matrix.settings.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        settings:
+          - os: macos-latest
+            arch: aarch64
+          - os: macos-13
+            arch: x64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Set up Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Cache cargo registry and builds
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "apps/desktop/src-tauri -> target"
+
+      - name: Determine version
+        uses: ./.github/actions/determine-version
+        with:
+          release_tag: ${{ inputs.release_tag }}
+
+      - name: Inject version into package.json
+        run: |
+          CLEAN_VERSION="${VERSION#v}"
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('apps/desktop/package.json', 'utf8'));
+            pkg.version = '$CLEAN_VERSION';
+            fs.writeFileSync('apps/desktop/package.json', JSON.stringify(pkg, null, 2) + '\n', 'utf8');
+          "
+
+      - name: Build macOS DMG
+        run: |
+          chmod +x scripts/package.sh
+          ./scripts/package.sh stable dmg
+
+      - name: Locate built DMG
+        run: |
+          DMG_PATH=$(find target/release/bundle apps/desktop/src-tauri/target/release/bundle -maxdepth 3 -type f -name '*.dmg' | head -n 1)
+          echo "DMG_PATH=$DMG_PATH" >> "$GITHUB_ENV"
+          echo "Found DMG at: $DMG_PATH"
+
+      - name: Upload DMG (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Meetspace-macOS-${{ matrix.settings.arch }}-${{ env.VERSION }}
+          path: ${{ env.DMG_PATH }}
+          retention-days: 30
+
+      - name: Upload DMG to Release
+        if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
+        run: |
+          TAG="${{ github.event.release.tag_name || inputs.release_tag }}"
+          echo "Attaching $DMG_PATH to release $TAG"
+          gh release upload "$TAG" "$DMG_PATH" --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Homebrew Cask in Tap
+        if: (matrix.settings.os == 'macos-latest') && (github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.release_tag != ''))
+        env:
+          TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          if [ -z "$TAP_TOKEN" ]; then
+            echo "HOMEBREW_TAP_TOKEN secret is not set, skipping cask tap automation."
+            exit 0
+          fi
+
+          CLEAN_VERSION="${VERSION#v}"
+
+          # Clone the tap repository
+          git clone "https://${TAP_TOKEN}@github.com/ztomer/homebrew-tap.git" /tmp/homebrew-tap
+          cd /tmp/homebrew-tap
+
+          # Update the cask file with new version
+          perl -pi -e "s/version \".*\"/version \"$CLEAN_VERSION\"/" Casks/meetspace.rb
+
+          # Commit and push directly to the tap repository
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Casks/meetspace.rb
+          git commit -m "Update Meetspace cask to version $CLEAN_VERSION"
+          git push origin main
