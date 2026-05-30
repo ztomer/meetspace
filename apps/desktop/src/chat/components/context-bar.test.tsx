@@ -24,7 +24,7 @@ const { openNewMock, searchMock, shellState, storeState } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("@hypr/ui/components/ui/popover", () => ({
+vi.mock("@meetspace/ui/components/ui/popover", () => ({
   AppFloatingPanel: ({ children }: { children: ReactNode }) => (
     <div>{children}</div>
   ),
@@ -35,7 +35,7 @@ vi.mock("@hypr/ui/components/ui/popover", () => ({
   PopoverTrigger: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
 
-vi.mock("@hypr/ui/components/ui/tooltip", () => ({
+vi.mock("@meetspace/ui/components/ui/tooltip", () => ({
   Tooltip: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   TooltipContent: ({ children }: { children: ReactNode }) => (
     <div>{children}</div>
