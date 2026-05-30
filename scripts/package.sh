@@ -32,12 +32,31 @@ fi
 bold "==> Prebuild @meetspace/ui (Tailwind globals.css)"
 pnpm -F @meetspace/ui build
 
-bold "==> Tauri build"
-if [ "$#" -gt 0 ]; then
-  pnpm -F @meetspace/desktop tauri build --bundles "$@"
+USE_STABLE=0
+BUNDLES=()
+
+for arg in "$@"; do
+  if [ "$arg" = "stable" ] || [ "$arg" = "--stable" ]; then
+    USE_STABLE=1
+  else
+    BUNDLES+=("$arg")
+  fi
+done
+
+TAURI_ARGS=()
+if [ "$USE_STABLE" = "1" ]; then
+  bold "==> Building with STABLE production release config (tauri.conf.stable.json)"
+  TAURI_ARGS+=("--config" "src-tauri/tauri.conf.stable.json")
 else
-  pnpm -F @meetspace/desktop tauri build
+  bold "==> Building with DEV config (tauri.conf.json)"
 fi
+
+if [ "${#BUNDLES[@]}" -gt 0 ]; then
+  TAURI_ARGS+=("--bundles" "${BUNDLES[@]}")
+fi
+
+bold "==> Tauri build"
+pnpm -F @meetspace/desktop tauri build "${TAURI_ARGS[@]}"
 
 green "==> Done. Artifacts:"
 find target/release/bundle apps/desktop/src-tauri/target/release/bundle \
