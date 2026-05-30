@@ -17,12 +17,16 @@ export type {
   TemplatesState,
 };
 
-export type TabInput = Exclude<
-  WindowsTabInput,
-  { type: "extension" } | { type: "extensions" } | { type: "folders" }
->;
+export type TabInput =
+  | Exclude<
+      WindowsTabInput,
+      { type: "extension" } | { type: "extensions" } | { type: "folders" }
+    >
+  | { type: "prep" };
 
-export const isTabInputSupported = (tab: WindowsTabInput): tab is TabInput => {
+export const isTabInputSupported = (
+  tab: WindowsTabInput | { type: "prep" },
+): tab is TabInput => {
   return (
     tab.type !== "extension" &&
     tab.type !== "extensions" &&
@@ -131,7 +135,8 @@ export type Tab =
       type: "daily_summary";
       id: string;
       state: DailySummaryState;
-    });
+    })
+  | (BaseTab & { type: "prep" });
 
 export type TaskResource =
   | { type: "github_issue"; owner: string; repo: string; number: number }
@@ -175,6 +180,8 @@ export const getDefaultState = (tab: TabInput): Tab => {
       return { ...base, type: "empty" };
     case "calendar":
       return { ...base, type: "calendar" };
+    case "prep":
+      return { ...base, type: "prep" };
     case "changelog":
       return {
         ...base,
@@ -230,6 +237,8 @@ export const uniqueIdfromTab = (tab: Tab): string => {
       return `task-${tab.id}`;
     case "daily_summary":
       return `daily_summary-${tab.id}`;
+    case "prep":
+      return `prep`;
   }
 };
 

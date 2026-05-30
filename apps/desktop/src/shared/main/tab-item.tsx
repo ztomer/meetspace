@@ -1,4 +1,5 @@
 import { TabItemCalendar } from "~/calendar";
+import { TabItemPrep } from "~/calendar/components/prep-card";
 import { TabItemChangelog } from "~/changelog";
 import { TabItemContact } from "~/contacts";
 import { TabItemHuman } from "~/contacts/humans";
@@ -168,6 +169,20 @@ export function MainTabItem({
   if (tab.type === "task") {
     return (
       <TabItemTask
+        tab={tab}
+        tabIndex={tabIndex}
+        handleCloseThis={handleClose}
+        handleSelectThis={handleSelect}
+        handleCloseOthers={handleCloseOthers}
+        handleCloseAll={handleCloseAll}
+        handlePinThis={handlePinThis}
+        handleUnpinThis={handleUnpinThis}
+      />
+    );
+  }
+  if (tab.type === "prep") {
+    return (
+      <TabItemPrep
         tab={tab}
         tabIndex={tabIndex}
         handleCloseThis={handleClose}

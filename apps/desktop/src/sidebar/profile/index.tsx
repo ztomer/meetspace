@@ -1,4 +1,9 @@
-import { CalendarIcon, SettingsIcon, UsersIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  SettingsIcon,
+  UsersIcon,
+  Sparkles as SparklesIcon,
+} from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useState } from "react";
 
@@ -34,6 +39,11 @@ export function ProfileMenu() {
     closeMenu();
   }, [openNew, closeMenu]);
 
+  const handleClickPrep = useCallback(() => {
+    openNew({ type: "prep" });
+    closeMenu();
+  }, [openNew, closeMenu]);
+
   const handleClickContacts = useCallback(() => {
     openNew({
       type: "contacts",
@@ -51,6 +61,12 @@ export function ProfileMenu() {
   ]);
 
   const menuItems = [
+    {
+      icon: SparklesIcon,
+      label: "Proactive Prep",
+      onClick: handleClickPrep,
+      badge: <Kbd className={kbdClass}>⌘ ⇧ P</Kbd>,
+    },
     {
       icon: UsersIcon,
       label: "People",
