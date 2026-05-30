@@ -19,7 +19,8 @@ runs:
         elif [ -n "$DISPATCH_TAG" ]; then
           VERSION="$DISPATCH_TAG"
         else
-          VERSION="dev-${GITHUB_SHA::7}"
+          VERSION="0.0.0-dev-${GITHUB_SHA::7}"
         fi
         echo "VERSION=$VERSION" >> "$GITHUB_ENV"
         echo "Version: $VERSION"
+
