@@ -75,15 +75,15 @@ else
     TARGET="$UPSTREAM_REMOTE/$UPSTREAM_BRANCH"
     TARGET_LABEL="$TARGET (no stable tag)"
   else
-    # Check whether HEAD already contains this tag's commit.
-    if git merge-base --is-ancestor "$LATEST_TAG" HEAD 2>/dev/null; then
-      green "Latest stable tag $LATEST_TAG is already in HEAD. Nothing to do."
-      yellow "Pass --on-main to rebase onto $UPSTREAM_REMOTE/$UPSTREAM_BRANCH anyway."
-      exit 0
-    fi
     TARGET="$LATEST_TAG"
     TARGET_LABEL="$LATEST_TAG (latest stable)"
   fi
+fi
+
+# Check whether HEAD already contains this target's commit.
+if git merge-base --is-ancestor "$TARGET" HEAD 2>/dev/null; then
+  green "Rebase target $TARGET_LABEL is already in HEAD. No rebase required."
+  exit 0
 fi
 
 bold "==> Rebasing onto $TARGET_LABEL"
