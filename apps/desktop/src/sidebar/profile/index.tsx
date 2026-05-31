@@ -142,8 +142,8 @@ function ProfileButton({
         "flex size-7 cursor-pointer items-center justify-center rounded-lg",
         "border border-transparent bg-transparent p-1",
         "transition-colors duration-150",
-        "hover:border-neutral-200 hover:bg-neutral-200/70",
-        isExpanded && "border-neutral-200 bg-neutral-200/70",
+        "hover:border-border hover:bg-accent",
+        isExpanded && "border-border bg-accent",
       ])}
       onClick={onClick}
     >

@@ -589,7 +589,7 @@ function TimelineCreateMeetingCard({
         type="button"
         className={cn([
           "border-border bg-background/80 flex h-10 w-full flex-col justify-center rounded-md border border-dashed px-2 text-left shadow-xs",
-          "hover:bg-accent focus-visible:ring-ring transition-colors hover:border-neutral-500 focus-visible:ring-2 focus-visible:outline-hidden dark:hover:border-neutral-400",
+          "hover:bg-accent focus-visible:ring-ring hover:border-muted-foreground transition-colors focus-visible:ring-2 focus-visible:outline-hidden",
         ])}
         onClick={onClick}
       >
@@ -623,7 +623,7 @@ function TimelineOpenCalendarCard({
         type="button"
         className={cn([
           "border-border bg-background/80 text-foreground flex h-10 w-full items-center gap-1.5 rounded-md border border-dashed px-2 text-left text-xs font-semibold shadow-xs",
-          "hover:bg-accent focus-visible:ring-ring transition-colors hover:border-neutral-500 focus-visible:ring-2 focus-visible:outline-hidden dark:hover:border-neutral-400",
+          "hover:bg-accent focus-visible:ring-ring hover:border-muted-foreground transition-colors focus-visible:ring-2 focus-visible:outline-hidden",
         ])}
         onClick={onClick}
       >
