@@ -2,7 +2,6 @@ import { Icon } from "@iconify-icon/react";
 
 import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 import { commands as openerCommands } from "@meetspace/plugin-opener2";
-import { commands as sfxCommands } from "@meetspace/plugin-sfx";
 
 import { OnboardingButton } from "./shared";
 
@@ -50,7 +49,6 @@ export function FinalSection({ onContinue }: { onContinue: () => void }) {
 }
 
 export async function finishOnboarding(onContinue?: () => void) {
-  await sfxCommands.stop("BGM").catch(console.error);
   await new Promise((resolve) => setTimeout(resolve, 100));
   await commands.setOnboardingNeeded(false).catch(console.error);
   await new Promise((resolve) => setTimeout(resolve, 100));
