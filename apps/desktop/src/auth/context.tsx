@@ -25,7 +25,10 @@ const noop = async () => {};
 const nullAsync = async () => null;
 
 const LOCAL_AUTH: AuthContextType = {
-  session: null,
+  session: {
+    access_token: "local-first-token",
+    user: { id: "local-user", email: "local@meetspace.app" },
+  },
   supabase: null,
   isRefreshingSession: false,
   signIn: noop,
