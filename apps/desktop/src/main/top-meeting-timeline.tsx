@@ -318,9 +318,9 @@ export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
           <button
             type="button"
             className={cn([
-              "absolute top-1/2 z-40 flex h-6 -translate-y-1/2 items-center gap-1 rounded-full border border-neutral-200 bg-white/95 px-2.5 text-xs font-medium text-neutral-700 shadow-xs backdrop-blur",
-              "transition-colors hover:border-neutral-300 hover:bg-white hover:text-neutral-900",
-              "focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden",
+              "border-border bg-background/95 text-foreground absolute top-1/2 z-40 flex h-6 -translate-y-1/2 items-center gap-1 rounded-full border px-2.5 text-xs font-medium shadow-xs backdrop-blur",
+              "hover:border-border hover:bg-accent hover:text-accent-foreground transition-colors",
+              "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-hidden",
               todayChipDirection === "left" ? "left-3" : "right-3",
             ])}
             onClick={handleGoToToday}
@@ -588,15 +588,15 @@ function TimelineCreateMeetingCard({
       <button
         type="button"
         className={cn([
-          "flex h-10 w-full flex-col justify-center rounded-md border border-dashed border-neutral-300 bg-white/80 px-2 text-left shadow-xs",
-          "transition-colors hover:border-neutral-600 hover:bg-white focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden",
+          "border-border bg-background/80 flex h-10 w-full flex-col justify-center rounded-md border border-dashed px-2 text-left shadow-xs",
+          "hover:bg-accent focus-visible:ring-ring transition-colors hover:border-neutral-500 focus-visible:ring-2 focus-visible:outline-hidden dark:hover:border-neutral-400",
         ])}
         onClick={onClick}
       >
-        <span className="font-mono text-[10px] text-neutral-500">
+        <span className="text-muted-foreground font-mono text-[10px]">
           {formatRelativeTimelineDay(item.start, timezone)}
         </span>
-        <span className="flex min-w-0 items-center gap-1.5 truncate text-xs font-semibold text-neutral-700">
+        <span className="text-foreground flex min-w-0 items-center gap-1.5 truncate text-xs font-semibold">
           <PlusIcon size={12} className="shrink-0" />
           <span className="truncate">Create new meeting</span>
         </span>
@@ -605,6 +605,7 @@ function TimelineCreateMeetingCard({
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function TimelineOpenCalendarCard({
   item,
   onClick,
@@ -621,8 +622,8 @@ function TimelineOpenCalendarCard({
       <button
         type="button"
         className={cn([
-          "flex h-10 w-full items-center gap-1.5 rounded-md border border-dashed border-neutral-300 bg-white/80 px-2 text-left text-xs font-semibold text-neutral-700 shadow-xs",
-          "transition-colors hover:border-neutral-600 hover:bg-white focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden",
+          "border-border bg-background/80 text-foreground flex h-10 w-full items-center gap-1.5 rounded-md border border-dashed px-2 text-left text-xs font-semibold shadow-xs",
+          "hover:bg-accent focus-visible:ring-ring transition-colors hover:border-neutral-500 focus-visible:ring-2 focus-visible:outline-hidden dark:hover:border-neutral-400",
         ])}
         onClick={onClick}
       >
@@ -700,20 +701,22 @@ function TimelineCardButton({
       onContextMenu={handleContextMenu}
       className={cn([
         "flex h-10 w-full flex-col justify-center rounded-md border px-2 text-left shadow-xs",
-        "transition-colors hover:border-neutral-700 focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden",
+        "hover:border-border focus-visible:ring-ring transition-colors focus-visible:ring-2 focus-visible:outline-hidden",
         item.type === "session" &&
           (item.selected
-            ? "border-neutral-900 bg-neutral-900 text-white hover:bg-neutral-800"
-            : "border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50"),
+            ? "border-primary bg-primary text-primary-foreground hover:bg-primary/95"
+            : "border-border bg-background text-foreground hover:bg-accent"),
         item.type === "event" &&
-          "border-dashed border-neutral-300 bg-white/80 text-neutral-600 hover:bg-white",
+          "border-border bg-background/80 text-muted-foreground hover:bg-accent border-dashed",
         item.muted && !item.selected && "opacity-60",
       ])}
     >
       <FadedTimelineLabel
         className={cn([
           "font-mono text-[10px]",
-          item.selected ? "text-white/65" : "text-neutral-500",
+          item.selected
+            ? "text-primary-foreground/70"
+            : "text-muted-foreground",
         ])}
       >
         {rangeLabel}

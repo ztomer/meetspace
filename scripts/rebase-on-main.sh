@@ -108,8 +108,6 @@ REMOVED_DIRS=(
   "apps/desktop/src/billing"
   "apps/desktop/src/onboarding/account"
   # Phase 7 rebrand pass — upstream's CI + release pipeline.
-  ".github/workflows"
-  ".github/actions"
   ".github/scripts"
   ".github/reports"
   "scripts/s3"
