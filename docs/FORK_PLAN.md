@@ -273,4 +273,16 @@ We completed a comprehensive sweep of visual contrast layouts, updated the backg
 | 6 | **Rebase Tooling Directory Preserves** | ✅ Updated `scripts/rebase-on-main.sh` to prevent it from deleting our custom `.github/workflows` and `.github/actions` folders during rebases against upstream tags. |
 | 7 | **Incremental Caching Local Script Upgrades** | ✅ Modified `scripts/rebase-push-release.sh` to preserve local cargo and Tauri compile target directories by default for instant local incremental builds, and added a `--clean` flag to wipe them only when explicitly requested. |
 
+---
+
+## Phase 13 — Stale i18n Key Compilation, Release v1.0.34 & Homebrew Update
+
+We successfully resolved the autostart settings label bug where the settings page rendered `saL1il` instead of "Start Meetspace at login", compiled all localized catalogs, bumped the production package version to `1.0.34`, built the production stable installer DMG, and updated the `homebrew-tap` cask.
+
+| # | Item | Status |
+|---|---|---|
+| 1 | **Autostart settings mislabeling (`saL1il` fix)** | ✅ Recompiled all translation catalogs using `lingui compile` to synchronize the upgraded Lingui v6 hash keys (`saL1iI` which rendered as `saL1il` in system font due to capital I / lowercase l similarity) in English, Japanese, and Korean. |
+| 2 | **Local Packaging & Version Bumps** | ✅ Bumped `apps/desktop/package.json` and `apps/desktop/src-tauri/Cargo.toml` to version `1.0.34` and built the production DMG bundle `Meetspace_1.0.34_aarch64.dmg`. |
+| 3 | **Homebrew Cask Upgrade** | ✅ Updated the `homebrew-tap` Cask for `meetspace` to version `1.0.34` with the precise computed SHA256 verification checksum. |
+
 
