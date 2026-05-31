@@ -41,11 +41,11 @@ msgstr "Automatically start listening when an event-backed note reaches its sche
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "Automatically stop listening when the meeting app releases the microphone."
 
-#: src/settings/general/index.tsx:259
+#: src/settings/general/index.tsx:261
 msgid "Data"
 msgstr "Data"
 
-#: src/settings/general/index.tsx:208
+#: src/settings/general/index.tsx:210
 msgid "Language & Region"
 msgstr "Language & Region"
 
@@ -62,7 +62,7 @@ msgstr "Main language"
 msgid "No matching languages found"
 msgstr "No matching languages found"
 
-#: src/settings/general/index.tsx:271
+#: src/settings/general/index.tsx:273
 msgid "Notifications"
 msgstr "Notifications"
 
@@ -78,7 +78,7 @@ msgstr "Select language"
 msgid "Send anonymous usage analytics to help improve Meetspace."
 msgstr "Send anonymous usage analytics to help improve Meetspace."
 
-#: src/settings/index.tsx:36
+#: src/settings/index.tsx:35
 msgid "Settings"
 msgstr "Settings"
 

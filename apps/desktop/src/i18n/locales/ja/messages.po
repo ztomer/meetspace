@@ -41,11 +41,11 @@ msgstr "予定に紐づいたノートが開始時刻になると、自動的に
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "会議アプリがマイクを解放すると、自動的にリスニングを停止します。"
 
-#: src/settings/general/index.tsx:259
+#: src/settings/general/index.tsx:261
 msgid "Data"
 msgstr "データ"
 
-#: src/settings/general/index.tsx:208
+#: src/settings/general/index.tsx:210
 msgid "Language & Region"
 msgstr "言語と地域"
 
@@ -62,7 +62,7 @@ msgstr "メイン言語"
 msgid "No matching languages found"
 msgstr "一致する言語が見つかりません"
 
-#: src/settings/general/index.tsx:271
+#: src/settings/general/index.tsx:273
 msgid "Notifications"
 msgstr "通知"
 
@@ -78,7 +78,7 @@ msgstr "言語を選択"
 msgid "Send anonymous usage analytics to help improve Meetspace."
 msgstr "Meetspace の改善に役立てるため、匿名の使用状況データを送信します。"
 
-#: src/settings/index.tsx:36
+#: src/settings/index.tsx:35
 msgid "Settings"
 msgstr "設定"
 
