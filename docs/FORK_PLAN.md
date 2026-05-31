@@ -257,3 +257,20 @@ We successfully completed the synchronization of `MIT_BACK` with the latest upst
 | 5 | **Unified Automation Pipeline** | ✅ Created `scripts/rebase-push-release.sh` to fully automate the rebase check, git push, and DMG package pipeline. |
 | 6 | **Repository Agent Skill** | ✅ Created `.agents/skills/rebase-and-release/SKILL.md` to equip any future agent with the exact downstream synchronization knowledge. |
 
+---
+
+## Phase 12 — Visual Polish, Menubar Branding, and Permissions Fixes
+
+We completed a comprehensive sweep of visual contrast layouts, updated the background menubar tray icons to the custom "meat sofa" brand, bypassed unbundled Swift sidecar TCC checks to restore microphone permission requests, activated local-first calendar integrations, and optimized rebase caching scripts.
+
+| # | Item | Status |
+|---|---|---|
+| 1 | **Onboarding "White-on-White" Text Fix** | ✅ Replaced hardcoded `text-white` classes inside `onboarding/permissions.tsx` with theme-aware `text-primary-foreground` to guarantee full text readability on light primary backgrounds in all modes. |
+| 2 | **Visual Theme-Aware Contrast Sweep** | ✅ Swept and resolved straggler hardcoded light colors (like `bg-white`, `border-neutral-300`, `text-neutral-700`, etc.) in `top-meeting-timeline.tsx`, converting them to semantic classes (`bg-background`, `border-border`, `text-foreground`, `text-muted-foreground`) to fully support dark mode. |
+| 3 | **Menubar "Meat Sofa" Icon Rebrand** | ✅ Resized the master high-resolution app icon (`icons/stable/icon.png`) into a 160x160 RGBA format and replaced all idle status bar PNG files (`tray_default.png`, `tray_degraded.png`, and `tray_update.png` under `plugins/tray/icons/`). |
+| 4 | **Interactive Permissions Click Handler** | ✅ Bypassed the unbundled Swift sidecar `check_sidecar` logic specifically for `Permission::Microphone` inside `ext.rs`, letting checks fall back to the thread-safe, in-process AVCaptureDevice check to correctly prompt and detect the main application bundle's permission status. |
+| 5 | **Local-First Calendar Integrations Enablement** | ✅ Provided a mock local session by default inside `auth/context.tsx` to satisfy React context assertions, activating Google and Outlook Calendar connect buttons so they cleanly open the OAuth localhost redirect web integrations. |
+| 6 | **Rebase Tooling Directory Preserves** | ✅ Updated `scripts/rebase-on-main.sh` to prevent it from deleting our custom `.github/workflows` and `.github/actions` folders during rebases against upstream tags. |
+| 7 | **Incremental Caching Local Script Upgrades** | ✅ Modified `scripts/rebase-push-release.sh` to preserve local cargo and Tauri compile target directories by default for instant local incremental builds, and added a `--clean` flag to wipe them only when explicitly requested. |
+
+

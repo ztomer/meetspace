@@ -25,6 +25,7 @@ BRANCH_NAME="${1:-$CURRENT_BRANCH}"
 SKIP_REBASE=0
 SKIP_PUSH=0
 USE_STABLE=0
+CLEAN_CACHE=0
 
 # Shift first argument if it's a branch name (i.e. does not start with -)
 if [[ $# -gt 0 && ! "$1" =~ ^- ]]; then
@@ -36,14 +37,16 @@ for arg in "$@"; do
     --no-rebase) SKIP_REBASE=1 ;;
     --no-push)   SKIP_PUSH=1 ;;
     --stable|stable) USE_STABLE=1 ;;
+    --clean)     CLEAN_CACHE=1 ;;
     -h|--help)
       cat <<EOF
-Usage: $0 [branch_name] [--no-rebase] [--no-push] [--stable]
+Usage: $0 [branch_name] [--no-rebase] [--no-push] [--stable] [--clean]
 
   [branch_name]  The branch to push and build (default: current branch '$CURRENT_BRANCH')
   --no-rebase    Skip rebasing onto the latest upstream stable release tag
   --no-push      Skip force-pushing to the 'meetspace' remote on GitHub
   --stable       Build the production stable release (Meetspace.dmg) instead of Meetspace Dev
+  --clean        Wipe stale Tauri and cargo build caches before packaging
 EOF
       exit 0
       ;;
@@ -78,9 +81,13 @@ else
   yellow "==> Skipping push to meetspace remote (--no-push)."
 fi
 
-bold "==> Wiping stale Tauri and cargo build caches"
-rm -rf apps/desktop/src-tauri/target
-cargo clean
+if [ "$CLEAN_CACHE" = "1" ]; then
+  bold "==> Wiping stale Tauri and cargo build caches"
+  rm -rf apps/desktop/src-tauri/target
+  cargo clean
+else
+  yellow "==> Retaining build caches for fast incremental compilation (pass --clean to wipe)"
+fi
 
 PACKAGE_ARGS=("dmg")
 if [ "$USE_STABLE" = "1" ]; then
