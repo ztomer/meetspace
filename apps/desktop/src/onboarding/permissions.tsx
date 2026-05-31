@@ -67,7 +67,7 @@ function PermissionBlock({
           "flex size-6 shrink-0 items-center justify-center rounded-md",
           isAuthorized
             ? "bg-success-bg text-success-fg"
-            : "bg-background/10 text-white",
+            : "bg-primary-foreground/10 text-primary-foreground",
         ])}
       >
         {isAuthorized ? (
@@ -80,7 +80,7 @@ function PermissionBlock({
         <span
           className={cn([
             "text-sm font-medium",
-            isAuthorized ? "text-foreground" : "text-white",
+            isAuthorized ? "text-foreground" : "text-primary-foreground",
           ])}
         >
           {title}
@@ -88,14 +88,16 @@ function PermissionBlock({
         <p
           className={cn([
             "truncate text-xs @[480px]:block",
-            isAuthorized ? "text-muted-foreground" : "text-white/70",
+            isAuthorized
+              ? "text-muted-foreground"
+              : "text-primary-foreground/70",
           ])}
         >
           {body}
         </p>
       </div>
       {!isAuthorized && (
-        <div className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-white/80">
+        <div className="text-primary-foreground/80 inline-flex shrink-0 items-center gap-1 text-xs font-medium">
           <span className="hidden @[480px]:inline">{ctaLabel}</span>
           <ArrowRightIcon className="size-3.5 transition-transform group-hover:translate-x-0.5" />
         </div>
