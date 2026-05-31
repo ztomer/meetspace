@@ -38,7 +38,7 @@ export const TabItemPrep: TabItem<Extract<Tab, { type: "prep" }>> = ({
 }) => {
   return (
     <TabItemBase
-      icon={<Sparkles className="h-4 w-4 text-indigo-400" />}
+      icon={<Sparkles className="text-primary/80 h-4 w-4" />}
       title={"Proactive Prep"}
       selected={tab.active}
       pinned={tab.pinned}
@@ -277,7 +277,7 @@ Keep it bullet-pointed, direct, and under 150 words total. Do not output convers
       <div className="border-border/20 flex shrink-0 flex-col gap-2 border-b pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-6 w-6 animate-pulse text-indigo-500" />
+            <Sparkles className="text-primary h-6 w-6 animate-pulse" />
             <h1 className="text-foreground text-xl font-bold tracking-tight">
               Proactive Prep
             </h1>
@@ -337,16 +337,16 @@ Keep it bullet-pointed, direct, and under 150 words total. Do not output convers
                     className={cn([
                       "flex w-full cursor-pointer flex-col gap-2.5 rounded-xl border p-4 text-left shadow-sm backdrop-blur-md transition-all duration-200",
                       selected
-                        ? "bg-accent/40 border-indigo-500/40 ring-1 shadow-indigo-500/5 ring-indigo-500/25"
+                        ? "bg-accent/40 border-primary/40 shadow-primary/5 ring-primary/25 ring-1"
                         : "bg-background/25 border-border/30 hover:bg-accent/20 hover:border-border/60",
                     ])}
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <span className="font-mono text-xs font-medium text-indigo-400">
+                      <span className="text-primary font-mono text-xs font-medium">
                         {timeStr} · {dateStr}
                       </span>
                       {mostRecentSession && (
-                        <span className="py-0.2 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-1.5 text-[9px] font-bold text-indigo-400">
+                        <span className="py-0.2 border-primary/20 bg-primary/10 text-primary rounded-full border px-1.5 text-[9px] font-bold">
                           Has History
                         </span>
                       )}
@@ -442,12 +442,12 @@ Keep it bullet-pointed, direct, and under 150 words total. Do not output convers
                       {/* Past Meeting History Details */}
                       <div className="flex flex-col gap-3">
                         <h3 className="text-muted-foreground flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase">
-                          <CheckCircle2 size={14} className="text-indigo-400" />
+                          <CheckCircle2 size={14} className="text-primary" />
                           <span>Last Shared Context</span>
                         </h3>
                         <div className="bg-background/30 border-border/30 flex items-center justify-between rounded-xl border p-4 shadow-xs">
                           <div className="flex flex-col gap-1">
-                            <span className="font-mono text-xs text-indigo-400">
+                            <span className="text-primary font-mono text-xs">
                               Previous Session on{" "}
                               {format(
                                 new Date(
@@ -468,7 +468,7 @@ Keep it bullet-pointed, direct, and under 150 words total. Do not output convers
                                 id: selectedPrepData.mostRecentSession.id,
                               })
                             }
-                            className="flex cursor-pointer items-center gap-1 text-xs font-medium text-indigo-400 hover:text-indigo-300"
+                            className="text-primary hover:text-primary/80 flex cursor-pointer items-center gap-1 text-xs font-medium"
                           >
                             <span>Open Notes</span>
                             <ChevronRight size={14} />
@@ -479,7 +479,7 @@ Keep it bullet-pointed, direct, and under 150 words total. Do not output convers
                       {/* Outstanding Checkboxes */}
                       <div className="flex flex-col gap-3">
                         <h3 className="text-muted-foreground flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase">
-                          <ListTodo size={14} className="text-indigo-400" />
+                          <ListTodo size={14} className="text-primary" />
                           <span>
                             Unresolved Action Items (
                             {selectedPrepData.outstandingTasks.length})
@@ -500,7 +500,7 @@ Keep it bullet-pointed, direct, and under 150 words total. Do not output convers
                                 >
                                   <CheckSquare
                                     size={13}
-                                    className="mt-0.5 shrink-0 text-indigo-400"
+                                    className="text-primary mt-0.5 shrink-0"
                                   />
                                   <span className="leading-relaxed select-text">
                                     {task}
@@ -516,7 +516,7 @@ Keep it bullet-pointed, direct, and under 150 words total. Do not output convers
                       <div className="border-border/10 flex flex-col gap-3 border-t pt-5">
                         <h3 className="text-muted-foreground flex items-center justify-between text-xs font-semibold tracking-wider uppercase">
                           <span className="flex items-center gap-1.5">
-                            <Brain size={14} className="text-indigo-400" />
+                            <Brain size={14} className="text-primary" />
                             <span>AI Preparation Digest</span>
                           </span>
 
@@ -551,7 +551,7 @@ Keep it bullet-pointed, direct, and under 150 words total. Do not output convers
                                     state: { tab: "intelligence" },
                                   })
                                 }
-                                className="mt-1.5 cursor-pointer self-start font-medium text-indigo-400 underline hover:text-indigo-300"
+                                className="text-primary hover:text-primary/80 mt-1.5 cursor-pointer self-start font-medium underline"
                               >
                                 Configure Local LLM Server →
                               </button>
@@ -574,7 +574,7 @@ Keep it bullet-pointed, direct, and under 150 words total. Do not output convers
                                     )
                                   }
                                   size="sm"
-                                  className="flex items-center gap-1.5 self-start rounded-xl bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-500"
+                                  className="border-border bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-1.5 self-start rounded-xl px-4 py-2 font-medium"
                                 >
                                   <Sparkles size={14} />
                                   <span>Synthesize Meeting Context</span>
@@ -583,10 +583,10 @@ Keep it bullet-pointed, direct, and under 150 words total. Do not output convers
 
                             {/* Loading state */}
                             {loadingAi[selectedPrepData.eventId] && (
-                              <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-indigo-500/10 bg-indigo-500/5 p-6 text-center">
+                              <div className="border-primary/10 bg-primary/5 flex flex-col items-center justify-center gap-2 rounded-xl border p-6 text-center">
                                 <Loader2
                                   size={20}
-                                  className="animate-spin text-indigo-500"
+                                  className="text-primary animate-spin"
                                 />
                                 <span className="text-muted-foreground text-xs">
                                   Reading previous notes & synthesizing
@@ -597,12 +597,9 @@ Keep it bullet-pointed, direct, and under 150 words total. Do not output convers
 
                             {/* Digest content with premium typing box */}
                             {aiDigests[selectedPrepData.eventId] && (
-                              <div className="relative overflow-hidden rounded-xl border border-indigo-500/10 bg-indigo-500/5 p-4 shadow-sm">
+                              <div className="border-primary/10 bg-primary/5 relative overflow-hidden rounded-xl border p-4 shadow-sm">
                                 <div className="absolute top-2 right-2 flex items-center opacity-40">
-                                  <Brain
-                                    size={16}
-                                    className="text-indigo-500"
-                                  />
+                                  <Brain size={16} className="text-primary" />
                                 </div>
                                 <div className="text-foreground pr-6 text-left text-xs leading-relaxed whitespace-pre-wrap select-text">
                                   {aiDigests[selectedPrepData.eventId]}
