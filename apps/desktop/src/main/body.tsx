@@ -1,4 +1,3 @@
-import { cn } from "@hypr/utils";
 import { isTauri } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import {
@@ -8,6 +7,8 @@ import {
   PanelLeftOpenIcon,
 } from "lucide-react";
 import { type MouseEvent, type PointerEvent, useCallback, useRef } from "react";
+
+import { cn } from "@meetspace/utils";
 
 import { resolveMainSurfaceChrome } from "./main-surface-chrome";
 import { ClassicMainSidebar } from "./shell-sidebar";

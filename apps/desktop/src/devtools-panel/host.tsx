@@ -1,11 +1,12 @@
-import { commands as notificationCommands } from "@hypr/plugin-notification";
+import { useCallback, useRef, useState } from "react";
+
+import { commands as notificationCommands } from "@meetspace/plugin-notification";
 import {
   commands as windowsCommands,
   events as windowsEvents,
   getCurrentWebviewWindowLabel,
   openUrlWithInstruction,
-} from "@hypr/plugin-windows";
-import { useCallback, useRef, useState } from "react";
+} from "@meetspace/plugin-windows";
 
 import { useBillingAccess } from "~/auth/billing";
 import { getLatestVersion } from "~/changelog";

@@ -1,6 +1,7 @@
-import { DancingSticks } from "@hypr/ui/components/ui/dancing-sticks";
-import { cn } from "@hypr/utils";
 import { MicOff } from "lucide-react";
+
+import { DancingSticks } from "@meetspace/ui/components/ui/dancing-sticks";
+import { cn } from "@meetspace/utils";
 
 import { MetadataButton } from "./metadata";
 import { OverflowButton } from "./overflow";

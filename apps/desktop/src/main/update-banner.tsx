@@ -1,13 +1,14 @@
-import {
-  commands as updaterCommands,
-  events as updaterEvents,
-  type Result,
-} from "@hypr/plugin-updater2";
-import { cn } from "@hypr/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { DownloadIcon, RefreshCwIcon, RotateCwIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useMemo, useState, type ReactNode } from "react";
+
+import {
+  commands as updaterCommands,
+  events as updaterEvents,
+  type Result,
+} from "@meetspace/plugin-updater2";
+import { cn } from "@meetspace/utils";
 
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 import { useDevtoolsOtaPreview } from "~/store/zustand/devtools-ota-preview";

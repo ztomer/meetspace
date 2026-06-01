@@ -1,11 +1,12 @@
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+
 import {
   type ImperativePanelHandle,
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@hypr/ui/components/ui/resizable";
-import { cn } from "@hypr/utils";
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+} from "@meetspace/ui/components/ui/resizable";
+import { cn } from "@meetspace/utils";
 
 import { DuringSessionAccessory } from "./during-session";
 import { ExpandToggle } from "./expand-toggle";

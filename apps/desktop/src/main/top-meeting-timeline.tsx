@@ -1,16 +1,3 @@
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { DancingSticks } from "@hypr/ui/components/ui/dancing-sticks";
-import { Spinner } from "@hypr/ui/components/ui/spinner";
-import {
-  addDays,
-  cn,
-  differenceInCalendarDays,
-  format,
-  safeParseDate,
-  startOfDay,
-  TZDate,
-} from "@hypr/utils";
 import { isTauri } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import {
@@ -34,6 +21,20 @@ import {
   useRef,
   useState,
 } from "react";
+
+import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { DancingSticks } from "@meetspace/ui/components/ui/dancing-sticks";
+import { Spinner } from "@meetspace/ui/components/ui/spinner";
+import {
+  addDays,
+  cn,
+  differenceInCalendarDays,
+  format,
+  safeParseDate,
+  startOfDay,
+  TZDate,
+} from "@meetspace/utils";
 
 import {
   normalizeEndMs,

@@ -1,4 +1,3 @@
-import { cn } from "@hypr/utils";
 import { AnimatePresence, motion } from "motion/react";
 import {
   useEffect,
@@ -9,6 +8,8 @@ import {
   type PointerEvent,
 } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+
+import { cn } from "@meetspace/utils";
 
 import { ChatView } from "./chat-panel";
 

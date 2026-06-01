@@ -1,7 +1,8 @@
-import { TooltipProvider } from "@hypr/ui/components/ui/tooltip";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { type ComponentProps } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import { TooltipProvider } from "@meetspace/ui/components/ui/tooltip";
 
 import { TitleInput } from "./title-input";
 
