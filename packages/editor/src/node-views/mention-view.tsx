@@ -44,7 +44,7 @@ export const mentionNodeSpec: NodeSpec = {
   },
 };
 
-const GLOBAL_NAVIGATE_FUNCTION = "__HYPR_NAVIGATE__";
+const GLOBAL_NAVIGATE_FUNCTION = "__MEETSPACE_NAVIGATE__";
 
 const FACEHASH_BG_CLASSES = [
   "bg-amber-50",
