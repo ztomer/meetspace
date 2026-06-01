@@ -346,9 +346,9 @@ pub fn transcribe_file(
     let started_at = Instant::now();
 
     tracing::info!(
-        hyprnote.stt.provider.name = "soniqo",
-        hyprnote.stt.model = %model,
-        hyprnote.stt.language = %language_label,
+        meetspace.stt.provider.name = "soniqo",
+        meetspace.stt.model = %model,
+        meetspace.stt.language = %language_label,
         file.extension = %file_extension,
         "soniqo_native_file_transcription_start"
     );
@@ -359,8 +359,8 @@ pub fn transcribe_file(
     match &result {
         Ok(transcript) => {
             tracing::info!(
-                hyprnote.stt.provider.name = "soniqo",
-                hyprnote.stt.model = %model,
+                meetspace.stt.provider.name = "soniqo",
+                meetspace.stt.model = %model,
                 elapsed_ms,
                 transcript.duration_seconds = transcript.duration_seconds,
                 transcript.text_chars = transcript.text.chars().count(),
@@ -369,8 +369,8 @@ pub fn transcribe_file(
         }
         Err(error) => {
             tracing::error!(
-                hyprnote.stt.provider.name = "soniqo",
-                hyprnote.stt.model = %model,
+                meetspace.stt.provider.name = "soniqo",
+                meetspace.stt.model = %model,
                 elapsed_ms,
                 error = %error,
                 "soniqo_native_file_transcription_failed"

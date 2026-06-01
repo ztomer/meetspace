@@ -30,7 +30,7 @@ vi.mock("./listen", () => ({
 }));
 
 vi.mock("~/shared/chat-cta", () => ({
-  ChatCTA: () => <button type="button">Ask Anarlog anything</button>,
+  ChatCTA: () => <button type="button">Ask Meetspace anything</button>,
 }));
 
 vi.mock("~/session/components/shared", () => ({
@@ -109,7 +109,7 @@ describe("FloatingActionButton", () => {
     render(<FloatingActionButton tab={tab} />);
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).not.toBeNull();
   });
 
@@ -119,7 +119,7 @@ describe("FloatingActionButton", () => {
     render(<FloatingActionButton tab={tab} />);
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).not.toBeNull();
   });
 
@@ -130,7 +130,7 @@ describe("FloatingActionButton", () => {
     render(<FloatingActionButton tab={tab} />);
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).toBeNull();
   });
 
@@ -143,7 +143,7 @@ describe("FloatingActionButton", () => {
     render(<FloatingActionButton tab={tab} />);
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).toBeNull();
   });
 
@@ -156,14 +156,14 @@ describe("FloatingActionButton", () => {
     render(<FloatingActionButton tab={tab} />);
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).not.toBeNull();
   });
 
   it("keeps the chat FAB mounted as a peek while hidden and reveals it from the hover zone", () => {
     render(<FloatingActionButton hidden tab={tab} />);
 
-    const wrapper = screen.getByText("Ask Anarlog anything").parentElement;
+    const wrapper = screen.getByText("Ask Meetspace anything").parentElement;
     const hoverZone = wrapper?.parentElement;
 
     expect(hoverZone?.className).toContain("group");
@@ -187,7 +187,7 @@ describe("FloatingActionButton", () => {
 
     render(<FloatingActionButton tab={tab} />);
 
-    const wrapper = screen.getByText("Ask Anarlog anything").parentElement;
+    const wrapper = screen.getByText("Ask Meetspace anything").parentElement;
     const hoverZone = wrapper?.parentElement;
 
     expect(hoverZone?.className).toContain("group");
@@ -205,7 +205,7 @@ describe("FloatingActionButton", () => {
 
     render(<FloatingActionButton tab={tab} />);
 
-    const wrapper = screen.getByText("Ask Anarlog anything").parentElement;
+    const wrapper = screen.getByText("Ask Meetspace anything").parentElement;
     const hoverZone = wrapper?.parentElement;
 
     expect(hoverZone?.className).toContain("group");
@@ -225,7 +225,7 @@ describe("FloatingActionButton", () => {
 
     render(<FloatingActionButton tab={tab} />);
 
-    const wrapper = screen.getByText("Ask Anarlog anything").parentElement;
+    const wrapper = screen.getByText("Ask Meetspace anything").parentElement;
 
     expect(
       screen.queryByRole("button", { name: "Start listening" }),
@@ -277,7 +277,7 @@ describe("FloatingActionButton", () => {
     expect(status.className).toContain("text-destructive");
     expect(status.parentElement?.className).toContain("pb-4");
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).toBeNull();
   });
 

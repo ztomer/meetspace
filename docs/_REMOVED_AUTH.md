@@ -116,3 +116,11 @@ This sweep won't auto-reapply on rebase; expect manual conflict work whenever up
 - `com.hyprnote.*` (bundle ids) → `com.meetspace.*`
 
 `/tmp/rename-to-meetspace.sh` from the original Phase 7.1 commit can be re-run on a conflicted file if upstream re-introduces the old names in bulk.
+
+## Rebase Notes & Compilation Lessons (v1.0.36)
+
+During the rebase onto `v1.0.36`, several compilation and type constraints were resolved to streamline future upgrades:
+1. **Simplified Component Signatures**: Upstream completely simplified `<ChatView />` and `<ChatToolbarControls />` props and removed Chrome tab layouts. Stubborn props like `layout` and `surface` are obsolete and must be cleaned up.
+2. **Vitest Assertions**: Tests must use standard vitest assertions like `.toBeDefined()` or `.toBeTruthy()` instead of browser-DOM `.toBeInTheDocument()` to avoid environment schema mismatch errors.
+3. **TinyBase Store Wrapper Typing**: In `apps/desktop/src/store/tinybase/store/main.ts`, the `testUtils` object must remain exported and cast as `any` (`as any`). This bridges the internal generic `Schemas` constraint differences between standard Stores and MergeableStores inside the Vitest wrappers.
+4. **Comprehensive Rebranding Sweep**: Upstream continues to introduce files using legacy naming conventions (like `@hypr/*` imports, `hypr_` functions, `com.hyprnote`, or `Anarlog`). The rebase script `rebase-on-main.sh` now automatically runs `scripts/rebrand_sweep.py`, a robust Python-based utility that sweeps all source folders (`apps/`, `packages/`, `crates/`, `plugins/`, `scripts/`, `e2e/`) and files, instantly rebranding them to `meetspace` equivalents while preserving the historical changelogs and design docs.

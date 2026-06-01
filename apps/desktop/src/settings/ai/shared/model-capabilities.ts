@@ -16,7 +16,7 @@ export function modelSupportsImageInput(
     return false;
   }
 
-  if (providerId === "hyprnote" && modelId === "Auto") {
+  if (providerId === "meetspace" && modelId === "Auto") {
     return true;
   }
 

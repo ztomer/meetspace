@@ -5,7 +5,7 @@ import { cn } from "@meetspace/utils";
 import { useShell } from "~/contexts/shell";
 
 export function ChatCTA({
-  label = "Ask Anarlog anything",
+  label = "Ask Meetspace anything",
 }: {
   label?: string;
 }) {
