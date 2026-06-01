@@ -67,16 +67,21 @@ else
 fi
 
 if [ "$SKIP_PUSH" = "0" ]; then
-  bold "==> Pushing updated branch '$BRANCH_NAME' to 'meetspace' remote"
-  
   if ! git remote | grep -q "^meetspace$"; then
     red "Error: 'meetspace' remote is not configured."
     yellow "Verify with: git remote -v"
     exit 1
   fi
-  
-  git push meetspace "$BRANCH_NAME" --force
-  green "==> Branch '$BRANCH_NAME' pushed successfully to 'meetspace' GitHub!"
+
+  if [ "$BRANCH_NAME" = "MIT_BACK" ]; then
+    bold "==> Pushing local branch 'MIT_BACK' as 'main' to 'meetspace' remote"
+    git push meetspace MIT_BACK:main --force
+    green "==> Branch 'MIT_BACK' pushed successfully as 'main' to 'meetspace' GitHub!"
+  else
+    bold "==> Pushing updated branch '$BRANCH_NAME' to 'meetspace' remote"
+    git push meetspace "$BRANCH_NAME" --force
+    green "==> Branch '$BRANCH_NAME' pushed successfully to 'meetspace' GitHub!"
+  fi
 else
   yellow "==> Skipping push to meetspace remote (--no-push)."
 fi
