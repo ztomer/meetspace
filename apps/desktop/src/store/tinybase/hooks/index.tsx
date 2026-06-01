@@ -364,7 +364,7 @@ export function TinyBaseTestWrapper({
     return s;
   });
 
-  const indexes = useCreateIndexes(store, (store) =>
+  const indexes = useCreateIndexes(store, (store: main.Store) =>
     createIndexes(store)
       .setIndexDefinition(
         main.INDEXES.sessionParticipantsBySession,
@@ -391,7 +391,7 @@ export function TinyBaseTestWrapper({
       ),
   );
 
-  const relationships = useCreateRelationships(store, (store) =>
+  const relationships = useCreateRelationships(store, (store: main.Store) =>
     createRelationships(store).setRelationshipDefinition(
       main.RELATIONSHIPS.enhancedNoteToSession,
       "enhanced_notes",
@@ -400,12 +400,12 @@ export function TinyBaseTestWrapper({
     ),
   );
 
-  const queries = useCreateQueries(store, (store) =>
+  const queries = useCreateQueries(store, (store: main.Store) =>
     createQueries(store)
       .setQueryDefinition(
         main.QUERIES.visibleHumans,
         "humans",
-        ({ select }) => {
+        ({ select }: any) => {
           select("name");
           select("email");
           select("org_id");
@@ -416,7 +416,7 @@ export function TinyBaseTestWrapper({
       .setQueryDefinition(
         main.QUERIES.visibleOrganizations,
         "organizations",
-        ({ select }) => {
+        ({ select }: any) => {
           select("name");
         },
       ),

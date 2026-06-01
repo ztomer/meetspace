@@ -1,3 +1,4 @@
+import { cn } from "@hypr/utils";
 import { AnimatePresence, motion } from "motion/react";
 import {
   useEffect,
@@ -8,8 +9,6 @@ import {
   type PointerEvent,
 } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-
-import { cn } from "@hypr/utils";
 
 import { ChatView } from "./chat-panel";
 
@@ -316,12 +315,7 @@ export function PersistentChatPanel({
               exit={panelMotion.exit}
               transition={panelTransition}
             >
-              <ChatView
-                layout="floating"
-                onOpenRightPanel={() =>
-                  chat.sendEvent({ type: "OPEN_RIGHT_PANEL" })
-                }
-              />
+              <ChatView />
               {RESIZE_HANDLES.map((handle) => (
                 <div
                   key={handle.id}

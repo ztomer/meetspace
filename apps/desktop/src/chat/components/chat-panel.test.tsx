@@ -8,17 +8,15 @@ const mocks = vi.hoisted(() => ({
     sessionId: "chat-session-id",
     setGroupId: vi.fn(),
     startNewChat: vi.fn(),
+    mode: "RightPanelOpen" as string,
   },
   toolbarControls: vi.fn(),
 }));
 
 vi.mock("./toolbar-controls", () => ({
-  ChatToolbarControls: (props: {
-    layout?: "floating" | "right-panel";
-    surface?: "light" | "dark";
-  }) => {
+  ChatToolbarControls: (props: any) => {
     mocks.toolbarControls(props);
-    return <div data-surface={props.surface} data-testid="chat-toolbar" />;
+    return <div data-testid="chat-toolbar" />;
   },
 }));
 
@@ -41,7 +39,7 @@ vi.mock("~/contexts/shell", () => ({
 vi.mock("~/store/tinybase/store/main", () => ({
   STORE_ID: "main",
   UI: {
-    useValues: () => ({}),
+    useValues: () => ({ user_id: "test-user" }),
   },
 }));
 
@@ -53,19 +51,12 @@ describe("ChatView", () => {
     mocks.toolbarControls.mockClear();
   });
 
-  it("uses the modal dark surface for the right panel layout", () => {
-    const { container } = render(<ChatView layout="right-panel" />);
+  it("renders simplified layout correctly", () => {
+    const { container } = render(<ChatView />);
     const root = container.firstElementChild;
 
-    expect(root?.className).toContain("bg-stone-800");
-    expect(root?.className).toContain("text-white");
-    expect(root?.firstElementChild?.className).toContain("h-12");
-    expect(screen.getByTestId("chat-toolbar").dataset.surface).toBe("dark");
-    expect(mocks.toolbarControls).toHaveBeenCalledWith(
-      expect.objectContaining({
-        layout: "right-panel",
-        surface: "dark",
-      }),
-    );
+    expect(root?.className).toContain("flex");
+    expect(root?.className).toContain("h-full");
+    expect(screen.getByTestId("chat-toolbar")).toBeDefined();
   });
 });

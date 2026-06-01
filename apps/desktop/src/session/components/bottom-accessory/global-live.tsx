@@ -1,5 +1,3 @@
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
-
 import {
   type ImperativePanelHandle,
   ResizableHandle,
@@ -7,6 +5,7 @@ import {
   ResizablePanelGroup,
 } from "@hypr/ui/components/ui/resizable";
 import { cn } from "@hypr/utils";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 import { DuringSessionAccessory } from "./during-session";
 import { ExpandToggle } from "./expand-toggle";

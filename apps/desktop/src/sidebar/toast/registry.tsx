@@ -140,3 +140,46 @@ export function getToastToShow(
   }
   return null;
 }
+
+export function createDevtoolsToastPreview({
+  preview,
+  onOpenLLMSettings,
+  onOpenSTTSettings: _onOpenSTTSettings,
+}: {
+  preview: string;
+  onOpenLLMSettings: () => void;
+  onOpenSTTSettings: () => void;
+}): ToastType {
+  switch (preview) {
+    case "language-model":
+      return {
+        id: "devtools-missing-llm",
+        description: "Language model needed",
+        primaryAction: {
+          label: "Add",
+          onClick: onOpenLLMSettings,
+        },
+        dismissible: true,
+      };
+    case "download":
+      return {
+        id: "devtools-downloading-model",
+        title: "Downloading model",
+        description: "This may take a few minutes",
+        dismissible: false,
+        progress: 42,
+      };
+    case "pro":
+      return {
+        id: "upgrade-to-pro",
+        description: "Pro features available",
+        dismissible: true,
+      };
+    default:
+      return {
+        id: "devtools-preview",
+        description: "Preview toast",
+        dismissible: true,
+      };
+  }
+}

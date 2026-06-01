@@ -1,6 +1,3 @@
-import { useLingui } from "@lingui/react/macro";
-import { SettingsIcon } from "lucide-react";
-
 import { cn } from "@meetspace/utils";
 
 import {
@@ -14,37 +11,7 @@ import { SettingsTodo } from "./todo";
 
 import { Intelligence } from "~/settings/ai";
 import { StandardTabWrapper } from "~/shared/main";
-import { type TabItem, TabItemBase } from "~/shared/tabs";
 import { type Tab } from "~/store/zustand/tabs";
-
-export const TabItemSettings: TabItem<Extract<Tab, { type: "settings" }>> = ({
-  tab,
-  tabIndex,
-  handleCloseThis,
-  handleSelectThis,
-  handleCloseOthers,
-  handleCloseAll,
-  handlePinThis,
-  handleUnpinThis,
-}) => {
-  const { t } = useLingui();
-
-  return (
-    <TabItemBase
-      icon={<SettingsIcon className="h-4 w-4" />}
-      title={t`Settings`}
-      selected={tab.active}
-      pinned={tab.pinned}
-      tabIndex={tabIndex}
-      handleCloseThis={() => handleCloseThis(tab)}
-      handleSelectThis={() => handleSelectThis(tab)}
-      handleCloseOthers={handleCloseOthers}
-      handleCloseAll={handleCloseAll}
-      handlePinThis={() => handlePinThis(tab)}
-      handleUnpinThis={() => handleUnpinThis(tab)}
-    />
-  );
-};
 
 export function TabContentSettings({
   tab,

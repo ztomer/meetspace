@@ -81,7 +81,7 @@ export function MainChatPanels({
         )}
       </ResizablePanelGroup>
 
-      <PersistentChatPanel panelContainerRef={chatPanelContainerRef} />
+      <PersistentChatPanel floatingContainerRef={chatPanelContainerRef} />
     </>
   );
 }

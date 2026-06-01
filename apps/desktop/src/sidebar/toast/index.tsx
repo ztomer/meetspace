@@ -147,7 +147,6 @@ export function ToastArea({
       devtoolsPreview
         ? createDevtoolsToastPreview({
             preview: devtoolsPreview.type,
-            onSignIn: handleSignIn,
             onOpenLLMSettings: handleOpenLLMSettings,
             onOpenSTTSettings: handleOpenSTTSettings,
           })

@@ -2,7 +2,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@hypr/ui/components/ui/button", () => ({
+vi.mock("@meetspace/ui/components/ui/button", () => ({
   Button: ({
     children,
     className,
@@ -14,7 +14,7 @@ vi.mock("@hypr/ui/components/ui/button", () => ({
   ),
 }));
 
-vi.mock("@hypr/ui/components/ui/dropdown-menu", () => ({
+vi.mock("@meetspace/ui/components/ui/dropdown-menu", () => ({
   AppFloatingPanel: ({ children }: { children: ReactNode }) => (
     <div>{children}</div>
   ),
@@ -45,63 +45,21 @@ describe("ChatToolbarControls", () => {
     cleanup();
   });
 
-  it("renders the dark chat title trigger as a pill", () => {
+  it("renders the simplified chat controls properly", () => {
     render(
       <ChatToolbarControls
         currentChatGroupId={undefined}
         onNewChat={vi.fn()}
-        onOpenRightPanel={vi.fn()}
+        onCloseChat={vi.fn()}
         onSelectChat={vi.fn()}
-        surface="dark"
-      />,
-    );
-
-    const title = screen.getByText("Ask Anarlog AI anything");
-    expect(title.closest("button")?.className).toContain("rounded-full");
-  });
-
-  it("renders dark toolbar action buttons as circles without tooltips", () => {
-    render(
-      <ChatToolbarControls
-        currentChatGroupId={undefined}
-        onNewChat={vi.fn()}
-        onOpenRightPanel={vi.fn()}
-        onSelectChat={vi.fn()}
-        surface="dark"
+        shortcutLabel="⌘ J"
       />,
     );
 
     const newChatButton = screen.getByRole("button", { name: "New chat" });
-    const rightPanelButton = screen.getByRole("button", {
-      name: "Open in right panel",
-    });
+    const closeChatButton = screen.getByRole("button", { name: "Close chat" });
 
-    expect(newChatButton.className).toContain("rounded-full");
-    expect(newChatButton.className).toContain("hover:!bg-white/7");
-    expect(newChatButton.getAttribute("title")).toBeNull();
-    expect(rightPanelButton.className).toContain("rounded-full");
-    expect(rightPanelButton.className).toContain("hover:!bg-white/7");
-    expect(rightPanelButton.getAttribute("title")).toBeNull();
-  });
-
-  it("uses balanced toolbar horizontal padding in the right panel", () => {
-    const { container } = render(
-      <ChatToolbarControls
-        currentChatGroupId={undefined}
-        layout="right-panel"
-        onNewChat={vi.fn()}
-        onOpenFloating={vi.fn()}
-        onSelectChat={vi.fn()}
-        surface="dark"
-      />,
-    );
-
-    expect(container.firstElementChild?.className).toContain("px-3");
-    expect(container.firstElementChild?.className).not.toContain("px-5");
-    expect(container.firstElementChild?.className).not.toContain("px-2");
-    expect(container.firstElementChild?.className).not.toContain("pr-0");
-    expect(
-      screen.getByRole("button", { name: "Float chat" }).className,
-    ).toContain("mr-1");
+    expect(newChatButton).toBeDefined();
+    expect(closeChatButton).toBeDefined();
   });
 });

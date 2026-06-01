@@ -1,11 +1,17 @@
 cask "meetspace" do
-  version "1.0.32"
-  sha256 :no_check # Set to actual release SHA256 to enable verification
+  version "1.0.36"
+  sha256 :no_check
 
-  url "https://github.com/fastrepl/meetspace/releases/download/v#{version}/Meetspace.dmg"
+  on_intel do
+    url "https://github.com/ztomer/meetspace/releases/download/v#{version}/Meetspace_#{version}_x64.dmg"
+  end
+  on_arm do
+    url "https://github.com/ztomer/meetspace/releases/download/v#{version}/Meetspace_#{version}_aarch64.dmg"
+  end
+
   name "Meetspace"
   desc "Local-first, privacy-respecting note-taking and meeting assistant"
-  homepage "https://github.com/fastrepl/meetspace"
+  homepage "https://github.com/ztomer/meetspace"
 
   # Installs the app bundle into /Applications
   app "Meetspace.app"

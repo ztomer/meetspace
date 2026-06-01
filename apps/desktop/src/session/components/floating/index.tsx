@@ -152,7 +152,6 @@ function isBlockingLLMStatus(status: LLMConnectionStatus) {
   return (
     status.status === "error" &&
     (status.reason === "missing_config" ||
-      status.reason === "not_pro" ||
-      status.reason === "unauthenticated")
+      status.reason === "provider_not_found")
   );
 }

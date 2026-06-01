@@ -1,15 +1,8 @@
-import { CalendarIcon, ExternalLinkIcon, SparklesIcon } from "lucide-react";
+import { CalendarIcon, ExternalLinkIcon } from "lucide-react";
 import { useEffect } from "react";
 
 import { ChangelogContent } from "@meetspace/changelog";
 import { commands as openerCommands } from "@meetspace/plugin-opener2";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@meetspace/ui/components/ui/breadcrumb";
 import { Button } from "@meetspace/ui/components/ui/button";
 import { safeFormat } from "@meetspace/utils";
 
@@ -17,35 +10,9 @@ import { useChangelogContent } from "./data";
 
 import { useShell } from "~/contexts/shell";
 import { StandardTabWrapper } from "~/shared/main";
-import { type TabItem, TabItemBase } from "~/shared/tabs";
 import { type Tab } from "~/store/zustand/tabs";
 
 export { getLatestVersion } from "./data";
-
-export const TabItemChangelog: TabItem<Extract<Tab, { type: "changelog" }>> = ({
-  tab,
-  tabIndex,
-  handleCloseThis,
-  handleSelectThis,
-  handleCloseOthers,
-  handleCloseAll,
-  handlePinThis,
-  handleUnpinThis,
-}) => (
-  <TabItemBase
-    icon={<SparklesIcon className="h-4 w-4" />}
-    title="What's New"
-    selected={tab.active}
-    pinned={tab.pinned}
-    tabIndex={tabIndex}
-    handleCloseThis={() => handleCloseThis(tab)}
-    handleSelectThis={() => handleSelectThis(tab)}
-    handleCloseOthers={handleCloseOthers}
-    handleCloseAll={handleCloseAll}
-    handlePinThis={() => handlePinThis(tab)}
-    handleUnpinThis={() => handleUnpinThis(tab)}
-  />
-);
 
 export function TabContentChangelog({
   tab,
@@ -162,17 +129,13 @@ function ChangelogHeader({
     <div className="w-full pt-1">
       <div className="flex items-center gap-2">
         <div className="min-w-0 flex-1">
-          <Breadcrumb className="ml-1.5 min-w-0">
-            <BreadcrumbList className="text-foreground flex-nowrap gap-0.5 overflow-hidden text-xs">
-              <BreadcrumbItem className="shrink-0">
-                <span className="text-muted-foreground">Changelog</span>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="shrink-0" />
-              <BreadcrumbItem className="overflow-hidden">
-                <BreadcrumbPage className="truncate">{version}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+          <div className="ml-1.5 flex min-w-0 items-center gap-1.5 text-xs">
+            <span className="text-muted-foreground">Changelog</span>
+            <span className="text-muted-foreground/30">/</span>
+            <span className="text-foreground truncate font-medium">
+              {version}
+            </span>
+          </div>
         </div>
 
         <div className="flex shrink-0 items-center">

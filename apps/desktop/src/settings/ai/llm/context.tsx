@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 import { useConfigValues } from "~/shared/config";
-import { useToastAction } from "~/store/zustand/toast-action";
 
 type LlmSettingsContextType = {
   accordionValue: string;
@@ -30,26 +29,6 @@ export function LlmSettingsProvider({
   );
   const [shouldHighlight, setShouldHighlight] = useState(false);
   const hyprAccordionRef = useRef<HTMLDivElement | null>(null);
-
-  const toastActionTarget = useToastAction((state) => state.target);
-  const clearToastActionTarget = useToastAction((state) => state.clearTarget);
-
-  useEffect(() => {
-    if (toastActionTarget === "llm") {
-      setAccordionValue(DEFAULT_PROVIDER);
-      setShouldHighlight(true);
-
-      const timer = setTimeout(() => {
-        hyprAccordionRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }, 100);
-
-      clearToastActionTarget();
-      return () => clearTimeout(timer);
-    }
-  }, [toastActionTarget, clearToastActionTarget]);
 
   useEffect(() => {
     if (hasLlmConfigured && shouldHighlight) {

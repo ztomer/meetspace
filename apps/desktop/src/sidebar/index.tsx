@@ -39,7 +39,7 @@ export function LeftSidebar() {
           ) : isTemplatesMode ? (
             <TemplatesNav />
           ) : (
-            <TimelineView topChromeInset={isTimelineSidebarLayout} />
+            <TimelineView />
           )}
         </div>
       </div>

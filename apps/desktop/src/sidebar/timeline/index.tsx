@@ -379,7 +379,7 @@ export function TimelineView() {
           )}
           {!isTodayVisible && isScrolledPastToday && (
             <Button
-              onClick={scrollToToday}
+              onClick={() => scrollToToday()}
               size="sm"
               className={cn([
                 "bg-background hover:bg-muted rounded-full",
@@ -398,7 +398,7 @@ export function TimelineView() {
 
       {!isTodayVisible && !isScrolledPastToday && (
         <Button
-          onClick={scrollToToday}
+          onClick={() => scrollToToday()}
           size="sm"
           className={cn([
             "absolute bottom-2 left-1/2 -translate-x-1/2 transform",
