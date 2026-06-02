@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { Kbd } from "@meetspace/ui/components/ui/kbd";
 import { cn } from "@meetspace/utils";
 
+import { FloatingChatCTA } from "~/shared/chat-cta";
 import { StandardTabWrapper } from "~/shared/main";
 import { type TabItem, TabItemBase } from "~/shared/tabs";
 import { useNewNote, useNewNoteAndListen } from "~/shared/useNewNote";
@@ -43,7 +44,7 @@ export function TabContentEmpty({
   tab: Extract<Tab, { type: "empty" }>;
 }) {
   return (
-    <StandardTabWrapper>
+    <StandardTabWrapper floatingButton={<FloatingChatCTA />}>
       <EmptyView />
     </StandardTabWrapper>
   );
@@ -54,21 +55,16 @@ function EmptyView() {
   const newNoteAndListen = useNewNoteAndListen({ behavior: "current" });
   const openCurrent = useTabs((state) => state.openCurrent);
 
-  const openCalendar = useCallback(
-    () => openCurrent({ type: "calendar" }),
-    [openCurrent],
-  );
-  const openContacts = useCallback(
-    () => openCurrent({ type: "contacts" }),
-    [openCurrent],
-  );
   const openSettings = useCallback(
     () => openCurrent({ type: "settings" }),
     [openCurrent],
   );
 
   return (
-    <div className="text-muted-foreground mb-12 flex h-full flex-col items-center justify-center gap-6">
+    <div
+      data-tauri-drag-region
+      className="flex h-full flex-col items-center justify-center gap-6 text-neutral-600"
+    >
       <div className="flex min-w-[280px] flex-col gap-1 text-center">
         <ActionItem label="New Note" shortcut={["⌘", "N"]} onClick={newNote} />
         <ActionItem
@@ -76,18 +72,7 @@ function EmptyView() {
           shortcut={["⌘", "⇧", "N"]}
           onClick={newNoteAndListen}
         />
-        <div className="bg-accent my-1 h-px" />
-        <ActionItem
-          label="Contacts"
-          shortcut={["⌘", "⇧", "O"]}
-          onClick={openContacts}
-        />
-        <ActionItem
-          label="Calendar"
-          shortcut={["⌘", "⇧", "C"]}
-          onClick={openCalendar}
-        />
-        <div className="bg-accent my-1 h-px" />
+        <div className="my-1 h-px bg-neutral-200" />
         <ActionItem
           label="Settings"
           shortcut={["⌘", ","]}
@@ -112,12 +97,13 @@ function ActionItem({
   return (
     <button
       onClick={onClick}
+      data-tauri-drag-region="false"
       className={cn([
         "group",
         "flex items-center justify-between gap-8",
         "text-sm",
         "rounded-md px-4 py-2",
-        "hover:bg-muted cursor-pointer transition-colors",
+        "cursor-pointer transition-colors hover:bg-neutral-100",
       ])}
     >
       <span>{label}</span>

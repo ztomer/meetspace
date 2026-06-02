@@ -37,7 +37,7 @@ export function SegmentHeader({
         color={color}
         label={label}
       />
-      <span className="font-mono text-muted-foreground">{timestamp}</span>
+      <span className="text-muted-foreground font-mono">{timestamp}</span>
     </div>
   );
 }

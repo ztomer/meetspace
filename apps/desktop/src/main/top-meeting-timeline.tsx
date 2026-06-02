@@ -1,9 +1,12 @@
+import { isTauri } from "@tauri-apps/api/core";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
   CalendarIcon,
   PlusIcon,
   SquareIcon,
+  SunIcon,
 } from "lucide-react";
 import {
   memo,
@@ -11,6 +14,7 @@ import {
   type DragEvent,
   type MouseEvent,
   type MouseEventHandler,
+  type PointerEvent,
   type ReactNode,
   type UIEvent,
   useCallback,
@@ -46,6 +50,7 @@ import {
 
 import { writeSessionContextDragData } from "~/chat/context/session-drag";
 import { SessionPreviewCard } from "~/session/components/session-preview-card";
+import { useDeleteSession } from "~/session/hooks/useDeleteSession";
 import { useIsSessionEnhancing } from "~/session/hooks/useEnhancedNotes";
 import { getSessionEvent } from "~/session/utils";
 import { useConfigValue } from "~/shared/config";
@@ -53,7 +58,8 @@ import {
   type MenuItemDef,
   useNativeContextMenu,
 } from "~/shared/hooks/useNativeContextMenu";
-import { useNewNoteAndListen } from "~/shared/useNewNote";
+import { useNewNote } from "~/shared/useNewNote";
+import { useCurrentTimeMs } from "~/sidebar/timeline/realtime";
 import type {
   TimelineEventRow,
   TimelineEventsTable,
@@ -61,30 +67,36 @@ import type {
   TimelineSessionsTable,
 } from "~/sidebar/timeline/utils";
 import { useIgnoredEvents } from "~/store/tinybase/hooks";
-import {
-  captureSessionData,
-  deleteSessionCascade,
-  finalizeSessionDeletion,
-} from "~/store/tinybase/store/deleteSession";
 import * as main from "~/store/tinybase/store/main";
 import { getOrCreateSessionForEventId } from "~/store/tinybase/store/sessions";
 import { useSessionTitle } from "~/store/zustand/live-title";
 import { type Tab, useTabs } from "~/store/zustand/tabs";
-import { useUndoDelete } from "~/store/zustand/undo-delete";
 import { useListener } from "~/stt/contexts";
 
 const TIMELINE_HEIGHT = 44;
-const TIMELINE_CAROUSEL_CARD_WIDTH = 188;
+const TIMELINE_CAROUSEL_CARD_WIDTH = 160;
 const TIMELINE_CAROUSEL_PADDING = 0;
-const TIMELINE_CAROUSEL_GAP = 4;
 const TIMELINE_CAROUSEL_END_PADDING = 24;
+const TIMELINE_CAROUSEL_GAP = 4;
+const TIMELINE_PAST_DAYS = 6;
+const TIMELINE_FUTURE_DAYS = 1;
+const TIMELINE_WINDOW_DRAG_THRESHOLD_PX = 5;
 type TodayChipDirection = "left" | "right";
+
+type TimelineWindowDragStart = {
+  pointerId: number;
+  clientX: number;
+  clientY: number;
+  dragging: boolean;
+};
 
 export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
   const timezone = useConfigValue("timezone") || undefined;
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const detachWheelListenerRef = useRef<(() => void) | null>(null);
   const appliedScrollAnchorRef = useRef<string | null>(null);
+  const windowDragStartRef = useRef<TimelineWindowDragStart | null>(null);
+  const suppressNextClickRef = useRef(false);
 
   const selectedSessionId =
     currentTab?.type === "sessions" ? currentTab.id : null;
@@ -103,6 +115,18 @@ export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
   ) as TimelineTranscriptsTable;
 
   const { isIgnored } = useIgnoredEvents();
+  const liveSessionId = useListener((state) => state.live.sessionId);
+  const today = getTimelineDayStart(new Date(), timezone);
+  const todayMs = today.getTime();
+  const timelineStart = useMemo(
+    () => addDays(new Date(todayMs), -TIMELINE_PAST_DAYS),
+    [todayMs],
+  );
+  const timelineEnd = useMemo(
+    () => addDays(new Date(todayMs), TIMELINE_FUTURE_DAYS + 1),
+    [todayMs],
+  );
+  const currentTimeMs = useCurrentTimeMs();
 
   const sessionRecordingRanges = useMemo(
     () => buildSessionRecordingRanges(transcriptsTable),
@@ -116,6 +140,8 @@ export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
         timelineSessionsTable,
         sessionRecordingRanges,
         selectedSessionId,
+        liveSessionId,
+        now: currentTimeMs,
         isIgnored,
       }),
     [
@@ -123,6 +149,8 @@ export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
       timelineSessionsTable,
       sessionRecordingRanges,
       selectedSessionId,
+      liveSessionId,
+      currentTimeMs,
       isIgnored,
     ],
   );
@@ -138,15 +166,26 @@ export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
     [entries, selectedSessionId],
   );
 
-  const todayMs = getTimelineDayStart(new Date(), timezone).getTime();
   const [todayChipDirection, setTodayChipDirection] =
     useState<TodayChipDirection | null>(null);
-  const createNewMeeting = useNewNoteAndListen({ behavior: "current" });
+  const createNewNote = useNewNote({ behavior: "current" });
   const openNew = useTabs((state) => state.openNew);
 
   const renderItems = useMemo(
-    () => buildTimelineRenderItems(entries),
-    [entries],
+    () =>
+      buildTimelineRenderItems(entries, {
+        startInclusive: timelineStart,
+        endExclusive: timelineEnd,
+      }),
+    [entries, timelineStart, timelineEnd],
+  );
+  const hasHiddenPastItems = useMemo(
+    () => hasTimelineEntriesBefore(entries, timelineStart),
+    [entries, timelineStart],
+  );
+  const hasHiddenFutureItems = useMemo(
+    () => hasTimelineEntriesAfter(entries, timelineEnd),
+    [entries, timelineEnd],
   );
   const carouselItems = useMemo(
     () =>
@@ -160,9 +199,23 @@ export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
         currentTime: new Date(Math.max(currentTimeMs, Date.now())),
         includeCreateNote: true,
       }),
-    [renderItems, todayMs, timezone],
+    [
+      renderItems,
+      todayMs,
+      timelineStart,
+      timelineEnd,
+      hasHiddenPastItems,
+      hasHiddenFutureItems,
+      currentTimeMs,
+    ],
   );
   const carouselWidth = getTimelineCarouselWidth(carouselItems);
+  const nowIndicatorX = useMemo(
+    () =>
+      getTimelineCarouselNowX(carouselItems, new Date(currentTimeMs), timezone),
+    [carouselItems, currentTimeMs, timezone],
+  );
+  const showNowIndicator = nowIndicatorX !== null && !liveSessionId;
   const openCalendar = useCallback(
     () => openNew({ type: "calendar" }),
     [openNew],
@@ -176,19 +229,25 @@ export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
 
   const updateTodayChipFromScroll = useCallback(
     (node: HTMLDivElement) => {
-      const nextDirection = getTimelineCarouselDateDirection({
-        items: carouselItems,
-        date: new Date(todayMs),
-        timezone,
-        scrollLeft: node.scrollLeft,
-        viewportWidth: node.clientWidth,
-      });
+      const nextDirection =
+        getTimelineCarouselNowDirection({
+          nowX: nowIndicatorX,
+          scrollLeft: node.scrollLeft,
+          viewportWidth: node.clientWidth,
+        }) ??
+        getTimelineCarouselDateDirection({
+          items: carouselItems,
+          date: new Date(todayMs),
+          timezone,
+          scrollLeft: node.scrollLeft,
+          viewportWidth: node.clientWidth,
+        });
 
       setTodayChipDirection((previousDirection) =>
         previousDirection === nextDirection ? previousDirection : nextDirection,
       );
     },
-    [carouselItems, todayMs, timezone],
+    [carouselItems, nowIndicatorX, todayMs, timezone],
   );
 
   const handleWheel = useCallback(
@@ -258,14 +317,18 @@ export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
       return;
     }
 
-    const todayLeft = getTimelineCarouselDateX(
-      carouselItems,
-      new Date(todayMs),
-      timezone,
-    );
+    const todayLeft =
+      nowIndicatorX ??
+      getTimelineCarouselDateX(carouselItems, new Date(todayMs), timezone);
     node.scrollLeft = Math.max(0, todayLeft - node.clientWidth * 0.5);
     updateTodayChipFromScroll(node);
-  }, [carouselItems, todayMs, timezone, updateTodayChipFromScroll]);
+  }, [
+    carouselItems,
+    nowIndicatorX,
+    todayMs,
+    timezone,
+    updateTodayChipFromScroll,
+  ]);
 
   const handleTimelineContextMenu = useCallback<
     MouseEventHandler<HTMLDivElement>
@@ -274,8 +337,109 @@ export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
     event.stopPropagation();
   }, []);
 
+  const handleTimelinePointerDown = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      suppressNextClickRef.current = false;
+
+      const button =
+        event.button !== undefined
+          ? event.button
+          : (event.nativeEvent as any).button;
+
+      if (button !== undefined && button !== 0) {
+        windowDragStartRef.current = null;
+        return;
+      }
+
+      const pointerId =
+        event.pointerId !== undefined
+          ? event.pointerId
+          : (event.nativeEvent as any).pointerId;
+      const clientX =
+        event.clientX !== undefined
+          ? event.clientX
+          : (event.nativeEvent as any).clientX;
+      const clientY =
+        event.clientY !== undefined
+          ? event.clientY
+          : (event.nativeEvent as any).clientY;
+
+      windowDragStartRef.current = {
+        pointerId,
+        clientX,
+        clientY,
+        dragging: false,
+      };
+    },
+    [],
+  );
+
+  const handleTimelinePointerMove = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      const dragStart = windowDragStartRef.current;
+      const pointerId =
+        event.pointerId !== undefined
+          ? event.pointerId
+          : (event.nativeEvent as any).pointerId;
+
+      if (
+        !dragStart ||
+        dragStart.dragging ||
+        dragStart.pointerId !== pointerId ||
+        !isTimelineWindowDrag(dragStart, event)
+      ) {
+        return;
+      }
+
+      dragStart.dragging = true;
+      suppressNextClickRef.current = true;
+      event.preventDefault();
+
+      if (isTauri()) {
+        void getCurrentWindow()
+          .startDragging()
+          .catch(() => {});
+      }
+    },
+    [],
+  );
+
+  const handleTimelinePointerEnd = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      const dragStart = windowDragStartRef.current;
+
+      if (!dragStart || dragStart.pointerId !== event.pointerId) {
+        return;
+      }
+
+      windowDragStartRef.current = null;
+    },
+    [],
+  );
+
+  const handleTimelineClickCapture = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      if (!suppressNextClickRef.current) {
+        return;
+      }
+
+      suppressNextClickRef.current = false;
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    [],
+  );
+
   return (
-    <div className="min-w-0 shrink-0">
+    <div
+      data-tauri-drag-region
+      className="min-w-0 shrink-0 select-none"
+      onPointerDown={handleTimelinePointerDown}
+      onPointerMove={handleTimelinePointerMove}
+      onPointerUp={handleTimelinePointerEnd}
+      onPointerCancel={handleTimelinePointerEnd}
+      onClickCapture={handleTimelineClickCapture}
+    >
       <div className="relative">
         <div
           ref={setScrollContainer}
@@ -288,19 +452,25 @@ export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
           style={{ height: TIMELINE_HEIGHT }}
         >
           <div
-            className="flex h-full min-w-full items-start gap-1"
+            className="group/timeline-strip relative flex h-full min-w-full items-start gap-1"
             onContextMenu={handleTimelineContextMenu}
             style={{
               width: carouselWidth,
             }}
           >
+            {showNowIndicator ? (
+              <TopCurrentTimeIndicator
+                currentTimeMs={currentTimeMs}
+                left={nowIndicatorX}
+                timezone={timezone}
+              />
+            ) : null}
             {carouselItems.map((renderItem) =>
-              renderItem.kind === "create-meeting" ? (
-                <TimelineCreateMeetingCard
+              renderItem.kind === "create-note" ? (
+                <TimelineCreateNoteCard
                   key={renderItem.id}
                   item={renderItem}
-                  timezone={timezone}
-                  onClick={createNewMeeting}
+                  onClick={createNewNote}
                 />
               ) : renderItem.kind === "open-calendar" ? (
                 <TimelineOpenCalendarCard
@@ -328,15 +498,16 @@ export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
           <button
             type="button"
             className={cn([
-              "border-border bg-background/95 text-foreground absolute top-1/2 z-40 flex h-6 -translate-y-1/2 items-center gap-1 rounded-full border px-2.5 text-xs font-medium shadow-xs backdrop-blur",
-              "hover:border-border hover:bg-accent hover:text-accent-foreground transition-colors",
-              "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-hidden",
+              "absolute top-1/2 z-40 flex h-6 -translate-y-1/2 items-center gap-1 rounded-full border border-neutral-200 bg-white/95 px-2.5 text-xs font-semibold text-neutral-900 shadow-md backdrop-blur",
+              "transition-colors hover:border-neutral-300 hover:bg-white hover:text-neutral-950",
+              "focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden",
               todayChipDirection === "left" ? "left-3" : "right-3",
             ])}
             onClick={handleGoToToday}
           >
             {todayChipDirection === "left" ? <ArrowLeftIcon size={12} /> : null}
-            <span>Today</span>
+            <SunIcon size={13} className="shrink-0 text-yellow-400" />
+            <span>Now</span>
             {todayChipDirection === "right" ? (
               <ArrowRightIcon size={12} />
             ) : null}
@@ -347,14 +518,42 @@ export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
   );
 }
 
+function TopCurrentTimeIndicator({
+  currentTimeMs,
+  left,
+  timezone,
+}: {
+  currentTimeMs: number;
+  left: number;
+  timezone?: string;
+}) {
+  const label = useMemo(() => {
+    const now = timezone
+      ? new TZDate(new Date(currentTimeMs), timezone)
+      : new Date(currentTimeMs);
+    return format(now, "h:mm a").toUpperCase();
+  }, [currentTimeMs, timezone]);
+
+  return (
+    <div
+      aria-hidden
+      data-testid="top-timeline-now-indicator"
+      className="pointer-events-none absolute top-0 bottom-0 z-40 w-0"
+      style={{ left }}
+    >
+      <div className="absolute top-0 bottom-1 left-0 w-px -translate-x-1/2 bg-red-500/90 shadow-[0_0_0_1px_rgba(255,255,255,0.85)]" />
+      <div className="absolute top-0 left-0 size-1.5 -translate-x-1/2 rounded-full bg-red-500 shadow-[0_0_0_1px_rgba(255,255,255,0.95)]" />
+      <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500 px-2 py-1 font-mono text-[10px] leading-none font-semibold whitespace-nowrap text-white opacity-0 shadow-xs transition-opacity group-hover/timeline-strip:opacity-100">
+        {label}
+      </div>
+    </div>
+  );
+}
+
 const SessionTimelineBar = memo(
   ({ item, timezone }: { item: MeetingTimelineEntry; timezone?: string }) => {
-    const store = main.UI.useStore(main.STORE_ID);
-    const indexes = main.UI.useIndexes(main.STORE_ID);
     const openNew = useTabs((state) => state.openNew);
-    const invalidateResource = useTabs((state) => state.invalidateResource);
-    const addDeletion = useUndoDelete((state) => state.addDeletion);
-    const { ignoreEvent } = useIgnoredEvents();
+    const deleteSession = useDeleteSession();
     const sessionRow = main.UI.useRow("sessions", item.id, main.STORE_ID) as
       | TimelineSessionRow
       | undefined;
@@ -372,10 +571,10 @@ const SessionTimelineBar = memo(
     }));
     const isEnhancing = useIsSessionEnhancing(item.id);
     const isLive = sessionMode === "active";
-    const isFinalizing = sessionMode === "finalizing";
-    const isBatching = sessionMode === "running_batch";
     const showSpinner =
-      !isLive && (isFinalizing || isEnhancing || isBatching);
+      sessionMode === "finalizing" ||
+      sessionMode === "running_batch" ||
+      isEnhancing;
     const sessionEvent = useMemo(
       () => (sessionRow ? getSessionEvent(sessionRow) : null),
       [sessionRow?.event_json],
@@ -397,35 +596,8 @@ const SessionTimelineBar = memo(
     );
 
     const handleDelete = useCallback(() => {
-      if (!store) {
-        return;
-      }
-
-      if (sessionEvent?.tracking_id) {
-        ignoreEvent(sessionEvent.tracking_id);
-      }
-
-      const capturedData = captureSessionData(store, indexes, item.id);
-
-      invalidateResource("sessions", item.id);
-      void deleteSessionCascade(store, indexes, item.id, {
-        deferFilesystemDelete: true,
-      });
-
-      if (capturedData) {
-        addDeletion(capturedData, () => {
-          void finalizeSessionDeletion(item.id);
-        });
-      }
-    }, [
-      store,
-      indexes,
-      item.id,
-      sessionEvent,
-      ignoreEvent,
-      invalidateResource,
-      addDeletion,
-    ]);
+      deleteSession(item.id, sessionEvent?.tracking_id);
+    }, [deleteSession, item.id, sessionEvent]);
 
     const handleShowInFinder = useCallback(async () => {
       const result = await fsSyncCommands.sessionDir(item.id);
@@ -463,6 +635,11 @@ const SessionTimelineBar = memo(
             item={item}
             title={title || item.title || "Untitled"}
             timezone={timezone}
+            isLive={isLive}
+            amplitude={Math.max(
+              0.25,
+              Math.min(Math.hypot(amplitude.mic, amplitude.speaker), 1),
+            )}
             showSpinner={showSpinner}
             onClick={openSession}
             onDragStart={handleDragStart}
@@ -560,8 +737,8 @@ type TimelineRenderItem = {
   start: Date;
 };
 
-type TimelineCreateMeetingItem = {
-  kind: "create-meeting";
+type TimelineCreateNoteItem = {
+  kind: "create-note";
   id: string;
   start: Date;
 };
@@ -574,7 +751,7 @@ type TimelineOpenCalendarItem = {
 
 type TimelineCarouselItem =
   | TimelineRenderItem
-  | TimelineCreateMeetingItem
+  | TimelineCreateNoteItem
   | TimelineOpenCalendarItem;
 
 function TimelineCarouselCard({
@@ -589,7 +766,7 @@ function TimelineCarouselCard({
       data-timeline-start-ms={item.start.getTime()}
       className={cn([
         "group/timeline-card relative shrink-0 snap-start",
-        "transition-transform focus-within:z-30 focus-within:scale-[1.02] hover:z-30 hover:scale-[1.02]",
+        "origin-top transition-transform focus-within:z-30 focus-within:scale-[1.02] hover:z-30 hover:scale-[1.02]",
         item.selected && "z-20",
       ])}
       style={{ width: TIMELINE_CAROUSEL_CARD_WIDTH }}
@@ -599,13 +776,11 @@ function TimelineCarouselCard({
   );
 }
 
-function TimelineCreateMeetingCard({
+function TimelineCreateNoteCard({
   item,
-  timezone,
   onClick,
 }: {
-  item: TimelineCreateMeetingItem;
-  timezone?: string;
+  item: TimelineCreateNoteItem;
   onClick: () => void;
 }) {
   return (
@@ -617,24 +792,20 @@ function TimelineCreateMeetingCard({
       <button
         type="button"
         className={cn([
-          "border-border bg-background/80 flex h-10 w-full flex-col justify-center rounded-md border border-dashed px-2 text-left shadow-xs",
-          "hover:bg-accent focus-visible:ring-ring hover:border-muted-foreground transition-colors focus-visible:ring-2 focus-visible:outline-hidden",
+          "flex h-10 w-full flex-col justify-center rounded-md border border-dashed border-neutral-300 bg-white/80 px-2 text-left shadow-xs",
+          "transition-colors hover:border-neutral-600 hover:bg-white focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden",
         ])}
         onClick={onClick}
       >
-        <span className="text-muted-foreground font-mono text-[10px]">
-          {formatRelativeTimelineDay(item.start, timezone)}
-        </span>
-        <span className="text-foreground flex min-w-0 items-center gap-1.5 truncate text-xs font-semibold">
+        <span className="flex min-w-0 items-center gap-1.5 truncate text-xs font-semibold text-neutral-700">
           <PlusIcon size={12} className="shrink-0" />
-          <span className="truncate">Create new meeting</span>
+          <span className="truncate">Create new note</span>
         </span>
       </button>
     </div>
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function TimelineOpenCalendarCard({
   item,
   onClick,
@@ -651,8 +822,8 @@ function TimelineOpenCalendarCard({
       <button
         type="button"
         className={cn([
-          "border-border bg-background/80 text-foreground flex h-10 w-full items-center gap-1.5 rounded-md border border-dashed px-2 text-left text-xs font-semibold shadow-xs",
-          "hover:bg-accent focus-visible:ring-ring hover:border-muted-foreground transition-colors focus-visible:ring-2 focus-visible:outline-hidden",
+          "flex h-10 w-full items-center gap-1.5 rounded-md border border-dashed border-neutral-300 bg-white/80 px-2 text-left text-xs font-semibold text-neutral-700 shadow-xs",
+          "transition-colors hover:border-neutral-600 hover:bg-white focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden",
         ])}
         onClick={onClick}
       >
@@ -763,20 +934,19 @@ function TimelineCardButton({
         className={cn([
           "flex h-10 w-full flex-col justify-center rounded-md border py-0 pl-2 text-left shadow-xs",
           showSuffix ? "pr-8" : "pr-2",
-          "transition-colors hover:border-border focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-hidden",
+          "transition-colors hover:border-neutral-700 focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden",
           item.type === "session" &&
             (showLiveStop
               ? "border-red-500 bg-red-500 text-white hover:border-red-600 hover:bg-red-600"
               : item.selected
-                ? "border-primary bg-primary text-primary-foreground hover:bg-primary/95"
-                : "border-border bg-background text-foreground hover:bg-accent"),
+                ? "border-neutral-900 bg-neutral-900 text-white hover:bg-neutral-800"
+                : "border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50"),
           item.type === "event" &&
-            "border-dashed border-border bg-background/80 text-muted-foreground hover:bg-accent",
+            "border-dashed border-neutral-300 bg-white/80 text-neutral-600 hover:bg-white",
           item.muted && !item.selected && !showLiveStop && "opacity-60",
         ])}
       >
         <span className="flex min-w-0 items-center gap-1.5">
-          {item.calendarId ? <CalendarDot calendarId={item.calendarId} /> : null}
           <FadedTimelineLabel className="min-w-0 flex-1 text-xs font-semibold">
             {title}
           </FadedTimelineLabel>
@@ -785,20 +955,31 @@ function TimelineCardButton({
           className={cn([
             "font-mono text-[10px]",
             item.selected || showLiveStop
-              ? "text-primary-foreground/70"
-              : "text-muted-foreground",
+              ? "text-white/65"
+              : "text-neutral-500",
           ])}
         >
           {startLabel}
         </FadedTimelineLabel>
       </button>
-      {showLiveStop ? (
+      {showSuffixSpinner ? (
+        <span
+          role="status"
+          aria-label="Loading timeline item"
+          className={cn([
+            "absolute top-1/2 right-2 flex size-5 -translate-y-1/2 items-center justify-center",
+            item.selected ? "text-white/70" : "text-neutral-500",
+          ])}
+        >
+          <Spinner size={12} />
+        </span>
+      ) : showLiveStop ? (
         <button
           type="button"
           aria-label="Stop listening"
           onClick={handleStopClick}
           className={cn([
-            "absolute top-1/2 right-3 flex size-5 -translate-y-1/2 items-center justify-center rounded-sm",
+            "absolute top-1/2 right-2 flex size-5 -translate-y-1/2 items-center justify-center rounded-sm",
             "text-white/80 transition-colors hover:bg-white/15 hover:text-white",
             "focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-hidden",
           ])}
@@ -823,19 +1004,32 @@ function TimelineCardButton({
             <SquareIcon size={10} className="fill-current" />
           </span>
         </button>
-      ) : showSuffixSpinner ? (
-        <div className="absolute top-1/2 right-3 flex size-5 -translate-y-1/2 items-center justify-center text-muted-foreground">
-          <Spinner size={12} />
-        </div>
       ) : null}
     </div>
-  );}
+  );
 }
 
 function buildTimelineRenderItems(
   items: MeetingTimelineEntry[],
+  range: {
+    startInclusive: Date;
+    endExclusive: Date;
+  },
 ): TimelineRenderItem[] {
+  const startInclusiveMs = range.startInclusive.getTime();
+  const endExclusiveMs = range.endExclusive.getTime();
+
   return [...items]
+    .filter((item) => {
+      if (item.selected) {
+        return true;
+      }
+
+      const startMs = item.start.getTime();
+      const endMs = normalizeEndMs(item.start, item.end);
+
+      return startMs < endExclusiveMs && endMs >= startInclusiveMs;
+    })
     .sort((a, b) => {
       const startDiff = a.start.getTime() - b.start.getTime();
       if (startDiff !== 0) {
@@ -937,6 +1131,30 @@ function insertCreateNoteAtCurrentTime(
   ];
 }
 
+function hasTimelineEntriesBefore(
+  entries: MeetingTimelineEntry[],
+  startInclusive: Date,
+): boolean {
+  const startInclusiveMs = startInclusive.getTime();
+
+  return entries.some(
+    (entry) =>
+      !entry.selected &&
+      normalizeEndMs(entry.start, entry.end) < startInclusiveMs,
+  );
+}
+
+function hasTimelineEntriesAfter(
+  entries: MeetingTimelineEntry[],
+  endExclusive: Date,
+): boolean {
+  const endExclusiveMs = endExclusive.getTime();
+
+  return entries.some(
+    (entry) => !entry.selected && entry.start.getTime() >= endExclusiveMs,
+  );
+}
+
 function getTimelineCarouselWidth(items: TimelineCarouselItem[]): number {
   if (items.length === 0) {
     return 1;
@@ -954,6 +1172,27 @@ function getTimelineCarouselWidth(items: TimelineCarouselItem[]): number {
     TIMELINE_CAROUSEL_GAP * Math.max(0, items.length - 1)
   );
 }
+
+export function isTimelineWindowDrag(
+  start: { clientX: number; clientY: number },
+  current: any,
+): boolean {
+  const currentClientX =
+    current.clientX !== undefined
+      ? current.clientX
+      : (current.nativeEvent?.clientX ?? 0);
+  const currentClientY =
+    current.clientY !== undefined
+      ? current.clientY
+      : (current.nativeEvent?.clientY ?? 0);
+
+  const deltaX = currentClientX - start.clientX;
+  const deltaY = currentClientY - start.clientY;
+
+  return (
+    deltaX * deltaX + deltaY * deltaY >=
+    TIMELINE_WINDOW_DRAG_THRESHOLD_PX * TIMELINE_WINDOW_DRAG_THRESHOLD_PX
+  );
 }
 
 function getTimelineCarouselX(
@@ -998,6 +1237,89 @@ function getTimelineCarouselDateX(
   return getTimelineCarouselX(items, date.getTime());
 }
 
+function getTimelineCarouselNowX(
+  items: TimelineCarouselItem[],
+  current: Date,
+  timezone?: string,
+): number | null {
+  const currentMs = current.getTime();
+  const positionedItems = getPositionedTimelineCarouselItems(items);
+
+  for (const positioned of positionedItems) {
+    if (positioned.item.kind !== "item") {
+      continue;
+    }
+
+    const startMs = positioned.item.item.start.getTime();
+    const end = positioned.item.item.end;
+    const endMs = end?.getTime();
+
+    if (endMs && startMs <= currentMs && currentMs <= endMs) {
+      if (endMs <= startMs) {
+        return positioned.right;
+      }
+
+      const progress = (currentMs - startMs) / (endMs - startMs);
+      return (
+        positioned.left + positioned.width * Math.min(Math.max(progress, 0), 1)
+      );
+    }
+  }
+
+  const todayItems = positionedItems.filter((positioned) =>
+    isSameTimelineDay(
+      getTimelineCarouselItemStart(positioned.item),
+      current,
+      timezone,
+    ),
+  );
+
+  if (todayItems.length === 0) {
+    return null;
+  }
+
+  const nextItem = todayItems.find(
+    (positioned) =>
+      getTimelineCarouselItemStart(positioned.item).getTime() > currentMs,
+  );
+  let previousItem: (typeof todayItems)[number] | undefined;
+  for (const positioned of todayItems) {
+    if (getTimelineCarouselItemStart(positioned.item).getTime() <= currentMs) {
+      previousItem = positioned;
+    }
+  }
+
+  if (previousItem && nextItem) {
+    if (previousItem.item.kind === "create-note") {
+      return previousItem.left;
+    }
+
+    if (nextItem.item.kind === "create-note") {
+      return nextItem.left;
+    }
+
+    return previousItem.right + (nextItem.left - previousItem.right) / 2;
+  }
+
+  if (nextItem) {
+    return nextItem.left;
+  }
+
+  if (!previousItem) {
+    return null;
+  }
+
+  if (previousItem.item.kind === "create-note") {
+    return previousItem.left;
+  }
+
+  if (previousItem.item.kind !== "item") {
+    return previousItem.left + previousItem.width / 2;
+  }
+
+  return previousItem.right;
+}
+
 function getTimelineCarouselDateDirection({
   items,
   date,
@@ -1031,6 +1353,32 @@ function getTimelineCarouselDateDirection({
   return null;
 }
 
+export function getTimelineCarouselNowDirection({
+  nowX,
+  scrollLeft,
+  viewportWidth,
+}: {
+  nowX: number | null;
+  scrollLeft: number;
+  viewportWidth: number;
+}): TodayChipDirection | null {
+  if (nowX === null) {
+    return null;
+  }
+
+  const viewportRight = scrollLeft + viewportWidth;
+
+  if (nowX < scrollLeft) {
+    return "left";
+  }
+
+  if (nowX > viewportRight) {
+    return "right";
+  }
+
+  return null;
+}
+
 function getTimelineCarouselDateRange(
   items: TimelineCarouselItem[],
   date: Date,
@@ -1058,6 +1406,25 @@ function getTimelineCarouselDateRange(
   return range;
 }
 
+function getPositionedTimelineCarouselItems(
+  items: TimelineCarouselItem[],
+): Array<{
+  item: TimelineCarouselItem;
+  left: number;
+  right: number;
+  width: number;
+}> {
+  let left = TIMELINE_CAROUSEL_PADDING;
+
+  return items.map((item) => {
+    const width = getTimelineCarouselItemWidth(item);
+    const right = left + width;
+    const positionedItem = { item, left, right, width };
+    left = right + TIMELINE_CAROUSEL_GAP;
+    return positionedItem;
+  });
+}
+
 function getTimelineCarouselAnchorKey(
   items: TimelineCarouselItem[],
   selectedSessionId: string | null,
@@ -1068,9 +1435,15 @@ function getTimelineCarouselAnchorKey(
   return [
     selectedSessionId ?? "today",
     items.length,
-    first ? getTimelineCarouselItemStart(first).getTime() : 0,
-    last ? getTimelineCarouselItemStart(last).getTime() : 0,
+    first ? getTimelineCarouselAnchorToken(first) : 0,
+    last ? getTimelineCarouselAnchorToken(last) : 0,
   ].join(":");
+}
+
+function getTimelineCarouselAnchorToken(item: TimelineCarouselItem): string {
+  return item.kind === "create-note"
+    ? item.id
+    : String(getTimelineCarouselItemStart(item).getTime());
 }
 
 function getTimelineCarouselItemStart(item: TimelineCarouselItem): Date {
@@ -1096,30 +1469,21 @@ function isSameTimelineDay(
   return format(firstDate, "yyyy-MM-dd") === format(secondDate, "yyyy-MM-dd");
 }
 
-function CalendarDot({ calendarId }: { calendarId: string }) {
-  const calendar = main.UI.useRow("calendars", calendarId, main.STORE_ID);
-  const color = calendar?.color ? String(calendar.color) : "#888";
-
-  return (
-    <span
-      aria-hidden
-      className="size-2 shrink-0 rounded-full opacity-70"
-      style={{ backgroundColor: color }}
-    />
-  );
-}
-
 function buildMeetingTimelineEntries({
   timelineEventsTable,
   timelineSessionsTable,
   sessionRecordingRanges,
   selectedSessionId,
+  liveSessionId,
+  now,
   isIgnored,
 }: {
   timelineEventsTable: TimelineEventsTable;
   timelineSessionsTable: TimelineSessionsTable;
   sessionRecordingRanges: ReadonlyMap<string, SessionRecordingRange>;
   selectedSessionId: string | null;
+  liveSessionId: string | null;
+  now: number;
   isIgnored: (
     trackingId?: string | null,
     recurrenceSeriesId?: string | null,
@@ -1127,7 +1491,6 @@ function buildMeetingTimelineEntries({
 }): MeetingTimelineEntry[] {
   const entries: MeetingTimelineEntry[] = [];
   const sessionTrackingIds = new Set<string>();
-  const now = Date.now();
 
   if (timelineSessionsTable) {
     Object.entries(timelineSessionsTable).forEach(([sessionId, row]) => {
@@ -1136,6 +1499,7 @@ function buildMeetingTimelineEntries({
         row,
         recordingRange: sessionRecordingRanges.get(sessionId),
         selected: selectedSessionId === sessionId,
+        isLive: liveSessionId === sessionId,
         now,
       });
 
@@ -1184,12 +1548,14 @@ function getSessionTimelineEntry({
   row,
   recordingRange,
   selected,
+  isLive,
   now,
 }: {
   sessionId: string;
   row: TimelineSessionRow;
   recordingRange?: SessionRecordingRange;
   selected: boolean;
+  isLive: boolean;
   now: number;
 }): MeetingTimelineEntry | null {
   const event = getSessionEvent(row);
@@ -1200,7 +1566,9 @@ function getSessionTimelineEntry({
     return null;
   }
 
-  const end = recordingRange?.end ?? safeParseDate(event?.ended_at);
+  const eventEnd = safeParseDate(event?.ended_at);
+  const recordedOrScheduledEnd = recordingRange?.end ?? eventEnd ?? null;
+  const end = isLive && !eventEnd ? new Date(now) : recordedOrScheduledEnd;
 
   return {
     id: sessionId,
@@ -1252,39 +1620,12 @@ function getEventTimelineEntry({
   };
 }
 
-function formatTimeRange(start: Date, end: Date, timezone?: string): string {
-  const displayStart = timezone ? new TZDate(start, timezone) : start;
-  const displayEnd = timezone ? new TZDate(end, timezone) : end;
-  const startMeridiem = format(displayStart, "a");
-  const endMeridiem = format(displayEnd, "a");
-
-  if (startMeridiem === endMeridiem) {
-    return `${format(displayStart, "h:mm")}-${format(displayEnd, "h:mm a")}`;
-  }
-
-  return `${format(displayStart, "h:mm a")}-${format(displayEnd, "h:mm a")}`;
-}
-
-function formatCompactDateTime(date: Date, timezone?: string): string {
-  const displayDate = timezone ? new TZDate(date, timezone) : date;
-  return `${formatRelativeTimelineDay(date, timezone)} ${format(displayDate, "h:mm a")}`;
-}
-
-function formatDateTimeRange(
-  start: Date,
-  end: Date,
+export function formatTimelineStartLabel(
+  date: Date,
   timezone?: string,
 ): string {
-  const displayStart = timezone ? new TZDate(start, timezone) : start;
-  const displayEnd = timezone ? new TZDate(end, timezone) : end;
-  const sameDay =
-    format(displayStart, "yyyy-MM-dd") === format(displayEnd, "yyyy-MM-dd");
-
-  if (sameDay) {
-    return `${formatRelativeTimelineDay(start, timezone)} ${formatTimeRange(start, end, timezone)}`;
-  }
-
-  return `${formatCompactDateTime(start, timezone)}-${formatCompactDateTime(end, timezone)}`;
+  const displayDate = timezone ? new TZDate(date, timezone) : date;
+  return `${formatRelativeTimelineDay(date, timezone)} ${format(displayDate, "h:mm a")}`;
 }
 
 function formatRelativeTimelineDay(date: Date, timezone?: string): string {

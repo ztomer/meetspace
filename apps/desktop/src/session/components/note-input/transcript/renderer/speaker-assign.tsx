@@ -5,13 +5,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@meetspace/ui/components/ui/popover";
+import { AppFloatingPanel } from "@meetspace/ui/components/ui/popover";
 import { cn } from "@meetspace/utils";
 
 import * as main from "~/store/tinybase/store/main";
 import type { Segment } from "~/stt/live-segment";
 import { upsertSpeakerAssignment } from "~/stt/utils";
-
-import { AppFloatingPanel } from "@meetspace/ui/components/ui/popover";
 
 export function SpeakerAssignPopover({
   segment,
@@ -63,7 +62,7 @@ export function SpeakerAssignPopover({
           type="button"
           className={cn([
             "-ml-1 cursor-pointer rounded-xs px-1",
-            "transition-colors hover:bg-muted",
+            "hover:bg-muted transition-colors",
           ])}
           style={{ color }}
         >
@@ -321,13 +320,13 @@ function ParticipantList({
 
   return (
     <AppFloatingPanel className="overflow-hidden">
-      <div className="border-b border-border p-2">
+      <div className="border-border border-b p-2">
         <input
           autoFocus
           type="search"
           className={cn([
-            "h-8 w-full rounded-md border border-input bg-background px-2 text-sm outline-hidden",
-            "placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring",
+            "border-input bg-background h-8 w-full rounded-md border px-2 text-sm outline-hidden",
+            "placeholder:text-muted-foreground focus-visible:ring-ring focus-visible:ring-1",
           ])}
           placeholder="Search contacts"
           value={query}
@@ -344,7 +343,7 @@ function ParticipantList({
 
         {groups.map((group) => (
           <div key={group.title}>
-            <div className="px-3 pt-2 pb-1 text-[11px] font-medium text-muted-foreground uppercase">
+            <div className="text-muted-foreground px-3 pt-2 pb-1 text-[11px] font-medium uppercase">
               {group.title}
             </div>
             {group.options.map((option) => (
@@ -358,7 +357,7 @@ function ParticipantList({
         ))}
 
         {!createOption && groups.length === 0 && (
-          <p className="px-3 py-2 text-xs text-muted-foreground">
+          <p className="text-muted-foreground px-3 py-2 text-xs">
             {query.trim() ? "No matching contacts" : "No contacts"}
           </p>
         )}
@@ -377,17 +376,14 @@ function ParticipantOptionButton({
   return (
     <button
       type="button"
-      className={cn([
-        "w-full px-3 py-1.5 text-left text-sm",
-        "hover:bg-muted",
-      ])}
+      className={cn(["w-full px-3 py-1.5 text-left text-sm", "hover:bg-muted"])}
       onClick={() => onSelect(option)}
     >
       <span className="block truncate">
         {option.isNew ? `Add "${option.name}"` : option.name}
       </span>
       {!option.isNew && option.email && (
-        <span className="block truncate text-xs text-muted-foreground">
+        <span className="text-muted-foreground block truncate text-xs">
           {option.email}
         </span>
       )}

@@ -152,7 +152,7 @@ function isBlockingLLMStatus(status: LLMConnectionStatus) {
   return (
     status.status === "error" &&
     (status.reason === "missing_config" ||
-      status.reason === "not_pro" ||
-      status.reason === "unauthenticated")
+      (status.reason as string) === "not_pro" ||
+      (status.reason as string) === "unauthenticated")
   );
 }

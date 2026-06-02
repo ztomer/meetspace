@@ -18,8 +18,8 @@ const hoisted = vi.hoisted(() => ({
   enhancedContent: "Generated summary",
   llmStatus: {
     status: "success",
-    providerId: "hyprnote",
-    isHosted: true,
+    providerId: "custom",
+    isHosted: false,
   } as LLMConnectionStatus,
   isCaretNearBottom: false,
   sessionMode: "inactive",
@@ -94,8 +94,8 @@ describe("FloatingActionButton", () => {
     hoisted.enhancedContent = "Generated summary";
     hoisted.llmStatus = {
       status: "success",
-      providerId: "hyprnote",
-      isHosted: true,
+      providerId: "custom",
+      isHosted: false,
     };
     hoisted.isCaretNearBottom = false;
     hoisted.sessionMode = "inactive";

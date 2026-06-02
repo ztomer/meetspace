@@ -9,7 +9,7 @@ import {
 } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { ChatView } from "./chat-panel";
 
@@ -186,18 +186,17 @@ export function PersistentChatPanel({
     y: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
     filter: { duration: 0.16, ease: "easeOut" },
   };
-  const panelStyle =
-    floatingSize && containerRect
-      ? getFloatingPanelStyle(floatingSize, containerRect)
-      : {
-          width: "min(640px, calc(100% - 2rem))",
-          height: "min(560px, calc(100% - 1rem))",
-          minWidth: "min(360px, calc(100% - 2rem))",
-          minHeight: "min(320px, calc(100% - 1rem))",
-          maxWidth: "calc(100% - 2rem)",
-          maxHeight: "calc(100% - 1rem)",
-          transformOrigin: "bottom center",
-        };
+  const panelStyle = floatingSize
+    ? getFloatingPanelStyle(floatingSize, containerRect)
+    : {
+        width: "min(640px, calc(100% - 2rem))",
+        height: "min(560px, calc(100% - 1rem))",
+        minWidth: "min(360px, calc(100% - 2rem))",
+        minHeight: "min(320px, calc(100% - 1rem))",
+        maxWidth: "calc(100% - 2rem)",
+        maxHeight: "calc(100% - 1rem)",
+        transformOrigin: "bottom center",
+      };
 
   const handleResizeStart = (
     handle: ResizeHandle,
@@ -217,11 +216,24 @@ export function PersistentChatPanel({
     const panelRect = panel.getBoundingClientRect();
     const frameRect = frame.getBoundingClientRect();
 
+    const pointerId =
+      event.pointerId !== undefined
+        ? event.pointerId
+        : (event.nativeEvent as any).pointerId;
+    const clientX =
+      event.clientX !== undefined
+        ? event.clientX
+        : (event.nativeEvent as any).clientX;
+    const clientY =
+      event.clientY !== undefined
+        ? event.clientY
+        : (event.nativeEvent as any).clientY;
+
     resizeStateRef.current = {
-      pointerId: event.pointerId,
+      pointerId,
       handle,
-      startX: event.clientX,
-      startY: event.clientY,
+      startX: clientX,
+      startY: clientY,
       startSize: {
         width: panelRect.width,
         height: panelRect.height,
@@ -233,16 +245,29 @@ export function PersistentChatPanel({
 
   const handleResizeMove = (event: PointerEvent<HTMLDivElement>) => {
     const resizeState = resizeStateRef.current;
+    const pointerId =
+      event.pointerId !== undefined
+        ? event.pointerId
+        : (event.nativeEvent as any).pointerId;
 
-    if (!resizeState || resizeState.pointerId !== event.pointerId) {
+    if (!resizeState || resizeState.pointerId !== pointerId) {
       return;
     }
 
     event.preventDefault();
     event.stopPropagation();
 
-    const deltaX = event.clientX - resizeState.startX;
-    const deltaY = event.clientY - resizeState.startY;
+    const clientX =
+      event.clientX !== undefined
+        ? event.clientX
+        : (event.nativeEvent as any).clientX;
+    const clientY =
+      event.clientY !== undefined
+        ? event.clientY
+        : (event.nativeEvent as any).clientY;
+
+    const deltaX = clientX - resizeState.startX;
+    const deltaY = clientY - resizeState.startY;
     const nextSize = getResizedSize(resizeState, deltaX, deltaY);
 
     setFloatingSize(
@@ -256,8 +281,12 @@ export function PersistentChatPanel({
 
   const handleResizeEnd = (event: PointerEvent<HTMLDivElement>) => {
     const resizeState = resizeStateRef.current;
+    const pointerId =
+      event.pointerId !== undefined
+        ? event.pointerId
+        : (event.nativeEvent as any).pointerId;
 
-    if (!resizeState || resizeState.pointerId !== event.pointerId) {
+    if (!resizeState || resizeState.pointerId !== pointerId) {
       return;
     }
 
@@ -346,13 +375,11 @@ export function PersistentChatPanel({
 
 function getFloatingPanelStyle(
   size: FloatingPanelSize,
-  containerRect: FloatingContainerRect,
+  containerRect: FloatingContainerRect | null,
 ): CSSProperties {
-  const clampedSize = clampFloatingPanelSize(
-    size,
-    containerRect.width,
-    containerRect.height,
-  );
+  const clampedSize = containerRect
+    ? clampFloatingPanelSize(size, containerRect.width, containerRect.height)
+    : size;
 
   return {
     width: `${clampedSize.width}px`,

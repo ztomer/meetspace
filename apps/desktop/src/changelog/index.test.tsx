@@ -9,15 +9,16 @@ const mocks = vi.hoisted(() => ({
   close: vi.fn(),
   leftsidebar: {
     expanded: true,
+    setExpanded: vi.fn(),
   },
   sidebarTimelineEnabled: false,
 }));
 
-vi.mock("@hypr/changelog", () => ({
+vi.mock("@meetspace/changelog", () => ({
   ChangelogContent: ({ content }: { content: string }) => <div>{content}</div>,
 }));
 
-vi.mock("@hypr/plugin-opener2", () => ({
+vi.mock("@meetspace/plugin-opener2", () => ({
   commands: {
     openUrl: vi.fn(),
   },
@@ -88,11 +89,8 @@ describe("TabContentChangelog", () => {
 });
 
 function getHeader() {
-  const heading = screen.getByRole("heading", {
-    name: "What's new in 1.0.36?",
-  });
-
-  return heading.parentElement?.parentElement?.parentElement as HTMLElement;
+  const breadcrumb = screen.getByText("Changelog");
+  return breadcrumb.closest(".w-full") as HTMLElement;
 }
 
 function buildChangelogTab(): Extract<Tab, { type: "changelog" }> {

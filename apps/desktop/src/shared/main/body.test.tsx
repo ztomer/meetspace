@@ -34,7 +34,14 @@ const mocks = vi.hoisted(() => ({
     slotId: "slot-1",
     type: "empty",
   },
+  tabs: [
+    { active: true, pinned: false, slotId: "slot-1", type: "empty" },
+  ] as any[],
   sidebarTimelineEnabled: false,
+}));
+
+vi.mock("~/shared/useTabsShortcuts", () => ({
+  useMainEscapeShortcutAction: vi.fn(() => mocks.runEscapeShortcut),
 }));
 
 vi.mock("@tauri-apps/api/core", () => ({
@@ -85,6 +92,11 @@ vi.mock("~/contexts/shell", () => ({
     leftsidebar: {
       expanded: mocks.leftSidebarExpanded,
       toggleExpanded: mocks.toggleLeftSidebar,
+      setExpanded: vi.fn(),
+    },
+    chat: {
+      mode: "FloatingClosed",
+      sendEvent: vi.fn(),
     },
   }),
 }));
@@ -114,20 +126,84 @@ vi.mock("~/sidebar/toast", () => ({
   ToastArea: () => <div data-testid="toast-area" />,
 }));
 
-vi.mock("~/store/zustand/tabs", () => ({
-  uniqueIdfromTab: vi.fn(() => "empty-slot"),
-  useTabs: vi.fn((selector: (state: unknown) => unknown) =>
+vi.mock("~/stt/contexts", () => ({
+  useListener: vi.fn((selector) =>
     selector({
-      tabs: [{ active: true, pinned: false, slotId: "slot-1", type: "empty" }],
-      currentTab: mocks.currentTab,
-      canGoBack: mocks.canGoBack,
-      canGoNext: mocks.canGoNext,
-      goBack: mocks.goBack,
-      goNext: mocks.goNext,
-      openNew: mocks.openNew,
+      live: {
+        sessionId: null,
+        status: "inactive",
+      },
     }),
   ),
 }));
+
+vi.mock("@meetspace/ui/components/ui/tooltip", () => ({
+  Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  TooltipTrigger: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+  TooltipContent: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+  TooltipProvider: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+}));
+
+vi.mock("~/sidebar/profile", () => ({
+  ProfileMenu: () => <div data-testid="profile-menu" />,
+}));
+
+vi.mock("~/sidebar/update", () => ({
+  Update: () => <div data-testid="update-button" />,
+}));
+
+vi.mock("~/contexts/notifications", () => ({
+  useNotifications: () => ({
+    shouldShowBadge: false,
+  }),
+}));
+
+vi.mock("~/shared/hooks/useNativeContextMenu", () => ({
+  useNativeContextMenu: () => vi.fn(),
+}));
+
+vi.mock("~/shared/main/tab-scroll", () => ({
+  useScrollActiveTabIntoView: () => vi.fn(),
+}));
+
+vi.mock("@tanstack/react-query", () => ({
+  useQuery: vi.fn().mockReturnValue({ data: false }),
+}));
+
+vi.mock("~/store/zustand/tabs", () => {
+  const getMockState = () => ({
+    tabs: mocks.tabs,
+    currentTab: mocks.currentTab,
+    canGoBack: mocks.canGoBack,
+    canGoNext: mocks.canGoNext,
+    goBack: mocks.goBack,
+    goNext: mocks.goNext,
+    openNew: mocks.openNew,
+    select: vi.fn(),
+    close: vi.fn(),
+    reorder: vi.fn(),
+    closeOthers: vi.fn(),
+    closeAll: vi.fn(),
+    pin: vi.fn(),
+    unpin: vi.fn(),
+    pendingCloseConfirmationTab: null,
+    setPendingCloseConfirmationTab: vi.fn(),
+  });
+  const useTabs = vi.fn((selector: (state: unknown) => unknown) =>
+    selector(getMockState()),
+  );
+  (useTabs as any).getState = getMockState;
+  return {
+    uniqueIdfromTab: vi.fn(() => "empty-slot"),
+    useTabs,
+  };
+});
 
 import { ClassicMainBody } from "~/main/body";
 
@@ -157,6 +233,9 @@ describe("ClassicMainBody", () => {
       slotId: "slot-1",
       type: "empty",
     };
+    mocks.tabs = [
+      { active: true, pinned: false, slotId: "slot-1", type: "empty" },
+    ];
     mocks.sidebarTimelineEnabled = false;
   });
 
@@ -195,15 +274,15 @@ describe("ClassicMainBody", () => {
 
     const { container } = render(<ClassicMainBody />);
     const body = container.firstElementChild;
-    const firstBodyChild = body?.firstElementChild;
+    const contentChild = body?.children[1];
 
     expect(screen.queryByTestId("top-meeting-timeline")).toBeNull();
     expect(screen.queryByTestId("timeline-update-banner")).toBeNull();
     expect(screen.queryByTestId("toast-area")).toBeNull();
-    expect(firstBodyChild?.className).toContain(
+    expect(contentChild?.className).toContain(
       "flex min-h-0 min-w-0 flex-1 gap-1",
     );
-    expect(firstBodyChild?.hasAttribute("data-tauri-drag-region")).toBe(false);
+    expect(contentChild?.hasAttribute("data-tauri-drag-region")).toBe(false);
     expect(screen.getByTestId("main-tab-content").textContent).toContain(
       "onboarding",
     );
@@ -326,7 +405,7 @@ describe("ClassicMainBody", () => {
 
     const { container } = render(<ClassicMainBody />);
     const body = container.firstElementChild;
-    const topArea = body?.firstElementChild;
+    const topArea = body?.children[1];
 
     expect(screen.queryByTestId("top-meeting-timeline")).toBeNull();
     expect(screen.queryByTestId("timeline-update-banner")).toBeNull();
@@ -471,15 +550,8 @@ describe("ClassicMainBody", () => {
   });
 
   it("renders the shell while the initial tab is still loading", async () => {
-    const { useTabs } = await import("~/store/zustand/tabs");
-
-    vi.mocked(useTabs).mockImplementationOnce(((
-      selector: (state: unknown) => unknown,
-    ) =>
-      selector({
-        tabs: [],
-        currentTab: null,
-      })) as typeof useTabs);
+    mocks.tabs = [];
+    mocks.currentTab = null;
 
     const { container } = render(<ClassicMainBody />);
     const view = within(container);

@@ -1,4 +1,10 @@
-import { ChevronDown, MessageCircle, Plus } from "lucide-react";
+import {
+  ChevronDown,
+  MessageCircle,
+  PanelRightClose,
+  PanelRightOpen,
+  Plus,
+} from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@meetspace/ui/components/ui/button";
@@ -8,98 +14,116 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@meetspace/ui/components/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@meetspace/ui/components/ui/tooltip";
 import { cn, formatDistanceToNow } from "@meetspace/utils";
 
 import * as main from "~/store/tinybase/store/main";
 
 export function ChatToolbarControls({
   currentChatGroupId,
-  onCloseChat,
+  layout = "floating",
   onNewChat,
+  onOpenFloating,
+  onOpenRightPanel,
   onSelectChat,
-  shortcutLabel,
+  surface = "light",
 }: {
   currentChatGroupId: string | undefined;
-  onCloseChat: () => void;
+  layout?: "floating" | "right-panel";
   onNewChat: () => void;
+  onOpenFloating?: () => void;
+  onOpenRightPanel?: () => void;
   onSelectChat: (chatGroupId: string) => void;
-  shortcutLabel?: string;
+  surface?: "light" | "dark";
 }) {
+  const isDark = surface === "dark";
+  const isRightPanel = layout === "right-panel";
+
   return (
-    <div className="relative flex h-full w-full min-w-0 items-center">
-      <div className="flex min-w-0 items-center gap-1 pr-8">
+    <div
+      className={cn([
+        "flex h-full w-full min-w-0 items-center gap-2",
+        isRightPanel ? "px-3" : isDark ? "px-2" : "px-0",
+      ])}
+    >
+      <div className="flex min-w-0 flex-1 items-center gap-1">
         <ChatGroups
           currentChatGroupId={currentChatGroupId}
           onSelectChat={onSelectChat}
-        />
-        <ChatActionButton
-          icon={<Plus size={16} />}
-          onClick={onNewChat}
-          title="New chat"
+          surface={surface}
         />
       </div>
-      <ChatActionButton
-        icon={<MessageCircle size={16} />}
-        onClick={onCloseChat}
-        title="Close chat"
-        shortcutLabel={shortcutLabel}
-        className="bg-muted text-foreground hover:bg-muted absolute top-1/2 right-0 -translate-y-1/2"
-      />
+      <div className="flex shrink-0 items-center gap-1">
+        <ChatActionButton
+          icon={<Plus size={16} />}
+          label="New chat"
+          onClick={onNewChat}
+          className={isDark ? darkToolbarButtonClassName : undefined}
+        />
+        <ChatActionButton
+          icon={
+            isRightPanel ? (
+              <PanelRightClose size={16} />
+            ) : (
+              <PanelRightOpen size={16} />
+            )
+          }
+          onClick={
+            isRightPanel
+              ? (onOpenFloating ?? (() => {}))
+              : (onOpenRightPanel ?? (() => {}))
+          }
+          label={isRightPanel ? "Float chat" : "Open in right panel"}
+          className={cn([
+            isDark
+              ? darkToolbarButtonClassName
+              : isRightPanel &&
+                "bg-neutral-100 text-neutral-900 hover:bg-neutral-100",
+            isRightPanel && "mr-1",
+          ])}
+        />
+      </div>
     </div>
   );
 }
 
+const darkToolbarButtonClassName =
+  "size-8 bg-transparent text-stone-300 hover:!bg-white/7 hover:!text-white focus-visible:!bg-white/7 focus-visible:!text-white active:!bg-white/10";
+
 function ChatActionButton({
   className,
   icon,
-  title,
+  label,
   onClick,
-  shortcutLabel,
 }: {
   className?: string;
   icon: React.ReactNode;
-  title: string;
+  label: string;
   onClick: () => void;
-  shortcutLabel?: string;
 }) {
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          onClick={onClick}
-          title={title}
-          size="icon"
-          variant="ghost"
-          className={cn(["text-muted-foreground", className])}
-        >
-          {icon}
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent side="bottom" className="flex items-center gap-2">
-        <span>{title}</span>
-        {shortcutLabel && (
-          <span className="border-border bg-muted text-muted-foreground rounded border px-1 py-0.5 text-[10px]">
-            {shortcutLabel}
-          </span>
-        )}
-      </TooltipContent>
-    </Tooltip>
+    <Button
+      aria-label={label}
+      onClick={onClick}
+      size="icon"
+      variant="ghost"
+      className={cn(["rounded-full text-neutral-600", className])}
+    >
+      {icon}
+    </Button>
   );
 }
 
 function ChatGroups({
   currentChatGroupId,
   onSelectChat,
+  surface = "light",
 }: {
   currentChatGroupId: string | undefined;
   onSelectChat: (chatGroupId: string) => void;
+  surface?: "light" | "dark";
 }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const isDark = surface === "dark";
 
   const currentChatTitle = main.UI.useCell(
     "chat_groups",
@@ -122,16 +146,26 @@ function ChatGroups({
         <Button
           variant="ghost"
           className={cn([
-            "group -ml-2 flex h-8 max-w-64 min-w-0 justify-start gap-2 px-2 py-0",
-            "text-foreground",
+            "group flex h-8 max-w-full min-w-0 justify-start gap-1.5 px-2 py-0 text-left",
+            isDark
+              ? "w-fit rounded-full text-stone-100 hover:bg-white/7 hover:text-white data-[state=open]:bg-white/7"
+              : "text-neutral-700",
           ])}
         >
-          <h3 className="text-foreground min-w-0 flex-1 truncate text-xs font-medium">
+          <h3
+            className={cn([
+              "max-w-64 min-w-0 truncate text-left font-medium",
+              isDark
+                ? "text-[15px] text-stone-100"
+                : "text-xs text-neutral-700",
+            ])}
+          >
             {currentChatTitle || "Ask Meetspace AI anything"}
           </h3>
           <ChevronDown
             className={cn([
-              "text-muted-foreground h-3.5 w-3.5 shrink-0 transition-transform duration-200",
+              "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
+              isDark ? "text-stone-300" : "text-neutral-400",
               isDropdownOpen && "rotate-180",
             ])}
           />
@@ -145,7 +179,7 @@ function ChatGroups({
       >
         <AppFloatingPanel className="flex flex-col gap-0.5 p-1.5">
           <div className="px-2 py-1.5">
-            <h4 className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
+            <h4 className="text-[10px] font-semibold tracking-wider text-neutral-500 uppercase">
               Recent Chats
             </h4>
           </div>
@@ -165,8 +199,8 @@ function ChatGroups({
             </div>
           ) : (
             <div className="px-3 py-6 text-center">
-              <MessageCircle className="text-muted-foreground/60 mx-auto mb-1.5 h-6 w-6" />
-              <p className="text-muted-foreground text-xs">No recent chats</p>
+              <MessageCircle className="mx-auto mb-1.5 h-6 w-6 text-neutral-300" />
+              <p className="text-xs text-neutral-400">No recent chats</p>
             </div>
           )}
         </AppFloatingPanel>
@@ -203,8 +237,8 @@ function ChatGroupItem({
       className={cn([
         "group h-auto w-full justify-start px-2.5 py-1.5",
         isActive
-          ? "bg-muted hover:bg-muted shadow-xs"
-          : "hover:bg-muted active:bg-muted",
+          ? "bg-neutral-100 shadow-xs hover:bg-neutral-100"
+          : "hover:bg-neutral-50 active:bg-neutral-100",
       ])}
     >
       <div className="flex w-full items-center gap-2.5">
@@ -213,8 +247,8 @@ function ChatGroupItem({
             className={cn([
               "h-3.5 w-3.5 transition-colors",
               isActive
-                ? "text-foreground"
-                : "text-muted-foreground group-hover:text-muted-foreground",
+                ? "text-neutral-700"
+                : "text-neutral-400 group-hover:text-neutral-600",
             ])}
           />
         </div>
@@ -222,12 +256,12 @@ function ChatGroupItem({
           <div
             className={cn([
               "truncate text-sm font-medium",
-              isActive ? "text-foreground" : "text-foreground",
+              isActive ? "text-neutral-900" : "text-neutral-700",
             ])}
           >
             {chatGroup.title}
           </div>
-          <div className="text-muted-foreground mt-0.5 text-[11px]">
+          <div className="mt-0.5 text-[11px] text-neutral-500">
             {formattedTime}
           </div>
         </div>

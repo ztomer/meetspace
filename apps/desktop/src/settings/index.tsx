@@ -9,10 +9,10 @@ import {
   SettingsNotifications,
   SettingsPermissions,
 } from "./general";
-import { SettingsIntegrations } from "./integrations";
 import { SettingsTodo } from "./todo";
 
-import { Intelligence } from "~/settings/ai";
+import { LLM } from "~/settings/ai/llm";
+import { STT } from "~/settings/ai/stt";
 import { StandardTabWrapper } from "~/shared/main";
 import { type TabItem, TabItemBase } from "~/shared/tabs";
 import { type Tab } from "~/store/zustand/tabs";
@@ -72,10 +72,9 @@ function SettingsView({ tab }: { tab: Extract<Tab, { type: "settings" }> }) {
       case "permissions":
         return <SettingsPermissions />;
       case "transcription":
+        return <STT />;
       case "intelligence":
-        return <Intelligence />;
-      case "integrations":
-        return <SettingsIntegrations />;
+        return <LLM />;
       case "todo":
         return <SettingsTodo />;
     }
@@ -86,7 +85,7 @@ function SettingsView({ tab }: { tab: Extract<Tab, { type: "settings" }> }) {
       <div className="relative w-full flex-1 overflow-hidden">
         <div
           className={cn([
-            "scroll-fade-y scrollbar-hide h-full w-full flex-1 overflow-y-auto px-6 pt-3 pb-6",
+            "scroll-fade-y scrollbar-hide h-full w-full flex-1 overflow-y-auto p-6",
           ])}
         >
           {renderContent()}

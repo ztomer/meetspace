@@ -25,27 +25,27 @@ msgstr "Lisää puhuttu kieli"
 msgid "Additional spoken languages"
 msgstr "Muita puhuttuja kieliä"
 
-#: src/settings/general/index.tsx:152
+#: src/settings/general/index.tsx:163
 msgid "Always ready without manually launching."
 msgstr "Aina valmis ilman manuaalista käynnistämistä."
 
 #: src/settings/general/index.tsx:136
-msgid "App"
-msgstr "Sovellus"
+#~ msgid "App"
+#~ msgstr "Sovellus"
 
-#: src/settings/general/index.tsx:159
+#: src/settings/general/index.tsx:170
 msgid "Automatically start listening when an event-backed note reaches its scheduled start time."
 msgstr "Aloita kuuntelu automaattisesti, kun tapahtuman taustalla oleva nuotti saavuttaa ajoitetun alkamisajan."
 
-#: src/settings/general/index.tsx:169
+#: src/settings/general/index.tsx:180
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "Lopeta kuuntelu automaattisesti, kun kokoussovellus vapauttaa mikrofonin."
 
-#: src/settings/general/index.tsx:265
+#: src/settings/general/index.tsx:278
 msgid "Data"
 msgstr "Tiedot"
 
-#: src/settings/general/index.tsx:214
+#: src/settings/general/index.tsx:227
 msgid "Language & Region"
 msgstr "Kieli ja alue"
 
@@ -66,7 +66,7 @@ msgstr "Kokoukset"
 msgid "No matching languages found"
 msgstr "Vastaavia kieliä ei löytynyt"
 
-#: src/settings/general/index.tsx:277
+#: src/settings/general/index.tsx:290
 msgid "Notifications"
 msgstr "Ilmoitukset"
 
@@ -79,34 +79,42 @@ msgid "Select language"
 msgstr "Valitse kieli"
 
 #: src/settings/general/index.tsx:193
-msgid "Send anonymous usage analytics to help improve Anarlog."
-msgstr "Lähetä anonyymi käyttöanalytiikka auttaaksesi parantamaan Anarlogia."
+#~ msgid "Send anonymous usage analytics to help improve Anarlog."
+#~ msgstr "Lähetä anonyymi käyttöanalytiikka auttaaksesi parantamaan Anarlogia."
 
-#: src/settings/general/index.tsx:192
+#: src/settings/general/index.tsx:204
+msgid "Send anonymous usage analytics to help improve Meetspace."
+msgstr ""
+
+#: src/settings/general/index.tsx:203
 msgid "Share usage data"
 msgstr "Jaa käyttötiedot"
 
-#: src/settings/general/index.tsx:175
+#: src/settings/general/index.tsx:186
 msgid "Show floating bar"
 msgstr "Näytä kelluva palkki"
 
-#: src/settings/general/index.tsx:176
+#: src/settings/general/index.tsx:187
 msgid "Show the compact floating control while listening."
 msgstr "Näytä kompakti kelluva säädin kuunnellessasi."
 
-#: src/settings/general/index.tsx:182
+#: src/settings/general/index.tsx:193
 msgid "Show timeline in sidebar"
 msgstr "Näytä aikajana sivupalkissa"
 
 #: src/settings/general/index.tsx:151
-msgid "Start Anarlog at login"
-msgstr "Käynnistä Anarlog sisäänkirjautumisen yhteydessä"
+#~ msgid "Start Anarlog at login"
+#~ msgstr "Käynnistä Anarlog sisäänkirjautumisen yhteydessä"
 
-#: src/settings/general/index.tsx:158
+#: src/settings/general/index.tsx:162
+msgid "Start Meetspace at login"
+msgstr ""
+
+#: src/settings/general/index.tsx:169
 msgid "Start when meeting begins"
 msgstr "Aloita kokouksen alkaessa"
 
-#: src/settings/general/index.tsx:168
+#: src/settings/general/index.tsx:179
 msgid "Stop when meeting ends"
 msgstr "Lopeta, kun kokous päättyy"
 
@@ -114,6 +122,6 @@ msgstr "Lopeta, kun kokous päättyy"
 msgid "The main language is always included for transcription"
 msgstr "Pääkieli on aina mukana transkriptiota varten"
 
-#: src/settings/general/index.tsx:183
+#: src/settings/general/index.tsx:194
 msgid "Use the left sidebar timeline instead of the top timeline."
 msgstr "Käytä vasemman sivupalkin aikajanaa yläaikajanan sijaan."

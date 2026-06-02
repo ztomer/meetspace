@@ -8,10 +8,11 @@ import {
 } from "lucide-react";
 import { type MouseEvent, type PointerEvent, useCallback, useRef } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { resolveMainSurfaceChrome } from "./main-surface-chrome";
 import { ClassicMainSidebar } from "./shell-sidebar";
+import { ClassicMainTabChrome } from "./tab-chrome";
 import { ClassicMainTabContent } from "./tab-content";
 import { TopMeetingTimeline } from "./top-meeting-timeline";
 import {
@@ -20,11 +21,11 @@ import {
   TimelineUpdateBanner,
   useDesktopUpdateControl,
 } from "./update-banner";
-import { useClassicMainTabsShortcuts } from "./useTabsShortcuts";
 
 import { useShell } from "~/contexts/shell";
 import { GlobalLiveTranscriptAccessory } from "~/session/components/bottom-accessory/global-live";
 import { useConfigValue } from "~/shared/config";
+import { useMainEscapeShortcutAction } from "~/shared/useTabsShortcuts";
 import {
   hasCustomSidebarTab,
   hasLeftSurfaceCustomSidebarTab,
@@ -43,13 +44,14 @@ type MainAreaWindowDragStart = {
 
 export function ClassicMainBody() {
   const { leftsidebar } = useShell();
+  const tabs = useTabs((state) => state.tabs);
   const currentTab = useTabs((state) => state.currentTab);
   const goBack = useTabs((state) => state.goBack);
   const goNext = useTabs((state) => state.goNext);
   const canGoBack = useTabs((state) => state.canGoBack);
   const canGoNext = useTabs((state) => state.canGoNext);
   const sidebarTimelineEnabled = useConfigValue("sidebar_timeline_enabled");
-  const { runEscapeShortcut } = useClassicMainTabsShortcuts();
+  const runEscapeShortcut = useMainEscapeShortcutAction();
 
   const isOnboarding = currentTab?.type === "onboarding";
   const isChangelog = currentTab?.type === "changelog";
@@ -81,6 +83,7 @@ export function ClassicMainBody() {
 
   return (
     <div className="relative flex h-full min-w-0 flex-1 flex-col">
+      <ClassicMainTabChrome tabs={tabs} />
       {isOnboarding ? null : showSidebarTimelineChrome ? (
         <div
           data-tauri-drag-region
@@ -183,19 +186,33 @@ function useMainAreaTopWindowDrag(enabled: boolean) {
     (event: PointerEvent<HTMLDivElement>) => {
       suppressNextClickRef.current = false;
 
-      if (
-        !enabled ||
-        event.button !== 0 ||
-        !isWithinMainAreaTopDragRegion(event)
-      ) {
+      const button =
+        event.button !== undefined
+          ? event.button
+          : (event.nativeEvent as any).button;
+
+      if (!enabled || button !== 0 || !isWithinMainAreaTopDragRegion(event)) {
         windowDragStartRef.current = null;
         return;
       }
 
+      const pointerId =
+        event.pointerId !== undefined
+          ? event.pointerId
+          : (event.nativeEvent as any).pointerId;
+      const clientX =
+        event.clientX !== undefined
+          ? event.clientX
+          : (event.nativeEvent as any).clientX;
+      const clientY =
+        event.clientY !== undefined
+          ? event.clientY
+          : (event.nativeEvent as any).clientY;
+
       windowDragStartRef.current = {
-        pointerId: event.pointerId,
-        clientX: event.clientX,
-        clientY: event.clientY,
+        pointerId,
+        clientX,
+        clientY,
         dragging: false,
       };
     },
@@ -205,11 +222,15 @@ function useMainAreaTopWindowDrag(enabled: boolean) {
   const handlePointerMove = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
       const dragStart = windowDragStartRef.current;
+      const pointerId =
+        event.pointerId !== undefined
+          ? event.pointerId
+          : (event.nativeEvent as any).pointerId;
 
       if (
         !dragStart ||
         dragStart.dragging ||
-        dragStart.pointerId !== event.pointerId ||
+        dragStart.pointerId !== pointerId ||
         !isMainAreaWindowDrag(dragStart, event)
       ) {
         return;
@@ -231,8 +252,12 @@ function useMainAreaTopWindowDrag(enabled: boolean) {
   const handlePointerEnd = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
       const dragStart = windowDragStartRef.current;
+      const pointerId =
+        event.pointerId !== undefined
+          ? event.pointerId
+          : (event.nativeEvent as any).pointerId;
 
-      if (!dragStart || dragStart.pointerId !== event.pointerId) {
+      if (!dragStart || dragStart.pointerId !== pointerId) {
         return;
       }
 
@@ -266,17 +291,30 @@ function isWithinMainAreaTopDragRegion(
   event: PointerEvent<HTMLDivElement>,
 ): boolean {
   const rect = event.currentTarget.getBoundingClientRect();
-  const offsetY = event.clientY - rect.top;
+  const clientY =
+    event.clientY !== undefined
+      ? event.clientY
+      : (event.nativeEvent as any).clientY;
+  const offsetY = clientY - rect.top;
 
   return offsetY >= 0 && offsetY < MAIN_AREA_TOP_DRAG_HEIGHT_PX;
 }
 
 function isMainAreaWindowDrag(
   start: { clientX: number; clientY: number },
-  current: { clientX: number; clientY: number },
+  current: any,
 ): boolean {
-  const deltaX = current.clientX - start.clientX;
-  const deltaY = current.clientY - start.clientY;
+  const currentClientX =
+    current.clientX !== undefined
+      ? current.clientX
+      : (current.nativeEvent?.clientX ?? 0);
+  const currentClientY =
+    current.clientY !== undefined
+      ? current.clientY
+      : (current.nativeEvent?.clientY ?? 0);
+
+  const deltaX = currentClientX - start.clientX;
+  const deltaY = currentClientY - start.clientY;
 
   return (
     deltaX * deltaX + deltaY * deltaY >=

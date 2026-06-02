@@ -25,27 +25,27 @@ msgstr "Gehitu ahozko hizkuntza"
 msgid "Additional spoken languages"
 msgstr "Ahozko hizkuntza gehigarriak"
 
-#: src/settings/general/index.tsx:152
+#: src/settings/general/index.tsx:163
 msgid "Always ready without manually launching."
 msgstr "Beti prest eskuz abiarazi gabe."
 
 #: src/settings/general/index.tsx:136
-msgid "App"
-msgstr "Aplikazioa"
+#~ msgid "App"
+#~ msgstr "Aplikazioa"
 
-#: src/settings/general/index.tsx:159
+#: src/settings/general/index.tsx:170
 msgid "Automatically start listening when an event-backed note reaches its scheduled start time."
 msgstr "Hasi automatikoki entzuten gertaerak babestutako ohar bat programatutako hasiera-orura iristen denean."
 
-#: src/settings/general/index.tsx:169
+#: src/settings/general/index.tsx:180
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "Utzi automatikoki entzuteari bilera-aplikazioak mikrofonoa askatzen duenean."
 
-#: src/settings/general/index.tsx:265
+#: src/settings/general/index.tsx:278
 msgid "Data"
 msgstr "Datuak"
 
-#: src/settings/general/index.tsx:214
+#: src/settings/general/index.tsx:227
 msgid "Language & Region"
 msgstr "Hizkuntza eta eskualdea"
 
@@ -66,7 +66,7 @@ msgstr "Bilkurak"
 msgid "No matching languages found"
 msgstr "Ez da bat datorren hizkuntzarik aurkitu"
 
-#: src/settings/general/index.tsx:277
+#: src/settings/general/index.tsx:290
 msgid "Notifications"
 msgstr "Jakinarazpenak"
 
@@ -79,34 +79,42 @@ msgid "Select language"
 msgstr "Hautatu hizkuntza"
 
 #: src/settings/general/index.tsx:193
-msgid "Send anonymous usage analytics to help improve Anarlog."
-msgstr "Bidali erabilera-analisi anonimoak Anarlog hobetzen laguntzeko."
+#~ msgid "Send anonymous usage analytics to help improve Anarlog."
+#~ msgstr "Bidali erabilera-analisi anonimoak Anarlog hobetzen laguntzeko."
 
-#: src/settings/general/index.tsx:192
+#: src/settings/general/index.tsx:204
+msgid "Send anonymous usage analytics to help improve Meetspace."
+msgstr ""
+
+#: src/settings/general/index.tsx:203
 msgid "Share usage data"
 msgstr "Partekatu erabilera datuak"
 
-#: src/settings/general/index.tsx:175
+#: src/settings/general/index.tsx:186
 msgid "Show floating bar"
 msgstr "Erakutsi barra mugikorra"
 
-#: src/settings/general/index.tsx:176
+#: src/settings/general/index.tsx:187
 msgid "Show the compact floating control while listening."
 msgstr "Erakutsi kontrol mugikor trinkoa entzuten duzun bitartean."
 
-#: src/settings/general/index.tsx:182
+#: src/settings/general/index.tsx:193
 msgid "Show timeline in sidebar"
 msgstr "Erakutsi denbora-lerroa alboko barran"
 
 #: src/settings/general/index.tsx:151
-msgid "Start Anarlog at login"
-msgstr "Hasi Anarlog saioa hasten denean"
+#~ msgid "Start Anarlog at login"
+#~ msgstr "Hasi Anarlog saioa hasten denean"
 
-#: src/settings/general/index.tsx:158
+#: src/settings/general/index.tsx:162
+msgid "Start Meetspace at login"
+msgstr ""
+
+#: src/settings/general/index.tsx:169
 msgid "Start when meeting begins"
 msgstr "Hasi bilera hasten denean"
 
-#: src/settings/general/index.tsx:168
+#: src/settings/general/index.tsx:179
 msgid "Stop when meeting ends"
 msgstr "Gelditu bilera amaitzen denean"
 
@@ -114,6 +122,6 @@ msgstr "Gelditu bilera amaitzen denean"
 msgid "The main language is always included for transcription"
 msgstr "Hizkuntza nagusia beti sartzen da transkripzioa egiteko"
 
-#: src/settings/general/index.tsx:183
+#: src/settings/general/index.tsx:194
 msgid "Use the left sidebar timeline instead of the top timeline."
 msgstr "Erabili ezkerreko alboko barrako denbora-lerroa goiko kronologiaren ordez."

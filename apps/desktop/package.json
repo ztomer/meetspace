@@ -1,6 +1,6 @@
 {
   "name": "@meetspace/desktop",
-  "version": "1.0.34",
+  "version": "1.0.37-meet1",
   "private": true,
   "type": "module",
   "scripts": {

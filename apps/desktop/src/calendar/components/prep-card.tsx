@@ -22,36 +22,8 @@ import { cn, format, safeParseDate } from "@meetspace/utils";
 import { useLanguageModel, useLLMConnectionStatus } from "~/ai/hooks";
 import { useNow } from "~/calendar/hooks";
 import { StandardTabWrapper } from "~/shared/main";
-import { type TabItem, TabItemBase } from "~/shared/tabs";
 import * as main from "~/store/tinybase/store/main";
-import { useTabs, type Tab } from "~/store/zustand/tabs";
-
-export const TabItemPrep: TabItem<Extract<Tab, { type: "prep" }>> = ({
-  tab,
-  tabIndex,
-  handleCloseThis,
-  handleSelectThis,
-  handleCloseOthers,
-  handleCloseAll,
-  handlePinThis,
-  handleUnpinThis,
-}) => {
-  return (
-    <TabItemBase
-      icon={<Sparkles className="text-primary/80 h-4 w-4" />}
-      title={"Proactive Prep"}
-      selected={tab.active}
-      pinned={tab.pinned}
-      tabIndex={tabIndex}
-      handleCloseThis={() => handleCloseThis(tab)}
-      handleSelectThis={() => handleSelectThis(tab)}
-      handleCloseOthers={handleCloseOthers}
-      handleCloseAll={handleCloseAll}
-      handlePinThis={() => handlePinThis(tab)}
-      handleUnpinThis={() => handleUnpinThis(tab)}
-    />
-  );
-};
+import { useTabs } from "~/store/zustand/tabs";
 
 export function TabContentPrep() {
   return (

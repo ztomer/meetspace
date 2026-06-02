@@ -25,27 +25,27 @@ msgstr "Linguam vocalem addere"
 msgid "Additional spoken languages"
 msgstr "Additional linguas vocales"
 
-#: src/settings/general/index.tsx:152
+#: src/settings/general/index.tsx:163
 msgid "Always ready without manually launching."
 msgstr "Semper sine manually deductis."
 
 #: src/settings/general/index.tsx:136
-msgid "App"
-msgstr "App"
+#~ msgid "App"
+#~ msgstr "App"
 
-#: src/settings/general/index.tsx:159
+#: src/settings/general/index.tsx:170
 msgid "Automatically start listening when an event-backed note reaches its scheduled start time."
 msgstr "Automatarie audire incipit cum res lippus notae attingit ad tempus initium horarium."
 
-#: src/settings/general/index.tsx:169
+#: src/settings/general/index.tsx:180
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "Automatarie auscultare desinunt cum conventus app tortor ligulam remittit."
 
-#: src/settings/general/index.tsx:265
+#: src/settings/general/index.tsx:278
 msgid "Data"
 msgstr "Data"
 
-#: src/settings/general/index.tsx:214
+#: src/settings/general/index.tsx:227
 msgid "Language & Region"
 msgstr "Lingua & Regio"
 
@@ -66,7 +66,7 @@ msgstr "Placitum"
 msgid "No matching languages found"
 msgstr "Non inventae linguae matching"
 
-#: src/settings/general/index.tsx:277
+#: src/settings/general/index.tsx:290
 msgid "Notifications"
 msgstr "Notificationes"
 
@@ -79,34 +79,42 @@ msgid "Select language"
 msgstr "Linguam selectam"
 
 #: src/settings/general/index.tsx:193
-msgid "Send anonymous usage analytics to help improve Anarlog."
-msgstr "Analytica usus anonymi mitte ad meliorem Anarlogum adiuvandum."
+#~ msgid "Send anonymous usage analytics to help improve Anarlog."
+#~ msgstr "Analytica usus anonymi mitte ad meliorem Anarlogum adiuvandum."
 
-#: src/settings/general/index.tsx:192
+#: src/settings/general/index.tsx:204
+msgid "Send anonymous usage analytics to help improve Meetspace."
+msgstr ""
+
+#: src/settings/general/index.tsx:203
 msgid "Share usage data"
 msgstr "Phare usus data"
 
-#: src/settings/general/index.tsx:175
+#: src/settings/general/index.tsx:186
 msgid "Show floating bar"
 msgstr "Ostende vectem nare"
 
-#: src/settings/general/index.tsx:176
+#: src/settings/general/index.tsx:187
 msgid "Show the compact floating control while listening."
 msgstr "Monstrare pactionem fluitantem imperium audiendo."
 
-#: src/settings/general/index.tsx:182
+#: src/settings/general/index.tsx:193
 msgid "Show timeline in sidebar"
 msgstr "Indicem temporis in barra laterali monstra"
 
 #: src/settings/general/index.tsx:151
-msgid "Start Anarlog at login"
-msgstr "Incipit Anarlog in login"
+#~ msgid "Start Anarlog at login"
+#~ msgstr "Incipit Anarlog in login"
 
-#: src/settings/general/index.tsx:158
+#: src/settings/general/index.tsx:162
+msgid "Start Meetspace at login"
+msgstr ""
+
+#: src/settings/general/index.tsx:169
 msgid "Start when meeting begins"
 msgstr "Committitur cum conventu incipit"
 
-#: src/settings/general/index.tsx:168
+#: src/settings/general/index.tsx:179
 msgid "Stop when meeting ends"
 msgstr "Desine cum fines conventum"
 
@@ -114,6 +122,6 @@ msgstr "Desine cum fines conventum"
 msgid "The main language is always included for transcription"
 msgstr "Praecipua lingua semper includitur in transcriptione"
 
-#: src/settings/general/index.tsx:183
+#: src/settings/general/index.tsx:194
 msgid "Use the left sidebar timeline instead of the top timeline."
 msgstr "Utere parte sinistra timeline pro summo timeline."

@@ -25,27 +25,27 @@ msgstr "Ychwanegu iaith lafar"
 msgid "Additional spoken languages"
 msgstr "Ieithoedd llafar ychwanegol"
 
-#: src/settings/general/index.tsx:152
+#: src/settings/general/index.tsx:163
 msgid "Always ready without manually launching."
 msgstr "Bob amser yn barod heb ei lansio â llaw."
 
 #: src/settings/general/index.tsx:136
-msgid "App"
-msgstr "Ap"
+#~ msgid "App"
+#~ msgstr "Ap"
 
-#: src/settings/general/index.tsx:159
+#: src/settings/general/index.tsx:170
 msgid "Automatically start listening when an event-backed note reaches its scheduled start time."
 msgstr "Dechrau gwrando'n awtomatig pan fydd nodyn a gefnogir gan ddigwyddiad yn cyrraedd ei amser cychwyn a drefnwyd."
 
-#: src/settings/general/index.tsx:169
+#: src/settings/general/index.tsx:180
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "Rhowch y gorau i wrando'n awtomatig pan fydd ap y cyfarfod yn rhyddhau'r meicroffon."
 
-#: src/settings/general/index.tsx:265
+#: src/settings/general/index.tsx:278
 msgid "Data"
 msgstr "Data"
 
-#: src/settings/general/index.tsx:214
+#: src/settings/general/index.tsx:227
 msgid "Language & Region"
 msgstr "Iaith a Rhanbarth"
 
@@ -66,7 +66,7 @@ msgstr "Cyfarfodydd"
 msgid "No matching languages found"
 msgstr "Ni chanfuwyd ieithoedd sy'n cyfateb"
 
-#: src/settings/general/index.tsx:277
+#: src/settings/general/index.tsx:290
 msgid "Notifications"
 msgstr "Hysbysiadau"
 
@@ -79,34 +79,42 @@ msgid "Select language"
 msgstr "Dewiswch iaith"
 
 #: src/settings/general/index.tsx:193
-msgid "Send anonymous usage analytics to help improve Anarlog."
-msgstr "Anfon dadansoddeg defnydd dienw i helpu i wella Anarlog."
+#~ msgid "Send anonymous usage analytics to help improve Anarlog."
+#~ msgstr "Anfon dadansoddeg defnydd dienw i helpu i wella Anarlog."
 
-#: src/settings/general/index.tsx:192
+#: src/settings/general/index.tsx:204
+msgid "Send anonymous usage analytics to help improve Meetspace."
+msgstr ""
+
+#: src/settings/general/index.tsx:203
 msgid "Share usage data"
 msgstr "Rhannu data defnydd"
 
-#: src/settings/general/index.tsx:175
+#: src/settings/general/index.tsx:186
 msgid "Show floating bar"
 msgstr "Dangos bar arnofio"
 
-#: src/settings/general/index.tsx:176
+#: src/settings/general/index.tsx:187
 msgid "Show the compact floating control while listening."
 msgstr "Dangos y rheolydd arnofio cryno wrth wrando."
 
-#: src/settings/general/index.tsx:182
+#: src/settings/general/index.tsx:193
 msgid "Show timeline in sidebar"
 msgstr "Dangos y llinell amser yn y bar ochr"
 
 #: src/settings/general/index.tsx:151
-msgid "Start Anarlog at login"
-msgstr "Dechrau Anarlog wrth fewngofnodi"
+#~ msgid "Start Anarlog at login"
+#~ msgstr "Dechrau Anarlog wrth fewngofnodi"
 
-#: src/settings/general/index.tsx:158
+#: src/settings/general/index.tsx:162
+msgid "Start Meetspace at login"
+msgstr ""
+
+#: src/settings/general/index.tsx:169
 msgid "Start when meeting begins"
 msgstr "Dechrau pan fydd y cyfarfod yn dechrau"
 
-#: src/settings/general/index.tsx:168
+#: src/settings/general/index.tsx:179
 msgid "Stop when meeting ends"
 msgstr "Stopiwch pan ddaw'r cyfarfod i ben"
 
@@ -114,6 +122,6 @@ msgstr "Stopiwch pan ddaw'r cyfarfod i ben"
 msgid "The main language is always included for transcription"
 msgstr "Mae'r brif iaith bob amser yn cael ei chynnwys ar gyfer trawsgrifio"
 
-#: src/settings/general/index.tsx:183
+#: src/settings/general/index.tsx:194
 msgid "Use the left sidebar timeline instead of the top timeline."
 msgstr "Defnyddiwch linell amser y bar ochr chwith yn lle'r llinell amser uchaf."

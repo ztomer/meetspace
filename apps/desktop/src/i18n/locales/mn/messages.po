@@ -25,27 +25,27 @@ msgstr "Ярианы хэл нэмэх"
 msgid "Additional spoken languages"
 msgstr "Нэмэлт ярианы хэлүүд"
 
-#: src/settings/general/index.tsx:152
+#: src/settings/general/index.tsx:163
 msgid "Always ready without manually launching."
 msgstr "Гараар эхлүүлэхгүйгээр үргэлж бэлэн байна."
 
 #: src/settings/general/index.tsx:136
-msgid "App"
-msgstr "Програм"
+#~ msgid "App"
+#~ msgstr "Програм"
 
-#: src/settings/general/index.tsx:159
+#: src/settings/general/index.tsx:170
 msgid "Automatically start listening when an event-backed note reaches its scheduled start time."
 msgstr "Үйл явдалд тулгуурласан тэмдэглэл төлөвлөсөн эхлэх цагтаа хүрэх үед автоматаар сонсож эхэлнэ."
 
-#: src/settings/general/index.tsx:169
+#: src/settings/general/index.tsx:180
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "Уулзалтын апп микрофоноо гаргах үед автоматаар сонсохоо зогсоо."
 
-#: src/settings/general/index.tsx:265
+#: src/settings/general/index.tsx:278
 msgid "Data"
 msgstr "Өгөгдөл"
 
-#: src/settings/general/index.tsx:214
+#: src/settings/general/index.tsx:227
 msgid "Language & Region"
 msgstr "Хэл ба бүс"
 
@@ -66,7 +66,7 @@ msgstr "Уулзалт"
 msgid "No matching languages found"
 msgstr "Тохирох хэл олдсонгүй"
 
-#: src/settings/general/index.tsx:277
+#: src/settings/general/index.tsx:290
 msgid "Notifications"
 msgstr "Мэдэгдэл"
 
@@ -79,34 +79,42 @@ msgid "Select language"
 msgstr "Хэл сонгох"
 
 #: src/settings/general/index.tsx:193
-msgid "Send anonymous usage analytics to help improve Anarlog."
-msgstr "Anarlog-г сайжруулахад туслах нэргүй хэрэглээний аналитик илгээнэ үү."
+#~ msgid "Send anonymous usage analytics to help improve Anarlog."
+#~ msgstr "Anarlog-г сайжруулахад туслах нэргүй хэрэглээний аналитик илгээнэ үү."
 
-#: src/settings/general/index.tsx:192
+#: src/settings/general/index.tsx:204
+msgid "Send anonymous usage analytics to help improve Meetspace."
+msgstr ""
+
+#: src/settings/general/index.tsx:203
 msgid "Share usage data"
 msgstr "Ашиглалтын өгөгдлийг хуваалцах"
 
-#: src/settings/general/index.tsx:175
+#: src/settings/general/index.tsx:186
 msgid "Show floating bar"
 msgstr "Хөвөгч мөрийг харуулах"
 
-#: src/settings/general/index.tsx:176
+#: src/settings/general/index.tsx:187
 msgid "Show the compact floating control while listening."
 msgstr "Сонсож байхдаа авсаархан хөвөгч удирдлагыг харуул."
 
-#: src/settings/general/index.tsx:182
+#: src/settings/general/index.tsx:193
 msgid "Show timeline in sidebar"
 msgstr "Хажуугийн талбарт он цагийн хэлхээсийг харуулах"
 
 #: src/settings/general/index.tsx:151
-msgid "Start Anarlog at login"
-msgstr "Нэвтрэх үед Anarlog-г эхлүүлнэ үү"
+#~ msgid "Start Anarlog at login"
+#~ msgstr "Нэвтрэх үед Anarlog-г эхлүүлнэ үү"
 
-#: src/settings/general/index.tsx:158
+#: src/settings/general/index.tsx:162
+msgid "Start Meetspace at login"
+msgstr ""
+
+#: src/settings/general/index.tsx:169
 msgid "Start when meeting begins"
 msgstr "Уулзалт эхлэхэд эхэл"
 
-#: src/settings/general/index.tsx:168
+#: src/settings/general/index.tsx:179
 msgid "Stop when meeting ends"
 msgstr "Уулзалт дуусахад зогсох"
 
@@ -114,6 +122,6 @@ msgstr "Уулзалт дуусахад зогсох"
 msgid "The main language is always included for transcription"
 msgstr "Үндсэн хэлийг транскрипцэд үргэлж оруулдаг"
 
-#: src/settings/general/index.tsx:183
+#: src/settings/general/index.tsx:194
 msgid "Use the left sidebar timeline instead of the top timeline."
 msgstr "Дээд он цагийн хэлхээсийн оронд зүүн талын хажуугийн он цагийн хэлхээсийг ашиглана уу."

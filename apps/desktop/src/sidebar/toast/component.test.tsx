@@ -23,13 +23,13 @@ describe("Toast", () => {
       />,
     );
 
-    const pill = container.querySelector(".inline-flex");
+    const card = container.querySelector(".group");
 
-    expect(pill?.className).toContain("rounded-full");
+    expect(card?.className).toContain("rounded-lg");
     expect(screen.getByText("Language model needed")).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "Add" }));
-    fireEvent.click(screen.getByRole("button", { name: "Hide" }));
+    fireEvent.click(screen.getByRole("button", { name: "Dismiss toast" }));
 
     expect(onAdd).toHaveBeenCalledTimes(1);
     expect(onHide).toHaveBeenCalledTimes(1);

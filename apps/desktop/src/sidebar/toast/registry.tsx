@@ -2,6 +2,8 @@ import type { ServerStatus } from "@meetspace/plugin-local-stt";
 
 import type { DownloadProgress, ToastCondition, ToastType } from "./types";
 
+import type { DevtoolsToastPreview } from "~/store/zustand/devtools-toast-preview";
+
 type ToastRegistryEntry = {
   toast: ToastType;
   condition: ToastCondition;
@@ -139,4 +141,69 @@ export function getToastToShow(
     }
   }
   return null;
+}
+
+type DevtoolsToastPreviewParams = {
+  preview: DevtoolsToastPreview;
+  onSignIn: () => void | Promise<void>;
+  onOpenLLMSettings: () => void;
+  onOpenSTTSettings: () => void;
+};
+
+export function createDevtoolsToastPreview({
+  preview,
+  onSignIn,
+  onOpenLLMSettings,
+  onOpenSTTSettings,
+}: DevtoolsToastPreviewParams): ToastType {
+  switch (preview) {
+    case "language-model":
+      return {
+        id: "devtools-missing-llm",
+        description: "Language model needed",
+        primaryAction: {
+          label: "Add",
+          onClick: onOpenLLMSettings,
+        },
+        dismissible: true,
+      };
+    case "transcription-model":
+      return {
+        id: "devtools-missing-stt",
+        description: "Transcription model needed",
+        primaryAction: {
+          label: "Add",
+          onClick: onOpenSTTSettings,
+        },
+        dismissible: false,
+      };
+    case "transcription-error":
+      return {
+        id: "devtools-local-stt-unreachable",
+        description: "Transcription unavailable",
+        primaryAction: {
+          label: "Settings",
+          onClick: onOpenSTTSettings,
+        },
+        dismissible: true,
+        variant: "error",
+      };
+    case "download":
+      return {
+        id: "devtools-downloading-model",
+        description: "Downloading model",
+        dismissible: false,
+        progress: 42,
+      };
+    case "pro":
+      return {
+        id: "devtools-upgrade-to-pro",
+        description: "Pro features available",
+        primaryAction: {
+          label: "Upgrade",
+          onClick: onSignIn,
+        },
+        dismissible: true,
+      };
+  }
 }

@@ -1,4 +1,3 @@
-import { platform } from "@tauri-apps/plugin-os";
 import { useCallback } from "react";
 
 import { cn } from "@meetspace/utils";
@@ -14,11 +13,18 @@ import { useChatActions } from "~/chat/store/use-chat-actions";
 import { useShell } from "~/contexts/shell";
 import * as main from "~/store/tinybase/store/main";
 
-export function ChatView() {
+export function ChatView({
+  layout = "floating",
+  onOpenFloating,
+  onOpenRightPanel,
+}: {
+  layout?: "floating" | "right-panel";
+  onOpenFloating?: () => void;
+  onOpenRightPanel?: () => void;
+}) {
   const { chat } = useShell();
   const { groupId, sessionId, setGroupId } = chat;
-  const currentPlatform = platform();
-  const chatPanelShortcutLabel = currentPlatform === "macos" ? "⌘ J" : "Ctrl J";
+  const isFloating = layout === "floating";
 
   const { currentSessionId } = useSessionTab();
 
@@ -41,16 +47,24 @@ export function ChatView() {
     <div
       className={cn([
         "flex h-full min-h-0 flex-col overflow-hidden",
-        chat.mode !== "RightPanelOpen" && "bg-muted",
+        "bg-stone-800 text-white",
       ])}
     >
-      <div className="border-border flex h-10 shrink-0 items-center border-b pr-0 pl-0">
+      <div
+        className={cn([
+          "flex shrink-0 items-center pr-0 pl-0",
+          isFloating ? "h-11" : "h-12",
+          "border-b border-stone-700/80",
+        ])}
+      >
         <ChatToolbarControls
           currentChatGroupId={groupId}
+          layout={layout}
           onNewChat={chat.startNewChat}
+          onOpenFloating={onOpenFloating}
+          onOpenRightPanel={onOpenRightPanel}
           onSelectChat={chat.selectChat}
-          onCloseChat={() => chat.sendEvent({ type: "CLOSE" })}
-          shortcutLabel={chatPanelShortcutLabel}
+          surface="dark"
         />
       </div>
       {user_id && (

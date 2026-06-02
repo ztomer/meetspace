@@ -25,7 +25,7 @@ vi.mock("./overflow", () => ({
   OverflowButton: () => <button type="button">More</button>,
 }));
 
-vi.mock("@hypr/ui/components/ui/dancing-sticks", () => ({
+vi.mock("@meetspace/ui/components/ui/dancing-sticks", () => ({
   DancingSticks: () => <span data-testid="dancing-sticks" />,
 }));
 

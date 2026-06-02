@@ -432,3 +432,25 @@ type TypedUI = Omit<
     queriesOrQueriesId?: QueriesOrQueriesId,
   ) => QueryResultRowMap[Q];
 };
+
+export const testUtils = {
+  useCreateMergeableStore,
+  useCreateSynchronizer,
+  useCreateRelationships,
+  useCreateQueries,
+  useProvideStore,
+  useProvideIndexes,
+  useProvideRelationships,
+  useProvideMetrics,
+  useCreateIndexes,
+  useCreateMetrics,
+  useProvideQueries,
+  useProvideSynchronizer,
+  useCreateCheckpoints,
+  useProvideCheckpoints,
+  createMergeableStore,
+  createIndexes,
+  createQueries,
+  createRelationships,
+  SCHEMA,
+} as any;

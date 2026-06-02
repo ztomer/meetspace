@@ -46,7 +46,8 @@ export function StandardTabWrapper({
   noBorder?: boolean;
 }) {
   const currentTab = useTabs((state) => state.currentTab);
-  const hasLeftSurfaceCustomSidebar = hasLeftSurfaceCustomSidebarTab(currentTab);
+  const hasLeftSurfaceCustomSidebar =
+    hasLeftSurfaceCustomSidebarTab(currentTab);
   const afterBorderPanelRef = useRef<ImperativePanelHandle>(null);
   const afterBorderSize = RESIZABLE_AFTER_BORDER_EXPANDED_SIZE;
   const hasAfterBorder = Boolean(afterBorder);
@@ -73,7 +74,12 @@ export function StandardTabWrapper({
   );
 
   return (
-    <div className={cn(["flex h-full flex-col", hasLeftSurfaceCustomSidebar && "pt-11"])}>
+    <div
+      className={cn([
+        "flex h-full flex-col",
+        hasLeftSurfaceCustomSidebar && "pt-11",
+      ])}
+    >
       <ResizablePanelGroup direction="vertical" className="min-h-0 flex-1">
         <ResizablePanel
           defaultSize={useResizableAfterBorder ? 100 - afterBorderSize : 100}

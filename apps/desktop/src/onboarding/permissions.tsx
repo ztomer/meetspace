@@ -51,8 +51,8 @@ function PermissionBlock({
       className={cn([
         "group flex min-w-0 flex-1 basis-0 items-center gap-3 rounded-xl px-3 py-3 text-left transition-all",
         isAuthorized
-          ? "border-border bg-background border"
-          : "border-border bg-primary hover:bg-primary text-primary-foreground border shadow-[0_4px_14px_rgba(87,83,78,0.18)] active:scale-[0.98]",
+          ? "border border-neutral-700/50 bg-neutral-800/40 text-neutral-300"
+          : "border border-transparent bg-white text-neutral-900 shadow-[0_4px_14px_rgba(0,0,0,0.25)] hover:bg-neutral-100 active:scale-[0.98]",
         (isPending || isAuthorized) && "cursor-default",
         isPending && "opacity-50",
       ])}
@@ -66,8 +66,8 @@ function PermissionBlock({
         className={cn([
           "flex size-6 shrink-0 items-center justify-center rounded-md",
           isAuthorized
-            ? "bg-success-bg text-success-fg"
-            : "bg-primary-foreground/10 text-primary-foreground",
+            ? "bg-emerald-950 text-emerald-400"
+            : "bg-neutral-100 text-neutral-600",
         ])}
       >
         {isAuthorized ? (
@@ -80,7 +80,7 @@ function PermissionBlock({
         <span
           className={cn([
             "text-sm font-medium",
-            isAuthorized ? "text-foreground" : "text-primary-foreground",
+            isAuthorized ? "text-neutral-300" : "text-neutral-900",
           ])}
         >
           {title}
@@ -88,16 +88,14 @@ function PermissionBlock({
         <p
           className={cn([
             "truncate text-xs @[480px]:block",
-            isAuthorized
-              ? "text-muted-foreground"
-              : "text-primary-foreground/70",
+            isAuthorized ? "text-neutral-400" : "text-neutral-500",
           ])}
         >
           {body}
         </p>
       </div>
       {!isAuthorized && (
-        <div className="text-primary-foreground/80 inline-flex shrink-0 items-center gap-1 text-xs font-medium">
+        <div className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-neutral-600">
           <span className="hidden @[480px]:inline">{ctaLabel}</span>
           <ArrowRightIcon className="size-3.5 transition-transform group-hover:translate-x-0.5" />
         </div>

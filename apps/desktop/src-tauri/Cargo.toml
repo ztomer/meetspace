@@ -1,6 +1,6 @@
 [package]
 name = "desktop"
-version = "1.0.34"
+version = "1.0.37-meet1"
 authors = ["you"]
 edition = "2024"
 description = "Meetspace Desktop App"
