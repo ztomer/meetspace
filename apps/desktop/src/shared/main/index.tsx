@@ -8,6 +8,9 @@ import {
 } from "@meetspace/ui/components/ui/resizable";
 import { cn } from "@meetspace/utils";
 
+import { hasLeftSurfaceCustomSidebarTab } from "~/sidebar/use-custom-sidebar";
+import { useTabs } from "~/store/zustand/tabs";
+
 const RESIZABLE_AFTER_BORDER_EXPANDED_SIZE = 22;
 
 export { MainShellBodyFrame } from "./body-frame";
@@ -42,6 +45,8 @@ export function StandardTabWrapper({
   mergeAfterBorder?: boolean;
   noBorder?: boolean;
 }) {
+  const currentTab = useTabs((state) => state.currentTab);
+  const hasLeftSurfaceCustomSidebar = hasLeftSurfaceCustomSidebarTab(currentTab);
   const afterBorderPanelRef = useRef<ImperativePanelHandle>(null);
   const afterBorderSize = RESIZABLE_AFTER_BORDER_EXPANDED_SIZE;
   const hasAfterBorder = Boolean(afterBorder);
@@ -68,7 +73,7 @@ export function StandardTabWrapper({
   );
 
   return (
-    <div className="flex h-full flex-col">
+    <div className={cn(["flex h-full flex-col", hasLeftSurfaceCustomSidebar && "pt-11"])}>
       <ResizablePanelGroup direction="vertical" className="min-h-0 flex-1">
         <ResizablePanel
           defaultSize={useResizableAfterBorder ? 100 - afterBorderSize : 100}
