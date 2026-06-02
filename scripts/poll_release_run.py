@@ -54,8 +54,8 @@ def fetch_cask_version():
 
 def main():
     head_sha = get_head_sha()
-    tag_name = "v1.0.36_meet1"
-    expected_cask_version = "1.0.36_meet1"
+    tag_name = sys.argv[1] if len(sys.argv) > 1 else "v1.0.36_meet2"
+    expected_cask_version = tag_name.lstrip("v")
     
     print_info(f"Target Release Tag: {tag_name}")
     print_info(f"Latest Git Head SHA: {head_sha}")
