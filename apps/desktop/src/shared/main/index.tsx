@@ -46,7 +46,8 @@ export function StandardTabWrapper({
   noBorder?: boolean;
 }) {
   const currentTab = useTabs((state) => state.currentTab);
-  const hasLeftSurfaceCustomSidebar = hasLeftSurfaceCustomSidebarTab(currentTab);
+  const hasLeftSurfaceCustomSidebar =
+    hasLeftSurfaceCustomSidebarTab(currentTab);
   const afterBorderPanelRef = useRef<ImperativePanelHandle>(null);
   const afterBorderSize = RESIZABLE_AFTER_BORDER_EXPANDED_SIZE;
   const hasAfterBorder = Boolean(afterBorder);

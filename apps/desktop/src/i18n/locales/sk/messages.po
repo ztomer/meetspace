@@ -25,7 +25,7 @@ msgstr "Pridať hovorený jazyk"
 msgid "Additional spoken languages"
 msgstr "Ďalšie hovorené jazyky"
 
-#: src/settings/general/app-settings.tsx:35
+#: src/settings/general/index.tsx:163
 msgid "Always ready without manually launching."
 msgstr "Vždy pripravené bez manuálneho spúšťania."
 
@@ -33,35 +33,19 @@ msgstr "Vždy pripravené bez manuálneho spúšťania."
 #~ msgid "App"
 #~ msgstr "Aplikácia"
 
-#: src/settings/general/theme.tsx:45
-msgid "Appearance"
-msgstr ""
-
-#: src/settings/general/app-settings.tsx:71
+#: src/settings/general/index.tsx:170
 msgid "Automatically start listening when an event-backed note reaches its scheduled start time."
 msgstr "Automaticky začať počúvať, keď poznámka podporovaná udalosťou dosiahne naplánovaný čas začiatku."
 
-#: src/settings/general/app-settings.tsx:82
+#: src/settings/general/index.tsx:180
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "Automaticky prestať počúvať, keď aplikácia na schôdzku uvoľní mikrofón."
 
-#: src/settings/general/theme.tsx:48
-msgid "Choose light, dark, or match your system setting."
-msgstr ""
-
-#: src/settings/general/theme.tsx:35
-msgid "Dark"
-msgstr ""
-
-#: src/settings/general/index.tsx:255
+#: src/settings/general/index.tsx:278
 msgid "Data"
 msgstr "Údaje"
 
-#: src/settings/general/week-start.tsx:58
-msgid "First day of the week in the calendar view"
-msgstr ""
-
-#: src/settings/general/index.tsx:206
+#: src/settings/general/index.tsx:227
 msgid "Language & Region"
 msgstr "Jazyk a oblasť"
 
@@ -69,111 +53,75 @@ msgstr "Jazyk a oblasť"
 msgid "Language for summaries, chats, and AI-generated responses"
 msgstr "Jazyk pre súhrny, čety a odpovede generované AI"
 
-#: src/settings/general/theme.tsx:34
-msgid "Light"
-msgstr ""
-
 #: src/settings/general/main-language.tsx:50
 msgid "Main language"
 msgstr "Hlavný jazyk"
 
-#: src/settings/general/app-settings.tsx:65
+#: src/settings/general/app-settings.tsx:56
 msgid "Meetings"
 msgstr "Stretnutia"
-
-#: src/settings/general/week-start.tsx:40
-msgid "Monday"
-msgstr ""
 
 #: src/settings/general/main-language.tsx:64
 #: src/settings/general/spoken-languages.tsx:218
 msgid "No matching languages found"
 msgstr "Nenašli sa žiadne zodpovedajúce jazyky"
 
-#: src/settings/general/searchable-select.tsx:122
-msgid "No results found."
-msgstr ""
-
-#: src/settings/general/index.tsx:265
+#: src/settings/general/index.tsx:290
 msgid "Notifications"
 msgstr "Upozornenia"
-
-#: src/settings/general/index.tsx:274
-msgid "Permissions"
-msgstr ""
 
 #: src/settings/general/main-language.tsx:63
 msgid "Search language..."
 msgstr "Jazyk vyhľadávania..."
 
-#: src/settings/general/searchable-select.tsx:116
-msgid "Search..."
-msgstr ""
-
-#: src/settings/general/theme.tsx:61
-msgid "Select appearance"
-msgstr ""
-
-#: src/settings/general/week-start.tsx:63
-msgid "Select day"
-msgstr ""
-
 #: src/settings/general/main-language.tsx:62
 msgid "Select language"
 msgstr "Vyberte jazyk"
 
-#: src/settings/general/searchable-select.tsx:95
-msgid "Select..."
+#: src/settings/general/index.tsx:193
+#~ msgid "Send anonymous usage analytics to help improve Anarlog."
+#~ msgstr "Odosielajte anonymné analýzy používania, aby ste pomohli zlepšiť Anarlog."
+
+#: src/settings/general/index.tsx:204
+msgid "Send anonymous usage analytics to help improve Meetspace."
 msgstr ""
 
-#: src/settings/general/app-settings.tsx:53
-msgid "Send anonymous usage analytics to help improve Meetspace."
-msgstr "Odosielajte anonymné analýzy používania, aby ste pomohli zlepšiť Meetspace."
-
-#: src/settings/general/app-settings.tsx:51
+#: src/settings/general/index.tsx:203
 msgid "Share usage data"
 msgstr "Zdieľať údaje o používaní"
 
-#: src/settings/general/app-settings.tsx:91
+#: src/settings/general/index.tsx:186
 msgid "Show floating bar"
 msgstr "Zobraziť plávajúcu lištu"
 
-#: src/settings/general/app-settings.tsx:93
+#: src/settings/general/index.tsx:187
 msgid "Show the compact floating control while listening."
 msgstr "Pri počúvaní ukážte kompaktné plávajúce ovládanie."
 
-#: src/settings/general/app-settings.tsx:41
+#: src/settings/general/index.tsx:193
 msgid "Show timeline in sidebar"
 msgstr "Zobraziť časovú os na bočnom paneli"
 
-#: src/settings/general/app-settings.tsx:33
-msgid "Start Meetspace at login"
-msgstr "Spustite Meetspace pri prihlásení"
+#: src/settings/general/index.tsx:151
+#~ msgid "Start Anarlog at login"
+#~ msgstr "Spustite Anarlog pri prihlásení"
 
-#: src/settings/general/app-settings.tsx:69
+#: src/settings/general/index.tsx:162
+msgid "Start Meetspace at login"
+msgstr ""
+
+#: src/settings/general/index.tsx:169
 msgid "Start when meeting begins"
 msgstr "Začať, keď sa schôdza začína"
 
-#: src/settings/general/app-settings.tsx:80
+#: src/settings/general/index.tsx:179
 msgid "Stop when meeting ends"
 msgstr "Zastavte, keď sa stretnutie skončí"
-
-#: src/settings/general/week-start.tsx:39
-msgid "Sunday"
-msgstr ""
-
-#: src/settings/general/theme.tsx:36
-msgid "System"
-msgstr ""
 
 #: src/settings/general/spoken-languages.tsx:119
 msgid "The main language is always included for transcription"
 msgstr "Pri prepise je vždy zahrnutý hlavný jazyk"
 
-#: src/settings/general/app-settings.tsx:43
+#: src/settings/general/index.tsx:194
 msgid "Use the left sidebar timeline instead of the top timeline."
 msgstr "Namiesto hornej časovej osi použite časovú os ľavého bočného panela."
-
-#: src/settings/general/week-start.tsx:55
-msgid "Week starts on"
-msgstr ""

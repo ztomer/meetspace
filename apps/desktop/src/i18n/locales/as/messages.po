@@ -25,7 +25,7 @@ msgstr "কথিত ভাষা যোগ কৰক"
 msgid "Additional spoken languages"
 msgstr "অতিৰিক্ত কথিত ভাষা"
 
-#: src/settings/general/app-settings.tsx:35
+#: src/settings/general/index.tsx:163
 msgid "Always ready without manually launching."
 msgstr "হস্তচালিতভাৱে আৰম্ভ নকৰাকৈ সদায় সাজু।"
 
@@ -33,35 +33,19 @@ msgstr "হস্তচালিতভাৱে আৰম্ভ নকৰাক�
 #~ msgid "App"
 #~ msgstr "এপ্প"
 
-#: src/settings/general/theme.tsx:45
-msgid "Appearance"
-msgstr ""
-
-#: src/settings/general/app-settings.tsx:71
+#: src/settings/general/index.tsx:170
 msgid "Automatically start listening when an event-backed note reaches its scheduled start time."
 msgstr "স্বয়ংক্ৰিয়ভাৱে শুনা আৰম্ভ কৰক যেতিয়া এটা ইভেন্ট-সমৰ্থিত টোকা ইয়াৰ নিৰ্ধাৰিত আৰম্ভণি সময় পোৱা যায়।"
 
-#: src/settings/general/app-settings.tsx:82
+#: src/settings/general/index.tsx:180
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "মিটিং এপে মাইক্ৰ'ফোন মুকলি কৰাৰ সময়ত স্বয়ংক্ৰিয়ভাৱে শুনা বন্ধ কৰক।"
 
-#: src/settings/general/theme.tsx:48
-msgid "Choose light, dark, or match your system setting."
-msgstr ""
-
-#: src/settings/general/theme.tsx:35
-msgid "Dark"
-msgstr ""
-
-#: src/settings/general/index.tsx:255
+#: src/settings/general/index.tsx:278
 msgid "Data"
 msgstr "তথ্য"
 
-#: src/settings/general/week-start.tsx:58
-msgid "First day of the week in the calendar view"
-msgstr ""
-
-#: src/settings/general/index.tsx:206
+#: src/settings/general/index.tsx:227
 msgid "Language & Region"
 msgstr "ভাষা আৰু অঞ্চল"
 
@@ -69,111 +53,75 @@ msgstr "ভাষা আৰু অঞ্চল"
 msgid "Language for summaries, chats, and AI-generated responses"
 msgstr "সাৰাংশ, আড্ডা, আৰু AI-উৎপন্ন সঁহাৰিৰ বাবে ভাষা"
 
-#: src/settings/general/theme.tsx:34
-msgid "Light"
-msgstr ""
-
 #: src/settings/general/main-language.tsx:50
 msgid "Main language"
 msgstr "মূল ভাষা"
 
-#: src/settings/general/app-settings.tsx:65
+#: src/settings/general/app-settings.tsx:56
 msgid "Meetings"
 msgstr "সভাসমূহ"
-
-#: src/settings/general/week-start.tsx:40
-msgid "Monday"
-msgstr ""
 
 #: src/settings/general/main-language.tsx:64
 #: src/settings/general/spoken-languages.tsx:218
 msgid "No matching languages found"
 msgstr "কোনো মিল থকা ভাষা পোৱা নগ'ল"
 
-#: src/settings/general/searchable-select.tsx:122
-msgid "No results found."
-msgstr ""
-
-#: src/settings/general/index.tsx:265
+#: src/settings/general/index.tsx:290
 msgid "Notifications"
 msgstr "জাননীসমূহ"
-
-#: src/settings/general/index.tsx:274
-msgid "Permissions"
-msgstr ""
 
 #: src/settings/general/main-language.tsx:63
 msgid "Search language..."
 msgstr "অন্বেষণ ভাষা..."
 
-#: src/settings/general/searchable-select.tsx:116
-msgid "Search..."
-msgstr ""
-
-#: src/settings/general/theme.tsx:61
-msgid "Select appearance"
-msgstr ""
-
-#: src/settings/general/week-start.tsx:63
-msgid "Select day"
-msgstr ""
-
 #: src/settings/general/main-language.tsx:62
 msgid "Select language"
 msgstr "ভাষা নিৰ্বাচন কৰক"
 
-#: src/settings/general/searchable-select.tsx:95
-msgid "Select..."
+#: src/settings/general/index.tsx:193
+#~ msgid "Send anonymous usage analytics to help improve Anarlog."
+#~ msgstr "Anarlog উন্নত কৰাত সহায় কৰিবলে বেনামী ব্যৱহাৰ বিশ্লেষণ পঠাওক।"
+
+#: src/settings/general/index.tsx:204
+msgid "Send anonymous usage analytics to help improve Meetspace."
 msgstr ""
 
-#: src/settings/general/app-settings.tsx:53
-msgid "Send anonymous usage analytics to help improve Meetspace."
-msgstr "Meetspace উন্নত কৰাত সহায় কৰিবলে বেনামী ব্যৱহাৰ বিশ্লেষণ পঠাওক।"
-
-#: src/settings/general/app-settings.tsx:51
+#: src/settings/general/index.tsx:203
 msgid "Share usage data"
 msgstr "ব্যৱহাৰৰ তথ্য অংশীদাৰী কৰক"
 
-#: src/settings/general/app-settings.tsx:91
+#: src/settings/general/index.tsx:186
 msgid "Show floating bar"
 msgstr "ভাসমান বাৰ দেখুৱাওক"
 
-#: src/settings/general/app-settings.tsx:93
+#: src/settings/general/index.tsx:187
 msgid "Show the compact floating control while listening."
 msgstr "শুনি থকাৰ সময়ত কমপেক্ট ভাসমান নিয়ন্ত্ৰণ দেখুৱাওক।"
 
-#: src/settings/general/app-settings.tsx:41
+#: src/settings/general/index.tsx:193
 msgid "Show timeline in sidebar"
 msgstr "চাইডবাৰত সময়ৰেখা দেখুৱাওক"
 
-#: src/settings/general/app-settings.tsx:33
-msgid "Start Meetspace at login"
-msgstr "প্ৰৱেশৰ সময়ত Meetspace আৰম্ভ কৰক"
+#: src/settings/general/index.tsx:151
+#~ msgid "Start Anarlog at login"
+#~ msgstr "প্ৰৱেশৰ সময়ত Anarlog আৰম্ভ কৰক"
 
-#: src/settings/general/app-settings.tsx:69
+#: src/settings/general/index.tsx:162
+msgid "Start Meetspace at login"
+msgstr ""
+
+#: src/settings/general/index.tsx:169
 msgid "Start when meeting begins"
 msgstr "মিটিং আৰম্ভ হ'লে আৰম্ভ কৰক"
 
-#: src/settings/general/app-settings.tsx:80
+#: src/settings/general/index.tsx:179
 msgid "Stop when meeting ends"
 msgstr "মিটিং শেষ হ'লে বন্ধ কৰক"
-
-#: src/settings/general/week-start.tsx:39
-msgid "Sunday"
-msgstr ""
-
-#: src/settings/general/theme.tsx:36
-msgid "System"
-msgstr ""
 
 #: src/settings/general/spoken-languages.tsx:119
 msgid "The main language is always included for transcription"
 msgstr "প্ৰধান ভাষাটো সদায় লিপিবদ্ধ কৰাৰ বাবে অন্তৰ্ভুক্ত কৰা হয়"
 
-#: src/settings/general/app-settings.tsx:43
+#: src/settings/general/index.tsx:194
 msgid "Use the left sidebar timeline instead of the top timeline."
 msgstr "শীৰ্ষৰ সময়ৰেখাৰ পৰিবৰ্তে বাওঁফালৰ বাৰৰ সময়ৰেখা ব্যৱহাৰ কৰক।"
-
-#: src/settings/general/week-start.tsx:55
-msgid "Week starts on"
-msgstr ""
