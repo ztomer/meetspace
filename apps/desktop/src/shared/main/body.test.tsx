@@ -33,7 +33,7 @@ const mocks = vi.hoisted(() => ({
     pinned: false,
     slotId: "slot-1",
     type: "empty",
-  },
+  } as any,
   tabs: [
     { active: true, pinned: false, slotId: "slot-1", type: "empty" },
   ] as any[],
