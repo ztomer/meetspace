@@ -45,8 +45,14 @@ export function CustomSidebarHeader({
   }, [chat, currentTab, openCurrent, select, tabs]);
 
   return (
-    <div className="flex h-12 shrink-0 items-center gap-2 px-3">
-      <div className="flex min-w-0 flex-1 items-center gap-1">
+    <div
+      data-tauri-drag-region
+      className="-mt-11 flex h-12 shrink-0 items-start py-0 pt-[9px] pr-1 pl-[76px]"
+    >
+      <div
+        data-tauri-drag-region
+        className="flex min-w-0 flex-1 items-center gap-1"
+      >
         <CustomSidebarHeaderButton
           label="Go home"
           title="Back"
