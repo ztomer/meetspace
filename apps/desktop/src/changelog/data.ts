@@ -11,7 +11,8 @@ export function getLatestVersion(): string | null {
 async function fetchChangelogFromGitHub(
   version: string,
 ): Promise<string | null> {
-  const url = `https://raw.githubusercontent.com/ztomer/meetspace/main/packages/changelog/content/${version}.md`;
+  const baseVersion = version.split(/[-_]/)[0];
+  const url = `https://raw.githubusercontent.com/ztomer/meetspace/main/packages/changelog/content/${baseVersion}.md`;
   try {
     const response = await fetch(url);
     if (!response.ok) {
@@ -32,7 +33,11 @@ export function useChangelogContent(version: string) {
     let cancelled = false;
 
     async function loadChangelog() {
-      if (version === latestVersion && latestContent) {
+      const baseVersion = version.split(/[-_]/)[0];
+      if (
+        (version === latestVersion || baseVersion === latestVersion) &&
+        latestContent
+      ) {
         const { content: parsed, date: parsedDate } =
           processContent(latestContent);
         setContent(parsed);

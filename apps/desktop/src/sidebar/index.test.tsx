@@ -90,7 +90,6 @@ describe("LeftSidebar", () => {
     const classList = container.firstElementChild?.className.split(" ") ?? [];
 
     expect(screen.getByTestId(testId)).toBeTruthy();
-    expect(classList).toContain("pt-11");
-    expect(classList).not.toContain("pt-0");
+    expect(classList).toContain("pt-0");
   });
 });

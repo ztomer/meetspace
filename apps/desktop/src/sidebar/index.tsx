@@ -24,8 +24,7 @@ export function LeftSidebar() {
   return (
     <div
       className={cn([
-        "flex h-full w-[200px] shrink-0 flex-col gap-1 overflow-hidden",
-        isTimelineSidebarLayout ? "pt-0" : "pt-11",
+        "flex h-full w-[200px] shrink-0 flex-col gap-1 overflow-hidden pt-0",
       ])}
     >
       <div className="flex flex-1 flex-col gap-1 overflow-hidden">
