@@ -10,6 +10,7 @@ import {
 
 import { getLatestVersion } from "~/changelog";
 import { useDevtoolsStore, useDevtoolsUserId } from "~/devtools-panel/hooks";
+import { populateRecurringMeetingNotes } from "~/devtools-panel/recurring-notes";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 import {
   type DevtoolsOtaPreviewStatus,
@@ -51,6 +52,7 @@ type DevtoolsPanelAction =
   | "notifications:clear"
   | "billing:trial-started"
   | "billing:trial-ended"
+  | "notes:populate-recurring"
   | "countdown:note-20"
   | "countdown:note-60"
   | "countdown:note-290"
@@ -192,6 +194,16 @@ function useDevtoolsPanelActions() {
     },
     [showMainWindow, showOtaPreview],
   );
+
+  const populateRecurringNotes = useCallback(async () => {
+    if (!store) {
+      return;
+    }
+
+    const sessionId = populateRecurringMeetingNotes({ store, userId: user_id });
+    await showMainWindow();
+    openNew({ type: "sessions", id: sessionId });
+  }, [openNew, showMainWindow, store, user_id]);
 
   const showCalendarNotification = useCallback(async () => {
     const eventId = `devtool-event-${crypto.randomUUID()}`;
@@ -431,6 +443,9 @@ function useDevtoolsPanelActions() {
           return;
         case "billing:trial-ended":
           return;
+        case "notes:populate-recurring":
+          void populateRecurringNotes();
+          return;
         case "countdown:note-20":
           createWithCountdown(20);
           return;
@@ -463,9 +478,10 @@ function useDevtoolsPanelActions() {
       showMicDetectedNotification,
       showMicOptionsNotification,
       showOnboarding,
+      populateRecurringNotes,
       showToastPreviewInMainWindow,
+      showOtaPreviewInMainWindow,
       clearToastPreview,
-      showOtaPreview,
       clearOtaPreview,
     ],
   );
