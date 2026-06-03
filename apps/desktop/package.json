@@ -1,12 +1,12 @@
 {
   "name": "@meetspace/desktop",
-  "version": "1.0.37-meet2",
+  "version": "1.0.37-meet3",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "dev:relay": "echo 'Make sure Meetspace Staging app is running, then open http://localhost:1423' && vite",
-    "build": "tsc && vite build",
+    "build": "lingui compile && tsc && vite build",
     "preview": "vite preview",
     "tauri": "dotenvx run --ignore MISSING_ENV_FILE -f .env -- tauri",
     "typecheck": "tsc --noEmit",

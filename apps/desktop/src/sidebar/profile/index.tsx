@@ -96,7 +96,7 @@ export function ProfileMenu() {
             className="absolute top-full left-0 mt-1 w-56"
             data-tauri-drag-region="false"
           >
-            <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.14)]">
+            <div className="dark:border-stone-850 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.14)] dark:bg-stone-900">
               <div className="py-1">
                 {menuItems.map((item) => (
                   <MenuItem key={item.label} {...item} />
@@ -149,8 +149,9 @@ function ProfileButton({
         "flex size-7 cursor-pointer items-center justify-center rounded-lg",
         "border border-transparent bg-transparent p-1",
         "transition-colors duration-150",
-        "hover:border-neutral-200 hover:bg-neutral-200/70",
-        isExpanded && "border-neutral-200 bg-neutral-200/70",
+        "hover:border-neutral-200 hover:bg-neutral-200/70 dark:hover:border-stone-800 dark:hover:bg-stone-900/70",
+        isExpanded &&
+          "border-neutral-200 bg-neutral-200/70 dark:border-stone-800 dark:bg-stone-900/70",
       ])}
       onClick={onClick}
     >

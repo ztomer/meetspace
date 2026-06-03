@@ -49,7 +49,8 @@ export function SidebarSearchInput() {
           "h-full w-full pl-8",
           query ? "pr-8" : showShortcut ? "pr-14" : "pr-4",
           "rounded-lg border border-neutral-200 bg-neutral-200/50",
-          "focus:bg-neutral-200 focus:outline-hidden",
+          "dark:border-stone-800 dark:bg-stone-900/50",
+          "dark:focus:bg-stone-850 focus:bg-neutral-200 focus:outline-hidden",
         ])}
       />
       {query && (

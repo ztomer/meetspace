@@ -359,10 +359,10 @@ export function TimelineView({
               <div
                 className={cn([
                   "sticky top-0 z-10",
-                  "bg-neutral-50 py-1 pr-1 pl-3",
+                  "bg-neutral-50 py-1 pr-1 pl-3 dark:bg-stone-950",
                 ])}
               >
-                <div className="text-base font-bold text-neutral-900">
+                <div className="text-base font-bold text-neutral-900 dark:text-neutral-100">
                   {bucket.label}
                 </div>
               </div>
@@ -412,8 +412,8 @@ export function TimelineView({
           className={cn([
             "pointer-events-none absolute inset-x-0 top-0 z-[15]",
             isScrolledToTop
-              ? "h-12 bg-neutral-50"
-              : "h-20 bg-linear-to-b from-neutral-50 via-neutral-50/95 via-55% to-neutral-50/0",
+              ? "h-12 bg-neutral-50 dark:bg-stone-950"
+              : "h-20 bg-linear-to-b from-neutral-50 via-neutral-50/95 via-55% to-neutral-50/0 dark:from-stone-950 dark:via-stone-950/95 dark:to-stone-950/0",
           ])}
         />
       )}
@@ -430,8 +430,8 @@ export function TimelineView({
               onClick={handleOpenCalendar}
               size="sm"
               className={cn([
-                "rounded-full bg-white hover:bg-neutral-50",
-                "border border-neutral-200 text-neutral-700",
+                "dark:hover:bg-stone-850 rounded-full bg-white hover:bg-neutral-50 dark:bg-stone-900",
+                "border border-neutral-200 text-neutral-700 dark:border-stone-800 dark:text-neutral-300",
                 "flex items-center gap-1",
                 "px-3",
                 "shadow-xs",
@@ -478,9 +478,9 @@ function TimelineNowChip({
       type="button"
       aria-label="Go back to now"
       className={cn([
-        "flex h-6 items-center gap-1 rounded-full border border-neutral-200 bg-white/95 px-2.5 text-xs font-semibold text-neutral-900 shadow-md backdrop-blur",
-        "transition-colors hover:border-neutral-300 hover:bg-white hover:text-neutral-950",
-        "focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden",
+        "flex h-6 items-center gap-1 rounded-full border border-neutral-200 bg-white/95 px-2.5 text-xs font-semibold text-neutral-900 shadow-md backdrop-blur dark:border-stone-800 dark:bg-stone-900/95 dark:text-neutral-100",
+        "dark:hover:bg-stone-850 transition-colors hover:border-neutral-300 hover:bg-white hover:text-neutral-950 dark:hover:border-stone-700 dark:hover:text-white",
+        "focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden dark:focus-visible:ring-neutral-100",
         className,
       ])}
       onClick={onClick}

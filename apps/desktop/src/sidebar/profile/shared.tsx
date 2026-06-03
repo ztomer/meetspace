@@ -21,13 +21,13 @@ export function MenuItem({
         className={cn([
           "group flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg",
           "px-3 py-1.5",
-          "text-sm whitespace-nowrap text-black",
-          "transition-colors hover:bg-neutral-100",
+          "text-sm whitespace-nowrap text-neutral-700 dark:text-neutral-200",
+          "transition-colors hover:bg-neutral-100 dark:hover:bg-stone-800",
         ])}
         onClick={onClick}
       >
         <div className="flex items-center justify-start gap-2.5">
-          <Icon className="h-4 w-4 shrink-0 text-black" />
+          <Icon className="h-4 w-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
           {label}
         </div>
         {badge &&
