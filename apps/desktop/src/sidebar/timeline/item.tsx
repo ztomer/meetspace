@@ -11,11 +11,6 @@ import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
 import { commands as openerCommands } from "@meetspace/plugin-opener2";
 import { DancingSticks } from "@meetspace/ui/components/ui/dancing-sticks";
 import { Spinner } from "@meetspace/ui/components/ui/spinner";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@meetspace/ui/components/ui/tooltip";
 import { cn, format, getYear, safeParseDate, TZDate } from "@meetspace/utils";
 
 import {
@@ -94,7 +89,6 @@ export const TimelineItemComponent = memo(
 function ItemBase({
   title,
   displayTime,
-  calendarId,
   isLive,
   amplitude,
   showSpinner,
@@ -114,7 +108,6 @@ function ItemBase({
 }: {
   title: string;
   displayTime: string;
-  calendarId: string | null;
   isLive?: boolean;
   amplitude?: number;
   showSpinner?: boolean;
@@ -185,7 +178,6 @@ function ItemBase({
               </div>
             )}
           </div>
-          {calendarId && <CalendarIndicator calendarId={calendarId} />}
         </div>
       </InteractiveButton>
       {showSpinner ? (
@@ -261,7 +253,6 @@ const EventItem = memo(
     const eventId = item.id;
     const trackingIdEvent = item.data.tracking_id_event;
     const title = item.data.title || "Untitled";
-    const calendarId = item.data.calendar_id ?? null;
     const recurrenceSeriesId = item.data.recurrence_series_id;
 
     const {
@@ -385,7 +376,6 @@ const EventItem = memo(
       <ItemBase
         title={title}
         displayTime={displayTime}
-        calendarId={calendarId}
         selected={selected}
         ignored={ignored}
         muted={muted}
@@ -451,8 +441,6 @@ const SessionItem = memo(
       () => getSessionEvent(item.data),
       [item.data.event_json],
     );
-
-    const calendarId = sessionEvent?.calendar_id ?? null;
 
     const displayTime = useMemo(
       () =>
@@ -564,7 +552,6 @@ const SessionItem = memo(
         <ItemBase
           title={title}
           displayTime={displayTime}
-          calendarId={calendarId}
           isLive={isLive}
           amplitude={Math.max(
             0.25,
@@ -613,25 +600,4 @@ function formatDisplayTime(
     : format(date, "MMM d, yyyy");
 
   return `${dateStr}, ${time}`;
-}
-
-function CalendarIndicator({ calendarId }: { calendarId: string }) {
-  const calendar = main.UI.useRow("calendars", calendarId, main.STORE_ID);
-
-  const name = calendar?.name ? String(calendar.name) : undefined;
-  const color = calendar?.color ? String(calendar.color) : "#888";
-
-  return (
-    <Tooltip delayDuration={0}>
-      <TooltipTrigger asChild>
-        <div
-          className="size-2 shrink-0 rounded-full opacity-60"
-          style={{ backgroundColor: color }}
-        />
-      </TooltipTrigger>
-      <TooltipContent side="right" className="text-xs">
-        {name || "Calendar"}
-      </TooltipContent>
-    </Tooltip>
-  );
 }
