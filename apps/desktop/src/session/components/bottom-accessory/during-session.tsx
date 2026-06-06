@@ -25,30 +25,12 @@ import {
 export function DuringSessionAccessory({
   sessionId,
   fillHeight = false,
-  isFinalizing = false,
   isExpanded = false,
 }: {
   sessionId: string;
   fillHeight?: boolean;
-  isFinalizing?: boolean;
   isExpanded?: boolean;
 }) {
-  if (isFinalizing) {
-    return (
-      <div className="relative w-full pt-1 select-none">
-        <div className="bg-muted rounded-xl">
-          <div className="flex min-h-9 items-center gap-2 px-2 py-1">
-            <div className="min-w-0 flex-1">
-              <span className="text-muted-foreground text-xs">
-                Finalizing...
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <LiveTranscriptFooter
       sessionId={sessionId}
