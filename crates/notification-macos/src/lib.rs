@@ -81,7 +81,7 @@ struct NotificationPayload<'a> {
     participants: Option<&'a [Participant]>,
     event_details: Option<&'a EventDetails>,
     action_label: Option<&'a str>,
-    action_variant: Option<&'a hypr_notification_interface::NotificationActionVariant>,
+    action_variant: Option<&'a meetspace_notification_interface::NotificationActionVariant>,
     options: Option<&'a [String]>,
     footer: Option<&'a NotificationFooter>,
     icon: Option<&'a NotificationIcon>,

@@ -12,15 +12,16 @@ import {
 
 import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 import { commands as detectCommands } from "@meetspace/plugin-detect";
-import {
-  commands as localSttCommands,
-  type LocalModel,
-} from "@meetspace/plugin-local-stt";
+import { commands as localSttCommands } from "@meetspace/plugin-local-stt";
 import { getCurrentWebviewWindowLabel } from "@meetspace/plugin-windows";
 
 import { registerSaveHandler } from "./save";
 
 import { useSettingsPersister } from "~/store/tinybase/persister/settings";
+import {
+  isConfiguredSttModel,
+  isMeetspaceLocalSttModel,
+} from "~/stt/capabilities";
 
 export const STORE_ID = "settings";
 
@@ -123,14 +124,6 @@ export const SETTINGS_MAPPING = {
     current_stt_model: {
       type: "string",
       path: ["ai", "current_stt_model"],
-    },
-    cactus_cloud_handoff: {
-      type: "boolean",
-      path: ["cactus", "cloud_handoff"],
-    },
-    cactus_min_chunk_sec: {
-      type: "number",
-      path: ["cactus", "min_chunk_sec"],
     },
     timezone: {
       type: "string",
@@ -388,6 +381,38 @@ type SettingsListeners = {
   ) => void;
 };
 
+function clearInvalidSttModel(store: Store) {
+  const provider = store.getValue("current_stt_provider") as string | undefined;
+  const model = store.getValue("current_stt_model") as string | undefined;
+
+  if (
+    provider === "meetspace" &&
+    model &&
+    !isConfiguredSttModel(provider, model)
+  ) {
+    store.delValue("current_stt_model");
+    return true;
+  }
+
+  return false;
+}
+
+function syncLocalSttServer(store: Store) {
+  if (clearInvalidSttModel(store)) {
+    localSttCommands.stopServer(null).catch(console.error);
+    return;
+  }
+
+  const provider = store.getValue("current_stt_provider") as string | undefined;
+  const model = store.getValue("current_stt_model") as string | undefined;
+
+  if (isMeetspaceLocalSttModel(provider, model)) {
+    localSttCommands.startServer(model).catch(console.error);
+  } else {
+    localSttCommands.stopServer(null).catch(console.error);
+  }
+}
+
 const SETTINGS_LISTENERS: SettingsListeners = {
   autostart: (_store, newValue) => {
     if (newValue) {
@@ -414,28 +439,8 @@ const SETTINGS_LISTENERS: SettingsListeners = {
   mic_active_threshold: (_store, newValue) => {
     detectCommands.setMicActiveThreshold(newValue).catch(console.error);
   },
-  current_stt_provider: (store) => {
-    const provider = store.getValue("current_stt_provider") as
-      | string
-      | undefined;
-    const model = store.getValue("current_stt_model") as string | undefined;
-
-    if (provider === "meetspace" && model && model !== "cloud") {
-      localSttCommands.startServer(model as LocalModel).catch(console.error);
-    }
-  },
-  current_stt_model: (store) => {
-    const provider = store.getValue("current_stt_provider") as
-      | string
-      | undefined;
-    const model = store.getValue("current_stt_model") as string | undefined;
-
-    if (provider === "meetspace" && model && model !== "cloud") {
-      localSttCommands.startServer(model as LocalModel).catch(console.error);
-    } else {
-      localSttCommands.stopServer(null).catch(console.error);
-    }
-  },
+  current_stt_provider: (store) => syncLocalSttServer(store),
+  current_stt_model: (store) => syncLocalSttServer(store),
   telemetry_consent: (_store, newValue) => {
     analyticsCommands.setDisabled(!newValue).catch(console.error);
   },
@@ -454,6 +459,8 @@ function registerSettingsListeners(store: Store): () => void {
       }),
     );
   }
+
+  clearInvalidSttModel(store);
 
   return () => {
     for (const id of cleanups) {

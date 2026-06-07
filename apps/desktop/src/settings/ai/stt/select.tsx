@@ -37,7 +37,10 @@ import {
 import { useNotifications } from "~/contexts/notifications";
 import { useConfigValues } from "~/shared/config";
 import * as settings from "~/store/tinybase/store/settings";
-import { isRealtimeLocalModel } from "~/stt/capabilities";
+import {
+  isRealtimeLocalModel,
+  isSupportedLocalSttModel,
+} from "~/stt/capabilities";
 
 type ModelEntry = {
   id: string;
@@ -233,12 +236,11 @@ function useLocalModels(): ModelEntry[] {
 
   // Apple Silicon: surface Soniqo (Parakeet streaming) plus the Argmax-backed
   // models (Parakeet V2/V3 and Whisper Large V3) — both are MLX/CoreML-native.
-  // Other platforms get the Cactus/Whisper-CPP family. Deprecated Cactus
-  // models are hidden on Apple Silicon since Soniqo supersedes them there.
+  // Other platforms get the Whisper-CPP family.
   const soniqo = all.filter((m) => m.model_type === "soniqo");
   const argmax = all.filter((m) => m.model_type === "argmax");
-  const cactus = all.filter((m) => m.model_type === "cactus");
-  const visible = isAppleSilicon ? [...soniqo, ...argmax] : cactus;
+  const whispercpp = all.filter((m) => m.model_type === "whispercpp");
+  const visible = isAppleSilicon ? [...soniqo, ...argmax] : whispercpp;
 
   const downloaded = useQueries({
     queries: visible.map((m) => sttModelQueries.isDownloaded(m.key)),
@@ -371,12 +373,7 @@ function ModelSelectedValue({ model }: { model: ModelEntry }) {
 }
 
 function isLocalModelId(model: string): model is LocalModel {
-  return (
-    model.startsWith("soniqo-") ||
-    model.startsWith("cactus-") ||
-    model.startsWith("am-") ||
-    model.startsWith("Quantized")
-  );
+  return isSupportedLocalSttModel(model);
 }
 
 function LocalModelDropdownActions({ model }: { model: LocalModel }) {
@@ -390,9 +387,7 @@ function LocalModelDropdownActions({ model }: { model: LocalModel }) {
   const handleOpen = () => {
     const resultPromise = String(model).startsWith("soniqo-")
       ? localSttCommands.soniqoModelDir(model)
-      : String(model).startsWith("cactus-")
-        ? localSttCommands.cactusModelsDir()
-        : localSttCommands.modelsDir();
+      : localSttCommands.modelsDir();
 
     void resultPromise.then((result) => {
       if (result.status === "ok") {

@@ -10,7 +10,6 @@ local = ["meetspace-audio-utils"]
 [dependencies]
 meetspace-am = { workspace = true }
 meetspace-audio-utils = { workspace = true, optional = true }
-meetspace-cactus-model = { workspace = true }
 meetspace-language = { workspace = true }
 meetspace-observability = { workspace = true }
 meetspace-ws-client = { workspace = true }

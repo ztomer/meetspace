@@ -5,7 +5,6 @@ edition = "2024"
 
 [dependencies]
 meetspace-am = { workspace = true }
-meetspace-cactus-model = { workspace = true }
 meetspace-file = { workspace = true }
 meetspace-model-downloader = { workspace = true }
 meetspace-transcribe-soniqo = { workspace = true }

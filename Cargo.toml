@@ -73,8 +73,6 @@ meetspace-audio-sync = { path = "crates/audio-sync", package = "audio-sync" }
 meetspace-audio-utils = { path = "crates/audio-utils", package = "audio-utils" }
 meetspace-buffer = { path = "crates/buffer", package = "buffer" }
 meetspace-bundle = { path = "crates/bundle", package = "bundle" }
-meetspace-cactus = { path = "crates/cactus", package = "cactus" }
-meetspace-cactus-model = { path = "crates/cactus-model", package = "cactus-model" }
 meetspace-calendar = { path = "crates/calendar", package = "calendar" }
 meetspace-calendar-interface = { path = "crates/calendar-interface", package = "calendar-interface" }
 meetspace-chatwoot = { path = "crates/chatwoot", package = "chatwoot" }
@@ -126,7 +124,6 @@ meetspace-language = { path = "crates/language", package = "language" }
 meetspace-linear = { path = "crates/linear", package = "linear" }
 meetspace-listener-core = { path = "crates/listener-core", package = "listener-core" }
 meetspace-listener2-core = { path = "crates/listener2-core", package = "listener2-core" }
-meetspace-llm-cactus = { path = "crates/llm-cactus", package = "llm-cactus" }
 meetspace-llm-proxy = { path = "crates/llm-proxy", package = "llm-proxy" }
 meetspace-llm-types = { path = "crates/llm-types", package = "llm-types" }
 meetspace-lmstudio = { path = "crates/lmstudio", package = "lmstudio" }
@@ -177,7 +174,6 @@ meetspace-template-eval = { path = "crates/template-eval", package = "template-e
 meetspace-template-support = { path = "crates/template-support", package = "template-support" }
 meetspace-ticket-interface = { path = "crates/ticket-interface", package = "ticket-interface" }
 meetspace-tiptap = { path = "crates/tiptap", package = "tiptap" }
-meetspace-transcribe-cactus = { path = "crates/transcribe-cactus", package = "transcribe-cactus" }
 meetspace-transcribe-core = { path = "crates/transcribe-core", package = "transcribe-core" }
 meetspace-transcribe-proxy = { path = "crates/transcribe-proxy", package = "transcribe-proxy" }
 meetspace-transcribe-soniqo = { path = "crates/transcribe-soniqo", package = "transcribe-soniqo" }

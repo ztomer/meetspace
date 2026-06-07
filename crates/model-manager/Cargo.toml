@@ -4,11 +4,9 @@ version = "0.1.0"
 edition = "2024"
 
 [features]
-cactus = ["meetspace-cactus"]
 whisper-local = ["meetspace-whisper-local"]
 
 [dependencies]
-meetspace-cactus = { workspace = true, optional = true }
 meetspace-whisper-local = { workspace = true, optional = true }
 
 thiserror = { workspace = true }

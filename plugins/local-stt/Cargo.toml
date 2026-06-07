@@ -37,7 +37,6 @@ tower = { workspace = true }
 [dependencies]
 meetspace-am = { workspace = true }
 meetspace-audio-utils = { workspace = true }
-meetspace-cactus-model = { workspace = true }
 meetspace-download-interface = { workspace = true }
 meetspace-file = { workspace = true }
 meetspace-host = { workspace = true }
@@ -85,6 +84,3 @@ ractor = { workspace = true, features = ["async-trait"] }
 
 port-killer = "0.1.0"
 port_check = "0.3.0"
-
-[target.'cfg(target_arch = "aarch64")'.dependencies]
-meetspace-transcribe-cactus = { workspace = true }
