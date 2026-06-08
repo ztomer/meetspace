@@ -26,7 +26,7 @@ export function BatchState({
         gap={4}
       />
       <div className="flex max-w-sm flex-col items-center gap-2 text-center">
-        <p className="text-foreground text-base font-semibold">
+        <p className="text-muted-foreground text-base font-semibold">
           {isFallbackFromLive
             ? "Live transcription stopped"
             : "Recording continues"}

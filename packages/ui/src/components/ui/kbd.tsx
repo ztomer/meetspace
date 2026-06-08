@@ -6,12 +6,8 @@ function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
       data-slot="kbd"
       className={cn([
         "pointer-events-none inline-flex h-5 w-fit min-w-5 shrink-0 items-center justify-center gap-1 rounded px-1 font-mono text-xs leading-none font-medium whitespace-nowrap select-none",
-        "border-border border",
-        // Looks like a physical key: subtle gradient + inset highlight.
-        // Tokens so it flips cleanly in dark mode (dark key, light text).
-        "from-background to-muted bg-linear-to-b",
-        "text-foreground",
-        "shadow-[0_1px_0_0_var(--color-border),inset_0_1px_0_0_color-mix(in_srgb,var(--color-background)_70%,transparent)]",
+        "border-border bg-muted text-muted-foreground border",
+        "shadow-[0_1px_0_0_var(--kbd-shadow-outer),inset_0_1px_0_0_var(--kbd-shadow-inset)]",
         "[&_svg:not([class*='size-'])]:size-3",
         className,
       ])}

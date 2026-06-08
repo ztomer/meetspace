@@ -206,7 +206,7 @@ function ConnectionActions({
             "todo",
           )
         }
-        className="text-muted-foreground hover:text-foreground cursor-pointer text-xs underline transition-colors"
+        className="text-muted-foreground hover:text-muted-foreground cursor-pointer text-xs underline transition-colors"
       >
         Disconnect
       </button>

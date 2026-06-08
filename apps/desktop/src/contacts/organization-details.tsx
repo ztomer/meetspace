@@ -1,5 +1,4 @@
 import { Icon } from "@iconify-icon/react";
-import { Facehash } from "facehash";
 import { Building2, Mail } from "lucide-react";
 
 import { commands as openerCommands } from "@meetspace/plugin-opener2";
@@ -7,7 +6,7 @@ import { Button } from "@meetspace/ui/components/ui/button";
 import { Input } from "@meetspace/ui/components/ui/input";
 import { cn } from "@meetspace/utils";
 
-import { getContactBgClass } from "./shared";
+import { ContactFacehash, getContactBgClass } from "./shared";
 
 import * as main from "~/store/tinybase/store/main";
 
@@ -36,7 +35,10 @@ export function OrganizationDetailsColumn({
     <div className="flex flex-1 flex-col">
       {selectedOrgData && selectedOrganizationId ? (
         <>
-          <div className="border-border flex items-center justify-center border-b py-6">
+          <div
+            data-tauri-drag-region
+            className="border-border flex items-center justify-center border-b py-6"
+          >
             <div className="bg-accent flex h-16 w-16 items-center justify-center rounded-full">
               <Building2 className="text-muted-foreground h-8 w-8" />
             </div>
@@ -75,7 +77,7 @@ export function OrganizationDetailsColumn({
                       return (
                         <div
                           key={humanId}
-                          className="border-border bg-background cursor-pointer rounded-lg border p-4 transition-all hover:shadow-xs"
+                          className="border-border bg-card cursor-pointer rounded-lg border p-4 transition-all hover:shadow-xs"
                           onClick={() => onPersonClick?.(humanId)}
                         >
                           <div className="flex flex-col items-center gap-3 text-center">
@@ -87,7 +89,7 @@ export function OrganizationDetailsColumn({
                                 ),
                               ])}
                             >
-                              <Facehash
+                              <ContactFacehash
                                 name={String(
                                   human.name || human.email || humanId,
                                 )}

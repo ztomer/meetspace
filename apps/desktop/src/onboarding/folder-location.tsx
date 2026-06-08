@@ -122,14 +122,14 @@ export function FolderLocationSection({
         <button
           onClick={handleChange}
           disabled={isPending}
-          className="text-muted-foreground hover:text-foreground shrink-0 text-sm transition-colors disabled:opacity-50"
+          className="text-muted-foreground hover:text-muted-foreground shrink-0 text-sm transition-colors disabled:opacity-50"
         >
           Change
         </button>
         <button
           onClick={onContinue}
           disabled={isPending}
-          className="bg-primary text-primary-foreground shrink-0 rounded-full px-3 py-1 text-sm font-medium duration-150 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 shrink-0 rounded-full px-3 py-1 text-sm font-medium duration-150 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
         >
           Confirm
         </button>

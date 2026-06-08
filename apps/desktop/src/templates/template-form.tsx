@@ -229,8 +229,8 @@ export function TemplateForm({
               onClick={setSelectedTemplateId}
               title={isDefault ? "Remove as default" : "Set as default"}
               className={cn([
-                "text-muted-foreground hover:text-foreground shrink-0",
-                isDefault ? "bg-muted text-foreground hover:bg-muted" : null,
+                "text-muted-foreground shrink-0 hover:text-black",
+                isDefault ? "bg-muted hover:bg-accent text-black" : null,
               ])}
             >
               {isDefault ? "Current default" : "Set as default"}
@@ -264,7 +264,7 @@ export function TemplateForm({
                   variant="ghost"
                   className={cn([
                     "text-muted-foreground hover:text-foreground",
-                    actionsOpen && "bg-muted text-foreground hover:bg-muted",
+                    actionsOpen && "bg-muted text-foreground hover:bg-accent",
                   ])}
                   aria-label="Template actions"
                 >

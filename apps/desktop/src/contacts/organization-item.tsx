@@ -109,8 +109,8 @@ export function OrganizationItem({
         className={cn([
           "shrink-0 rounded-xs p-1 transition-colors",
           isPinned
-            ? "text-info-fg hover:text-info-fg"
-            : "text-muted-foreground/60 hover:text-muted-foreground opacity-0 group-hover:opacity-100",
+            ? "text-blue-600 hover:text-blue-700"
+            : "text-muted-foreground/70 hover:text-muted-foreground opacity-0 group-hover:opacity-100",
         ])}
         aria-label={isPinned ? "Unpin organization" : "Pin organization"}
       >

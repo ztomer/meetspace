@@ -1,4 +1,3 @@
-import { Facehash } from "facehash";
 import {
   Building2,
   CircleMinus,
@@ -19,7 +18,7 @@ import {
 import { Textarea } from "@meetspace/ui/components/ui/textarea";
 import { cn } from "@meetspace/utils";
 
-import { getContactBgClass } from "./shared";
+import { ContactFacehash, getContactBgClass } from "./shared";
 
 import * as main from "~/store/tinybase/store/main";
 
@@ -203,9 +202,15 @@ export function DetailsColumn({
     <div className="flex h-full flex-1 flex-col">
       {selectedPersonData && selectedHumanId ? (
         <>
-          <div className="border-border flex items-center justify-center border-b py-6">
-            <div className={cn(["rounded-full", bgClass])}>
-              <Facehash
+          <div
+            data-tauri-drag-region
+            className="border-border flex items-center justify-center border-b py-6"
+          >
+            <div
+              data-tauri-drag-region="false"
+              className={cn(["rounded-full", bgClass])}
+            >
+              <ContactFacehash
                 name={facehashName}
                 size={64}
                 interactive={true}
@@ -217,8 +222,8 @@ export function DetailsColumn({
 
           <div className="flex-1 overflow-y-auto">
             {duplicatesWithData.length > 0 && (
-              <div className="border-border bg-destructive-bg border-b px-6 py-4">
-                <h4 className="text-destructive-fg mb-1 text-sm font-semibold">
+              <div className="border-border border-b bg-red-50 px-6 py-4">
+                <h4 className="mb-1 text-sm font-semibold text-red-900">
                   Duplicate Contact
                   {duplicatesWithData.length > 1 ? "s" : ""} Found
                 </h4>
@@ -245,7 +250,7 @@ export function DetailsColumn({
                             ),
                           ])}
                         >
-                          <Facehash
+                          <ContactFacehash
                             name={String(dup.name || dup.email || dup.id)}
                             size={32}
                             interactive={false}
@@ -309,7 +314,7 @@ export function DetailsColumn({
                   Summary
                 </h3>
                 <div className="border-border bg-muted rounded-lg border p-4">
-                  <p className="text-foreground text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-sm leading-relaxed">
                     AI-generated summary of all interactions and notes with this
                     contact will appear here. This will synthesize key
                     discussion points, action items, and relationship context
@@ -329,7 +334,7 @@ export function DetailsColumn({
                     <button
                       key={session.id}
                       onClick={() => handleSessionClick(session.id)}
-                      className="border-border hover:bg-muted w-full rounded-md border p-3 text-left transition-colors"
+                      className="border-border hover:bg-accent w-full rounded-md border p-3 text-left transition-colors"
                     >
                       <div className="mb-1 flex items-center gap-2">
                         <FileText className="text-muted-foreground h-4 w-4" />
@@ -461,8 +466,8 @@ function EditablePersonPhoneField({ personId }: { personId: string }) {
   );
 
   return (
-    <div className="flex items-center border-b border-neutral-200 px-4 py-3">
-      <div className="w-28 text-sm text-neutral-500">Phone</div>
+    <div className="border-border flex items-center border-b px-4 py-3">
+      <div className="text-muted-foreground w-28 text-sm">Phone</div>
       <div className="flex-1">
         <Input
           type="tel"
@@ -563,13 +568,13 @@ function EditPersonOrganizationSelector({ personId }: { personId: string }) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <div className="hover:bg-muted -mx-2 inline-flex cursor-pointer items-center rounded-lg px-2 py-1 transition-colors">
+        <div className="hover:bg-accent -mx-2 inline-flex cursor-pointer items-center rounded-lg px-2 py-1 transition-colors">
           {organization?.name ? (
             <div className="flex items-center">
               <span className="text-base">{organization.name}</span>
               <span className="group text-muted-foreground ml-2">
                 <CircleMinus
-                  className="text-muted-foreground hover:text-destructive size-4 cursor-pointer"
+                  className="text-muted-foreground size-4 cursor-pointer hover:text-red-600"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRemoveOrganization();
@@ -677,7 +682,9 @@ function OrganizationControl({
 
   return (
     <div className="flex max-w-[450px] flex-col gap-3">
-      <div className="text-foreground text-sm font-medium">Organization</div>
+      <div className="text-muted-foreground text-sm font-medium">
+        Organization
+      </div>
 
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-2">
@@ -706,7 +713,7 @@ function OrganizationControl({
                   type="button"
                   className={[
                     "flex items-center px-3 py-2 text-sm text-left transition-colors w-full",
-                    highlightedIndex === index ? "bg-muted" : "hover:bg-muted",
+                    highlightedIndex === index ? "bg-muted" : "hover:bg-accent",
                   ].join(" ")}
                   onClick={() => selectOrganization(org.id)}
                   onMouseEnter={() => setHighlightedIndex(index)}
@@ -725,7 +732,7 @@ function OrganizationControl({
                     "flex items-center px-3 py-2 text-sm text-left transition-colors w-full",
                     highlightedIndex === organizations.length
                       ? "bg-muted"
-                      : "hover:bg-muted",
+                      : "hover:bg-accent",
                   ].join(" ")}
                   onClick={() => handleCreateOrganization()}
                   onMouseEnter={() => setHighlightedIndex(organizations.length)}
@@ -752,7 +759,7 @@ function OrganizationControl({
                   type="button"
                   className={[
                     "flex items-center px-3 py-2 text-sm text-left transition-colors w-full",
-                    highlightedIndex === index ? "bg-muted" : "hover:bg-muted",
+                    highlightedIndex === index ? "bg-muted" : "hover:bg-accent",
                   ].join(" ")}
                   onClick={() => selectOrganization(org.id)}
                   onMouseEnter={() => setHighlightedIndex(index)}

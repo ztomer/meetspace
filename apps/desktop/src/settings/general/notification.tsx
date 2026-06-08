@@ -308,7 +308,7 @@ export function NotificationSettingsView() {
                               className={cn([
                                 "flex items-center gap-1 px-2 py-0.5 text-xs",
                                 isDefault
-                                  ? ["bg-accent text-foreground"]
+                                  ? ["bg-accent text-muted-foreground"]
                                   : ["bg-muted"],
                               ])}
                               title={isDefault ? "default" : undefined}

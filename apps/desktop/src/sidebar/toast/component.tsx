@@ -1,192 +1,125 @@
-import { X } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
-
 import { cn } from "@meetspace/utils";
 
-import type { DownloadProgress, ToastType } from "./types";
+import type { ToastAction, ToastType } from "./types";
 
 export function Toast({
   toast,
   onDismiss,
-  alwaysShowDismissButton = false,
 }: {
   toast: ToastType;
   onDismiss?: () => void | Promise<void>;
-  alwaysShowDismissButton?: boolean;
 }) {
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState<number | "auto">("auto");
-  const [isAnimatingHeight, setIsAnimatingHeight] = useState(false);
-  const contentKey = toast.actions ? "actions" : "default";
-
-  useEffect(() => {
-    if (!contentRef.current) return;
-    const measure = () => {
-      if (contentRef.current) {
-        setHeight(contentRef.current.scrollHeight);
-      }
-    };
-    measure();
-    setIsAnimatingHeight(true);
-    const ro = new ResizeObserver(measure);
-    ro.observe(contentRef.current);
-    return () => ro.disconnect();
-  }, [contentKey]);
+  const actions = getActions(toast, onDismiss);
+  const progress = getProgress(toast);
 
   return (
     <div className="overflow-visible p-1">
       <div
         className={cn([
-          "group relative z-50 overflow-visible rounded-lg",
-          "bg-background p-4",
+          "relative z-50 inline-flex max-w-[calc(100vw-24px)] items-center gap-3 py-1.5 pr-1.5 pl-4",
+          "bg-secondary text-secondary-foreground rounded-full",
+          "border shadow-lg backdrop-blur-none",
           toast.variant === "error"
-            ? "border-destructive/40 border shadow-xl shadow-red-200"
-            : "border-border border shadow-xl",
+            ? "border-alert-border shadow-red-100 dark:shadow-red-950/30"
+            : "border-border",
         ])}
       >
-        {onDismiss && (
-          <button
-            onClick={onDismiss}
-            aria-label="Dismiss toast"
-            className={cn([
-              "absolute top-1.5 right-1.5 z-10 flex size-6 items-center justify-center rounded-full",
-              alwaysShowDismissButton
-                ? "opacity-100"
-                : "opacity-0 group-hover:opacity-50 hover:opacity-100!",
-              "hover:bg-accent",
-              "transition-all duration-200",
-            ])}
-          >
-            <X className="h-4 w-4" />
-          </button>
-        )}
+        {toast.icon ? <span className="shrink-0">{toast.icon}</span> : null}
 
-        <motion.div
-          animate={{ height }}
-          onAnimationStart={() => setIsAnimatingHeight(true)}
-          onAnimationComplete={() => setIsAnimatingHeight(false)}
-          transition={{ duration: 0.25, ease: "easeInOut" }}
-          style={{ overflow: isAnimatingHeight ? "hidden" : "visible" }}
-        >
-          <div ref={contentRef}>
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={contentKey}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15, ease: "easeInOut" }}
-                className="flex flex-col gap-2"
-              >
-                <div
-                  className={cn(["flex flex-col gap-2", onDismiss && "pr-6"])}
-                >
-                  {(toast.icon || toast.title) && (
-                    <div className="flex items-center gap-2">
-                      {toast.icon}
-                      {toast.title && (
-                        <h3 className="text-foreground text-lg font-bold">
-                          {toast.title}
-                        </h3>
-                      )}
-                    </div>
-                  )}
-
-                  <div className="text-sm">{toast.description}</div>
-                </div>
-
-                <div className="mt-1 flex flex-col gap-2 overflow-visible">
-                  {toast.progress !== undefined && (
-                    <ProgressBar progress={toast.progress} />
-                  )}
-                  {toast.downloads && toast.downloads.length > 0 && (
-                    <div className="flex flex-col gap-2">
-                      {toast.downloads.map((download) => (
-                        <DownloadProgressBar
-                          key={download.model}
-                          download={download}
-                        />
-                      ))}
-                    </div>
-                  )}
-                  {toast.actions && toast.actions.length > 0 ? (
-                    toast.actions.map((action) => (
-                      <button
-                        key={action.label}
-                        onClick={action.onClick}
-                        className={cn([
-                          "flex w-full items-center justify-center gap-2",
-                          "bg-accent text-foreground rounded-full py-2 text-sm font-medium",
-                          "hover:bg-accent duration-150 hover:scale-[1.01] active:scale-[0.99]",
-                        ])}
-                      >
-                        {action.icon}
-                        {action.label}
-                      </button>
-                    ))
-                  ) : (
-                    <>
-                      {toast.primaryAction && (
-                        <button
-                          onClick={toast.primaryAction.onClick}
-                          className="border-border bg-primary text-primary-foreground hover:bg-primary flex h-11 w-full items-center justify-center rounded-full border-2 px-4 text-sm font-medium shadow-[0_2px_6px_rgba(87,83,78,0.22),0_10px_18px_-10px_rgba(87,83,78,0.65)] transition-all duration-200"
-                        >
-                          {toast.primaryAction.label}
-                        </button>
-                      )}
-                      {toast.secondaryAction && (
-                        <button
-                          onClick={toast.secondaryAction.onClick}
-                          className="bg-accent text-foreground w-full rounded-full py-2 text-sm font-medium duration-150 hover:scale-[1.01] active:scale-[0.99]"
-                        >
-                          {toast.secondaryAction.label}
-                        </button>
-                      )}
-                    </>
-                  )}
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </motion.div>
-      </div>
-    </div>
-  );
-}
-
-function ProgressBar({ progress }: { progress: number }) {
-  return (
-    <div className="relative w-full overflow-hidden rounded-full bg-linear-to-t from-neutral-200 to-neutral-100 py-2">
-      <div
-        className="absolute inset-0 bg-linear-to-t from-stone-600 to-stone-500 transition-all duration-300"
-        style={{ width: `${progress}%` }}
-      />
-      <span
-        className={cn([
-          "relative z-10 block text-center text-sm font-medium transition-colors duration-150",
-          progress >= 48 ? "text-white" : "text-foreground",
-        ])}
-      >
-        {Math.round(progress)}%
-      </span>
-    </div>
-  );
-}
-
-function DownloadProgressBar({ download }: { download: DownloadProgress }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="text-muted-foreground flex items-center justify-between text-xs">
-        <span className="truncate font-medium">{download.displayName}</span>
-        <span>{Math.round(download.progress)}%</span>
-      </div>
-      <div className="relative h-2 w-full overflow-hidden rounded-full bg-linear-to-t from-neutral-200 to-neutral-100">
         <div
-          className="absolute inset-0 rounded-full bg-linear-to-t from-stone-600 to-stone-500 transition-all duration-300"
-          style={{ width: `${download.progress}%` }}
-        />
+          className={cn([
+            "max-w-50 truncate text-sm",
+            toast.variant === "error"
+              ? "text-alert-foreground"
+              : "text-muted-foreground",
+          ])}
+        >
+          {toast.description}
+        </div>
+
+        {progress !== null ? <ProgressPill progress={progress} /> : null}
+
+        {actions.length > 0 ? (
+          <div className="flex items-center gap-1">
+            {actions.map((action, index) => (
+              <button
+                key={action.label}
+                onClick={action.onClick}
+                className={cn([
+                  "flex items-center justify-center gap-1.5",
+                  "rounded-full px-3 py-1.5 text-xs font-medium",
+                  "whitespace-nowrap",
+                  getActionClassName(toast, index),
+                  "transition-colors",
+                ])}
+              >
+                {action.icon}
+                {action.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
       </div>
     </div>
+  );
+}
+
+function getActions(
+  toast: ToastType,
+  onDismiss: (() => void | Promise<void>) | undefined,
+): ToastAction[] {
+  if (toast.actions?.length) {
+    return toast.actions;
+  }
+
+  const actions: ToastAction[] = [];
+
+  if (toast.primaryAction) {
+    actions.push(toast.primaryAction);
+  }
+  if (toast.secondaryAction) {
+    actions.push(toast.secondaryAction);
+  }
+  if (onDismiss) {
+    actions.push({ label: "Hide", onClick: onDismiss });
+  }
+
+  return actions;
+}
+
+function getActionClassName(toast: ToastType, index: number) {
+  if (toast.variant === "error" && index === 0) {
+    return "bg-alert text-alert-foreground hover:bg-alert/90";
+  }
+
+  if (index === 0) {
+    return "bg-primary text-primary-foreground hover:bg-primary/90";
+  }
+
+  return "border-border bg-card text-foreground hover:bg-accent border";
+}
+
+function getProgress(toast: ToastType) {
+  if (toast.progress !== undefined) {
+    return toast.progress;
+  }
+
+  if (!toast.downloads?.length) {
+    return null;
+  }
+
+  const total = toast.downloads.reduce(
+    (sum, download) => sum + download.progress,
+    0,
+  );
+
+  return total / toast.downloads.length;
+}
+
+function ProgressPill({ progress }: { progress: number }) {
+  return (
+    <span className="bg-muted text-muted-foreground rounded-full px-2.5 py-1.5 text-xs font-medium whitespace-nowrap">
+      {Math.round(progress)}%
+    </span>
   );
 }

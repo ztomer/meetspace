@@ -69,19 +69,19 @@ export function CalendarSelection({
       >
         {isLoading ? (
           <>
-            <Loader2Icon className="text-muted-foreground/60 mb-2 size-6 animate-spin" />
+            <Loader2Icon className="text-muted-foreground/70 mb-2 size-6 animate-spin" />
             <p className="text-muted-foreground text-xs">Loading calendars…</p>
           </>
         ) : (
           <>
-            <CalendarOffIcon className="text-muted-foreground/60 mb-2 size-6" />
+            <CalendarOffIcon className="text-muted-foreground/70 mb-2 size-6" />
             <div className="text-muted-foreground flex items-center gap-1 text-xs">
               <p>No calendars found</p>
               {onRefresh ? (
                 <button
                   type="button"
                   onClick={onRefresh}
-                  className="text-muted-foreground hover:bg-muted hover:text-foreground rounded p-1 transition-colors"
+                  className="text-muted-foreground hover:bg-accent hover:text-muted-foreground rounded p-1 transition-colors"
                   aria-label="Refresh calendars"
                 >
                   <RefreshCwIcon className="size-3" />
@@ -163,7 +163,7 @@ function CalendarGroupAccordionHeader({
       onContextMenu={hasMenu ? showContextMenu : undefined}
       className={cn([
         "group -mx-2 flex items-center gap-1 rounded-md px-2",
-        !disableHoverTone && "hover:bg-muted",
+        !disableHoverTone && "hover:bg-accent",
       ])}
     >
       <AccordionHeader className="max-w-full min-w-0">
@@ -217,7 +217,7 @@ function CalendarGroupMenuButton({
       className={cn([
         "text-muted-foreground shrink-0 rounded p-1 transition-colors",
         "opacity-0 group-hover:opacity-100 focus-visible:opacity-100",
-        "hover:bg-accent hover:text-foreground",
+        "hover:bg-accent hover:text-muted-foreground",
       ])}
       aria-label="Open calendar account actions"
     >
@@ -254,7 +254,12 @@ function CalendarToggleRow({
             : { borderColor: color }
         }
       >
-        {enabled && <CheckIcon className="size-3 text-white" strokeWidth={3} />}
+        {enabled && (
+          <CheckIcon
+            className="text-primary-foreground size-3"
+            strokeWidth={3}
+          />
+        )}
       </div>
       <span className="truncate text-sm">{calendar.title}</span>
     </button>

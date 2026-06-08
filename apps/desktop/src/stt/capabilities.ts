@@ -1,4 +1,4 @@
-import type { LocalModel } from "@hypr/plugin-local-stt";
+import type { LocalModel } from "@meetspace/plugin-local-stt";
 import {
   commands as listenerCommands,
   type TranscriptionMode,

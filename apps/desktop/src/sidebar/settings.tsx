@@ -145,8 +145,8 @@ export function SettingsNav() {
                       "flex w-full items-center gap-2 rounded-full px-3 py-2 text-left text-sm",
                       "transition-colors",
                       isSettingsItem && activeTab === item.id
-                        ? "bg-accent text-foreground font-medium"
-                        : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+                        ? "bg-sidebar-accent text-foreground font-medium"
+                        : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground",
                     ])}
                   >
                     <item.icon size={15} />

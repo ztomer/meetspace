@@ -25,7 +25,7 @@ export function TranscriptEmptyState({
       <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
         <AlertCircleIcon className="text-destructive h-8 w-8" />
         <div className="flex max-w-md flex-col gap-1">
-          <p className="text-foreground text-sm font-medium">
+          <p className="text-muted-foreground text-sm font-medium">
             Batch transcription failed
           </p>
           <p className="text-muted-foreground text-xs">{error}</p>

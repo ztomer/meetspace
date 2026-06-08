@@ -16,7 +16,7 @@ export function ConfigError({ status }: { status: LLMConnectionStatus }) {
 
   return (
     <div className="flex h-full min-h-[400px] flex-col items-center justify-center">
-      <p className="text-foreground mb-6 max-w-lg text-center text-sm">
+      <p className="text-muted-foreground mb-6 max-w-lg text-center text-sm">
         {message}
       </p>
       <Button

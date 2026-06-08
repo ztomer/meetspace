@@ -74,7 +74,7 @@ export function NewPersonForm({
           {name.trim() && (
             <button
               type="submit"
-              className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
+              className="text-muted-foreground hover:text-muted-foreground shrink-0 transition-colors"
               aria-label="Add person"
             >
               <CornerDownLeft className="size-4" />

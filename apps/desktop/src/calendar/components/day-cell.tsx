@@ -95,8 +95,8 @@ export function DayCell({
   return (
     <div
       className={cn([
-        "border-border border-r border-b",
-        "flex min-w-0 flex-col p-1.5",
+        "border-r-border border-b-border border-r border-b",
+        "flex min-w-0 flex-col p-1.5 select-none",
         (day.getDay() === 0 || day.getDay() === 6) && "bg-muted",
       ])}
     >
@@ -105,7 +105,7 @@ export function DayCell({
           className={cn([
             "mb-1 flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium",
             today && "bg-primary text-primary-foreground",
-            !today && !isCurrentMonth && "text-muted-foreground/60",
+            !today && !isCurrentMonth && "text-muted-foreground/70",
             !today &&
               isCurrentMonth &&
               (day.getDay() === 0 || day.getDay() === 6) &&

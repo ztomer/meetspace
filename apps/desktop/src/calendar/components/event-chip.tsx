@@ -111,7 +111,7 @@ export function EventChip({ eventId }: { eventId: string }) {
         {isAllDay ? (
           <button
             className={cn([
-              "w-full truncate rounded px-1.5 py-0.5 text-left text-xs leading-tight text-white",
+              "text-primary-foreground w-full truncate rounded px-1.5 py-0.5 text-left text-xs leading-tight",
               "cursor-pointer select-none hover:opacity-80",
             ])}
             style={{ backgroundColor: color }}
@@ -181,7 +181,7 @@ function EventPopoverContent({ eventId }: { eventId: string }) {
       <EventDisplay event={event} />
       <Button
         size="sm"
-        className="bg-primary hover:bg-primary text-primary-foreground min-h-8 w-full"
+        className="bg-primary text-primary-foreground hover:bg-primary/90 min-h-8 w-full"
         onClick={handleOpen}
       >
         Open note

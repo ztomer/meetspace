@@ -40,7 +40,7 @@ export function EnhanceError({
   return (
     <div className="flex h-full min-h-[400px] flex-col items-center justify-center gap-4">
       <AlertCircleIcon size={24} className="text-muted-foreground" />
-      <p className="text-foreground max-w-lg text-center text-sm">
+      <p className="text-muted-foreground max-w-lg text-center text-sm">
         {error?.message || "Something went wrong while generating the summary."}
       </p>
       <Button

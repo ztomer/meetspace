@@ -132,7 +132,7 @@ function WebTemplatePreview({
               size="sm"
               variant="ghost"
               onClick={() => onSetDefault(nextTemplate)}
-              className="text-muted-foreground hover:text-foreground shrink-0"
+              className="text-muted-foreground shrink-0 hover:text-black"
             >
               Set as default
             </Button>
@@ -155,7 +155,7 @@ function WebTemplatePreview({
                   variant="ghost"
                   className={cn([
                     "text-muted-foreground hover:text-foreground",
-                    actionsOpen && "bg-muted text-foreground hover:bg-muted",
+                    actionsOpen && "bg-muted text-foreground hover:bg-accent",
                   ])}
                   aria-label="Template actions"
                 >

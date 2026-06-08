@@ -48,7 +48,7 @@ export const ToolEditSummary = defineTool({
         <div className="space-y-2">
           <ToolCardFooterError text={parsed.message ?? "Unknown error"} />
           {parsed.candidates && parsed.candidates.length > 0 ? (
-            <div className="border-border bg-muted text-foreground space-y-1 rounded-md border p-2 text-[12px]">
+            <div className="border-border bg-muted text-muted-foreground space-y-1 rounded-md border p-2 text-[12px]">
               {parsed.candidates.map((candidate) => (
                 <div key={candidate.enhancedNoteId}>
                   {candidate.title} ({candidate.enhancedNoteId})

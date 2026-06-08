@@ -104,7 +104,7 @@ export function GitHubTodoProviderContent({
           <button
             type="button"
             onClick={upgradeToPro}
-            className="hover:text-foreground underline transition-colors"
+            className="hover:text-muted-foreground underline transition-colors"
           >
             Upgrade for private repos.
           </button>
@@ -119,7 +119,7 @@ export function GitHubTodoProviderContent({
                 "todo",
               )
             }
-            className="hover:text-foreground underline transition-colors"
+            className="hover:text-muted-foreground underline transition-colors"
           >
             Connect GitHub for private repos.
           </button>
@@ -134,7 +134,7 @@ export function GitHubTodoProviderContent({
                 "todo",
               )
             }
-            className="hover:text-foreground underline transition-colors"
+            className="hover:text-muted-foreground underline transition-colors"
           >
             Disconnect private repo access.
           </button>
@@ -143,7 +143,7 @@ export function GitHubTodoProviderContent({
 
       {hasRepository && !showAddInput ? (
         <div className="flex items-center gap-2">
-          <span className="text-foreground text-sm">
+          <span className="text-muted-foreground text-sm">
             {normalizedRepository}
           </span>
           <button
@@ -154,14 +154,14 @@ export function GitHubTodoProviderContent({
                 null,
               )
             }
-            className="text-muted-foreground hover:text-foreground transition-colors"
+            className="text-muted-foreground hover:text-muted-foreground transition-colors"
           >
             <ExternalLinkIcon className="size-3.5" />
           </button>
           <button
             type="button"
             onClick={() => setRepository("")}
-            className="text-muted-foreground hover:text-foreground transition-colors"
+            className="text-muted-foreground hover:text-muted-foreground transition-colors"
           >
             <XIcon className="size-3.5" />
           </button>
@@ -224,8 +224,8 @@ export function GitHubTodoProviderContent({
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => handleSelect(repo)}
                 className={cn([
-                  "text-foreground flex w-full items-center px-3 py-1.5 text-left text-sm",
-                  "hover:bg-muted transition-colors",
+                  "text-muted-foreground flex w-full items-center px-3 py-1.5 text-left text-sm",
+                  "hover:bg-accent transition-colors",
                 ])}
               >
                 {repo}

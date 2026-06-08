@@ -7,8 +7,8 @@ import {
   endOfWeek,
   format,
   isSameMonth,
-  startOfDay,
   startOfMonth,
+  startOfDay,
   startOfWeek,
   subMonths,
 } from "date-fns";
@@ -16,7 +16,10 @@ import { ChevronLeftIcon, ChevronRightIcon, RefreshCwIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@meetspace/ui/components/ui/button";
-import { ButtonGroup } from "@meetspace/ui/components/ui/button-group";
+import {
+  ButtonGroup,
+  ButtonGroupSeparator,
+} from "@meetspace/ui/components/ui/button-group";
 import { Spinner } from "@meetspace/ui/components/ui/spinner";
 import {
   Tooltip,
@@ -47,6 +50,8 @@ const VIEW_BREAKPOINTS = [
   { minWidth: 0, cols: 1 },
 ] as const;
 
+const COMPACT_SCROLL_PAST_DAYS = 42;
+const COMPACT_SCROLL_FUTURE_DAYS = 42;
 const VISIBLE_RANGE_SYNC_QUERY_KEY = "calendar-visible-range-sync";
 const VISIBLE_RANGE_SYNC_STALE_MS = 60 * 1000;
 
@@ -77,8 +82,13 @@ export function CalendarView() {
   const weekStartsOn = useWeekStartsOn();
   const weekOpts = useMemo(() => ({ weekStartsOn }), [weekStartsOn]);
   const [currentMonth, setCurrentMonth] = useState(now);
-  const [weekStart, setWeekStart] = useState(() => startOfWeek(now, weekOpts));
+  const [visibleStart, setVisibleStart] = useState(() => startOfDay(now));
+  const [compactVisibleStart, setCompactVisibleStart] = useState(() =>
+    startOfDay(now),
+  );
   const containerRef = useRef<HTMLDivElement>(null);
+  const compactScrollRef = useRef<HTMLDivElement>(null);
+  const compactBaseRef = useRef(startOfDay(now));
   const cols = useVisibleCols(containerRef);
   const calendarData = useCalendarData();
   const enabledCalendars = useEnabledCalendars();
@@ -89,26 +99,38 @@ export function CalendarView() {
 
   const isMonthView = cols === 7;
 
+  const advanceCompact = useCallback(
+    (direction: -1 | 1) => {
+      const next = addDays(compactBaseRef.current, direction * cols);
+      compactBaseRef.current = next;
+      setVisibleStart(next);
+    },
+    [cols],
+  );
+
   const goToPrev = useCallback(() => {
     if (isMonthView) {
       setCurrentMonth((m) => subMonths(m, 1));
     } else {
-      setWeekStart((d) => addDays(d, -cols));
+      advanceCompact(-1);
     }
-  }, [isMonthView, cols]);
+  }, [isMonthView, advanceCompact]);
 
   const goToNext = useCallback(() => {
     if (isMonthView) {
       setCurrentMonth((m) => addMonths(m, 1));
     } else {
-      setWeekStart((d) => addDays(d, cols));
+      advanceCompact(1);
     }
-  }, [isMonthView, cols]);
+  }, [isMonthView, advanceCompact]);
 
   const goToToday = useCallback(() => {
+    const todayStart = startOfDay(now);
+    compactBaseRef.current = todayStart;
     setCurrentMonth(now);
-    setWeekStart(startOfWeek(now, weekOpts));
-  }, [now, weekOpts]);
+    setVisibleStart(todayStart);
+    setCompactVisibleStart(todayStart);
+  }, [now]);
 
   const days = useMemo(() => {
     if (isMonthView) {
@@ -120,10 +142,10 @@ export function CalendarView() {
     }
 
     return eachDayOfInterval({
-      start: weekStart,
-      end: addDays(weekStart, cols - 1),
+      start: addDays(visibleStart, -COMPACT_SCROLL_PAST_DAYS),
+      end: addDays(visibleStart, COMPACT_SCROLL_FUTURE_DAYS - 1),
     });
-  }, [currentMonth, isMonthView, cols, weekStart, weekOpts]);
+  }, [currentMonth, isMonthView, visibleStart, weekOpts]);
 
   const visibleRange = useMemo<CalendarSyncRange | null>(() => {
     const firstDay = days[0];
@@ -147,52 +169,101 @@ export function CalendarView() {
 
   useVisibleRangeSync(visibleRange, enabledCalendarKey);
 
-  const visibleHeaders = useMemo(() => {
+  const visibleHeaders =
+    weekStartsOn === 1 ? WEEKDAY_HEADERS_MON : WEEKDAY_HEADERS_SUN;
+
+  useEffect(() => {
     if (isMonthView) {
-      return weekStartsOn === 1 ? WEEKDAY_HEADERS_MON : WEEKDAY_HEADERS_SUN;
+      return;
     }
-    return days.slice(0, cols).map((d) => format(d, "EEE"));
-  }, [isMonthView, days, cols, weekStartsOn]);
+
+    const el = compactScrollRef.current;
+    if (el) {
+      const dayWidth = el.clientWidth / cols;
+      el.scrollTo({ left: COMPACT_SCROLL_PAST_DAYS * dayWidth });
+    }
+    compactBaseRef.current = visibleStart;
+    setCompactVisibleStart(visibleStart);
+  }, [isMonthView, visibleStart, cols]);
+
+  const handleCompactScroll = useCallback(() => {
+    const el = compactScrollRef.current;
+    if (!el || cols <= 0) {
+      return;
+    }
+
+    const dayWidth = el.clientWidth / cols;
+    if (dayWidth <= 0) {
+      return;
+    }
+
+    const maxStartIndex = Math.max(0, days.length - cols);
+    const startIndex = Math.min(
+      maxStartIndex,
+      Math.max(0, Math.round(el.scrollLeft / dayWidth)),
+    );
+    const nextStart = startOfDay(addDays(days[0], startIndex));
+
+    setCompactVisibleStart((prev) => {
+      if (prev.getTime() === nextStart.getTime()) {
+        return prev;
+      }
+      compactBaseRef.current = nextStart;
+      return nextStart;
+    });
+  }, [cols, days]);
+
+  const compactContentWidth = `${(days.length / cols) * 100}%`;
 
   return (
     <div ref={containerRef} className="flex h-full flex-col overflow-hidden">
       <div
+        data-tauri-drag-region
         className={cn([
           "flex items-center justify-between",
-          "border-border h-12 border-b py-2 pr-1 pl-3",
+          "border-border h-12 border-b py-2 pr-3 pl-3 select-none",
         ])}
       >
         <div className="flex items-center gap-2">
           <h2 className="text-foreground text-sm font-semibold">
             {isMonthView
               ? format(currentMonth, "MMMM yyyy")
-              : days.length > 0
-                ? format(days[0], "MMMM yyyy")
-                : ""}
+              : format(compactVisibleStart, "MMMM yyyy")}
           </h2>
           <CalendarSyncHeaderControls />
         </div>
-        <ButtonGroup>
+        <ButtonGroup
+          data-tauri-drag-region="false"
+          className={cn([
+            "border-border h-8 overflow-hidden rounded-full border",
+            "bg-card shadow-xs",
+          ])}
+        >
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
-            className="shadow-none"
+            className="hover:bg-accent h-full w-10 rounded-none border-0 bg-transparent shadow-none"
             onClick={goToPrev}
           >
             <ChevronLeftIcon className="h-4 w-4" />
           </Button>
+          <ButtonGroupSeparator className="bg-accent" />
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
-            className="px-3 shadow-none"
+            className={cn([
+              "h-full rounded-none border-0",
+              "hover:bg-accent bg-transparent px-3 text-sm shadow-none",
+            ])}
             onClick={goToToday}
           >
             Today
           </Button>
+          <ButtonGroupSeparator className="bg-accent" />
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
-            className="shadow-none"
+            className="hover:bg-accent h-full w-10 rounded-none border-0 bg-transparent shadow-none"
             onClick={goToNext}
           >
             <ChevronRightIcon className="h-4 w-4" />
@@ -200,42 +271,87 @@ export function CalendarView() {
         </ButtonGroup>
       </div>
 
-      <div
-        className="border-border grid border-b"
-        style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-      >
-        {visibleHeaders.map((day, i) => (
+      {isMonthView ? (
+        <>
           <div
-            key={`${day}-${i}`}
-            className={cn([
-              "text-center text-xs font-medium",
-              "py-2",
-              day === "Sat" || day === "Sun"
-                ? "text-muted-foreground"
-                : "text-foreground",
-            ])}
+            className="border-border grid border-b"
+            style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
           >
-            {day}
+            {visibleHeaders.map((day, i) => (
+              <div
+                key={`${day}-${i}`}
+                className={cn([
+                  "text-center text-xs font-medium",
+                  "py-2",
+                  i < visibleHeaders.length - 1 && "border-r-border border-r",
+                  day === "Sat" || day === "Sun"
+                    ? "text-muted-foreground"
+                    : "text-foreground",
+                ])}
+              >
+                {day}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      <div
-        className={cn([
-          "grid flex-1 overflow-hidden",
-          isMonthView ? "auto-rows-fr" : "grid-rows-1",
-        ])}
-        style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-      >
-        {days.map((day) => (
-          <DayCell
-            key={day.toISOString()}
-            day={day}
-            isCurrentMonth={isMonthView ? isSameMonth(day, currentMonth) : true}
-            calendarData={calendarData}
-          />
-        ))}
-      </div>
+          <div
+            className="grid flex-1 auto-rows-fr overflow-hidden"
+            style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+          >
+            {days.map((day) => (
+              <DayCell
+                key={day.toISOString()}
+                day={day}
+                isCurrentMonth={isSameMonth(day, currentMonth)}
+                calendarData={calendarData}
+              />
+            ))}
+          </div>
+        </>
+      ) : (
+        <div
+          ref={compactScrollRef}
+          className={cn([
+            "scrollbar-hide min-h-0 flex-1 overflow-x-auto overflow-y-hidden",
+            "snap-x snap-mandatory overscroll-x-contain",
+          ])}
+          onScroll={handleCompactScroll}
+        >
+          <div
+            className="grid h-full min-w-full grid-rows-[auto_minmax(0,1fr)]"
+            style={{
+              width: compactContentWidth,
+              gridTemplateColumns: `repeat(${days.length}, minmax(0, 1fr))`,
+            }}
+          >
+            {days.map((day) => {
+              const label = format(day, "EEE");
+              return (
+                <div
+                  key={`header-${day.toISOString()}`}
+                  className={cn([
+                    "border-r-border border-b-border snap-start border-r border-b",
+                    "py-2 text-center text-xs font-medium",
+                    label === "Sat" || label === "Sun"
+                      ? "text-muted-foreground"
+                      : "text-foreground",
+                  ])}
+                >
+                  {label}
+                </div>
+              );
+            })}
+            {days.map((day) => (
+              <DayCell
+                key={day.toISOString()}
+                day={day}
+                isCurrentMonth={true}
+                calendarData={calendarData}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -319,6 +435,7 @@ function CalendarSyncHeaderControls() {
           variant="ghost"
           size="icon"
           className="size-6"
+          data-tauri-drag-region="false"
           onClick={handleRefresh}
         >
           <RefreshCwIcon className="size-3.5" />

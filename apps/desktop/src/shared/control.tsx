@@ -38,7 +38,7 @@ export const ErrorComponent: ErrorRouteComponent = ({ error }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
         >
-          <div className="border-border bg-background rounded-xl border p-6 shadow-xs">
+          <div className="border-border bg-card rounded-xl border p-6 shadow-xs">
             <div className="flex flex-col items-center gap-4 text-center">
               <motion.div
                 className="bg-destructive-bg flex h-12 w-12 items-center justify-center rounded-full"
@@ -93,7 +93,7 @@ export const NotFoundComponent: NotFoundRouteComponent = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
         >
-          <div className="border-border bg-background rounded-xl border p-6 shadow-xs">
+          <div className="border-border bg-card rounded-xl border p-6 shadow-xs">
             <div className="flex flex-col items-center gap-4 text-center">
               <motion.div
                 className="bg-muted flex h-12 w-12 items-center justify-center rounded-full"
@@ -110,7 +110,7 @@ export const NotFoundComponent: NotFoundRouteComponent = () => {
 
               <div className="flex flex-col gap-1.5">
                 <motion.span
-                  className="text-muted-foreground/60 block text-4xl font-bold"
+                  className="text-muted-foreground/70 block text-4xl font-bold"
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{

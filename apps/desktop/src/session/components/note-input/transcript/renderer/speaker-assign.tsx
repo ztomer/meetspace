@@ -62,7 +62,7 @@ export function SpeakerAssignPopover({
           type="button"
           className={cn([
             "-ml-1 cursor-pointer rounded-xs px-1",
-            "hover:bg-muted transition-colors",
+            "hover:bg-accent transition-colors",
           ])}
           style={{ color }}
         >
@@ -325,8 +325,8 @@ function ParticipantList({
           autoFocus
           type="search"
           className={cn([
-            "border-input bg-background h-8 w-full rounded-md border px-2 text-sm outline-hidden",
-            "placeholder:text-muted-foreground focus-visible:ring-ring focus-visible:ring-1",
+            "border-border bg-card h-8 w-full rounded-md border px-2 text-sm outline-hidden",
+            "placeholder:text-muted-foreground focus:border-border",
           ])}
           placeholder="Search contacts"
           value={query}
@@ -376,7 +376,10 @@ function ParticipantOptionButton({
   return (
     <button
       type="button"
-      className={cn(["w-full px-3 py-1.5 text-left text-sm", "hover:bg-muted"])}
+      className={cn([
+        "w-full px-3 py-1.5 text-left text-sm",
+        "hover:bg-accent",
+      ])}
       onClick={() => onSelect(option)}
     >
       <span className="block truncate">

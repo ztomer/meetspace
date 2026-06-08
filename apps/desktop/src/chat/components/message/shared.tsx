@@ -3,6 +3,8 @@ import { type ReactNode } from "react";
 
 import { cn } from "@meetspace/utils";
 
+import { useChatAppearance } from "~/chat/hooks/use-chat-appearance";
+
 export function MessageContainer({
   align = "start",
   children,
@@ -31,14 +33,22 @@ export function MessageBubble({
   withActionButton?: boolean;
   children: ReactNode;
 }) {
+  const { isDarkAppearance } = useChatAppearance();
+
   return (
     <div
       className={cn([
         "select-text-deep text-sm",
         variant === "user" &&
-          "bg-info-bg text-foreground w-fit max-w-full rounded-2xl px-3 py-1 [&_p]:[text-wrap:wrap]",
-        variant === "assistant" && "text-foreground",
-        variant === "loading" && "text-foreground",
+          "w-fit max-w-full rounded-2xl bg-blue-100 px-3 py-1 text-neutral-800 [&_p]:[text-wrap:wrap]",
+        variant === "assistant" &&
+          (isDarkAppearance
+            ? "bg-primary-foreground/95 text-primary rounded-2xl px-3 py-1"
+            : "text-foreground"),
+        variant === "loading" &&
+          (isDarkAppearance
+            ? "bg-primary-foreground/95 text-primary w-fit rounded-2xl px-3 py-1"
+            : "text-foreground"),
         variant === "error" &&
           "border-destructive/30 bg-destructive-bg text-destructive rounded-2xl border px-3 py-1",
         withActionButton && "group relative",

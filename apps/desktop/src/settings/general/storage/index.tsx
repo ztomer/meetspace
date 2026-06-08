@@ -170,7 +170,7 @@ function AudioRetentionRow() {
         <span className="text-sm font-medium">Audio</span>
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-foreground truncate text-sm">
+        <p className="text-muted-foreground truncate text-sm">
           Save audio after meeting
         </p>
         <p className="text-muted-foreground text-xs">
@@ -178,7 +178,7 @@ function AudioRetentionRow() {
         </p>
       </div>
       <Select value={audioRetention} onValueChange={setAudioRetention}>
-        <SelectTrigger className="bg-background w-36 shadow-none focus:ring-0">
+        <SelectTrigger className="bg-card w-36 shadow-none focus:ring-0">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -280,12 +280,12 @@ function ChangeContentPathDialog({
               className={cn([
                 "flex items-center gap-3 rounded-lg border px-3 py-2",
                 isNewPathChosen && isNewPathEmpty === false
-                  ? "border-warning bg-muted"
+                  ? "bg-muted border-yellow-400"
                   : "border-foreground",
               ])}
             >
               <div className="min-w-0 flex-1">
-                <p className="text-foreground text-sm">
+                <p className="text-muted-foreground text-sm">
                   {selectedPath
                     ? displayPath(selectedPath, home)
                     : displayPath(currentPath, home)}
@@ -316,7 +316,7 @@ function ChangeContentPathDialog({
                   <button
                     key={vault.path}
                     onClick={() => selectPath(vault.path)}
-                    className="border-border bg-muted text-muted-foreground hover:bg-muted flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors"
+                    className="border-border bg-muted text-muted-foreground hover:bg-accent flex cursor-pointer items-center gap-2 rounded-full border px-3 py-2 text-left text-sm transition-colors"
                   >
                     <img
                       src="/assets/obsidian-icon.svg"

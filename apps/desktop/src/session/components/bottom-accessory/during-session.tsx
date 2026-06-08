@@ -360,7 +360,7 @@ function TranscriptSegmentRow({
       >
         <span className="min-w-0 truncate">{label}</span>
       </span>
-      <span className="text-foreground min-w-0 text-xs leading-5">
+      <span className="text-muted-foreground min-w-0 text-xs leading-5">
         {getSegmentText(segment)}
       </span>
     </div>

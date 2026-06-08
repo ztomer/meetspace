@@ -4,7 +4,7 @@ import type {
   SessionEvent,
   SessionKeyFactsStorage,
   SessionStorage,
-} from "@hypr/store";
+} from "@meetspace/store";
 
 import { buildPastSessionNotes } from "~/session/components/bottom-accessory/past-notes";
 import { DEFAULT_USER_ID } from "~/shared/utils";

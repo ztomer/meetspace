@@ -1,7 +1,8 @@
 import { parseImageMetadata } from "@meetspace/editor/node-views";
 import { cn } from "@meetspace/utils";
 
-const HEADING_SHARED = "text-foreground font-semibold text-sm mb-1 min-h-6";
+const HEADING_SHARED =
+  "text-muted-foreground font-semibold text-sm mb-1 min-h-6";
 const HEADING_WITH_MARGIN = "mt-4 first:mt-0";
 
 export const streamdownComponents = {

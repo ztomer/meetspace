@@ -190,7 +190,7 @@ export function OpenNoteDialog({
       >
         <div
           className={cn([
-            "border-border/80 bg-popover text-popover-foreground rounded-xl border",
+            "border-border/80 bg-background rounded-xl border",
             "shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]",
             "overflow-hidden",
           ])}
@@ -256,7 +256,7 @@ export function OpenNoteDialog({
                           onSelect={() => handleSelect(session.id)}
                           className={cn([
                             "flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5",
-                            "text-foreground text-sm",
+                            "text-muted-foreground text-sm",
                             "data-[selected=true]:bg-accent/60",
                             "transition-colors",
                           ])}
@@ -288,7 +288,7 @@ export function OpenNoteDialog({
                           onSelect={() => handleSelect(session.id)}
                           className={cn([
                             "flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5",
-                            "text-foreground text-sm",
+                            "text-muted-foreground text-sm",
                             "data-[selected=true]:bg-accent/60",
                             "transition-colors",
                           ])}

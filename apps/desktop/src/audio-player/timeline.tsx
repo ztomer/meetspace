@@ -100,8 +100,8 @@ export function Timeline() {
           className={cn([
             "flex items-center justify-center",
             "h-7 w-7 rounded-full",
-            "border-border bg-background border",
-            "hover:bg-muted transition-all hover:scale-110",
+            "border-border bg-card border",
+            "hover:bg-accent transition-all hover:scale-110",
             "shrink-0 shadow-xs select-none",
           ])}
         >
@@ -129,9 +129,9 @@ export function Timeline() {
                 className={cn([
                   "flex items-center justify-center",
                   "h-6 rounded-md px-1.5",
-                  "border-border bg-background border",
-                  "hover:bg-muted transition-colors",
-                  "text-foreground font-mono text-xs select-none",
+                  "border-border bg-card border",
+                  "hover:bg-accent transition-colors",
+                  "text-muted-foreground font-mono text-xs select-none",
                   "shadow-xs",
                 ])}
               >
@@ -141,7 +141,7 @@ export function Timeline() {
                 <div
                   className={cn([
                     "absolute right-0 bottom-full mb-1",
-                    "border-border bg-background rounded-lg border shadow-md",
+                    "border-border bg-card rounded-lg border shadow-md",
                     "z-50 py-1",
                   ])}
                 >
@@ -154,7 +154,7 @@ export function Timeline() {
                       }}
                       className={cn([
                         "block w-full px-3 py-1 text-left font-mono text-xs select-none",
-                        "hover:bg-muted transition-colors",
+                        "hover:bg-accent transition-colors",
                         rate === playbackRate
                           ? "text-foreground font-semibold"
                           : "text-muted-foreground",

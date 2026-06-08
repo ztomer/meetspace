@@ -75,11 +75,16 @@ function Checkbox({ checked }: { checked: boolean }) {
       className={cn([
         "flex size-5 shrink-0 items-center justify-center rounded-md border-2",
         checked
-          ? "border-border bg-muted-foreground/40"
-          : "border-border bg-background",
+          ? "border-muted-foreground bg-muted-foreground"
+          : "border-border bg-card",
       ])}
     >
-      {checked && <CheckIcon className="size-3.5 text-white" strokeWidth={3} />}
+      {checked && (
+        <CheckIcon
+          className="text-primary-foreground size-3.5"
+          strokeWidth={3}
+        />
+      )}
     </span>
   );
 }
@@ -135,7 +140,7 @@ export const AppLinkView = forwardRef<HTMLSpanElement, NodeViewComponentProps>(
           }}
           className={cn([
             "inline-flex max-w-full items-center gap-2.5 rounded-lg px-2 py-1 text-left align-middle",
-            "hover:bg-muted transition-colors",
+            "hover:bg-accent transition-colors",
           ])}
         >
           {showCheckbox ? (

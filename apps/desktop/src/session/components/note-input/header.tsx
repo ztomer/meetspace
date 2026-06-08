@@ -304,7 +304,7 @@ function HeaderTabEnhanced({
             className="w-72"
           >
             <AppFloatingPanel className="flex flex-col gap-2 p-3">
-              <p className="text-foreground text-xs leading-5">
+              <p className="text-muted-foreground text-xs leading-5">
                 <span className="text-foreground font-medium">
                   {templateTitle}
                 </span>{" "}
@@ -434,9 +434,9 @@ function HeaderTabEnhanced({
         "group relative inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded-xs transition-colors",
         isError
           ? [
-              "text-destructive hover:bg-destructive-bg hover:text-foreground focus-visible:bg-destructive-bg focus-visible:text-foreground",
+              "hover:text-foreground focus-visible:text-foreground text-red-600 hover:bg-red-50 focus-visible:bg-red-50",
             ]
-          : ["hover:bg-accent focus-visible:bg-accent"],
+          : ["hover:bg-accent focus-visible:bg-muted"],
       ])}
     >
       {isError && (
@@ -943,7 +943,7 @@ function CreateOtherFormatButton({
             <div className="border-border border-b py-2">
               <div
                 className={cn([
-                  "bg-background flex h-9 items-center gap-2 rounded-md px-3",
+                  "bg-card flex h-9 items-center gap-2 rounded-md px-3",
                 ])}
               >
                 <SearchIcon className="text-muted-foreground h-4 w-4" />
@@ -960,7 +960,7 @@ function CreateOtherFormatButton({
                 {search && (
                   <button
                     onClick={() => setSearch("")}
-                    className="hover:bg-muted rounded-xs p-0.5"
+                    className="hover:bg-accent rounded-xs p-0.5"
                   >
                     <XIcon className="text-muted-foreground h-3 w-3" />
                   </button>
@@ -1020,7 +1020,7 @@ function CreateOtherFormatButton({
             onClick={handleSeeAllTemplates}
             className={cn([
               "flex h-7 w-full items-center justify-center gap-1 rounded-lg px-3 text-xs font-medium",
-              "text-muted-foreground hover:bg-muted hover:text-foreground transition-colors",
+              "text-muted-foreground hover:bg-accent hover:text-foreground transition-colors",
             ])}
           >
             See all templates
@@ -1473,7 +1473,7 @@ function TemplateResultButton({
     <button
       ref={buttonRef}
       className={cn([
-        "hover:bg-muted focus:bg-muted w-full rounded-md px-3 py-2 text-left transition-colors focus:outline-hidden",
+        "hover:bg-accent focus:bg-muted w-full rounded-md px-3 py-2 text-left transition-colors focus:outline-hidden",
         "flex flex-col gap-0.5",
       ])}
       onClick={onClick}

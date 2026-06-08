@@ -298,35 +298,7 @@ export const generalSchema = z.object({
   on_device_transcription_mode: z.string().default("realtime"),
   timezone: z.string().optional(),
   week_start: z.string().optional(),
-  obsidian_vault_path: z.string().optional(),
-  obsidian_subfolder: z.string().default("Meetspace"),
-  obsidian_auto_export: z.boolean().default(false),
-  theme: z.enum(["system", "light", "dark"]).default("system"),
-  notion_token: z.string().optional(),
-  notion_database_id: z.string().optional(),
-  linear_api_key: z.string().optional(),
-  linear_team_id: z.string().optional(),
-  // OAuth — calendar integrations. Tokens persisted via tinybase for now
-  // (TODO: move to OS keychain when @tauri-apps/plugin-stronghold or similar lands).
-  google_client_id: z.string().optional(),
-  google_refresh_token: z.string().optional(),
-  google_access_token: z.string().optional(),
-  google_token_expires_at: z.number().optional(),
-  outlook_client_id: z.string().optional(),
-  outlook_refresh_token: z.string().optional(),
-  outlook_access_token: z.string().optional(),
-  outlook_token_expires_at: z.number().optional(),
-  // Phase 9 — local diarization. Off by default (per-session CPU cost).
-  diarize_auto: z.boolean().default(false),
-  // Phase 10.4 — JSON-encoded ordered list of CalendarProvider values.
-  // Higher index = lower priority. Same logical event coming from multiple
-  // providers shows the version from the highest-priority one. Default
-  // matches what most users expect on macOS where Apple Calendar already
-  // aggregates Google/Outlook accounts: prefer the native one to avoid
-  // double-counts.
-  calendar_provider_precedence: z
-    .string()
-    .default(JSON.stringify(["apple", "google", "outlook"])),
+  theme: z.enum(["light", "dark", "system"]).default("system"),
 });
 
 export const aiProviderSchema = z

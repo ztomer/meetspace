@@ -117,7 +117,7 @@ export const SessionNodeView = forwardRef<
         onClick={handleRowClick}
         className={cn([
           "group flex items-start rounded-md px-2 py-1 transition-colors",
-          "focus-within:bg-muted hover:bg-muted -mx-2",
+          "focus-within:bg-muted hover:bg-accent -mx-2",
           "cursor-pointer",
         ])}
       >

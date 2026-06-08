@@ -147,8 +147,8 @@ export function ModelCombobox({
           disabled={disabled || isLoadingModels}
           aria-expanded={open}
           className={cn([
-            "bg-background w-full justify-between font-normal shadow-none focus-visible:ring-0",
-            "rounded-md px-3",
+            "bg-card w-full justify-between font-normal shadow-none focus-visible:ring-0",
+            "rounded-full px-3",
           ])}
         >
           <span className="flex w-full min-w-0 items-center justify-between gap-2">

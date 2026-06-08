@@ -455,7 +455,7 @@ export function ExportModal({
       >
         <div
           className={cn([
-            "border-border/80 bg-popover text-popover-foreground rounded-xl border",
+            "border-border/80 bg-background rounded-xl border",
             "shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]",
             "flex flex-col gap-4 p-5 text-center",
           ])}
@@ -481,7 +481,7 @@ export function ExportModal({
                       name="export-format"
                       checked={format === f}
                       onChange={() => setFormat(f)}
-                      className="accent-stone-800"
+                      className="accent-primary"
                     />
                     {f === "md"
                       ? "Markdown"
@@ -511,7 +511,7 @@ export function ExportModal({
                       type="checkbox"
                       checked={checked}
                       onChange={(e) => setter(e.target.checked)}
-                      className="accent-stone-800"
+                      className="accent-primary"
                     />
                     {label}
                   </label>
@@ -525,7 +525,7 @@ export function ExportModal({
             disabled={
               isPending || isTranscriptPending || !hasAnyContentSelected
             }
-            className="border-border bg-primary hover:bg-primary text-primary-foreground h-10 w-full rounded-full border-2 text-sm font-medium shadow-[0_4px_14px_rgba(87,83,78,0.4)] transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50"
+            className="border-primary bg-primary text-primary-foreground hover:bg-primary/90 h-10 w-full rounded-full border-2 text-sm font-medium shadow-[0_4px_14px_rgba(87,83,78,0.4)] transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isPending
               ? "Exporting..."

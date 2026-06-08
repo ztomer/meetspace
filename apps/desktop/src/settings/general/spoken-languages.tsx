@@ -121,7 +121,7 @@ export function SpokenLanguagesView({
       <div className="relative">
         <div
           className={cn([
-            "border-border bg-background focus-within:border-border flex min-h-[38px] w-full flex-wrap items-center gap-1.5 rounded-lg border px-2 py-1.5",
+            "border-border bg-card focus-within:border-border flex min-h-[38px] w-full flex-wrap items-center gap-1.5 rounded-2xl border px-2 py-1.5",
             languageInputFocused && "border-border",
           ])}
           onClick={() =>
@@ -150,7 +150,7 @@ export function SpokenLanguagesView({
             </Badge>
           ))}
           {selectedLanguageCodes.length === 0 && (
-            <Search className="text-foreground size-4 shrink-0" />
+            <Search className="text-muted-foreground size-4 shrink-0" />
           )}
           <input
             id="language-search-input"
@@ -184,7 +184,7 @@ export function SpokenLanguagesView({
           <div
             id="language-options"
             role="listbox"
-            className="border-border bg-background absolute top-full right-0 left-0 z-10 mt-1 flex max-h-60 w-full flex-col overflow-hidden overflow-y-auto rounded-xs border shadow-md"
+            className="border-border bg-card absolute top-full right-0 left-0 z-10 mt-1 flex max-h-60 w-full flex-col overflow-hidden overflow-y-auto rounded-2xl border shadow-md"
           >
             {filteredLanguages.length > 0 ? (
               filteredLanguages.map((langCode, index) => (
@@ -205,7 +205,7 @@ export function SpokenLanguagesView({
                     "flex w-full items-center justify-between px-3 py-2 text-left text-sm transition-colors",
                     languageSelectedIndex === index
                       ? "bg-accent"
-                      : "hover:bg-muted",
+                      : "hover:bg-accent",
                   ])}
                 >
                   <span className="truncate font-medium">

@@ -16,6 +16,7 @@ import { getTemplateCopyTitle, type UserTemplate } from "./queries";
 import { useTemplateTab } from "./utils";
 
 import { useNativeContextMenu } from "~/shared/hooks/useNativeContextMenu";
+import { CustomSidebarHeader } from "~/sidebar/custom-sidebar-header";
 import { type Tab } from "~/store/zustand/tabs";
 
 type SortOption = "alphabetical" | "reverse-alphabetical";
@@ -292,52 +293,49 @@ export function TemplatesSidebarContent({
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
       <div>
-        <div className="flex h-12 items-center justify-between py-2 pr-1 pl-3">
-          <h3 className="font-sans text-sm font-medium">Templates</h3>
-          <div className="flex items-center">
-            {userTemplates.length > 1 && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="text-muted-foreground hover:text-foreground"
+        <CustomSidebarHeader title="Templates">
+          {userTemplates.length > 1 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="text-muted-foreground relative z-[60] hover:text-black"
+                >
+                  <ArrowDownUp size={16} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent variant="app" align="end">
+                <AppFloatingPanel className="overflow-hidden p-1">
+                  <DropdownMenuItem
+                    onClick={() => setSortOption("alphabetical")}
                   >
-                    <ArrowDownUp size={16} />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent variant="app" align="end">
-                  <AppFloatingPanel className="overflow-hidden p-1">
-                    <DropdownMenuItem
-                      onClick={() => setSortOption("alphabetical")}
-                    >
-                      A to Z
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setSortOption("reverse-alphabetical")}
-                    >
-                      Z to A
-                    </DropdownMenuItem>
-                  </AppFloatingPanel>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+                    A to Z
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setSortOption("reverse-alphabetical")}
+                  >
+                    Z to A
+                  </DropdownMenuItem>
+                </AppFloatingPanel>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
 
-            <Button
-              size="icon"
-              variant="ghost"
-              className="text-muted-foreground hover:text-foreground"
-              onClick={createDefaultTemplate}
-            >
-              <Plus size={16} />
-            </Button>
-          </div>
-        </div>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="text-muted-foreground relative z-[60] hover:text-black"
+            onClick={createDefaultTemplate}
+          >
+            <Plus size={16} />
+          </Button>
+        </CustomSidebarHeader>
 
-        <div className="px-2 pb-2">
+        <div className="pb-2">
           <div
             className={cn([
-              "border-border bg-accent/50 flex h-8 shrink-0 items-center gap-2 rounded-lg border px-3",
+              "border-border bg-accent/50 flex h-8 w-full shrink-0 items-center gap-2 rounded-lg border px-3",
               "focus-within:bg-accent transition-colors",
             ])}
           >
@@ -379,7 +377,7 @@ export function TemplatesSidebarContent({
           <div className="text-muted-foreground px-3 py-8 text-center">
             <BookText
               size={32}
-              className="text-muted-foreground/60 mx-auto mb-2"
+              className="text-muted-foreground/70 mx-auto mb-2"
             />
             <p className="text-sm">
               {search ? "No templates found" : "No templates yet"}

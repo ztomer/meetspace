@@ -65,7 +65,7 @@ const TriggerInner = forwardRef<
       title={label}
       className={cn([
         "rounded-full",
-        "text-muted-foreground hover:text-foreground",
+        "text-muted-foreground hover:bg-accent hover:text-black",
         open && "bg-muted",
       ])}
     >
@@ -190,7 +190,7 @@ export function EventDisplay({
 
       {shouldShowLocation && (
         <>
-          <div className="text-foreground flex items-center gap-2 text-sm">
+          <div className="text-muted-foreground flex items-center gap-2 text-sm">
             <MapPinIcon size={16} className="text-muted-foreground shrink-0" />
             <span>{event.location}</span>
           </div>
@@ -200,7 +200,7 @@ export function EventDisplay({
       {event.meetingLink && (
         <>
           <div className="flex items-center justify-between gap-2">
-            <div className="text-foreground flex min-w-0 items-center gap-2 text-sm">
+            <div className="text-muted-foreground flex min-w-0 items-center gap-2 text-sm">
               <VideoIcon size={16} className="text-muted-foreground shrink-0" />
               <span className="truncate">
                 {meetingDomain || "Meeting link"}
@@ -219,7 +219,9 @@ export function EventDisplay({
       )}
 
       {event.startedAt && (
-        <div className="text-foreground text-sm">{formatEventDateTime()}</div>
+        <div className="text-muted-foreground text-sm">
+          {formatEventDateTime()}
+        </div>
       )}
 
       {children}
@@ -227,7 +229,7 @@ export function EventDisplay({
       {event.description && (
         <>
           <div className="bg-accent h-px" />
-          <div className="select-text-deep text-foreground max-h-40 overflow-y-auto text-sm break-words whitespace-pre-wrap">
+          <div className="select-text-deep text-muted-foreground max-h-40 overflow-y-auto text-sm break-words whitespace-pre-wrap">
             {renderDescriptionWithLinks(event.description)}
           </div>
         </>

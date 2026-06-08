@@ -96,7 +96,7 @@ export function ResourceView({ resource }: { resource: TaskResource }) {
               </h1>
               <button
                 type="button"
-                className="text-muted-foreground hover:bg-muted hover:text-muted-foreground shrink-0 rounded-md p-1.5 transition-colors"
+                className="text-muted-foreground hover:bg-accent hover:text-muted-foreground shrink-0 rounded-md p-1.5 transition-colors"
                 onClick={() => openerCommands.openUrl(url, null)}
                 title="Open on GitHub"
               >
@@ -167,7 +167,7 @@ export function ResourceView({ resource }: { resource: TaskResource }) {
           {issue.body ? (
             <div className="border-border border-t pt-4">
               <Streamdown
-                className="text-foreground mt-1 text-sm"
+                className="text-muted-foreground mt-1 text-sm"
                 components={streamdownComponents}
                 isAnimating={false}
                 rehypePlugins={rehypePlugins}
@@ -204,7 +204,7 @@ export function ResourceView({ resource }: { resource: TaskResource }) {
                           className="size-5 rounded-full"
                         />
                       ) : null}
-                      <span className="text-foreground font-medium">
+                      <span className="text-muted-foreground font-medium">
                         {comment.user?.login}
                       </span>
                       <span className="text-muted-foreground">
@@ -222,7 +222,7 @@ export function ResourceView({ resource }: { resource: TaskResource }) {
                     <div className="px-4 py-3">
                       {comment.body ? (
                         <Streamdown
-                          className="text-foreground mt-1 text-sm"
+                          className="text-muted-foreground mt-1 text-sm"
                           components={streamdownComponents}
                           isAnimating={false}
                           rehypePlugins={rehypePlugins}
