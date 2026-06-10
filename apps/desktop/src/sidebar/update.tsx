@@ -45,8 +45,8 @@ export function Update() {
       disabled={installing}
       className={cn([
         "rounded-full px-3",
-        "bg-linear-to-t from-stone-600 to-stone-500",
-        "hover:from-stone-500 hover:to-stone-400",
+        "from-primary/80 to-primary/70 bg-linear-to-t",
+        "hover:from-primary/70 hover:to-primary/60",
       ])}
     >
       {installing ? "Installing..." : "Install Update"}

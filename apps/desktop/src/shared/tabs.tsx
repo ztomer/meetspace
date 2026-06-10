@@ -39,20 +39,20 @@ const accentColors: Record<
 > = {
   neutral: {
     selected: [
-      "bg-neutral-200/50",
-      "hover:bg-neutral-200",
+      "bg-secondary/50",
+      "hover:bg-secondary",
       "text-black",
-      "border-stone-400",
+      "border-border",
     ],
     unselected: [
-      "bg-neutral-50",
-      "hover:bg-stone-100",
-      "text-neutral-500",
+      "bg-muted",
+      "hover:bg-accent",
+      "text-muted-foreground",
       "border-transparent",
     ],
     hover: {
-      selected: "text-neutral-700 hover:text-neutral-900",
-      unselected: "text-neutral-500 hover:text-neutral-700",
+      selected: "text-foreground hover:text-foreground",
+      unselected: "text-muted-foreground hover:text-foreground",
     },
   },
   red: {
@@ -411,7 +411,7 @@ export function TabItemBase({
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <AppFloatingPanel className="flex flex-col gap-2 p-3">
-            <p className="text-sm text-neutral-700">
+            <p className="text-foreground text-sm">
               Are you sure you want to close this tab? This will stop Meetspace
               from listening.
             </p>

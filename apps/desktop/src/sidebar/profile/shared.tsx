@@ -21,13 +21,13 @@ export function MenuItem({
         className={cn([
           "group flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg",
           "px-3 py-1.5",
-          "text-sm whitespace-nowrap text-neutral-700 dark:text-neutral-200",
-          "transition-colors hover:bg-neutral-100 dark:hover:bg-stone-800",
+          "text-foreground dark:text-muted-foreground/50 text-sm whitespace-nowrap",
+          "hover:bg-accent dark:hover:bg-accent transition-colors",
         ])}
         onClick={onClick}
       >
         <div className="flex items-center justify-start gap-2.5">
-          <Icon className="h-4 w-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
+          <Icon className="text-foreground dark:text-muted-foreground/50 h-4 w-4 shrink-0" />
           {label}
         </div>
         {badge &&
@@ -46,7 +46,9 @@ export function MenuItem({
             badge
           ))}
         {SuffixIcon && (
-          <SuffixIcon className={cn("h-4 w-4 shrink-0", "text-neutral-400")} />
+          <SuffixIcon
+            className={cn("h-4 w-4 shrink-0", "text-muted-foreground")}
+          />
         )}
       </button>
     </div>

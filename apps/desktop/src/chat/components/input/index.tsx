@@ -111,7 +111,7 @@ export function ChatMessageInput({
               <span
                 className={cn([
                   "chat-input-send-shortcut font-mono text-xs",
-                  !isSendDisabled && "text-stone-400",
+                  !isSendDisabled && "text-muted-foreground",
                 ])}
               >
                 ⌘ ↩

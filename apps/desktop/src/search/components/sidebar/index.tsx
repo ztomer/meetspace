@@ -35,7 +35,7 @@ export function SearchResults() {
   }, [selectedId]);
 
   return (
-    <div className={cn(["h-full rounded-xl bg-neutral-50"])}>
+    <div className={cn(["bg-muted h-full rounded-xl"])}>
       {empty ? (
         <SearchNoResults query={query} setQuery={setQuery} />
       ) : (
@@ -76,12 +76,12 @@ function SearchNoResults({
     <div className="flex h-full items-center justify-center">
       <div className="max-w-xs px-4 text-center">
         <div className="mb-3 flex justify-center">
-          <SearchXIcon className="h-10 w-10 text-neutral-300" />
+          <SearchXIcon className="text-muted-foreground/70 h-10 w-10" />
         </div>
-        <p className="text-sm font-medium text-neutral-700">
+        <p className="text-foreground text-sm font-medium">
           No results found for "{query}"
         </p>
-        <p className="mt-2 text-xs leading-relaxed text-neutral-500 underline">
+        <p className="text-muted-foreground mt-2 text-xs leading-relaxed underline">
           Help us improve search
         </p>
       </div>

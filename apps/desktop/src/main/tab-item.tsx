@@ -1,5 +1,3 @@
-import { TabItemEmpty } from "./empty";
-
 import { MainTabItem } from "~/shared/main/tab-item";
 import { type Tab } from "~/store/zustand/tabs";
 
@@ -26,21 +24,6 @@ export function ClassicMainTabItem({
   pendingCloseConfirmationTab?: Tab | null;
   setPendingCloseConfirmationTab?: (tab: Tab | null) => void;
 }) {
-  if (tab.type === "empty") {
-    return (
-      <TabItemEmpty
-        tab={tab}
-        tabIndex={tabIndex}
-        handleCloseThis={handleClose}
-        handleSelectThis={handleSelect}
-        handleCloseOthers={() => handleCloseOthersCallback(tab)}
-        handleCloseAll={handleCloseAll}
-        handlePinThis={() => handlePin(tab)}
-        handleUnpinThis={() => handleUnpin(tab)}
-      />
-    );
-  }
-
   return (
     <MainTabItem
       tab={tab}
