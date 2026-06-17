@@ -15,6 +15,9 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
+# Ensure rerere + generated-file merge driver are active before rebasing.
+bash scripts/setup-fork-git.sh >/dev/null
+
 UPSTREAM_REMOTE="${UPSTREAM_REMOTE:-origin}"
 UPSTREAM_BRANCH="${UPSTREAM_BRANCH:-main}"
 STABLE_TAG_PATTERN='^desktop_v[0-9]+\.[0-9]+\.[0-9]+$'
@@ -183,6 +186,9 @@ pnpm install --frozen-lockfile=false
 bold "==> Automatically rebranding legacy names and imports to Meetspace"
 python3 scripts/rebrand_sweep.py
 
+bold "==> Regenerating i18n catalogs (resolved via keep-ours during rebase)"
+pnpm -F desktop i18n:compile || yellow "i18n:compile failed; run it manually before release"
+
 bold "==> Formatting codebase with dprint"
 pnpm exec dprint fmt
 
@@ -197,6 +203,9 @@ pnpm -F desktop typecheck
 
 bold "==> cargo check"
 cargo check
+
+bold "==> Fork hygiene guard (conflict markers + un-rebranded names)"
+bash scripts/check-clean.sh
 
 green "==> Rebase verified against $TARGET."
 yellow "Inspect with: git log --oneline $TARGET..HEAD"
