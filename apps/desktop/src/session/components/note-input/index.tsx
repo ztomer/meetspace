@@ -104,13 +104,12 @@ export const NoteInput = forwardRef<
     }
   }, [currentTab, isMeetingInProgress]);
 
-  const handleViewReady = useCallback((editorView: EditorView) => {
-    setView(editorView);
-  }, []);
-
-  const handleViewDisposed = useCallback((editorView: EditorView) => {
-    setView((currentView) => (currentView === editorView ? null : currentView));
-  }, []);
+  useEffect(() => {
+    const editorView = internalEditorRef.current?.view ?? null;
+    if (editorView !== view) {
+      setView(editorView);
+    }
+  });
 
   useCaretNearBottom({
     view,
@@ -167,8 +166,6 @@ export const NoteInput = forwardRef<
               sessionId={sessionId}
               enhancedNoteId={currentTab.id}
               onNavigateToTitle={onNavigateToTitle}
-              onViewReady={handleViewReady}
-              onViewDisposed={handleViewDisposed}
             />
           )}
           {currentTab.type === "raw" && (
@@ -176,8 +173,6 @@ export const NoteInput = forwardRef<
               ref={internalEditorRef}
               sessionId={sessionId}
               onNavigateToTitle={onNavigateToTitle}
-              onViewReady={handleViewReady}
-              onViewDisposed={handleViewDisposed}
             />
           )}
         </div>
