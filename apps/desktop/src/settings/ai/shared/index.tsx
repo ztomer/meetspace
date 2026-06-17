@@ -34,7 +34,6 @@ import {
 import { useBillingAccess } from "~/auth/billing";
 import * as settings from "~/store/tinybase/store/settings";
 
-export * from "./meetspace-cloud-button";
 export * from "./model-combobox";
 
 type ProviderType = "stt" | "llm";

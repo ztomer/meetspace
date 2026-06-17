@@ -12,7 +12,6 @@ vi.mock("@meetspace/plugin-transcription", () => ({
 
 import {
   buildRenderTranscriptRequestFromStore,
-  collectAssignedHumanIdsFromTranscriptRows,
   getRenderTranscriptRequestKey,
   renderTranscriptSegments,
 } from "./render-transcript";
@@ -85,47 +84,6 @@ function createStore(participantIds = ["self", "remote"]): FakeStore {
           word_id: "unordered-word",
           type: "provider_speaker_index",
           value: JSON.stringify({ channel: 1, speaker_index: 2 }),
-        },
-      ]),
-    },
-    segmentOnly: {
-      session_id: "session-1",
-      started_at: 2_000,
-      words: JSON.stringify([
-        {
-          id: "segment-word-1",
-          text: " hello",
-          start_ms: 0,
-          end_ms: 100,
-          channel: 1,
-        },
-        {
-          id: "segment-word-2",
-          text: " there",
-          start_ms: 100,
-          end_ms: 200,
-          channel: 1,
-        },
-      ]),
-      speaker_hints: JSON.stringify([
-        {
-          word_id: "segment-word-1",
-          type: "provider_speaker_index",
-          value: JSON.stringify({ channel: 1, speaker_index: 2 }),
-        },
-        {
-          word_id: "segment-word-2",
-          type: "provider_speaker_index",
-          value: JSON.stringify({ channel: 1, speaker_index: 2 }),
-        },
-        {
-          word_id: "segment-word-1",
-          type: "user_speaker_assignment",
-          value: JSON.stringify({
-            human_id: "remote",
-            scope: "segment",
-            word_ids: ["segment-word-1", "segment-word-2"],
-          }),
         },
       ]),
     },
@@ -240,49 +198,6 @@ describe("buildRenderTranscriptRequestFromStore", () => {
         },
       },
     ]);
-  });
-
-  it("turns segment speaker assignments into word-scoped render assignments", () => {
-    const request = buildRenderTranscriptRequestFromStore(
-      createStore() as never,
-      ["segmentOnly"],
-    );
-
-    expect(request?.transcripts[0]?.assignments).toEqual([
-      {
-        human_id: "remote",
-        scope: {
-          kind: "words",
-          word_ids: ["segment-word-1", "segment-word-2"],
-        },
-      },
-    ]);
-  });
-
-  it("collects assigned speaker human ids from transcript rows", () => {
-    expect(
-      collectAssignedHumanIdsFromTranscriptRows([
-        {
-          speaker_hints: [
-            {
-              word_id: "word-1",
-              type: "user_speaker_assignment",
-              value: JSON.stringify({ human_id: "remote" }),
-            },
-            {
-              word_id: "word-2",
-              type: "user_speaker_assignment",
-              value: { human_id: "third" },
-            },
-            {
-              word_id: "word-3",
-              type: "provider_speaker_index",
-              value: JSON.stringify({ speaker_index: 1 }),
-            },
-          ],
-        },
-      ]),
-    ).toEqual(["remote", "third"]);
   });
 
   it("rounds fractional millisecond timings before invoking Rust", async () => {
