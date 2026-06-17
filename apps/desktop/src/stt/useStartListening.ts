@@ -4,7 +4,7 @@ import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 import type { TranscriptStorage } from "@meetspace/store";
 
 import { useListener } from "./contexts";
-import { getSessionKeywords } from "./useKeywords";
+import { useKeywords } from "./useKeywords";
 import {
   canRunBatchTranscription,
   isStoppedTranscriptionError,
@@ -12,9 +12,11 @@ import {
 } from "./useRunBatch";
 import { useSTTConnection } from "./useSTTConnection";
 
-import { useShell } from "~/contexts/shell";
-import { deleteProcessedAudioForRetention } from "~/services/audio-retention";
+import { useLanguageModel } from "~/ai/hooks";
+import { maybeDiarizeAndPersist } from "~/services/diarize-on-stop";
 import { getEnhancerService } from "~/services/enhancer";
+import { maybeResolveSpeakerNames } from "~/services/name-resolve-on-stop";
+import { maybeAutoExportToObsidian } from "~/services/obsidian-auto-export";
 import { getSessionEventById } from "~/session/utils";
 import { useConfigValue } from "~/shared/config";
 import { id } from "~/shared/utils";
@@ -28,24 +30,7 @@ import {
   getLiveTranscriptionConfig,
   getTranscriptionLanguages,
 } from "~/stt/capabilities";
-import {
-  createTranscriptAccumulator,
-  parseTranscriptWords,
-  type TranscriptAccumulator,
-} from "~/stt/utils";
-
-function hasTranscriptContent(
-  store: main.Store,
-  indexes: ReturnType<typeof main.UI.useIndexes> | undefined,
-  sessionId: string,
-) {
-  const transcriptIds =
-    indexes?.getSliceRowIds(main.INDEXES.transcriptBySession, sessionId) ?? [];
-
-  return transcriptIds.some(
-    (transcriptId) => parseTranscriptWords(store, transcriptId).length > 0,
-  );
-}
+import { applyLiveTranscriptDelta } from "~/stt/utils";
 
 export function getPostCaptureAction(
   details: {
@@ -68,23 +53,27 @@ export function getPostCaptureAction(
 export function useStartListening(sessionId: string) {
   const { user_id } = main.UI.useValues(main.STORE_ID);
   const store = main.UI.useStore(main.STORE_ID);
-  const indexes = main.UI.useIndexes(main.STORE_ID);
   const settingsStore = settings.UI.useStore(settings.STORE_ID);
+  const indexes = main.UI.useIndexes(main.STORE_ID);
 
   const aiLanguage = useConfigValue("ai_language");
   const spokenLanguages = useConfigValue("spoken_languages");
-  const dictionaryTerms = useConfigValue("personalization_dictionary_terms");
 
   const start = useListener((state) => state.start);
   const { conn } = useSTTConnection();
   const runBatch = useRunBatch(sessionId);
-  const { leftsidebar } = useShell();
-  const setLeftSidebarExpanded = leftsidebar.setExpanded;
 
+  const keywords = useKeywords(sessionId);
   const runBatchRef = useRef(runBatch);
   const canRunBatchRef = useRef(canRunBatchTranscription(conn));
   runBatchRef.current = runBatch;
   canRunBatchRef.current = canRunBatchTranscription(conn);
+
+  // Captured for the post-stop name-resolution pass. The LLM may be null
+  // (not configured) — the service no-ops in that case.
+  const languageModel = useLanguageModel();
+  const languageModelRef = useRef(languageModel);
+  languageModelRef.current = languageModel;
 
   const startListening = useCallback(async () => {
     if (!store) {
@@ -95,24 +84,8 @@ export function useStartListening(sessionId: string) {
     const startedAt = Date.now();
     const memoMd = store.getCell("sessions", sessionId, "raw_md");
     const createdAt = new Date().toISOString();
-    const hadTranscriptBeforeStart = hasTranscriptContent(
-      store as main.Store,
-      indexes ?? undefined,
-      sessionId,
-    );
-    const transcriptAccumulatorRef: {
-      current: TranscriptAccumulator | null;
-    } = { current: null };
-    const keywords = getSessionKeywords({
-      store,
-      sessionId,
-      dictionaryTerms,
-    });
 
     const onStopped: OnStoppedCallback = async (_sessionId, details) => {
-      transcriptAccumulatorRef.current?.dispose();
-      transcriptAccumulatorRef.current = null;
-
       const postCaptureAction = getPostCaptureAction(
         details,
         canRunBatchRef.current,
@@ -133,27 +106,30 @@ export function useStartListening(sessionId: string) {
         }
       }
 
-      if (postCaptureAction === "none") {
-        return;
+      if (postCaptureAction !== "none") {
+        getEnhancerService()?.queueAutoEnhanceIfSummaryEmpty(sessionId);
       }
 
-      const service = getEnhancerService();
-      const shouldRegenerateExistingSummary =
-        hadTranscriptBeforeStart &&
-        (transcriptId !== null || postCaptureAction === "batch_then_enhance");
-      if (shouldRegenerateExistingSummary) {
-        service?.resetEnhanceTasks(sessionId);
-        service?.queueAutoEnhance(sessionId);
-      } else {
-        service?.queueAutoEnhanceIfSummaryEmpty(sessionId);
-      }
-
-      if (settingsStore) {
-        await deleteProcessedAudioForRetention(
-          store as main.Store,
-          settingsStore as settings.Store,
+      if (store && settingsStore) {
+        // Chain: diarize -> resolve Speaker N -> human names via LLM ->
+        // Obsidian export, so the exported markdown reflects every post-pass.
+        // Each step swallows its own failures.
+        void maybeDiarizeAndPersist(
+          store,
+          settingsStore,
           sessionId,
-        );
+          details.audioPath ?? null,
+        )
+          .then(() =>
+            maybeResolveSpeakerNames(
+              store,
+              sessionId,
+              languageModelRef.current,
+            ),
+          )
+          .finally(() => {
+            void maybeAutoExportToObsidian(store, settingsStore, sessionId);
+          });
       }
     };
 
@@ -175,20 +151,10 @@ export function useStartListening(sessionId: string) {
         } satisfies TranscriptStorage;
 
         store.setRow("transcripts", transcriptId, transcriptRow);
-        transcriptAccumulatorRef.current = createTranscriptAccumulator(
-          store,
-          transcriptId,
-          { words: [], hints: [] },
-        );
       }
 
-      transcriptAccumulatorRef.current ??= createTranscriptAccumulator(
-        store,
-        transcriptId,
-      );
-
       store.transaction(() => {
-        transcriptAccumulatorRef.current?.applyLiveDelta(delta);
+        applyLiveTranscriptDelta(store, transcriptId!, delta);
       });
     };
 
@@ -240,16 +206,11 @@ export function useStartListening(sessionId: string) {
     );
 
     if (!started) {
-      transcriptAccumulatorRef.current?.dispose();
-      transcriptAccumulatorRef.current = null;
-
       if (transcriptId) {
         store.delRow("transcripts", transcriptId);
       }
       return;
     }
-
-    setLeftSidebarExpanded(false);
 
     void analyticsCommands.event({
       event: "session_started",
@@ -264,15 +225,14 @@ export function useStartListening(sessionId: string) {
   }, [
     aiLanguage,
     conn,
-    dictionaryTerms,
     store,
+    settingsStore,
     indexes,
     sessionId,
     start,
+    keywords,
     user_id,
     spokenLanguages,
-    setLeftSidebarExpanded,
-    settingsStore,
   ]);
 
   return startListening;

@@ -2,12 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 import type { TranscriptItem } from "@meetspace/plugin-export";
-import type { RenderTranscriptRequest } from "@meetspace/plugin-transcription";
 
-import { TRANSCRIPT_RENDER_CACHE_TIME_MS } from "./cache";
-import { useSessionTranscriptRenderData } from "./render-request-hooks";
-
+import * as main from "~/store/tinybase/store/main";
 import {
+  buildRenderTranscriptRequestFromStore,
   getRenderTranscriptRequestKey,
   renderTranscriptSegments,
 } from "~/stt/render-transcript";
@@ -18,7 +16,9 @@ export type TranscriptExportSegment = TranscriptItem & {
 };
 
 export async function buildTranscriptExportSegments(
-  request: RenderTranscriptRequest,
+  request: NonNullable<
+    ReturnType<typeof buildRenderTranscriptRequestFromStore>
+  >,
 ): Promise<TranscriptExportSegment[]> {
   const segments = await renderTranscriptSegments(request);
 
@@ -34,7 +34,36 @@ export function useTranscriptExportSegments(sessionId: string): {
   data: TranscriptExportSegment[];
   isLoading: boolean;
 } {
-  const { request } = useSessionTranscriptRenderData(sessionId);
+  const store = main.UI.useStore(main.STORE_ID);
+  const transcriptsTable = main.UI.useTable("transcripts", main.STORE_ID);
+  const participantMappingsTable = main.UI.useTable(
+    "mapping_session_participant",
+    main.STORE_ID,
+  );
+  const humansTable = main.UI.useTable("humans", main.STORE_ID);
+  const selfHumanId = main.UI.useValue("user_id", main.STORE_ID);
+
+  const transcriptIds =
+    main.UI.useSliceRowIds(
+      main.INDEXES.transcriptBySession,
+      sessionId,
+      main.STORE_ID,
+    ) ?? [];
+
+  const request = useMemo(() => {
+    if (!store || transcriptIds.length === 0) {
+      return null;
+    }
+
+    return buildRenderTranscriptRequestFromStore(store, transcriptIds);
+  }, [
+    store,
+    transcriptIds,
+    transcriptsTable,
+    participantMappingsTable,
+    humansTable,
+    selfHumanId,
+  ]);
   const requestKey = useMemo(
     () => getRenderTranscriptRequestKey(request),
     [request],
@@ -49,8 +78,7 @@ export function useTranscriptExportSegments(sessionId: string): {
       return buildTranscriptExportSegments(request);
     },
     enabled: !!request,
-    staleTime: Number.POSITIVE_INFINITY,
-    gcTime: TRANSCRIPT_RENDER_CACHE_TIME_MS,
+    gcTime: 0,
   });
 
   return { data, isLoading };

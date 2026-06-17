@@ -16,7 +16,6 @@ Default permissions for the plugin
 - `allow-window-restore-frame-animated`
 - `allow-window-expand-width`
 - `allow-window-restore-width`
-- `allow-set-show-app-in-dock`
 - `allow-floating-bar-show`
 - `allow-floating-bar-hide`
 - `allow-floating-bar-update`

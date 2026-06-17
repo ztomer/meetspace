@@ -1,33 +1,38 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-import { TRANSCRIPT_RENDER_CACHE_TIME_MS } from "../cache";
-import {
-  useTranscriptRenderData,
-  useTranscriptRowsRevision,
-} from "../render-request-hooks";
-
 import * as main from "~/store/tinybase/store/main";
+import type { Segment } from "~/stt/live-segment";
 import {
-  getMaxSpeakerNumberForParticipants,
-  type Segment,
-} from "~/stt/live-segment";
-import {
+  buildRenderTranscriptRequestFromStore,
   getRenderTranscriptRequestKey,
   renderTranscriptSegments,
 } from "~/stt/render-transcript";
 
-const emptyIds: string[] = [];
-
 export function useRenderedTranscriptSegments(transcriptId: string): Segment[] {
-  return useRenderedTranscriptData(transcriptId).segments;
-}
+  const store = main.UI.useStore(main.STORE_ID);
+  const transcriptsTable = main.UI.useTable("transcripts", main.STORE_ID);
+  const participantMappingsTable = main.UI.useTable(
+    "mapping_session_participant",
+    main.STORE_ID,
+  );
+  const humansTable = main.UI.useTable("humans", main.STORE_ID);
+  const selfHumanId = main.UI.useValue("user_id", main.STORE_ID);
 
-export function useRenderedTranscriptData(transcriptId: string): {
-  maxSpeakerNumber?: number;
-  segments: Segment[];
-} {
-  const { request } = useTranscriptRenderData(transcriptId);
+  const request = useMemo(() => {
+    if (!store) {
+      return null;
+    }
+
+    return buildRenderTranscriptRequestFromStore(store, [transcriptId]);
+  }, [
+    store,
+    transcriptId,
+    transcriptsTable,
+    participantMappingsTable,
+    humansTable,
+    selfHumanId,
+  ]);
   const requestKey = useMemo(
     () => getRenderTranscriptRequestKey(request),
     [request],
@@ -43,26 +48,15 @@ export function useRenderedTranscriptData(transcriptId: string): {
       return renderTranscriptSegments(request);
     },
     enabled: !!request,
-    staleTime: Number.POSITIVE_INFINITY,
-    gcTime: TRANSCRIPT_RENDER_CACHE_TIME_MS,
+    gcTime: 0,
   });
 
-  const maxSpeakerNumber = useMemo(
-    () =>
-      request
-        ? getMaxSpeakerNumberForParticipants(
-            request.participant_human_ids,
-            request.self_human_id,
-          )
-        : undefined,
-    [request],
-  );
-
-  return { maxSpeakerNumber, segments: data };
+  return data;
 }
 
 export function useTranscriptOffset(transcriptId: string): number {
   const store = main.UI.useStore(main.STORE_ID);
+  const transcriptsTable = main.UI.useTable("transcripts", main.STORE_ID);
   const sessionId = main.UI.useCell(
     "transcripts",
     transcriptId,
@@ -70,13 +64,11 @@ export function useTranscriptOffset(transcriptId: string): number {
     main.STORE_ID,
   );
 
-  const transcriptIds =
-    main.UI.useSliceRowIds(
-      main.INDEXES.transcriptBySession,
-      sessionId ?? "",
-      main.STORE_ID,
-    ) ?? emptyIds;
-  const transcriptRowsRevision = useTranscriptRowsRevision(transcriptIds);
+  const transcriptIds = main.UI.useSliceRowIds(
+    main.INDEXES.transcriptBySession,
+    sessionId ?? "",
+    main.STORE_ID,
+  );
 
   return useMemo(() => {
     if (!store) {
@@ -107,5 +99,5 @@ export function useTranscriptOffset(transcriptId: string): number {
     return Number.isFinite(earliestStartedAt)
       ? transcriptStartedAt - earliestStartedAt
       : 0;
-  }, [store, transcriptId, transcriptIds, transcriptRowsRevision]);
+  }, [store, transcriptId, transcriptIds, transcriptsTable]);
 }
