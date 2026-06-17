@@ -9,11 +9,16 @@ import {
   OpenAI,
   OpenRouter,
 } from "@lobehub/icons";
+import { ServerIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { env } from "~/env";
 import { MeetspaceProviderIcon } from "~/settings/ai/shared";
 import { type ProviderRequirement } from "~/settings/ai/shared/eligibility";
+import {
+  keepLocalProviders,
+  LOCAL_LLM_PROVIDER_IDS,
+} from "~/settings/ai/shared/local-providers";
 import { sortProviders } from "~/settings/ai/shared/sort-providers";
 
 type Provider = {
@@ -36,11 +41,29 @@ const _PROVIDERS = [
     displayName: "Meetspace",
     badge: "Recommended",
     icon: <MeetspaceProviderIcon />,
-    baseUrl: new URL("/llm", env.VITE_API_URL).toString(),
+    // Hidden cloud provider (allowlist drops it); guard so an unset API URL
+    // (e.g. in tests) doesn't crash module load.
+    baseUrl: env.VITE_API_URL
+      ? new URL("/llm", env.VITE_API_URL).toString()
+      : undefined,
     requirements: [
       { kind: "requires_auth" },
       { kind: "requires_entitlement", entitlement: "pro" },
     ],
+  },
+  {
+    id: "osaurus",
+    displayName: "Osaurus",
+    badge: "Recommended",
+    icon: <ServerIcon className="size-4" />,
+    baseUrl: "http://127.0.0.1:1337/v1",
+    requirements: [],
+    links: {
+      download: {
+        label: "Osaurus on GitHub",
+        url: "https://github.com/dinoki-ai/osaurus",
+      },
+    },
   },
   {
     id: "lmstudio",
@@ -172,5 +195,8 @@ const _PROVIDERS = [
   },
 ] as const satisfies readonly Provider[];
 
-export const PROVIDERS = sortProviders(_PROVIDERS);
+// Hide cloud providers: only the local-provider allowlist reaches the UI.
+export const PROVIDERS = sortProviders(
+  keepLocalProviders(_PROVIDERS, LOCAL_LLM_PROVIDER_IDS),
+);
 export type ProviderId = (typeof _PROVIDERS)[number]["id"];

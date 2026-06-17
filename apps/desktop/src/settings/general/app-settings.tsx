@@ -13,9 +13,7 @@ interface AppSettingsViewProps {
   autoStartScheduledMeetings: SettingItem;
   autoStopMeetings: SettingItem;
   floatingBar: SettingItem;
-  liveCaption: SettingItem;
-  showAppInDock: SettingItem;
-  showTrayIcon: SettingItem;
+  sidebarTimeline: SettingItem;
   telemetryConsent: SettingItem;
 }
 
@@ -24,9 +22,7 @@ export function AppSettingsView({
   autoStartScheduledMeetings,
   autoStopMeetings,
   floatingBar,
-  liveCaption,
-  showAppInDock,
-  showTrayIcon,
+  sidebarTimeline,
   telemetryConsent,
 }: AppSettingsViewProps) {
   return (
@@ -42,6 +38,16 @@ export function AppSettingsView({
             onChange={autostart.onChange}
           />
           <SettingRow
+            title={<Trans>Show timeline in sidebar</Trans>}
+            description={
+              <Trans>
+                Use the left sidebar timeline instead of the top timeline.
+              </Trans>
+            }
+            checked={sidebarTimeline.value}
+            onChange={sidebarTimeline.onChange}
+          />
+          <SettingRow
             title={<Trans>Share usage data</Trans>}
             description={
               <Trans>
@@ -50,22 +56,6 @@ export function AppSettingsView({
             }
             checked={telemetryConsent.value}
             onChange={telemetryConsent.onChange}
-          />
-          <SettingRow
-            title={<Trans>Show app in Dock</Trans>}
-            description={
-              <Trans>Show Meetspace in the Dock and app switcher.</Trans>
-            }
-            checked={showAppInDock.value}
-            onChange={showAppInDock.onChange}
-          />
-          <SettingRow
-            title={<Trans>Show tray icon</Trans>}
-            description={
-              <Trans>Keep Meetspace available from the menu bar.</Trans>
-            }
-            checked={showTrayIcon.value}
-            onChange={showTrayIcon.onChange}
           />
         </div>
       </section>
@@ -104,16 +94,6 @@ export function AppSettingsView({
             }
             checked={floatingBar.value}
             onChange={floatingBar.onChange}
-          />
-          <SettingRow
-            title={<Trans>Show live transcript overlay</Trans>}
-            description={
-              <Trans>
-                Show the live transcript overlay by default while listening.
-              </Trans>
-            }
-            checked={liveCaption.value}
-            onChange={liveCaption.onChange}
           />
         </div>
       </section>
