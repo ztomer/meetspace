@@ -1,99 +1,75 @@
-import { Trans, useLingui } from "@lingui/react/macro";
-import { SearchIcon } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
-import type { EventParticipant } from "@meetspace/store";
-import { Checkbox } from "@meetspace/ui/components/ui/checkbox";
 import {
-  AppFloatingPanel,
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@meetspace/ui/components/ui/popover";
+import { AppFloatingPanel } from "@meetspace/ui/components/ui/popover";
 import { cn } from "@meetspace/utils";
 
-import { useSessionEventParticipants } from "~/calendar/queries";
-import { createHuman, useHumans } from "~/contacts/queries";
-import {
-  addSessionParticipant,
-  useSession,
-  useSessionParticipants,
-} from "~/session/queries";
+import * as main from "~/store/tinybase/store/main";
 import type { Segment } from "~/stt/live-segment";
-import { assignTranscriptSpeaker, useTranscript } from "~/stt/queries";
-
-type AssignmentMode = "all" | "segment";
+import { upsertSpeakerAssignment } from "~/stt/utils";
 
 export function SpeakerAssignPopover({
   segment,
   transcriptId,
   color,
   label,
-  className,
-  onAssigned,
 }: {
   segment: Segment;
   transcriptId: string;
   color: string;
   label: string;
-  className?: string;
-  onAssigned?: (humanId: string) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const sessionId = useTranscript(transcriptId)?.sessionId;
+  const store = main.UI.useStore(main.STORE_ID);
+  const isSelf = segment.key.channel === "DirectMic";
 
-  const handleOpenChange = useCallback((nextOpen: boolean) => {
-    setOpen(nextOpen);
-  }, []);
+  const sessionId = main.UI.useCell(
+    "transcripts",
+    transcriptId,
+    "session_id",
+    main.STORE_ID,
+  ) as string | undefined;
 
   const handleAssign = useCallback(
-    (humanId: string, assignmentMode: AssignmentMode) => {
-      if (segment.words.length === 0) return;
+    (humanId: string) => {
+      if (!store || segment.words.length === 0) return;
       const anchorWordId = getAssignmentAnchorWordId(segment);
       if (!anchorWordId) return;
-      void assignTranscriptSpeaker({
+      upsertSpeakerAssignment(
+        store,
         transcriptId,
-        segmentKey: segment.key,
+        segment.key,
         humanId,
         anchorWordId,
-        mode: assignmentMode,
-        wordIds: getAssignmentWordIds(segment),
-      })
-        .then(() => {
-          onAssigned?.(humanId);
-          handleOpenChange(false);
-        })
-        .catch((error) => {
-          console.error("[transcript] failed to assign speaker", error);
-        });
+      );
+      setOpen(false);
     },
-    [handleOpenChange, onAssigned, transcriptId, segment],
+    [store, transcriptId, segment.key, segment.words],
   );
 
+  if (isSelf) {
+    return <span style={{ color }}>{label}</span>;
+  }
+
   return (
-    <Popover open={open} onOpenChange={handleOpenChange}>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
           type="button"
           className={cn([
-            "-my-0.5 cursor-pointer rounded-full py-0.5 pr-2",
-            "underline-offset-2 hover:underline focus-visible:underline",
-            open ? "underline" : null,
-            className,
+            "-ml-1 cursor-pointer rounded-xs px-1",
+            "hover:bg-accent transition-colors",
           ])}
           style={{ color }}
         >
           {label}
         </button>
       </PopoverTrigger>
-      <PopoverContent
-        variant="app"
-        side="right"
-        align="start"
-        sideOffset={8}
-        collisionPadding={16}
-        className="max-h-[min(var(--radix-popover-content-available-height),28rem)] w-80"
-      >
+      <PopoverContent variant="app" align="start" className="w-64">
         <ParticipantList sessionId={sessionId} onSelect={handleAssign} />
       </PopoverContent>
     </Popover>
@@ -109,32 +85,20 @@ export function getAssignmentAnchorWordId(
   return typeof word?.id === "string" ? word.id : undefined;
 }
 
-export function getAssignmentWordIds(segment: Segment): string[] {
-  return segment.words
-    .map((word) => word.id)
-    .filter(
-      (wordId): wordId is string =>
-        typeof wordId === "string" && wordId.length > 0,
-    );
-}
-
 export type SpeakerParticipantOption = {
   id: string;
   name: string;
   email?: string;
   isSessionParticipant: boolean;
   isNew?: boolean;
-  isCreateOption?: boolean;
 };
 
 export function buildSpeakerParticipantGroups({
   sessionParticipants,
-  eventParticipants = [],
   contacts,
   query,
 }: {
   sessionParticipants: SpeakerParticipantOption[];
-  eventParticipants?: SpeakerParticipantOption[];
   contacts: SpeakerParticipantOption[];
   query: string;
 }) {
@@ -149,39 +113,27 @@ export function buildSpeakerParticipantGroups({
     );
   };
 
-  const participantKeys = new Set<string>();
-  const participantOptions = [...sessionParticipants, ...eventParticipants]
-    .filter((option) => {
-      const keys = getSpeakerParticipantDedupeKeys(option);
-      if (keys.some((key) => participantKeys.has(key))) {
-        return false;
-      }
-
-      keys.forEach((key) => participantKeys.add(key));
-      return true;
-    })
-    .filter(matches);
+  const sessionParticipantIds = new Set(
+    sessionParticipants.map((option) => option.id),
+  );
+  const matchingSessionParticipants = sessionParticipants.filter(matches);
   const matchingContacts = contacts
-    .filter((option) =>
-      getSpeakerParticipantDedupeKeys(option).every(
-        (key) => !participantKeys.has(key),
-      ),
-    )
+    .filter((option) => !sessionParticipantIds.has(option.id))
     .filter(matches);
 
   return [
-    ...(participantOptions.length > 0
+    ...(matchingSessionParticipants.length > 0
       ? [
           {
-            title: "Participants",
-            options: participantOptions,
+            title: "Session participants",
+            options: matchingSessionParticipants,
           },
         ]
       : []),
     ...(matchingContacts.length > 0
       ? [
           {
-            title: "People",
+            title: "Contacts",
             options: matchingContacts,
           },
         ]
@@ -216,60 +168,7 @@ export function buildCreateSpeakerParticipantOption({
     name,
     isSessionParticipant: false,
     isNew: true,
-    isCreateOption: true,
   };
-}
-
-export function buildEventSpeakerParticipantOptions({
-  eventParticipants,
-  contacts,
-}: {
-  eventParticipants: EventParticipant[];
-  contacts: SpeakerParticipantOption[];
-}): SpeakerParticipantOption[] {
-  const contactByEmail = new Map(
-    contacts
-      .filter((contact) => contact.email)
-      .map((contact) => [contact.email!.toLowerCase(), contact]),
-  );
-  const contactByName = new Map(
-    contacts.map((contact) => [contact.name.toLowerCase(), contact]),
-  );
-
-  return eventParticipants
-    .map((participant, index): SpeakerParticipantOption | null => {
-      const name = (participant.name ?? "").trim();
-      const email = (participant.email ?? "").trim();
-      if (!name && !email) {
-        return null;
-      }
-
-      const contact = email
-        ? contactByEmail.get(email.toLowerCase())
-        : name
-          ? contactByName.get(name.toLowerCase())
-          : undefined;
-
-      if (contact) {
-        return {
-          ...contact,
-          name: name || contact.name,
-          email: email || contact.email,
-          isSessionParticipant: true,
-        };
-      }
-
-      const pendingId = email ? `event:${email}` : `event:${name}:${index}`;
-
-      return {
-        id: pendingId,
-        name: name || email,
-        email: email || undefined,
-        isSessionParticipant: true,
-        isNew: true,
-      };
-    })
-    .filter((option): option is SpeakerParticipantOption => option !== null);
 }
 
 function ParticipantList({
@@ -277,291 +176,216 @@ function ParticipantList({
   onSelect,
 }: {
   sessionId: string | undefined;
-  onSelect: (humanId: string, mode: AssignmentMode) => void;
+  onSelect: (humanId: string) => void;
 }) {
-  const { t } = useLingui();
-  const session = useSession(sessionId ?? "");
-  const participantRecords = useSessionParticipants(sessionId ?? "");
-  const humanRecords = useHumans();
-  const attachedEventParticipants = useSessionEventParticipants(
+  const queries = main.UI.useQueries(main.STORE_ID);
+  const store = main.UI.useStore(main.STORE_ID);
+  const userId = main.UI.useValue("user_id", main.STORE_ID) as
+    | string
+    | undefined;
+  const allHumanIds = main.UI.useRowIds("humans", main.STORE_ID) as string[];
+
+  const mappingIds = main.UI.useSliceRowIds(
+    main.INDEXES.sessionParticipantsBySession,
     sessionId ?? "",
-  );
+    main.STORE_ID,
+  ) as string[];
 
   const [query, setQuery] = useState("");
-  const [selectedOption, setSelectedOption] =
-    useState<SpeakerParticipantOption | null>(null);
-  const [applyToAllMatching, setApplyToAllMatching] = useState(true);
-  const [assigning, setAssigning] = useState(false);
 
-  const participants = useMemo(
-    () =>
-      participantRecords
-        .map((participant): SpeakerParticipantOption | null => {
-          if (!participant.humanId) return null;
-          const name = participant.name.trim();
-          const email = participant.email.trim();
-          return {
-            id: participant.humanId,
-            name: name || email || t`Unknown`,
-            email: email || undefined,
-            isSessionParticipant: true,
-          };
-        })
-        .filter((participant): participant is SpeakerParticipantOption =>
-          Boolean(participant),
-        ),
-    [participantRecords, t],
-  );
-
-  const contacts = useMemo(
-    () =>
-      humanRecords
-        .map((human): SpeakerParticipantOption | null => {
-          const name = human.name.trim();
-          const email = human.email.trim();
-          if (!name && !email) return null;
-
-          return {
-            id: human.id,
-            name: name || email,
-            email: email || undefined,
-            isSessionParticipant: false,
-          };
-        })
-        .filter((contact): contact is SpeakerParticipantOption =>
-          Boolean(contact),
-        ),
-    [humanRecords],
-  );
-
-  const eventParticipants = useMemo(
-    () =>
-      buildEventSpeakerParticipantOptions({
-        eventParticipants: attachedEventParticipants,
-        contacts,
-      }),
-    [attachedEventParticipants, contacts],
-  );
+  const participants = useMemo(() => {
+    if (!queries) return [];
+    return mappingIds
+      .map((mappingId): SpeakerParticipantOption | null => {
+        const result = queries.getResultRow(
+          main.QUERIES.sessionParticipantsWithDetails,
+          mappingId,
+        );
+        if (!result?.human_id) return null;
+        const name = ((result.human_name as string | undefined) || "").trim();
+        const email = ((result.human_email as string | undefined) || "").trim();
+        return {
+          id: result.human_id as string,
+          name: name || email || "Unknown",
+          email: email || undefined,
+          isSessionParticipant: true,
+        };
+      })
+      .filter((p): p is SpeakerParticipantOption => p !== null);
+  }, [mappingIds, queries]);
 
   const participantIds = useMemo(
     () => new Set(participants.map((participant) => participant.id)),
     [participants],
   );
 
+  const contacts = useMemo(() => {
+    if (!store) return [];
+
+    return allHumanIds
+      .map((humanId): SpeakerParticipantOption | null => {
+        const human = store.getRow("humans", humanId);
+        if (!human) {
+          return null;
+        }
+
+        const name = ((human.name as string | undefined) || "").trim();
+        const email = ((human.email as string | undefined) || "").trim();
+        if (!name && !email) {
+          return null;
+        }
+
+        return {
+          id: humanId,
+          name: name || email,
+          email: email || undefined,
+          isSessionParticipant: false,
+        };
+      })
+      .filter((p): p is SpeakerParticipantOption => p !== null);
+  }, [allHumanIds, store]);
+
   const groups = useMemo(
     () =>
       buildSpeakerParticipantGroups({
         sessionParticipants: participants,
-        eventParticipants,
         contacts,
         query,
       }),
-    [contacts, eventParticipants, participants, query],
+    [contacts, participants, query],
   );
 
   const createOption = useMemo(
     () =>
       buildCreateSpeakerParticipantOption({
         query,
-        existingOptions: [...participants, ...eventParticipants, ...contacts],
+        existingOptions: [...participants, ...contacts],
       }),
-    [contacts, eventParticipants, participants, query],
+    [contacts, participants, query],
   );
-  const hasPeopleGroup = groups.some((group) => group.title === "People");
 
   const linkHumanToSession = useCallback(
-    async (humanId: string) => {
-      if (!sessionId || participantIds.has(humanId)) {
+    (humanId: string) => {
+      if (!store || !sessionId || !userId || participantIds.has(humanId)) {
         return;
       }
 
-      await addSessionParticipant(sessionId, humanId);
-    },
-    [participantIds, sessionId],
-  );
-
-  const handleSelect = useCallback((option: SpeakerParticipantOption) => {
-    setSelectedOption(option);
-  }, []);
-
-  const getCurrentHumanId = useCallback(
-    async (option: SpeakerParticipantOption) => {
-      if (!option.isNew) {
-        return option.id;
-      }
-
-      const email = option.email?.trim().toLowerCase();
-      const name = option.name.trim().toLowerCase();
-      const existingContact = email
-        ? contacts.find(
-            (contact) => contact.email?.trim().toLowerCase() === email,
-          )
-        : contacts.find(
-            (contact) => contact.name.trim().toLowerCase() === name,
-          );
-
-      if (existingContact) return existingContact.id;
-      if (!session?.user_id) return null;
-
-      return createHuman({
-        ownerUserId: session.user_id,
-        name: option.name,
-        email: option.email,
+      store.setRow("mapping_session_participant", crypto.randomUUID(), {
+        user_id: userId,
+        session_id: sessionId,
+        human_id: humanId,
+        source: "manual",
       });
     },
-    [contacts, session?.user_id],
+    [participantIds, sessionId, store, userId],
   );
 
-  const handleConfirm = useCallback(() => {
-    if (!selectedOption) {
-      return;
-    }
+  const createHuman = useCallback(
+    (name: string) => {
+      if (!store || !userId) {
+        return null;
+      }
 
-    setAssigning(true);
-    void getCurrentHumanId(selectedOption)
-      .then(async (humanId) => {
-        if (!humanId) return;
-        await linkHumanToSession(humanId);
-        onSelect(humanId, applyToAllMatching ? "all" : "segment");
-      })
-      .catch((error) => {
-        console.error("[transcript] failed to prepare speaker", error);
-      })
-      .finally(() => setAssigning(false));
-  }, [
-    applyToAllMatching,
-    getCurrentHumanId,
-    linkHumanToSession,
-    onSelect,
-    selectedOption,
-  ]);
+      const humanId = crypto.randomUUID();
+      store.setRow("humans", humanId, {
+        user_id: userId,
+        created_at: new Date().toISOString(),
+        name,
+        email: "",
+        phone: "",
+        org_id: "",
+        job_title: "",
+        linkedin_username: "",
+        memo: "",
+        pinned: false,
+        pin_order: 0,
+      });
+      return humanId;
+    },
+    [store, userId],
+  );
+
+  const handleSelect = useCallback(
+    (option: SpeakerParticipantOption) => {
+      const humanId = option.isNew ? createHuman(option.name) : option.id;
+      if (!humanId) {
+        return;
+      }
+
+      linkHumanToSession(humanId);
+      onSelect(humanId);
+    },
+    [createHuman, linkHumanToSession, onSelect],
+  );
 
   return (
-    <div className="flex max-h-[min(var(--radix-popover-content-available-height),28rem)] flex-col gap-1 overflow-hidden">
-      <AppFloatingPanel className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        <div className="border-border border-b py-2">
-          <div className="flex h-9 items-center gap-2 px-3">
-            <SearchIcon size={16} className="text-muted-foreground shrink-0" />
-            <input
-              autoFocus
-              type="search"
-              className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-sm outline-hidden"
-              placeholder={t`Search people`}
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setSelectedOption(null);
-              }}
-            />
-          </div>
-        </div>
-        <div className="min-h-0 flex-1 overflow-auto py-1">
-          {groups.map((group) => (
-            <div key={group.title}>
-              <div className="text-muted-foreground px-3 pt-2 pb-1 text-[11px] font-medium uppercase">
-                {group.title === "Participants" ? (
-                  <Trans>Participants</Trans>
-                ) : (
-                  <Trans>People</Trans>
-                )}
-              </div>
-              {group.options.map((option) => (
-                <ParticipantOptionButton
-                  key={option.id}
-                  option={option}
-                  selected={selectedOption === option}
-                  onSelect={handleSelect}
-                />
-              ))}
-            </div>
-          ))}
+    <AppFloatingPanel className="overflow-hidden">
+      <div className="border-border border-b p-2">
+        <input
+          autoFocus
+          type="search"
+          className={cn([
+            "border-border bg-card h-8 w-full rounded-md border px-2 text-sm outline-hidden",
+            "placeholder:text-muted-foreground focus:border-border",
+          ])}
+          placeholder="Search contacts"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
+      <div className="max-h-56 overflow-auto py-1">
+        {createOption && (
+          <ParticipantOptionButton
+            option={createOption}
+            onSelect={handleSelect}
+          />
+        )}
 
-          {createOption && (
-            <div>
-              {!hasPeopleGroup && (
-                <div className="text-muted-foreground px-3 pt-2 pb-1 text-[11px] font-medium uppercase">
-                  <Trans>People</Trans>
-                </div>
-              )}
+        {groups.map((group) => (
+          <div key={group.title}>
+            <div className="text-muted-foreground px-3 pt-2 pb-1 text-[11px] font-medium uppercase">
+              {group.title}
+            </div>
+            {group.options.map((option) => (
               <ParticipantOptionButton
-                option={createOption}
-                selected={selectedOption === createOption}
+                key={option.id}
+                option={option}
                 onSelect={handleSelect}
               />
-            </div>
-          )}
+            ))}
+          </div>
+        ))}
 
-          {!createOption && groups.length === 0 && (
-            <p className="text-muted-foreground px-3 py-2 text-xs">
-              {query.trim() ? (
-                <Trans>No matching people</Trans>
-              ) : (
-                <Trans>No people</Trans>
-              )}
-            </p>
-          )}
-        </div>
-      </AppFloatingPanel>
-      <div className="flex items-center gap-3 pt-1 pb-3 pl-2">
-        <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2">
-          <Checkbox
-            checked={applyToAllMatching}
-            onCheckedChange={(value) => setApplyToAllMatching(value === true)}
-          />
-          <span className="text-muted-foreground text-sm whitespace-nowrap">
-            <Trans>Apply to all</Trans>
-          </span>
-        </label>
-        <button
-          type="button"
-          className={cn([
-            "bg-primary text-primary-foreground h-8 rounded-full px-3 text-xs font-medium",
-            "hover:bg-primary/90",
-            "disabled:pointer-events-none disabled:opacity-50",
-          ])}
-          disabled={!selectedOption || assigning}
-          onClick={handleConfirm}
-        >
-          <Trans>Confirm</Trans>
-        </button>
+        {!createOption && groups.length === 0 && (
+          <p className="text-muted-foreground px-3 py-2 text-xs">
+            {query.trim() ? "No matching contacts" : "No contacts"}
+          </p>
+        )}
       </div>
-    </div>
+    </AppFloatingPanel>
   );
-}
-
-function getSpeakerParticipantDedupeKeys(
-  option: SpeakerParticipantOption,
-): string[] {
-  return [
-    `id:${option.id}`,
-    option.email ? `email:${option.email.toLowerCase()}` : null,
-  ].filter((key): key is string => key !== null);
 }
 
 function ParticipantOptionButton({
   option,
-  selected,
   onSelect,
 }: {
   option: SpeakerParticipantOption;
-  selected: boolean;
   onSelect: (option: SpeakerParticipantOption) => void;
 }) {
-  const { t } = useLingui();
   return (
     <button
       type="button"
-      aria-pressed={selected}
       className={cn([
         "w-full px-3 py-1.5 text-left text-sm",
-        selected ? "bg-accent text-accent-foreground" : "hover:bg-accent",
+        "hover:bg-accent",
       ])}
       onClick={() => onSelect(option)}
     >
       <span className="block truncate">
-        {option.isCreateOption ? t`Add "${option.name}"` : option.name}
+        {option.isNew ? `Add "${option.name}"` : option.name}
       </span>
-      {option.email && (
+      {!option.isNew && option.email && (
         <span className="text-muted-foreground block truncate text-xs">
           {option.email}
         </span>
