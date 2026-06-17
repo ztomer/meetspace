@@ -30,6 +30,22 @@ When the rebase stops on a conflict, resolve it, `git add`, `git rebase
 (overwhelmingly the `hypr → meetspace` rename) is auto-resolved next time it
 recurs in a later commit or a future sync.
 
+### Resolution rule (when a conflict needs a human/agent decision)
+
+This fork takes upstream as-is, strips the commercial bits, and runs locally.
+So:
+
+- **UI / features / components / behavior → upstream wins.** Take the upstream
+  side; do not preserve the fork's older version of a feature.
+- **The fork's only deltas are:** (1) remove commercial/cloud — auth, billing,
+  Supabase, accounts, api/web/stripe apps, paid gating, cloud sync (keep those
+  removals / local stubs); (2) local-first defaults (local STT/LLM, no cloud
+  calls); (3) the `hypr/anarlog → meetspace` rebrand (applied last by
+  `rebrand_sweep.py`).
+
+In short: conflict in feature/UI code → take upstream; conflict in
+auth/billing/cloud → keep the fork's removal/stub.
+
 ### What is handled for you
 
 - **Generated/lock files** (`Cargo.lock`, `pnpm-lock.yaml`,
