@@ -7,17 +7,17 @@ import { useListener } from "./contexts";
 import { useKeywords } from "./useKeywords";
 import { useSTTConnection } from "./useSTTConnection";
 
-import { deleteProcessedAudioForRetention } from "~/services/audio-retention";
 import { useConfigValue } from "~/shared/config";
 import { id } from "~/shared/utils";
 import * as main from "~/store/tinybase/store/main";
-import * as settings from "~/store/tinybase/store/settings";
 import type { BatchPersistCallback } from "~/store/zustand/listener/transcript";
 import { getTranscriptionLanguages } from "~/stt/capabilities";
 import type { SpeakerHintWithId, WordWithId } from "~/stt/types";
 import {
-  createTranscriptAccumulator,
-  type TranscriptAccumulator,
+  parseTranscriptHints,
+  parseTranscriptWords,
+  updateTranscriptHints,
+  updateTranscriptWords,
 } from "~/stt/utils";
 
 type RunOptions = {
@@ -114,20 +114,10 @@ export function getSessionSpeakerCount(
   return humanIds.size > 1 ? humanIds.size : undefined;
 }
 
-async function saveCompletedBatchTranscript(): Promise<void> {
-  try {
-    const { save } = await import("~/store/tinybase/store/save");
-    await save();
-  } catch (error) {
-    console.error("[runBatch] failed to save completed transcript", error);
-  }
-}
-
 export const useRunBatch = (sessionId: string) => {
   const store = main.UI.useStore(main.STORE_ID);
   const indexes = main.UI.useIndexes(main.STORE_ID);
   const { user_id } = main.UI.useValues(main.STORE_ID);
-  const settingsStore = settings.UI.useStore(settings.STORE_ID);
 
   const startTranscription = useListener((state) => state.startTranscription);
   const { conn } = useSTTConnection();
@@ -166,10 +156,6 @@ export const useRunBatch = (sessionId: string) => {
 
       const handlePersist: BatchPersistCallback | undefined =
         options?.handlePersist;
-      let wroteDefaultTranscript = false;
-      const transcriptAccumulatorRef: {
-        current: TranscriptAccumulator | null;
-      } = { current: null };
 
       const persist =
         handlePersist ??
@@ -205,12 +191,6 @@ export const useRunBatch = (sessionId: string) => {
 
               store.setRow("transcripts", currentTranscriptId, transcriptRow);
             });
-
-            transcriptAccumulatorRef.current = createTranscriptAccumulator(
-              store,
-              currentTranscriptId,
-              { words: [], hints: [] },
-            );
           }
 
           const currentTranscriptId = transcriptId;
@@ -218,10 +198,13 @@ export const useRunBatch = (sessionId: string) => {
             return;
           }
 
-          transcriptAccumulatorRef.current ??= createTranscriptAccumulator(
-            store,
-            currentTranscriptId,
-          );
+          const shouldReplace = persistOptions?.mode === "replace";
+          const existingWords = shouldReplace
+            ? []
+            : parseTranscriptWords(store, currentTranscriptId);
+          const existingHints = shouldReplace
+            ? []
+            : parseTranscriptHints(store, currentTranscriptId);
 
           const newWords: WordWithId[] = [];
           const newWordIds: string[] = [];
@@ -270,14 +253,24 @@ export const useRunBatch = (sessionId: string) => {
           });
 
           store.transaction(() => {
-            transcriptAccumulatorRef.current?.appendWordsAndHints(
-              newWords,
-              newHints,
-              persistOptions,
-            );
+            updateTranscriptWords(store, currentTranscriptId, [
+              ...existingWords,
+              ...newWords,
+            ]);
+            updateTranscriptHints(store, currentTranscriptId, [
+              ...existingHints,
+              ...newHints,
+            ]);
           });
 
-          wroteDefaultTranscript = true;
+          void import("~/store/tinybase/store/save")
+            .then(({ save }) => save())
+            .catch((error) => {
+              console.error(
+                "[runBatch] failed to save streamed transcript",
+                error,
+              );
+            });
         });
 
       const params: TranscriptionParams = {
@@ -296,24 +289,7 @@ export const useRunBatch = (sessionId: string) => {
         max_speakers: options?.maxSpeakers,
       };
 
-      try {
-        await startTranscription(params, { handlePersist: persist });
-      } finally {
-        if (!handlePersist && wroteDefaultTranscript) {
-          await saveCompletedBatchTranscript();
-        }
-
-        transcriptAccumulatorRef.current?.dispose();
-        transcriptAccumulatorRef.current = null;
-      }
-
-      if (settingsStore) {
-        await deleteProcessedAudioForRetention(
-          store as main.Store,
-          settingsStore as settings.Store,
-          sessionId,
-        );
-      }
+      await startTranscription(params, { handlePersist: persist });
     },
     [
       conn,
@@ -323,7 +299,6 @@ export const useRunBatch = (sessionId: string) => {
       spokenLanguages,
       startTranscription,
       sessionId,
-      settingsStore,
       store,
       user_id,
     ],

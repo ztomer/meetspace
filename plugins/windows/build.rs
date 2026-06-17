@@ -11,7 +11,6 @@ const COMMANDS: &[&str] = &[
     "window_restore_frame_animated",
     "window_expand_width",
     "window_restore_width",
-    "set_show_app_in_dock",
     "floating_bar_show",
     "floating_bar_hide",
     "floating_bar_update",

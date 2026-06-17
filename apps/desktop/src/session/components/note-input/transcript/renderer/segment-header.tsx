@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { cn } from "@meetspace/utils";
 
 import { SpeakerAssignPopover } from "./speaker-assign";
-import { getTimestampRange, useSegmentColorVars } from "./utils";
+import { getTimestampRange, useSegmentColor } from "./utils";
 
 import * as main from "~/store/tinybase/store/main";
 import type { Segment } from "~/stt/live-segment";
@@ -19,7 +19,7 @@ export function SegmentHeader({
   transcriptId: string;
   speakerLabelManager?: SpeakerLabelManager;
 }) {
-  const colorVars = useSegmentColorVars(segment.key);
+  const color = useSegmentColor(segment.key);
   const label = useSpeakerLabel(segment.key, speakerLabelManager);
   const timestamp = getTimestampRange(segment);
   const headerClassName = cn([
@@ -27,16 +27,14 @@ export function SegmentHeader({
     "-mx-3 px-3 py-1",
     "text-xs font-light",
     "flex items-center justify-between",
-    "[--segment-color:var(--segment-color-light)]",
-    "dark:[--segment-color:var(--segment-color-dark)]",
   ]);
 
   return (
-    <div className={headerClassName} style={colorVars}>
+    <div className={headerClassName}>
       <SpeakerAssignPopover
         segment={segment}
         transcriptId={transcriptId}
-        color="var(--segment-color)"
+        color={color}
         label={label}
       />
       <span className="text-muted-foreground font-mono">{timestamp}</span>

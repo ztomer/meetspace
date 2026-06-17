@@ -7,7 +7,7 @@ import {
   Loader2,
   Trash2,
 } from "lucide-react";
-import { useRef } from "react";
+import { useEffect } from "react";
 
 import {
   commands as localSttCommands,
@@ -15,8 +15,6 @@ import {
 } from "@meetspace/plugin-local-stt";
 import { commands as openerCommands } from "@meetspace/plugin-opener2";
 import { commands as listenerCommands } from "@meetspace/plugin-transcription";
-import type { AIProviderStorage } from "@meetspace/store";
-import { Input } from "@meetspace/ui/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -29,237 +27,127 @@ import { cn } from "@meetspace/utils";
 import { useSttSettings } from "./context";
 import { HealthStatusIndicator, useConnectionHealth } from "./health";
 import { LocalModelBackendBadge, LocalModelLabel } from "./model-icon";
-import { getPreferredProviderModel } from "./selection";
 import {
   displayModelId,
   formatModelSize,
-  type ProviderId,
-  PROVIDERS,
+  LOCAL_STT_PROVIDER_ID,
   sttModelQueries,
 } from "./shared";
 
-import { useBillingAccess } from "~/auth/billing";
 import { useNotifications } from "~/contexts/notifications";
-import { providerRowId, ProviderIconSlot } from "~/settings/ai/shared";
-import {
-  getProviderSelectionBlockers,
-  requiresEntitlement,
-} from "~/settings/ai/shared/eligibility";
 import { useConfigValues } from "~/shared/config";
-import { SettingsAlert } from "~/shared/ui/settings-alert";
 import * as settings from "~/store/tinybase/store/settings";
-import {
-  isConfiguredSttModel,
-  isMeetspaceLocalSttModel,
-  isLiveTranscriptionSupported,
-  isRealtimeLocalModel,
-  isSupportedLocalSttModel,
-} from "~/stt/capabilities";
+import { isRealtimeLocalModel } from "~/stt/capabilities";
+
+type ModelEntry = {
+  id: string;
+  isDownloaded: boolean;
+  displayName?: string;
+  sizeBytes?: number | null;
+  mode?: "realtime" | "batch";
+};
 
 export function SelectProviderAndModel() {
   const { current_stt_provider, current_stt_model } = useConfigValues([
     "current_stt_provider",
     "current_stt_model",
   ] as const);
-  const billing = useBillingAccess();
-  const configuredProviders = useConfiguredMapping();
-  const { startDownload, startTrial } = useSttSettings();
+  const { startDownload } = useSttSettings();
   const health = useConnectionHealth();
+  const models = useLocalModels();
 
-  const selectedSttModel = isConfiguredSttModel(
-    current_stt_provider,
-    current_stt_model,
-  )
-    ? current_stt_model
-    : undefined;
-  const isConfigured = !!(current_stt_provider && selectedSttModel);
-  const hasError = isConfigured && health.status === "error";
-  const selectedProvider = current_stt_provider as ProviderId | undefined;
-  const selectedModels = selectedProvider
-    ? (configuredProviders[selectedProvider]?.models ?? [])
-    : [];
-  const selectedModel = selectedModels.find(
-    (model) => model.id === selectedSttModel,
-  );
-
-  const handleSelectProvider = settings.UI.useSetValueCallback(
+  const setProvider = settings.UI.useSetValueCallback(
     "current_stt_provider",
     (provider: string) => provider,
     [],
     settings.STORE_ID,
   );
 
-  const handleSelectModel = settings.UI.useSetValueCallback(
+  const setModel = settings.UI.useSetValueCallback(
     "current_stt_model",
     (model: string) => model,
     [],
     settings.STORE_ID,
   );
-  const lastSelectedModelsRef = useRef<Record<string, string>>(
-    current_stt_provider && selectedSttModel
-      ? { [current_stt_provider]: selectedSttModel }
-      : {},
-  );
-  const rememberModel = (provider?: string, model?: string) => {
-    if (!provider || model === undefined) {
+
+  // Auto-seed the (only) provider so callers that read current_stt_provider
+  // see something consistent without making the user click anything.
+  useEffect(() => {
+    if (current_stt_provider !== LOCAL_STT_PROVIDER_ID) {
+      setProvider(LOCAL_STT_PROVIDER_ID);
+    }
+  }, [current_stt_provider, setProvider]);
+
+  // Default the model on first run: prefer a realtime Parakeet, fall back to
+  // the first downloaded model, then to the first available.
+  useEffect(() => {
+    if (current_stt_model || models.length === 0) {
       return;
     }
-
-    lastSelectedModelsRef.current[provider] = model;
-  };
-
-  const handleProviderChange = (provider: string) => {
-    rememberModel(current_stt_provider, selectedSttModel);
-
-    const providerId = provider as ProviderId;
-    const nextModels = configuredProviders[providerId]?.models ?? [];
-    const nextModel = getPreferredProviderModel(
-      lastSelectedModelsRef.current[provider],
-      nextModels,
-      { allowSavedModelWithoutChoices: providerId === "custom" },
-    );
-
-    rememberModel(provider, nextModel);
-    handleSelectProvider(provider);
-    handleSelectModel(nextModel);
-  };
-
-  const handleModelChange = (model: string) => {
-    if (!current_stt_provider) {
-      return;
+    const preferred =
+      models.find((m) => m.mode === "realtime" && m.isDownloaded) ??
+      models.find((m) => m.isDownloaded) ??
+      models[0];
+    if (preferred) {
+      setModel(preferred.id);
     }
+  }, [current_stt_model, models, setModel]);
 
-    rememberModel(current_stt_provider, model);
-    handleSelectModel(model);
-  };
+  const isConfigured = !!current_stt_model;
+  const hasError = isConfigured && health.status === "error";
+  const selectedModel = models.find((m) => m.id === current_stt_model);
+
   return (
     <div className="flex flex-col gap-4">
       {!isConfigured && (
-        <SettingsAlert>
-          <strong className="font-medium">Transcription model</strong> is needed
-          to make Meetspace listen to your conversations.
-        </SettingsAlert>
+        <div className="border-destructive/30 bg-destructive-bg rounded-lg border px-4 py-3">
+          <span className="text-destructive text-sm">
+            <strong className="font-medium">Transcription model</strong> is
+            needed to make Meetspace listen to your conversations.
+          </span>
+        </div>
       )}
 
       {hasError && health.message && (
-        <SettingsAlert>{health.message}</SettingsAlert>
+        <div className="border-destructive/30 bg-destructive-bg rounded-lg border px-4 py-3">
+          <span className="text-destructive text-sm">{health.message}</span>
+        </div>
       )}
 
-      <h3 className="text-md font-sans font-semibold">Model being used</h3>
-      <div className="flex flex-row items-center gap-4">
-        <div className="min-w-0 flex-2" data-stt-provider-selector>
-          <Select
-            value={current_stt_provider || ""}
-            onValueChange={handleProviderChange}
+      <h3 className="text-md font-sans font-semibold">Transcription model</h3>
+      <div data-stt-model-selector>
+        <Select
+          value={current_stt_model || ""}
+          onValueChange={setModel}
+          disabled={models.length === 0}
+        >
+          <SelectTrigger
+            className={cn([
+              "bg-background text-left shadow-none focus:ring-0",
+              "[&>span]:flex [&>span]:w-full [&>span]:items-center [&>span]:justify-between [&>span]:gap-2",
+              isConfigured && "[&>svg:last-child]:hidden",
+            ])}
           >
-            <SelectTrigger className="bg-card shadow-none focus:ring-0">
-              <SelectValue placeholder="Select a provider" />
-            </SelectTrigger>
-            <SelectContent>
-              {PROVIDERS.filter(({ disabled }) => !disabled).map((provider) => {
-                const configured =
-                  configuredProviders[provider.id]?.configured ?? false;
-                const requiresPro = requiresEntitlement(
-                  provider.requirements,
-                  "pro",
-                );
-                const locked = requiresPro && !billing.isPaid;
-                return (
-                  <SelectItem
-                    key={provider.id}
-                    value={provider.id}
-                    disabled={provider.disabled || locked}
-                    className={cn([
-                      "data-disabled:text-muted-foreground data-disabled:!opacity-100",
-                      !configured && !locked && "text-muted-foreground",
-                    ])}
-                  >
-                    <div className="flex flex-col gap-0.5">
-                      <div className="flex items-center gap-2">
-                        <ProviderIconSlot>{provider.icon}</ProviderIconSlot>
-                        <span>{provider.displayName}</span>
-                        {requiresPro ? (
-                          <span className="border-border text-muted-foreground rounded-full border px-2 py-0.5 text-[10px] tracking-wide uppercase">
-                            Pro
-                          </span>
-                        ) : null}
-                      </div>
-                      {locked ? (
-                        <span className="text-muted-foreground text-[11px]">
-                          Upgrade to Pro to use this provider.
-                        </span>
-                      ) : null}
-                    </div>
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <span className="text-muted-foreground">/</span>
-
-        {current_stt_provider === "custom" ? (
-          <div className="min-w-0 flex-3">
-            <Input
-              value={selectedSttModel || ""}
-              onChange={(event) => handleModelChange(event.target.value)}
-              className="text-xs"
-              placeholder="Enter a model identifier"
-            />
-          </div>
-        ) : (
-          <div className="min-w-0 flex-3">
-            <Select
-              value={selectedSttModel || ""}
-              onValueChange={handleModelChange}
-              disabled={selectedModels.length === 0}
-            >
-              <SelectTrigger
-                className={cn([
-                  "bg-card text-left shadow-none focus:ring-0",
-                  "[&>span]:flex [&>span]:w-full [&>span]:items-center [&>span]:justify-between [&>span]:gap-2",
-                  isConfigured && "[&>svg:last-child]:hidden",
-                ])}
-              >
-                <SelectValue placeholder="Select a model">
-                  {selectedModel ? (
-                    <ModelSelectedValue model={selectedModel} />
-                  ) : undefined}
-                </SelectValue>
-                {isConfigured && <HealthStatusIndicator />}
-                {isConfigured && health.status === "success" && (
-                  <Check className="-mr-1 h-4 w-4 shrink-0 text-green-600" />
-                )}
-              </SelectTrigger>
-              <SelectContent align="end">
-                {selectedModels.map((model, i) => {
-                  const prevCategory =
-                    i > 0 ? selectedModels[i - 1].category : null;
-                  const showHeader =
-                    model.category && model.category !== prevCategory;
-                  const categoryLabel = showHeader
-                    ? getModelCategoryLabel(model.category)
-                    : null;
-                  return (
-                    <span key={model.id}>
-                      {categoryLabel && (
-                        <div className="text-muted-foreground px-2 pt-2 pb-1 text-[11px] font-medium tracking-wide uppercase">
-                          {categoryLabel}
-                        </div>
-                      )}
-                      <ModelSelectItem
-                        model={model}
-                        onDownload={() => startDownload(model.id as LocalModel)}
-                        onStartTrial={startTrial}
-                      />
-                    </span>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
+            <SelectValue placeholder="Select a model">
+              {selectedModel ? (
+                <ModelSelectedValue model={selectedModel} />
+              ) : undefined}
+            </SelectValue>
+            {isConfigured && <HealthStatusIndicator />}
+            {isConfigured && health.status === "success" && (
+              <Check className="text-success-fg -mr-1 h-4 w-4 shrink-0" />
+            )}
+          </SelectTrigger>
+          <SelectContent align="end">
+            {models.map((model) => (
+              <ModelSelectItem
+                key={model.id}
+                model={model}
+                onDownload={() => startDownload(model.id as LocalModel)}
+              />
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );
@@ -273,8 +161,8 @@ export function TranscriptionLanguageWarningBanner() {
   }
 
   return (
-    <div className="-mx-6 -mt-6 mb-6 border-b border-amber-200 bg-amber-50 px-6 py-3">
-      <span className="flex items-center justify-center gap-2 text-center text-sm text-amber-600">
+    <div className="border-warning-border bg-warning-bg -mx-6 -mt-3 mb-6 border-b px-6 py-3">
+      <span className="text-warning-fg flex items-center justify-center gap-2 text-center text-sm">
         <AlertTriangle className="size-4 shrink-0" />
         Selected model may not support all your spoken languages.
       </span>
@@ -291,147 +179,45 @@ function useHasLanguageWarning() {
     ] as const);
   const health = useConnectionHealth();
 
-  const selectedSttModel = isConfiguredSttModel(
-    current_stt_provider,
-    current_stt_model,
-  )
-    ? current_stt_model
-    : undefined;
-  const isConfigured = !!(current_stt_provider && selectedSttModel);
-  const isOnDeviceModel = isMeetspaceLocalSttModel(
-    current_stt_provider,
-    selectedSttModel,
-  );
+  const isConfigured = !!(current_stt_provider && current_stt_model);
   const useLiveOnDeviceModel =
-    isOnDeviceModel && isRealtimeLocalModel(selectedSttModel);
+    !!current_stt_model && isRealtimeLocalModel(current_stt_model);
   const hasError = isConfigured && health.status === "error";
-  const liveSupport = useQuery({
-    queryKey: ["stt-live-support", current_stt_provider, selectedSttModel],
-    queryFn: () =>
-      isLiveTranscriptionSupported(current_stt_provider, selectedSttModel),
-    enabled: isConfigured,
-  });
 
   const languageSupport = useQuery({
     queryKey: [
       "stt-language-support",
       current_stt_provider,
-      selectedSttModel,
+      current_stt_model,
       useLiveOnDeviceModel,
-      liveSupport.data,
       spoken_languages,
     ],
     queryFn: async () => {
-      const useLiveMode = isOnDeviceModel
-        ? useLiveOnDeviceModel && liveSupport.data
-        : liveSupport.data;
-      const result = useLiveMode
+      const result = useLiveOnDeviceModel
         ? await listenerCommands.isSupportedLanguagesLive(
             current_stt_provider!,
-            selectedSttModel ?? null,
+            current_stt_model ?? null,
             spoken_languages ?? [],
           )
         : await listenerCommands.isSupportedLanguagesBatch(
             current_stt_provider!,
-            selectedSttModel ?? null,
+            current_stt_model ?? null,
             spoken_languages ?? [],
           );
       return result.status === "ok" ? result.data : true;
     },
-    enabled:
-      isConfigured &&
-      liveSupport.data !== undefined &&
-      !!spoken_languages?.length,
+    enabled: isConfigured && !!spoken_languages?.length,
   });
 
   return isConfigured && languageSupport.data === false && !hasError;
 }
 
-type ModelCategory = "latest" | null;
-type ModelEntry = {
-  id: string;
-  isDownloaded: boolean;
-  displayName?: string;
-  isDeprecated?: boolean;
-  category?: ModelCategory;
-  sizeBytes?: number | null;
-  mode?: "realtime" | "batch";
-};
-
-function getModelCategoryLabel(category?: ModelCategory) {
-  if (category === "latest") {
-    return "Recommended";
-  }
-
-  return null;
-}
-
-function getProviderModelMode(
-  providerId: ProviderId,
-  model: string,
-): ModelEntry["mode"] {
-  if (providerId === "assemblyai") {
-    if (model === "universal-3-pro") {
-      return "batch";
-    }
-
-    if (model === "u3-rt-pro") {
-      return "realtime";
-    }
-  }
-
-  if (providerId === "elevenlabs") {
-    if (model === "scribe_v2") {
-      return "batch";
-    }
-
-    if (model === "scribe_v2_realtime") {
-      return "realtime";
-    }
-  }
-
-  if (providerId === "mistral") {
-    if (model === "voxtral-mini-2602" || model === "voxtral-mini-latest") {
-      return "batch";
-    }
-
-    if (model === "voxtral-mini-transcribe-realtime-2602") {
-      return "realtime";
-    }
-  }
-
-  if (providerId === "soniox") {
-    if (model === "stt-async-v5") {
-      return "batch";
-    }
-
-    if (model === "stt-rt-v5" || model === "stt-v4" || model === "stt-rt-v4") {
-      return "realtime";
-    }
-  }
-
-  return undefined;
-}
-
-function useConfiguredMapping(): Record<
-  ProviderId,
-  {
-    configured: boolean;
-    models: ModelEntry[];
-  }
-> {
-  const billing = useBillingAccess();
-  const configuredProviders = settings.UI.useResultTable(
-    settings.QUERIES.sttProviders,
-    settings.STORE_ID,
-  );
-
+function useLocalModels(): ModelEntry[] {
   const targetArch = useQuery({
     queryKey: ["target-arch"],
     queryFn: () => arch(),
     staleTime: Infinity,
   });
-
   const isAppleSilicon = targetArch.data === "aarch64";
 
   const supportedModels = useQuery({
@@ -443,90 +229,36 @@ function useConfiguredMapping(): Record<
     staleTime: Infinity,
   });
 
-  const localModels = supportedModels.data ?? [];
-  const soniqoModels = localModels.filter((m) => m.model_type === "soniqo");
+  const all = supportedModels.data ?? [];
 
-  const soniqoDownloaded = useQueries({
-    queries: [...soniqoModels.map((m) => sttModelQueries.isDownloaded(m.key))],
+  // Apple Silicon: surface Soniqo (Parakeet streaming) plus the Argmax-backed
+  // models (Parakeet V2/V3 and Whisper Large V3) — both are MLX/CoreML-native.
+  // Other platforms get the Whisper-CPP family.
+  const soniqo = all.filter((m) => m.model_type === "soniqo");
+  const argmax = all.filter((m) => m.model_type === "argmax");
+  const whispercpp = all.filter((m) => m.model_type === "whispercpp");
+  const visible = isAppleSilicon ? [...soniqo, ...argmax] : whispercpp;
+
+  const downloaded = useQueries({
+    queries: visible.map((m) => sttModelQueries.isDownloaded(m.key)),
   });
 
-  return Object.fromEntries(
-    PROVIDERS.map((provider) => {
-      const config = configuredProviders[providerRowId("stt", provider.id)] as
-        | AIProviderStorage
-        | undefined;
-      const baseUrl = String(config?.base_url || provider.baseUrl || "").trim();
-      const apiKey = String(config?.api_key || "").trim();
-
-      const eligible =
-        getProviderSelectionBlockers(provider.requirements, {
-          isAuthenticated: true,
-          isPaid: billing.isPaid,
-          config: { base_url: baseUrl, api_key: apiKey },
-        }).length === 0;
-
-      if (!eligible) {
-        return [provider.id, { configured: false, models: [] }];
-      }
-
-      if (provider.id === "meetspace") {
-        const models: ModelEntry[] = [
-          { id: "cloud", isDownloaded: billing.isPaid, category: "latest" },
-        ];
-
-        if (isAppleSilicon) {
-          soniqoModels.forEach((model, i) => {
-            models.push({
-              id: model.key,
-              isDownloaded: soniqoDownloaded[i]?.data ?? false,
-              displayName: model.display_name,
-              sizeBytes: model.size_bytes,
-              mode: isRealtimeLocalModel(String(model.key))
-                ? "realtime"
-                : "batch",
-              category: "latest",
-            });
-          });
-        }
-
-        return [provider.id, { configured: true, models }];
-      }
-
-      if (provider.id === "custom") {
-        return [provider.id, { configured: true, models: [] }];
-      }
-
-      return [
-        provider.id,
-        {
-          configured: true,
-          models: provider.models.map((model) => ({
-            id: model,
-            isDownloaded: true,
-            mode: getProviderModelMode(provider.id, model),
-          })),
-        },
-      ];
-    }),
-  ) as Record<
-    ProviderId,
-    {
-      configured: boolean;
-      models: ModelEntry[];
-    }
-  >;
+  return visible.map((model, i) => ({
+    id: model.key,
+    isDownloaded: downloaded[i]?.data ?? false,
+    displayName: model.display_name,
+    sizeBytes: model.size_bytes,
+    mode: isRealtimeLocalModel(String(model.key)) ? "realtime" : "batch",
+  }));
 }
 
 function ModelSelectItem({
   model,
   onDownload,
-  onStartTrial,
 }: {
   model: ModelEntry;
   onDownload: () => void;
-  onStartTrial: () => void;
 }) {
-  const isCloud = model.id === "cloud";
   const { activeDownloads } = useNotifications();
   const downloadInfo = activeDownloads.find((d) => d.model === model.id);
   const isDownloading = !!downloadInfo;
@@ -534,7 +266,6 @@ function ModelSelectItem({
   const label = model.displayName ?? displayModelId(model.id);
   const sizeLabel = formatModelSize(model.sizeBytes);
   const showLocalActions = model.isDownloaded && isLocalModelId(model.id);
-  const isDeprecated = model.isDeprecated === true;
   const content = (
     <div className="flex min-w-0 flex-1 items-center justify-between gap-3">
       <LocalModelLabel
@@ -544,7 +275,18 @@ function ModelSelectItem({
       />
       <div className="flex shrink-0 items-center gap-2 text-[11px]">
         <LocalModelBackendBadge model={model.id} />
-        <ModelModeBadge mode={model.mode} />
+        {model.mode && (
+          <span
+            className={cn([
+              "rounded-md px-1.5 py-0.5 font-medium",
+              model.mode === "realtime"
+                ? "bg-info-bg text-info-fg"
+                : "bg-muted text-muted-foreground",
+            ])}
+          >
+            {model.mode === "realtime" ? "Realtime" : "Batch"}
+          </span>
+        )}
         {!model.isDownloaded && sizeLabel && (
           <span className="text-muted-foreground font-mono">{sizeLabel}</span>
         )}
@@ -558,10 +300,7 @@ function ModelSelectItem({
         <SelectItem
           key={model.id}
           value={model.id}
-          className={cn([
-            showLocalActions && "pr-20",
-            isDeprecated && "text-muted-foreground focus:text-muted-foreground",
-          ])}
+          className={cn([showLocalActions && "pr-20"])}
         >
           {content}
         </SelectItem>
@@ -578,18 +317,14 @@ function ModelSelectItem({
     if (isDownloading) {
       return;
     }
-    if (isCloud) {
-      onStartTrial();
-    } else {
-      onDownload();
-    }
+    onDownload();
   };
 
   return (
     <div
       className={cn([
         "relative flex items-center justify-between",
-        "rounded-full px-2 py-1.5 text-sm outline-hidden",
+        "rounded-xs px-2 py-1.5 text-sm outline-hidden",
         "cursor-pointer select-none",
         "hover:bg-accent hover:text-accent-foreground",
         "group",
@@ -601,7 +336,7 @@ function ModelSelectItem({
           className={cn([
             "rounded-full px-2 py-0.5 text-[11px] font-medium",
             "flex items-center gap-1",
-            "from-muted to-accent text-muted-foreground bg-linear-to-t",
+            "bg-secondary text-secondary-foreground border-border border",
           ])}
         >
           <Loader2 className="size-3 animate-spin" />
@@ -613,13 +348,11 @@ function ModelSelectItem({
             "rounded-full px-2 text-[11px] font-medium",
             "opacity-0 group-hover:opacity-100",
             "transition-all duration-150",
-            isCloud
-              ? "bg-primary text-primary-foreground hover:bg-primary/90 py-1 shadow-xs hover:shadow-md"
-              : "from-muted to-accent text-foreground bg-linear-to-t py-0.5 shadow-xs hover:shadow-md",
+            "bg-secondary text-secondary-foreground border-border border py-0.5 shadow-xs hover:shadow-md",
           ])}
           onClick={handleAction}
         >
-          {isCloud ? "Upgrade to use" : "Download"}
+          Download
         </button>
       )}
     </div>
@@ -627,42 +360,22 @@ function ModelSelectItem({
 }
 
 function ModelSelectedValue({ model }: { model: ModelEntry }) {
-  const isDeprecated = model.isDeprecated === true;
-
   return (
-    <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
-      <LocalModelLabel
-        model={model.id}
-        label={model.displayName ?? displayModelId(model.id)}
-        className={cn(["min-w-0 flex-1", isDeprecated && "opacity-60"])}
-        labelClassName={cn([isDeprecated && "text-muted-foreground"])}
-      />
-      <ModelModeBadge mode={model.mode} />
-    </div>
-  );
-}
-
-function ModelModeBadge({ mode }: { mode?: ModelEntry["mode"] }) {
-  if (!mode) {
-    return null;
-  }
-
-  return (
-    <span
-      className={cn([
-        "shrink-0 rounded-md px-1.5 py-0.5 text-[11px] font-medium",
-        mode === "realtime"
-          ? "bg-sky-50 text-sky-700"
-          : "bg-muted text-muted-foreground",
-      ])}
-    >
-      {mode === "realtime" ? "Realtime" : "Batch"}
-    </span>
+    <LocalModelLabel
+      model={model.id}
+      label={model.displayName ?? displayModelId(model.id)}
+      className="min-w-0 flex-1"
+    />
   );
 }
 
 function isLocalModelId(model: string): model is LocalModel {
-  return isSupportedLocalSttModel(model);
+  return (
+    model.startsWith("soniqo-") ||
+    model.startsWith("cactus-") ||
+    model.startsWith("am-") ||
+    model.startsWith("Quantized")
+  );
 }
 
 function LocalModelDropdownActions({ model }: { model: LocalModel }) {
@@ -709,7 +422,7 @@ function LocalModelDropdownActions({ model }: { model: LocalModel }) {
         type="button"
         aria-label="Show in Finder"
         className={cn([
-          "flex size-6 items-center justify-center rounded-full",
+          "flex size-6 items-center justify-center rounded-md",
           "text-muted-foreground hover:text-foreground",
         ])}
         onPointerDown={stopSelect}
@@ -724,8 +437,8 @@ function LocalModelDropdownActions({ model }: { model: LocalModel }) {
         type="button"
         aria-label="Delete model"
         className={cn([
-          "flex size-6 items-center justify-center rounded-full",
-          "text-red-500 hover:text-red-600",
+          "flex size-6 items-center justify-center rounded-md",
+          "text-destructive hover:text-destructive",
         ])}
         onPointerDown={stopSelect}
         onClick={(event) => {
