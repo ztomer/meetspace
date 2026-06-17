@@ -31,18 +31,11 @@ export function TranscriptEmptyState({
 }) {
   if (error) {
     return (
-      <div
-        role="alert"
-        className="flex h-full min-h-[400px] flex-col items-center justify-center px-6 text-center"
-      >
-        <AlertCircleIcon
-          aria-hidden
-          className="text-muted-foreground mb-5 size-9 stroke-[1.5]"
-        />
-        <div className="mb-6 flex max-w-md flex-col gap-2">
-          <p className="text-base font-medium">Transcription failed</p>
-          <p className="text-muted-foreground text-sm leading-relaxed">
-            {error}
+      <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
+        <AlertCircleIcon className="text-destructive h-8 w-8" />
+        <div className="flex max-w-md flex-col gap-1">
+          <p className="text-muted-foreground text-sm font-medium">
+            Batch transcription failed
           </p>
         </div>
         {onRetranscribe && (

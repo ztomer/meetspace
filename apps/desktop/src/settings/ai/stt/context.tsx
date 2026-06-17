@@ -11,14 +11,12 @@ import {
   type LocalModel,
 } from "@meetspace/plugin-local-stt";
 
-import { useBillingAccess } from "~/auth/billing-context";
 import { useToastAction } from "~/store/zustand/toast-action";
 
 type SttSettingsContextType = {
   accordionValue: string;
   setAccordionValue: (value: string) => void;
   startDownload: (model: LocalModel) => void;
-  startTrial: () => void;
 };
 
 const SttSettingsContext = createContext<SttSettingsContextType | null>(null);
@@ -29,7 +27,6 @@ export function SttSettingsProvider({
   children: React.ReactNode;
 }) {
   const [accordionValue, setAccordionValue] = useState<string>("");
-  const { upgradeToPro } = useBillingAccess();
 
   const toastActionTarget = useToastAction((state) => state.target);
   const clearToastActionTarget = useToastAction((state) => state.clearTarget);
@@ -44,17 +41,12 @@ export function SttSettingsProvider({
     void localSttCommands.downloadModel(model);
   }, []);
 
-  const startTrial = useCallback(() => {
-    upgradeToPro();
-  }, [upgradeToPro]);
-
   return (
     <SttSettingsContext.Provider
       value={{
         accordionValue,
         setAccordionValue,
         startDownload,
-        startTrial,
       }}
     >
       {children}

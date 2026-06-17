@@ -4,20 +4,14 @@ import type { DownloadProgress, ToastCondition, ToastType } from "./types";
 
 import type { DevtoolsToastPreview } from "~/store/zustand/devtools-toast-preview";
 
-const MEETSPACE_ICON_SRC = "/assets/meetspace-icon.png";
-
 type ToastRegistryEntry = {
   toast: ToastType;
   condition: ToastCondition;
 };
 
 type ToastRegistryParams = {
-  isAuthenticated: boolean;
-  isAuthLoading: boolean;
   hasLLMConfigured: boolean;
   hasSttConfigured: boolean;
-  hasProSttConfigured: boolean;
-  hasProLlmConfigured: boolean;
   isAiTranscriptionTabActive: boolean;
   isAiIntelligenceTabActive: boolean;
   isBatchTranscribingInActiveTranscriptTab: boolean;
@@ -27,25 +21,13 @@ type ToastRegistryParams = {
   activeDownloads: DownloadProgress[];
   localSttStatus: ServerStatus | null;
   isLocalSttModel: boolean;
-  onSignIn: () => void | Promise<void>;
-  onOpenLLMSettings: () => void;
-  onOpenSTTSettings: () => void;
-};
-
-type DevtoolsToastPreviewParams = {
-  preview: DevtoolsToastPreview;
-  onSignIn: () => void | Promise<void>;
   onOpenLLMSettings: () => void;
   onOpenSTTSettings: () => void;
 };
 
 export function createToastRegistry({
-  isAuthenticated,
-  isAuthLoading,
   hasLLMConfigured,
   hasSttConfigured,
-  hasProSttConfigured,
-  hasProLlmConfigured,
   isAiTranscriptionTabActive,
   isAiIntelligenceTabActive,
   isBatchTranscribingInActiveTranscriptTab,
@@ -55,12 +37,11 @@ export function createToastRegistry({
   activeDownloads,
   localSttStatus,
   isLocalSttModel,
-  onSignIn,
   onOpenLLMSettings,
   onOpenSTTSettings,
 }: ToastRegistryParams): ToastRegistryEntry[] {
   const downloadTitle =
-    activeDownloads.length === 1 && downloadingModel
+    activeDownloads.length === 1
       ? `Downloading ${downloadingModel}`
       : `Downloading ${activeDownloads.length} models`;
 
@@ -69,7 +50,8 @@ export function createToastRegistry({
     {
       toast: {
         id: "downloading-model",
-        description: downloadTitle,
+        title: downloadTitle,
+        description: "This may take a few minutes",
         dismissible: false,
         loading: true,
       },
@@ -87,7 +69,12 @@ export function createToastRegistry({
     {
       toast: {
         id: "local-stt-loading",
-        description: "Starting transcription...",
+        description: (
+          <>
+            <strong className="font-mono">Local transcription</strong> is
+            starting up...
+          </>
+        ),
         dismissible: false,
         loading: true,
       },
@@ -100,9 +87,14 @@ export function createToastRegistry({
     {
       toast: {
         id: "local-stt-unreachable",
-        description: "Transcription unavailable",
+        description: (
+          <>
+            <strong className="text-destructive">Could not connect</strong> to
+            the local speech-to-text model. Please check your settings.
+          </>
+        ),
         primaryAction: {
-          label: "Settings",
+          label: "Check settings",
           onClick: onOpenSTTSettings,
         },
         dismissible: true,
@@ -117,9 +109,14 @@ export function createToastRegistry({
     {
       toast: {
         id: "missing-stt",
-        description: "Transcription model needed",
+        description: (
+          <>
+            <strong className="font-mono">Transcription model</strong> is needed
+            to make Meetspace listen to your conversations.
+          </>
+        ),
         primaryAction: {
-          label: "Add",
+          label: "Configure transcription",
           onClick: onOpenSTTSettings,
         },
         dismissible: false,
@@ -129,57 +126,20 @@ export function createToastRegistry({
     {
       toast: {
         id: "missing-llm",
-        description: "Language model needed",
+        description: (
+          <>
+            <strong className="font-mono">Language model</strong> is needed to
+            make Meetspace summarize and chat about your conversations.
+          </>
+        ),
         primaryAction: {
-          label: "Add",
+          label: "Add intelligence",
           onClick: onOpenLLMSettings,
         },
         dismissible: true,
       },
       condition: () =>
         hasSttConfigured && !hasLLMConfigured && !isAiIntelligenceTabActive,
-    },
-    {
-      toast: {
-        id: "pro-requires-login",
-        icon: (
-          <img
-            src={MEETSPACE_ICON_SRC}
-            alt="Meetspace Pro"
-            className="size-5 object-contain object-center"
-          />
-        ),
-        description: "Sign in required",
-        primaryAction: {
-          label: "Sign in",
-          onClick: onSignIn,
-        },
-        dismissible: true,
-      },
-      // suppress until auth resolves to avoid flash on startup
-      condition: () =>
-        !isAuthLoading &&
-        !isAuthenticated &&
-        (hasProSttConfigured || hasProLlmConfigured),
-    },
-    {
-      toast: {
-        id: "upgrade-to-pro",
-        description: "Pro features available",
-        primaryAction: {
-          label: "Upgrade",
-          onClick: onSignIn,
-        },
-        dismissible: true,
-      },
-      // suppress until auth resolves to avoid flash on startup
-      condition: () =>
-        !isAuthLoading &&
-        !isAuthenticated &&
-        hasLLMConfigured &&
-        hasSttConfigured &&
-        !hasProSttConfigured &&
-        !hasProLlmConfigured,
     },
   ];
 }
@@ -195,6 +155,13 @@ export function getToastToShow(
   }
   return null;
 }
+
+type DevtoolsToastPreviewParams = {
+  preview: DevtoolsToastPreview;
+  onSignIn: () => void | Promise<void>;
+  onOpenLLMSettings: () => void;
+  onOpenSTTSettings: () => void;
+};
 
 export function createDevtoolsToastPreview({
   preview,

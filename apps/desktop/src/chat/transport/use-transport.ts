@@ -34,7 +34,7 @@ Web search guidance:
 export function appendMeetingContextToolGuidance(
   prompt: string | undefined,
 ): string | undefined {
-  if (prompt === undefined) {
+  if (prompt == null) {
     return undefined;
   }
 

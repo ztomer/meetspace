@@ -22,7 +22,6 @@ peerDependencyRules:
     esbuild: "0.25"
 
 allowBuilds:
-  "@infisical/cli": true
   "@parcel/watcher": true
   "@sentry/cli": true
   cbor-extract: true
@@ -31,9 +30,6 @@ allowBuilds:
   edgedriver: true
   esbuild: true
   geckodriver: true
-  netlify: true
   protobufjs: true
-  puppeteer: true
   sharp: true
-  supabase: true
   unix-dgram: true
