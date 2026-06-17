@@ -46,10 +46,8 @@ export function FloatingActionButton({
   return (
     <div
       className={cn([
-        "absolute left-1/2 z-30 flex max-w-[calc(100%-2rem)] -translate-x-1/2 items-end justify-center",
-        tuckAction
-          ? "group pointer-events-auto bottom-0 h-32 pb-4"
-          : "pointer-events-none bottom-0 h-14 pb-4",
+        "absolute bottom-0 left-1/2 z-20 flex h-14 max-w-[calc(100%-2rem)] -translate-x-1/2 items-end justify-center pb-4",
+        tuckAction ? "group pointer-events-auto" : "pointer-events-none",
       ])}
     >
       <AnimatePresence mode="wait" initial={false}>
@@ -61,16 +59,14 @@ export function FloatingActionButton({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="max-w-full translate-y-0 text-center text-sm whitespace-nowrap text-red-400"
+            className="text-destructive max-w-full translate-y-0 text-center text-sm whitespace-nowrap"
           >
             {skipReason}
           </motion.div>
         ) : (
           <motion.div
             key={shouldShowListen ? "listen" : "chat"}
-            aria-hidden={
-              tuckAction && (shouldShowListen || !isLiveSessionActive)
-            }
+            aria-hidden={tuckAction}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -83,9 +79,9 @@ export function FloatingActionButton({
               } as CSSProperties
             }
             className={cn([
-              "relative max-w-full translate-y-[var(--floating-fab-tuck-offset)] transition-transform duration-200 ease-out",
+              "max-w-full translate-y-[var(--floating-fab-tuck-offset)] transition-transform duration-200 ease-out",
               tuckAction
-                ? "pointer-events-none visible group-hover:pointer-events-auto group-hover:translate-y-0 before:pointer-events-none before:absolute before:-inset-x-8 before:-inset-y-8 before:content-[''] hover:pointer-events-auto hover:translate-y-0"
+                ? "pointer-events-none visible group-hover:pointer-events-auto group-hover:translate-y-0 hover:pointer-events-auto hover:translate-y-0"
                 : "pointer-events-auto visible",
             ])}
           >
@@ -156,7 +152,7 @@ function isBlockingLLMStatus(status: LLMConnectionStatus) {
   return (
     status.status === "error" &&
     (status.reason === "missing_config" ||
-      status.reason === "not_pro" ||
-      status.reason === "unauthenticated")
+      (status.reason as string) === "not_pro" ||
+      (status.reason as string) === "unauthenticated")
   );
 }

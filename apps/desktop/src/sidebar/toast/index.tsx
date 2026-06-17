@@ -13,17 +13,13 @@ import {
 import { useTransientToast } from "./transient";
 import { useDismissedToasts } from "./useDismissedToasts";
 
-import { useAuth } from "~/auth";
 import { useNotifications } from "~/contexts/notifications";
 import { useConfigValues } from "~/shared/config";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 import { useDevtoolsToastPreview } from "~/store/zustand/devtools-toast-preview";
 import { useTabs } from "~/store/zustand/tabs";
 import { useToastAction } from "~/store/zustand/toast-action";
-import {
-  isConfiguredSttModel,
-  isMeetspaceCloudSttModel,
-} from "~/stt/capabilities";
+import { isConfiguredSttModel } from "~/stt/capabilities";
 
 type ToastAreaPlacement = "default" | "left-sidebar";
 type ToastAreaPosition = {
@@ -40,7 +36,6 @@ export function ToastArea({
 }: {
   placement?: ToastAreaPlacement;
 }) {
-  const auth = useAuth();
   const { dismissToast, isDismissed } = useDismissedToasts();
   const shouldShowToast = useShouldShowToast();
   const contentOffset = useMainContentCenterOffset();
@@ -56,8 +51,6 @@ export function ToastArea({
     isLocalSttModel,
   } = useNotifications();
 
-  const isAuthenticated = !!auth?.session;
-  const isAuthLoading = auth.session === undefined;
   const {
     current_llm_provider,
     current_llm_model,
@@ -74,11 +67,6 @@ export function ToastArea({
     current_stt_provider,
     current_stt_model,
   );
-  const hasProSttConfigured = isMeetspaceCloudSttModel(
-    current_stt_provider,
-    current_stt_model,
-  );
-  const hasProLlmConfigured = current_llm_provider === "meetspace";
 
   const currentTab = useTabs((state) => state.currentTab);
   const devtoolsPreview = useDevtoolsToastPreview((state) => state.preview);
@@ -98,10 +86,6 @@ export function ToastArea({
     (state) => state.updateSettingsTabState,
   );
   const setToastActionTarget = useToastAction((state) => state.setTarget);
-
-  const handleSignIn = useCallback(async () => {
-    await auth?.signIn();
-  }, [auth]);
 
   const openAiTab = useCallback(
     (tab: "intelligence" | "transcription") => {
@@ -123,15 +107,13 @@ export function ToastArea({
     openAiTab("transcription");
   }, [openAiTab, setToastActionTarget]);
 
+  const handleSignIn = useCallback(() => {}, []);
+
   const registry = useMemo(
     () =>
       createToastRegistry({
-        isAuthenticated,
-        isAuthLoading,
         hasLLMConfigured,
         hasSttConfigured,
-        hasProSttConfigured,
-        hasProLlmConfigured,
         isAiTranscriptionTabActive,
         isAiIntelligenceTabActive,
         hasActiveDownload,
@@ -140,17 +122,12 @@ export function ToastArea({
         activeDownloads,
         localSttStatus,
         isLocalSttModel,
-        onSignIn: handleSignIn,
         onOpenLLMSettings: handleOpenLLMSettings,
         onOpenSTTSettings: handleOpenSTTSettings,
       }),
     [
-      isAuthenticated,
-      isAuthLoading,
       hasLLMConfigured,
       hasSttConfigured,
-      hasProSttConfigured,
-      hasProLlmConfigured,
       isAiTranscriptionTabActive,
       isAiIntelligenceTabActive,
       hasActiveDownload,
@@ -159,7 +136,6 @@ export function ToastArea({
       activeDownloads,
       localSttStatus,
       isLocalSttModel,
-      handleSignIn,
       handleOpenLLMSettings,
       handleOpenSTTSettings,
     ],
