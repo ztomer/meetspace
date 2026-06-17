@@ -12,6 +12,7 @@ use objc2_app_kit::{
 #[cfg(target_os = "macos")]
 use objc2_foundation::{NSCopying, NSDictionary, NSPoint, NSRect, NSSize, NSString};
 
+#[allow(dead_code)] // Degraded is wired through the icon plugin's draw() arm; not yet emitted by the runtime.
 pub enum Overlay {
     Recording,
     Notification(u8),

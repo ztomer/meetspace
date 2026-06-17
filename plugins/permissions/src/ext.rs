@@ -77,8 +77,11 @@ impl<'a, R: tauri::Runtime, M: tauri::Manager<R>> Permissions<'a, R, M> {
     pub async fn check(&self, permission: Permission) -> Result<PermissionStatus, crate::Error> {
         #[cfg(target_os = "macos")]
         {
-            if let Some(status) = self.check_sidecar(permission).await {
-                return Ok(status);
+            // Bypass sidecar for Microphone to check the true permission status of the main app bundle
+            if !matches!(permission, Permission::Microphone) {
+                if let Some(status) = self.check_sidecar(permission).await {
+                    return Ok(status);
+                }
             }
 
             tracing::warn!(

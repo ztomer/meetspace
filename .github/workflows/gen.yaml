@@ -1,0 +1,31 @@
+on:
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: arduino/setup-task@v1
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: lukka/get-cmake@latest
+      - run: task run
+      - run: |
+          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            otool -L bin/llama-gbnf-validator
+          else
+            ldd bin/llama-gbnf-validator
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: llama-gbnf-validator-${{ matrix.os }}
+          path: bin/llama-gbnf-validator*

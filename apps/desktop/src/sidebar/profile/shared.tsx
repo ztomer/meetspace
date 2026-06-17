@@ -1,0 +1,81 @@
+import { Facehash } from "facehash";
+
+import { cn } from "@meetspace/utils";
+
+export function MenuItem({
+  icon: Icon,
+  label,
+  badge,
+  suffixIcon: SuffixIcon,
+  onClick,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  badge?: number | React.ReactNode;
+  suffixIcon?: React.ComponentType<{ className?: string }>;
+  onClick: () => void;
+}) {
+  return (
+    <div className="px-1">
+      <button
+        className={cn([
+          "group flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg",
+          "px-3 py-1.5",
+          "text-foreground dark:text-muted-foreground/50 text-sm whitespace-nowrap",
+          "hover:bg-accent dark:hover:bg-accent transition-colors",
+        ])}
+        onClick={onClick}
+      >
+        <div className="flex items-center justify-start gap-2.5">
+          <Icon className="text-foreground dark:text-muted-foreground/50 h-4 w-4 shrink-0" />
+          {label}
+        </div>
+        {badge &&
+          (typeof badge === "number" ? (
+            <span
+              className={cn(
+                "rounded-full",
+                "px-2 py-0.5",
+                "bg-red-500",
+                "text-xs font-semibold text-white",
+              )}
+            >
+              {badge}
+            </span>
+          ) : (
+            badge
+          ))}
+        {SuffixIcon && (
+          <SuffixIcon
+            className={cn("h-4 w-4 shrink-0", "text-muted-foreground")}
+          />
+        )}
+      </button>
+    </div>
+  );
+}
+
+export function ProfileFacehash({
+  name,
+  size,
+  showInitial = true,
+  className,
+}: {
+  name: string;
+  size: number;
+  showInitial?: boolean;
+  className?: string;
+}) {
+  return (
+    <div className={cn(["rounded-full bg-amber-50", className])}>
+      <Facehash
+        name={name}
+        size={size}
+        interactive={false}
+        showInitial={showInitial}
+        variant="solid"
+        intensity3d="none"
+      />
+    </div>
+  );
+}

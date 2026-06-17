@@ -12,8 +12,8 @@ pub(crate) mod elevenlabs;
 mod fireworks;
 mod gladia;
 pub mod http;
-mod meetspace;
 mod language;
+mod meetspace;
 mod mistral;
 mod openai;
 mod owhisper;
@@ -31,8 +31,8 @@ pub use deepgram::*;
 pub use elevenlabs::*;
 pub use fireworks::*;
 pub use gladia::*;
-pub use meetspace::*;
 pub use language::{LanguageQuality, LanguageSupport};
+pub use meetspace::*;
 pub use mistral::*;
 pub use openai::*;
 pub use pyannote::*;
@@ -305,7 +305,9 @@ pub fn is_meetspace_proxy(base_url: &str) -> bool {
     is_meetspace_cloud(base_url) || is_meetspace_local_proxy(base_url)
 }
 
-pub fn normalize_languages(languages: &[meetspace_language::Language]) -> Vec<meetspace_language::Language> {
+pub fn normalize_languages(
+    languages: &[meetspace_language::Language],
+) -> Vec<meetspace_language::Language> {
     let mut seen = HashSet::new();
     let mut result = Vec::with_capacity(languages.len());
 
@@ -688,7 +690,12 @@ mod tests {
     fn test_adapter_kind_from_url_and_languages() {
         use meetspace_language::ISO639::*;
 
-        let cases: &[(&str, &[meetspace_language::ISO639], Option<&str>, AdapterKind)] = &[
+        let cases: &[(
+            &str,
+            &[meetspace_language::ISO639],
+            Option<&str>,
+            AdapterKind,
+        )] = &[
             // MeetspaceCloud - always routes to Meetspace adapter (proxy owns provider selection)
             (
                 "https://api.meetspace.com/stt",
@@ -780,7 +787,8 @@ mod tests {
         ];
 
         for (url, langs, model, expected) in cases {
-            let langs: Vec<meetspace_language::Language> = langs.iter().map(|l| (*l).into()).collect();
+            let langs: Vec<meetspace_language::Language> =
+                langs.iter().map(|l| (*l).into()).collect();
             assert_eq!(
                 AdapterKind::from_url_and_languages(url, &langs, *model),
                 *expected,
@@ -948,7 +956,8 @@ mod tests {
             &[&[En], &[Ko], &[Ar], &[En, De], &[En, Ko], &[Zh]];
 
         for langs in combos {
-            let langs: Vec<meetspace_language::Language> = langs.iter().map(|l| (*l).into()).collect();
+            let langs: Vec<meetspace_language::Language> =
+                langs.iter().map(|l| (*l).into()).collect();
             assert!(
                 AdapterKind::Meetspace.is_supported_languages_live(&langs, Some("cloud")),
                 "Meetspace adapter should support all languages: {langs:?}"
@@ -1012,8 +1021,10 @@ mod tests {
 
     #[test]
     fn test_append_provider_param_replaces_existing() {
-        let url =
-            append_provider_param("https://api.meetspace.com/stt?provider=deepgram", "meetspace");
+        let url = append_provider_param(
+            "https://api.meetspace.com/stt?provider=deepgram",
+            "meetspace",
+        );
         assert!(
             url.contains("provider=meetspace"),
             "new provider value should be present: {url}"

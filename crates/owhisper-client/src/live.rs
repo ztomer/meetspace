@@ -475,10 +475,11 @@ impl<A: RealtimeSttAdapter> ListenClientDual<A> {
             let adapter = adapter.clone();
             move |result| {
                 let adapter = adapter.clone();
-                let responses: Vec<Result<StreamResponse, meetspace_ws_client::Error>> = match result {
-                    Ok(raw) => adapter.parse_response(&raw).into_iter().map(Ok).collect(),
-                    Err(e) => vec![Err(e)],
-                };
+                let responses: Vec<Result<StreamResponse, meetspace_ws_client::Error>> =
+                    match result {
+                        Ok(raw) => adapter.parse_response(&raw).into_iter().map(Ok).collect(),
+                        Err(e) => vec![Err(e)],
+                    };
                 futures_util::stream::iter(responses)
             }
         });
@@ -487,10 +488,11 @@ impl<A: RealtimeSttAdapter> ListenClientDual<A> {
             let adapter = adapter.clone();
             move |result| {
                 let adapter = adapter.clone();
-                let responses: Vec<Result<StreamResponse, meetspace_ws_client::Error>> = match result {
-                    Ok(raw) => adapter.parse_response(&raw).into_iter().map(Ok).collect(),
-                    Err(e) => vec![Err(e)],
-                };
+                let responses: Vec<Result<StreamResponse, meetspace_ws_client::Error>> =
+                    match result {
+                        Ok(raw) => adapter.parse_response(&raw).into_iter().map(Ok).collect(),
+                        Err(e) => vec![Err(e)],
+                    };
                 futures_util::stream::iter(responses)
             }
         });

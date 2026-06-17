@@ -1,0 +1,20 @@
+name: fork-guard
+
+# Cheap guard against the two failure modes that have silently broken
+# past upstream syncs: leftover conflict markers and un-rebranded
+# upstream identifiers in source.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check-clean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Conflict markers + rebrand leaks
+        run: bash scripts/check-clean.sh

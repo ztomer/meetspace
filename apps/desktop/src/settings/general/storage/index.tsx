@@ -1,7 +1,13 @@
-import { Trans, useLingui } from "@lingui/react/macro";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { homeDir } from "@tauri-apps/api/path";
-import { FolderIcon, type LucideIcon, Settings2Icon } from "lucide-react";
+import { open as selectFolder } from "@tauri-apps/plugin-dialog";
+import {
+  ArchiveIcon,
+  FolderIcon,
+  Loader2Icon,
+  type LucideIcon,
+  Settings2Icon,
+} from "lucide-react";
 import { type ReactNode } from "react";
 import { useState } from "react";
 
@@ -71,7 +77,6 @@ const AUDIO_RETENTION_OPTIONS = [
 ];
 
 export function StorageSettingsView() {
-  const { t } = useLingui();
   const queryClient = useQueryClient();
   const { data: home } = useQuery({ queryKey: ["home-dir"], queryFn: homeDir });
   const { data: othersBase } = useQuery({
@@ -99,15 +104,13 @@ export function StorageSettingsView() {
 
   return (
     <div>
-      <h2 className="mb-4 font-sans text-lg font-semibold">
-        <Trans>Storage</Trans>
-      </h2>
+      <h2 className="mb-4 font-sans text-lg font-semibold">Storage</h2>
       <div className="flex flex-col gap-3">
         <AudioRetentionRow />
         <StoragePathRow
           icon={FolderIcon}
-          title={t`Content`}
-          description={t`Stores your notes, recordings, and session data`}
+          title="Content"
+          description="Stores your notes, recordings, and session data"
           path={contentBase}
           home={home}
           action={
@@ -117,17 +120,18 @@ export function StorageSettingsView() {
               onClick={() => setShowDialog(true)}
               disabled={!contentBase}
             >
-              <Trans>Customize</Trans>
+              Customize
             </Button>
           }
         />
         <StoragePathRow
           icon={Settings2Icon}
-          title={t`Others`}
-          description={t`Stores app-wide settings and configurations`}
+          title="Others"
+          description="Stores app-wide settings and configurations"
           path={othersBase}
           home={home}
         />
+        <BackupRow currentPath={contentBase} />
       </div>
       <ChangeContentPathDialog
         open={showDialog}
@@ -145,7 +149,6 @@ export function StorageSettingsView() {
 }
 
 function AudioRetentionRow() {
-  const { t } = useLingui();
   const audioRetention = useConfigValue("audio_retention") || "forever";
   const setAudioRetention = settings.UI.useSetPartialValuesCallback(
     (value: string) => ({
@@ -158,48 +161,19 @@ function AudioRetentionRow() {
   const selectedOption =
     AUDIO_RETENTION_OPTIONS.find((option) => option.value === audioRetention) ??
     AUDIO_RETENTION_OPTIONS[AUDIO_RETENTION_OPTIONS.length - 1]!;
-  const copyByValue = {
-    none: {
-      label: t`Don't save`,
-      description: t`Do not keep recordings after processing`,
-    },
-    oneDay: {
-      label: t`1 day`,
-      description: t`Expire recordings after one day`,
-    },
-    threeDays: {
-      label: t`3 days`,
-      description: t`Expire recordings after three days`,
-    },
-    oneWeek: {
-      label: t`1 week`,
-      description: t`Expire recordings after one week`,
-    },
-    oneMonth: {
-      label: t`1 month`,
-      description: t`Expire recordings after one month`,
-    },
-    forever: {
-      label: t`Forever`,
-      description: t`Keep recordings until manually deleted`,
-    },
-  } as const;
 
   return (
     <div className="flex items-center gap-3">
       <div className="flex w-24 shrink-0 cursor-default items-center gap-2">
         <Settings2Icon className="text-muted-foreground size-4" />
-        <span className="text-sm font-medium">
-          <Trans>Audio</Trans>
-        </span>
+        <span className="text-sm font-medium">Audio</span>
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-muted-foreground truncate text-sm">
-          <Trans>Save audio after meeting</Trans>
+          Save audio after meeting
         </p>
         <p className="text-muted-foreground text-xs">
-          {copyByValue[selectedOption.value as keyof typeof copyByValue]
-            ?.description ?? selectedOption.description}
+          {selectedOption.description}
         </p>
       </div>
       <Select value={audioRetention} onValueChange={setAudioRetention}>
@@ -209,8 +183,7 @@ function AudioRetentionRow() {
         <SelectContent>
           {AUDIO_RETENTION_OPTIONS.map((option) => (
             <SelectItem key={option.value} value={option.value}>
-              {copyByValue[option.value as keyof typeof copyByValue]?.label ??
-                option.label}
+              {option.label}
             </SelectItem>
           ))}
         </SelectContent>
@@ -232,7 +205,6 @@ function ChangeContentPathDialog({
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
 }) {
-  const { t } = useLingui();
   const {
     selectedPath,
     selectPath,
@@ -267,10 +239,10 @@ function ChangeContentPathDialog({
 
   const disabledReason = (() => {
     if (!selectedPath || selectedPath === currentPath)
-      return t`Select a different folder`;
-    if (isCheckingNewPath) return t`Checking folder...`;
+      return "Select a different folder";
+    if (isCheckingNewPath) return "Checking folder...";
     if (moveVault && isNewPathEmpty === false) {
-      return t`Moving existing data requires an empty folder. Uncheck Move to switch locations without migrating files.`;
+      return "Moving existing data requires an empty folder. Uncheck Move to switch locations without migrating files.";
     }
     return null;
   })();
@@ -287,13 +259,9 @@ function ChangeContentPathDialog({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            <Trans>Change content location</Trans>
-          </DialogTitle>
+          <DialogTitle>Change content location</DialogTitle>
           <DialogDescription>
-            <Trans>
-              Choose where Meetspace should store data. (notes, settings, etc)
-            </Trans>
+            Choose where Meetspace should store data. (notes, settings, etc)
           </DialogDescription>
         </DialogHeader>
 
@@ -314,12 +282,10 @@ function ChangeContentPathDialog({
                     : displayPath(currentPath, home)}
                 </p>
                 {isNewPathChosen && isNewPathEmpty === false && (
-                  <p className="mt-1 text-xs text-yellow-600">
-                    <Trans>
-                      Folder is not empty. Uncheck Move to use it as-is, or pick
-                      a dedicated empty folder (for example "meetings") for a
-                      full migration.
-                    </Trans>
+                  <p className="text-warning-fg mt-1 text-xs">
+                    Folder is not empty. Uncheck Move to use it as-is, or pick a
+                    dedicated empty folder (for example "meetings") for a full
+                    migration.
                   </p>
                 )}
               </div>
@@ -329,13 +295,13 @@ function ChangeContentPathDialog({
                 className="shrink-0"
                 onClick={() => chooseFolder()}
               >
-                <Trans>Browse</Trans>
+                Browse
               </Button>
             </div>
             {obsidianVaults && obsidianVaults.length > 0 && (
               <div className="mt-2 flex flex-col gap-1.5">
                 <span className="mt-1 text-xs">
-                  <Trans>Want to use with your vault?</Trans>
+                  Want to use with your vault?
                 </span>
                 {obsidianVaults.map((vault) => (
                   <button
@@ -358,7 +324,7 @@ function ChangeContentPathDialog({
           </div>
         </div>
 
-        {error && <p className="text-sm text-red-500">{error.message}</p>}
+        {error && <p className="text-destructive text-sm">{error.message}</p>}
 
         {isNewPathChosen && (
           <DialogFooter className="items-center">
@@ -370,10 +336,10 @@ function ChangeContentPathDialog({
                 />
                 <div className="flex flex-row gap-1">
                   <span className="text-muted-foreground text-sm font-semibold">
-                    <Trans>Move</Trans>
+                    Move
                   </span>
                   <span className="text-muted-foreground text-sm">
-                    <Trans>existing data to new location</Trans>
+                    existing data to new location
                   </span>
                 </div>
               </label>
@@ -392,7 +358,7 @@ function ChangeContentPathDialog({
                       disabledReason ? "pointer-events-none" : "",
                     ])}
                   >
-                    {isPending ? t`Applying...` : t`Apply and Restart`}
+                    {isPending ? "Applying..." : "Apply and Restart"}
                   </Button>
                 </span>
               </TooltipTrigger>
@@ -409,6 +375,86 @@ function ChangeContentPathDialog({
   );
 }
 
+function BackupRow({ currentPath }: { currentPath: string | undefined }) {
+  const [lastBackupPath, setLastBackupPath] = useState<string | null>(null);
+
+  const backup = useMutation({
+    mutationFn: async () => {
+      const dest = await selectFolder({
+        title: "Choose a backup destination",
+        directory: true,
+        multiple: false,
+      });
+      if (typeof dest !== "string") {
+        return null;
+      }
+      const result = await settingsCommands.copyVault(dest);
+      if (result.status === "error") {
+        throw new Error(result.error);
+      }
+      return dest;
+    },
+    onSuccess: (dest) => {
+      if (dest) setLastBackupPath(dest);
+    },
+  });
+
+  return (
+    <div className="flex items-center gap-3">
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>
+          <div className="flex w-24 shrink-0 cursor-default items-center gap-2">
+            <ArchiveIcon className="text-muted-foreground size-4" />
+            <span className="text-sm font-medium">Backup</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="top">
+          <p className="text-xs">
+            Copy a snapshot of notes, recordings, and session data into a folder
+            you can sync via Dropbox, iCloud, git, etc.
+          </p>
+        </TooltipContent>
+      </Tooltip>
+      <div className="min-w-0 flex-1">
+        {lastBackupPath ? (
+          <button
+            onClick={() => openerCommands.openPath(lastBackupPath, null)}
+            className="text-success-fg cursor-pointer truncate text-left text-sm hover:underline"
+          >
+            Backed up to {lastBackupPath}
+          </button>
+        ) : (
+          <p className="text-muted-foreground truncate text-sm">
+            Copy your vault to another folder. To restore, use Content →
+            Customize and pick the backup folder.
+          </p>
+        )}
+        {backup.error && (
+          <p className="text-destructive mt-1 text-xs">
+            {(backup.error as Error).message}
+          </p>
+        )}
+      </div>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => backup.mutate()}
+        disabled={!currentPath || backup.isPending}
+        className="shrink-0"
+      >
+        {backup.isPending ? (
+          <>
+            <Loader2Icon className="mr-1 size-3 animate-spin" />
+            Backing up…
+          </>
+        ) : (
+          "Backup now"
+        )}
+      </Button>
+    </div>
+  );
+}
+
 function StoragePathRow({
   icon: Icon,
   title,
@@ -418,8 +464,8 @@ function StoragePathRow({
   action,
 }: {
   icon: LucideIcon;
-  title: ReactNode;
-  description: ReactNode;
+  title: string;
+  description: string;
   path: string | undefined;
   home: string | undefined;
   action?: ReactNode;

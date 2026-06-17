@@ -1,0 +1,5 @@
+# Run artifacts — baselines in __snapshots__/ ARE committed.
+test-results/
+playwright-report/
+.playwright/
+*.zip
