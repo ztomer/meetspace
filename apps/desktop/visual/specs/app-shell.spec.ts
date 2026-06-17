@@ -1,16 +1,13 @@
 import { expect, test } from "../support/fixtures";
 
-// EXPANSION POINT — full in-app screens (timeline, editor, settings, calendar)
-// are where most visual regressions live, but `/app/*` routes need the Tauri
-// event API mocked and the TinyBase settings/session stores seeded before they
-// render (today they hit the error boundary under the headless mock).
-//
-// To enable: extend support/tauri-mock.ts (event listen/unlisten + plugin
-// handlers) and add a store-seed init script, then point this at the route and
-// drop `.fixme`. Until then, drive these screens via the exploratory loop in
-// docs/VISUAL_TESTING.md (real app + screenshots).
-test.fixme("main app shell", async ({ page }) => {
+// The main app shell (empty state: no sessions/notes seeded). Renders via the
+// mocked Tauri backend; sessions/chat stay empty because the persisters have
+// no files to load. Captured in light + dark.
+test("main app shell (empty state)", async ({ page }) => {
   await page.goto("/app/main");
-  await page.getByTestId("main-app-shell").waitFor({ state: "visible" });
+  await page
+    .getByTestId("main-app-shell")
+    .waitFor({ state: "visible", timeout: 30_000 });
+  await page.waitForLoadState("networkidle").catch(() => {});
   await expect(page).toHaveScreenshot("app-shell.png", { fullPage: true });
 });

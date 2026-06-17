@@ -55,4 +55,10 @@ export function installTauriMock() {
       arch: "aarch64",
       family: "unix",
     };
+
+  // Event API reads this directly on unlisten().
+  (window as unknown as Record<string, unknown>).__TAURI_EVENT_PLUGIN_INTERNALS__ =
+    {
+      unregisterListener: noop,
+    };
 }

@@ -62,18 +62,22 @@ test("settings appearance", async ({ page }) => {
 Run `pnpm -F desktop visual:update` to write the light+dark baselines, review
 them, commit.
 
-### Known limitation — full in-app screens
+### In-app screens
 
-`/app/*` routes (timeline, editor, settings, calendar) currently hit the error
-boundary under the headless mock: they need the Tauri **event API** mocked and
-the TinyBase **settings/session stores seeded** before they render. That work
-is the expansion point flagged in `specs/app-shell.spec.ts` (`test.fixme`).
-Until it lands, cover those screens via the exploratory pass (§1); the seed
-baseline (`not-found.spec.ts`) proves the pipeline end-to-end.
+`/app/*` routes render under the headless mock — the main shell empty state is
+snapshotted in `specs/app-shell.spec.ts`. The mock answers every Tauri command
+with safe empties, so sessions/notes/chat come up **empty** (the persisters
+have no files to load — those errors in the log are caught and harmless).
 
-To enable a full screen: extend `support/tauri-mock.ts` (event listen/unlisten
-+ the plugin commands the screen calls) and add a store-seed init script, then
-point a spec at the route and drop `.fixme`.
+That covers empty/first-run states. Screens that need **existing data**
+(a populated timeline, an open note, calendar events) need that data seeded —
+return it from the relevant command in `support/tauri-mock.ts` `handlers`, or
+push rows into the TinyBase stores via an init script. Add the handler your
+screen calls, navigate, get it to a stable state, snapshot.
+
+Determinism notes: the clock is frozen (`support/fixtures.ts` → `FIXED_TIME`)
+so on-screen times don't drift; animations are disabled at screenshot time.
+If a screen shows other live/random values, stub them in the mock.
 
 ### Baselines & CI
 
