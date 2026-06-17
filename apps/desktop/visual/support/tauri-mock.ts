@@ -8,6 +8,9 @@ export function installTauriMock() {
   const noop = () => {};
   let callbackId = 0;
 
+  // @tauri-apps/api isTauri() gates Tauri-only code paths on this flag.
+  (window as unknown as Record<string, unknown>).isTauri = true;
+
   // command name -> value (or fn(args) -> value). Default: null.
   const handlers: Record<string, unknown | ((args: unknown) => unknown)> = {
     // window/webview identity used during boot
@@ -27,7 +30,11 @@ export function installTauriMock() {
 
   (window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ = {
     invoke: (cmd: string, args: unknown) => {
-      const h = handlers[cmd];
+      // Per-test overrides (set via mockCommands()) win over the defaults.
+      const overrides =
+        ((window as unknown as Record<string, unknown>)
+          .__VISUAL_MOCK_OVERRIDES__ as Record<string, unknown>) ?? {};
+      const h = cmd in overrides ? overrides[cmd] : handlers[cmd];
       const value =
         typeof h === "function"
           ? (h as (a: unknown) => unknown)(args)
@@ -57,8 +64,9 @@ export function installTauriMock() {
     };
 
   // Event API reads this directly on unlisten().
-  (window as unknown as Record<string, unknown>).__TAURI_EVENT_PLUGIN_INTERNALS__ =
-    {
-      unregisterListener: noop,
-    };
+  (
+    window as unknown as Record<string, unknown>
+  ).__TAURI_EVENT_PLUGIN_INTERNALS__ = {
+    unregisterListener: noop,
+  };
 }

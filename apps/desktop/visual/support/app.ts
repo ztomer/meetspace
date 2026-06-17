@@ -1,5 +1,18 @@
 import type { Page } from "@playwright/test";
 
+// Override mocked Tauri command return values for one test. Call before
+// navigation. Values are the raw `invoke` return (specta bindings wrap them
+// into { status: "ok", data }).
+export async function mockCommands(
+  page: Page,
+  overrides: Record<string, unknown>,
+) {
+  await page.addInitScript((o) => {
+    (window as unknown as Record<string, unknown>).__VISUAL_MOCK_OVERRIDES__ =
+      o;
+  }, overrides);
+}
+
 // Boot to the main shell (empty state).
 export async function openShell(page: Page) {
   await page.goto("/app/main");
