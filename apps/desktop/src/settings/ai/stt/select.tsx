@@ -15,6 +15,7 @@ import {
   type LocalModel,
 } from "@meetspace/plugin-local-stt";
 import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { commands as listenerCommands } from "@meetspace/plugin-transcription";
 import type { AIProviderStorage } from "@meetspace/store";
 import { Input } from "@meetspace/ui/components/ui/input";
 import {
@@ -53,8 +54,6 @@ import {
   isMeetspaceLocalSttModel,
   isLiveTranscriptionSupported,
   isRealtimeLocalModel,
-  isSupportedLanguagesBatch,
-  isSupportedLanguagesLive,
   isSupportedLocalSttModel,
 } from "~/stt/capabilities";
 
@@ -81,12 +80,8 @@ export function SelectProviderAndModel() {
   const selectedModels = selectedProvider
     ? (configuredProviders[selectedProvider]?.models ?? [])
     : [];
-  const displayedSttModel =
-    selectedProvider === "custom"
-      ? selectedSttModel
-      : getPreferredProviderModel(selectedSttModel, selectedModels);
   const selectedModel = selectedModels.find(
-    (model) => model.id === displayedSttModel,
+    (model) => model.id === selectedSttModel,
   );
 
   const handleSelectProvider = settings.UI.useSetValueCallback(
@@ -213,7 +208,7 @@ export function SelectProviderAndModel() {
         {current_stt_provider === "custom" ? (
           <div className="min-w-0 flex-3">
             <Input
-              value={displayedSttModel || ""}
+              value={selectedSttModel || ""}
               onChange={(event) => handleModelChange(event.target.value)}
               className="text-xs"
               placeholder={t`Enter a model identifier`}
@@ -222,7 +217,7 @@ export function SelectProviderAndModel() {
         ) : (
           <div className="min-w-0 flex-3">
             <Select
-              value={displayedSttModel || ""}
+              value={selectedSttModel || ""}
               onValueChange={handleModelChange}
               disabled={selectedModels.length === 0}
             >
@@ -336,17 +331,18 @@ function useHasLanguageWarning() {
       const useLiveMode = isOnDeviceModel
         ? useLiveOnDeviceModel && liveSupport.data
         : liveSupport.data;
-      return useLiveMode
-        ? await isSupportedLanguagesLive(
+      const result = useLiveMode
+        ? await listenerCommands.isSupportedLanguagesLive(
             current_stt_provider!,
             selectedSttModel ?? null,
             spoken_languages ?? [],
           )
-        : await isSupportedLanguagesBatch(
+        : await listenerCommands.isSupportedLanguagesBatch(
             current_stt_provider!,
             selectedSttModel ?? null,
             spoken_languages ?? [],
           );
+      return result.status === "ok" ? result.data : true;
     },
     enabled:
       isConfigured &&
@@ -411,16 +407,11 @@ function getProviderModelMode(
   }
 
   if (providerId === "soniox") {
-    if (model === "stt-async-v5" || model === "stt-async-v4") {
+    if (model === "stt-async-v5") {
       return "batch";
     }
 
-    if (
-      model === "stt-rt-v5" ||
-      model === "stt-rt-v4" ||
-      model === "stt-v5" ||
-      model === "stt-v4"
-    ) {
+    if (model === "stt-rt-v5" || model === "stt-v4" || model === "stt-rt-v4") {
       return "realtime";
     }
   }

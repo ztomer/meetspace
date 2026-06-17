@@ -75,10 +75,6 @@ export function getBatchProvider(
   provider: string,
   model: string,
 ): TranscriptionParams["provider"] | null {
-  if (provider === "cloudflare_workers_ai") {
-    return "deepgram";
-  }
-
   if (provider === "meetspace") {
     if (model.startsWith("soniqo-")) return "soniqo";
     if (model.startsWith("am-")) return "am";
