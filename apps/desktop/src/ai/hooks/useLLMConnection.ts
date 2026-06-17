@@ -8,7 +8,7 @@ import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 import { extractReasoningMiddleware, wrapLanguageModel } from "ai";
 import { useMemo, useRef } from "react";
 
-import type { CharTask } from "@meetspace/api-client";
+import type { CharTask } from "~/shared/api-types";
 import type { AIProviderStorage } from "@meetspace/store";
 
 import { createAuthFetch } from "../auth-fetch";

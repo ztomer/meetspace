@@ -1,4 +1,3 @@
-import { Trans, useLingui } from "@lingui/react/macro";
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { arch } from "@tauri-apps/plugin-os";
 import {
@@ -44,8 +43,7 @@ import {
   displayModelLabel,
   displayModelTitle,
   formatModelSize,
-  type ProviderId,
-  PROVIDERS,
+  LOCAL_STT_PROVIDER_ID,
   sttModelQueries,
 } from "./shared";
 
@@ -83,7 +81,6 @@ import {
 } from "~/stt/model-selection";
 
 export function SelectProviderAndModel() {
-  const { t } = useLingui();
   const { current_stt_provider, current_stt_model } = useConfigValues([
     "current_stt_provider",
     "current_stt_model",
@@ -191,6 +188,11 @@ export function SelectProviderAndModel() {
       setPendingProvider(providerId);
       return;
     }
+  }, [current_stt_model, models, setModel]);
+
+  const isConfigured = !!current_stt_model;
+  const hasError = isConfigured && health.status === "error";
+  const selectedModel = models.find((m) => m.id === current_stt_model);
 
     setPendingProvider(null);
     rememberModel(provider, nextModel);
@@ -421,19 +423,9 @@ function useTranscriptionLanguageWarning() {
     ] as const);
   const health = useConnectionHealth();
 
-  const selectedSttModel = isConfiguredSttModel(
-    current_stt_provider,
-    current_stt_model,
-  )
-    ? current_stt_model
-    : undefined;
-  const isConfigured = !!(current_stt_provider && selectedSttModel);
-  const isOnDeviceModel = isMeetspaceLocalSttModel(
-    current_stt_provider,
-    selectedSttModel,
-  );
+  const isConfigured = !!(current_stt_provider && current_stt_model);
   const useLiveOnDeviceModel =
-    isOnDeviceModel && isRealtimeLocalModel(selectedSttModel);
+    !!current_stt_model && isRealtimeLocalModel(current_stt_model);
   const hasError = isConfigured && health.status === "error";
   const liveSupport = useQuery({
     queryKey: ["stt-live-support", current_stt_provider, selectedSttModel],
@@ -471,10 +463,7 @@ function useTranscriptionLanguageWarning() {
 
       return await getLanguageSupportIssue(spoken_languages ?? [], isSupported);
     },
-    enabled:
-      isConfigured &&
-      liveSupport.data !== undefined &&
-      !!spoken_languages?.length,
+    enabled: isConfigured && !!spoken_languages?.length,
   });
 
   if (
@@ -598,7 +587,6 @@ function useConfiguredMapping(): {
     queryFn: () => arch(),
     staleTime: Infinity,
   });
-
   const isAppleSilicon = targetArch.data === "aarch64";
 
   const supportedModels = useQuery({
@@ -610,11 +598,18 @@ function useConfiguredMapping(): {
     staleTime: Infinity,
   });
 
-  const localModels = supportedModels.data ?? [];
-  const soniqoModels = localModels.filter((m) => m.model_type === "soniqo");
+  const all = supportedModels.data ?? [];
 
-  const soniqoDownloaded = useQueries({
-    queries: [...soniqoModels.map((m) => sttModelQueries.isDownloaded(m.key))],
+  // Apple Silicon: surface Soniqo (Parakeet streaming) plus the Argmax-backed
+  // models (Parakeet V2/V3 and Whisper Large V3) — both are MLX/CoreML-native.
+  // Other platforms get the Whisper-CPP family.
+  const soniqo = all.filter((m) => m.model_type === "soniqo");
+  const argmax = all.filter((m) => m.model_type === "argmax");
+  const whispercpp = all.filter((m) => m.model_type === "whispercpp");
+  const visible = isAppleSilicon ? [...soniqo, ...argmax] : whispercpp;
+
+  const downloaded = useQueries({
+    queries: visible.map((m) => sttModelQueries.isDownloaded(m.key)),
   });
 
   const providers = Object.fromEntries(
@@ -689,13 +684,10 @@ function useConfiguredMapping(): {
 function ModelSelectItem({
   model,
   onDownload,
-  onStartTrial,
 }: {
   model: ModelEntry;
   onDownload: () => void;
-  onStartTrial: () => void;
 }) {
-  const isCloud = model.id === "cloud";
   const { activeDownloads } = useNotifications();
   const downloadInfo = activeDownloads.find((d) => d.model === model.id);
   const isDownloading = !!downloadInfo;
@@ -704,7 +696,6 @@ function ModelSelectItem({
   const title = displayModelTitle(model.id, model.displayName);
   const sizeLabel = formatModelSize(model.sizeBytes);
   const showLocalActions = model.isDownloaded && isLocalModelId(model.id);
-  const isDeprecated = model.isDeprecated === true;
   const content = (
     <div className="flex min-w-0 flex-1 items-center justify-between gap-3">
       <LocalModelLabel
@@ -715,7 +706,18 @@ function ModelSelectItem({
       />
       <div className="flex shrink-0 items-center gap-2 text-[11px]">
         <LocalModelBackendBadge model={model.id} />
-        <ModelModeBadge mode={model.mode} />
+        {model.mode && (
+          <span
+            className={cn([
+              "rounded-md px-1.5 py-0.5 font-medium",
+              model.mode === "realtime"
+                ? "bg-info-bg text-info-fg"
+                : "bg-muted text-muted-foreground",
+            ])}
+          >
+            {model.mode === "realtime" ? "Realtime" : "Batch"}
+          </span>
+        )}
         {!model.isDownloaded && sizeLabel && (
           <span className="text-muted-foreground font-mono">{sizeLabel}</span>
         )}
@@ -725,7 +727,7 @@ function ModelSelectItem({
 
   if (model.isDownloaded) {
     return (
-      <div className="group/model-row relative overflow-hidden rounded-full">
+      <div className="group/model-row relative">
         <SelectItem
           key={model.id}
           value={model.id}
@@ -750,11 +752,7 @@ function ModelSelectItem({
     if (isDownloading) {
       return;
     }
-    if (isCloud) {
-      onStartTrial();
-    } else {
-      onDownload();
-    }
+    onDownload();
   };
 
   return (
@@ -774,7 +772,7 @@ function ModelSelectItem({
           className={cn([
             "rounded-full px-2 py-0.5 text-[11px] font-medium",
             "flex items-center gap-1",
-            "from-muted to-accent text-muted-foreground bg-linear-to-t",
+            "bg-secondary text-secondary-foreground border-border border",
           ])}
         >
           <Loader2 className="size-3 animate-spin" />
@@ -786,13 +784,11 @@ function ModelSelectItem({
             "rounded-full px-2 text-[11px] font-medium",
             "opacity-0 group-hover:opacity-100",
             "transition-all duration-150",
-            isCloud
-              ? "bg-primary text-primary-foreground hover:bg-primary/90 py-1 shadow-xs hover:shadow-md dark:!bg-white dark:!text-black dark:hover:!bg-white/90"
-              : "from-muted to-accent text-foreground bg-linear-to-t py-0.5 shadow-xs hover:shadow-md",
+            "bg-secondary text-secondary-foreground border-border border py-0.5 shadow-xs hover:shadow-md",
           ])}
           onClick={handleAction}
         >
-          {isCloud ? <Trans>Upgrade to use</Trans> : <Trans>Download</Trans>}
+          Download
         </button>
       )}
     </div>
@@ -800,8 +796,6 @@ function ModelSelectItem({
 }
 
 function ModelSelectedValue({ model }: { model: ModelEntry }) {
-  const isDeprecated = model.isDeprecated === true;
-
   return (
     <div className="flex max-w-full min-w-0 items-center gap-2">
       <LocalModelLabel
@@ -851,11 +845,15 @@ function ModelModeBadge({ mode }: { mode?: ModelEntry["mode"] }) {
 }
 
 function isLocalModelId(model: string): model is LocalModel {
-  return isSupportedLocalSttModel(model);
+  return (
+    model.startsWith("soniqo-") ||
+    model.startsWith("cactus-") ||
+    model.startsWith("am-") ||
+    model.startsWith("Quantized")
+  );
 }
 
 function LocalModelDropdownActions({ model }: { model: LocalModel }) {
-  const { t } = useLingui();
   const queryClient = useQueryClient();
 
   const stopSelect = (event: React.SyntheticEvent<HTMLButtonElement>) => {
@@ -896,9 +894,9 @@ function LocalModelDropdownActions({ model }: { model: LocalModel }) {
     >
       <button
         type="button"
-        aria-label={t`Show in Finder`}
+        aria-label="Show in Finder"
         className={cn([
-          "flex size-6 items-center justify-center rounded-full",
+          "flex size-6 items-center justify-center rounded-md",
           "text-muted-foreground hover:text-foreground",
         ])}
         onPointerDown={stopSelect}
@@ -911,10 +909,10 @@ function LocalModelDropdownActions({ model }: { model: LocalModel }) {
       </button>
       <button
         type="button"
-        aria-label={t`Delete model`}
+        aria-label="Delete model"
         className={cn([
-          "flex size-6 items-center justify-center rounded-full",
-          "text-red-500 hover:text-red-600",
+          "flex size-6 items-center justify-center rounded-md",
+          "text-destructive hover:text-destructive",
         ])}
         onPointerDown={stopSelect}
         onClick={(event) => {
