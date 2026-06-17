@@ -50,10 +50,15 @@ export function formatModelSize(sizeBytes?: number | null) {
   })} ${unit}`;
 }
 
-// The picker is local-only. We keep a single internal provider ("meetspace")
-// because tinybase settings and several callers persist a provider id, but
-// the UI surfaces only the model list — no provider selector.
-const _PROVIDERS = [
+// Upstream's STT providers (all hosted/cloud). AT SYNC: replace this array
+// wholesale with upstream's list — do NOT trim it; the allowlist hides them.
+const _UPSTREAM_PROVIDERS = [] as const satisfies readonly Provider[];
+
+// Fork-added local provider. The picker is local-only: we keep a single
+// internal "meetspace" provider because tinybase settings and several callers
+// persist a provider id, but the UI surfaces only the model list. This is part
+// of the fork delta and must survive a sync.
+const _FORK_PROVIDERS = [
   {
     disabled: false,
     id: "meetspace",
@@ -66,11 +71,15 @@ const _PROVIDERS = [
   },
 ] as const satisfies readonly Provider[];
 
+const _PROVIDERS = [..._UPSTREAM_PROVIDERS, ..._FORK_PROVIDERS];
+
 // Hide cloud providers: only the local-provider allowlist reaches the UI.
 export const PROVIDERS = sortProviders(
   keepLocalProviders(_PROVIDERS, LOCAL_STT_PROVIDER_IDS),
 );
-export type ProviderId = (typeof _PROVIDERS)[number]["id"];
+export type ProviderId =
+  | (typeof _UPSTREAM_PROVIDERS)[number]["id"]
+  | (typeof _FORK_PROVIDERS)[number]["id"];
 
 /** Internal id of the local provider — used to seed settings on first run. */
 export const LOCAL_STT_PROVIDER_ID: ProviderId = "meetspace";
