@@ -13,11 +13,7 @@ import {
 import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 import { commands as detectCommands } from "@meetspace/plugin-detect";
 import { commands as localSttCommands } from "@meetspace/plugin-local-stt";
-import { commands as trayCommands } from "@meetspace/plugin-tray";
-import {
-  commands as windowsCommands,
-  getCurrentWebviewWindowLabel,
-} from "@meetspace/plugin-windows";
+import { getCurrentWebviewWindowLabel } from "@meetspace/plugin-windows";
 
 import { registerSaveHandler } from "./save";
 
@@ -51,55 +47,10 @@ export const SETTINGS_MAPPING = {
       path: ["general", "floating_bar_enabled"],
       default: true as boolean,
     },
-    floating_bar_opacity: {
-      type: "number",
-      path: ["general", "floating_bar_opacity"],
-      default: 0.78 as number,
-    },
-    live_caption_opacity: {
-      type: "number",
-      path: ["general", "live_caption_opacity"],
-      default: 0.3 as number,
-    },
-    live_caption_width: {
-      type: "number",
-      path: ["general", "live_caption_width"],
-      default: 440 as number,
-    },
-    live_caption_line_count: {
-      type: "number",
-      path: ["general", "live_caption_line_count"],
-      default: 1 as number,
-    },
-    live_caption_position: {
-      type: "string",
-      path: ["general", "live_caption_position"],
-      default: "topCenter" as string,
-    },
-    live_caption_minimized: {
+    sidebar_timeline_enabled: {
       type: "boolean",
-      path: ["general", "live_caption_minimized"],
+      path: ["general", "sidebar_timeline_enabled"],
       default: false as boolean,
-    },
-    live_caption_enabled: {
-      type: "boolean",
-      path: ["general", "live_caption_enabled"],
-      default: true as boolean,
-    },
-    show_app_in_dock: {
-      type: "boolean",
-      path: ["general", "show_app_in_dock"],
-      default: true as boolean,
-    },
-    show_tray_icon: {
-      type: "boolean",
-      path: ["general", "show_tray_icon"],
-      default: true as boolean,
-    },
-    theme: {
-      type: "string",
-      path: ["general", "theme"],
-      default: "system" as string,
     },
     save_recordings: {
       type: "boolean",
@@ -111,6 +62,11 @@ export const SETTINGS_MAPPING = {
       path: ["general", "audio_retention"],
       default: "forever" as string,
       schemaDefault: false,
+    },
+    theme: {
+      type: "string",
+      path: ["general", "theme"],
+      default: "system" as string,
     },
     notification_event: {
       type: "boolean",
@@ -195,6 +151,78 @@ export const SETTINGS_MAPPING = {
       type: "string",
       path: ["todo", "github_repository"],
       default: "" as string,
+    },
+    obsidian_vault_path: {
+      type: "string",
+      path: ["general", "obsidian_vault_path"],
+    },
+    obsidian_subfolder: {
+      type: "string",
+      path: ["general", "obsidian_subfolder"],
+      default: "Meetspace" as string,
+    },
+    obsidian_auto_export: {
+      type: "boolean",
+      path: ["general", "obsidian_auto_export"],
+      default: false as boolean,
+    },
+    notion_token: {
+      type: "string",
+      path: ["general", "notion_token"],
+    },
+    notion_database_id: {
+      type: "string",
+      path: ["general", "notion_database_id"],
+    },
+    linear_api_key: {
+      type: "string",
+      path: ["general", "linear_api_key"],
+    },
+    linear_team_id: {
+      type: "string",
+      path: ["general", "linear_team_id"],
+    },
+    google_client_id: {
+      type: "string",
+      path: ["general", "google_client_id"],
+    },
+    google_refresh_token: {
+      type: "string",
+      path: ["general", "google_refresh_token"],
+    },
+    google_access_token: {
+      type: "string",
+      path: ["general", "google_access_token"],
+    },
+    google_token_expires_at: {
+      type: "number",
+      path: ["general", "google_token_expires_at"],
+    },
+    outlook_client_id: {
+      type: "string",
+      path: ["general", "outlook_client_id"],
+    },
+    outlook_refresh_token: {
+      type: "string",
+      path: ["general", "outlook_refresh_token"],
+    },
+    outlook_access_token: {
+      type: "string",
+      path: ["general", "outlook_access_token"],
+    },
+    outlook_token_expires_at: {
+      type: "number",
+      path: ["general", "outlook_token_expires_at"],
+    },
+    diarize_auto: {
+      type: "boolean",
+      path: ["general", "diarize_auto"],
+      default: false as boolean,
+    },
+    calendar_provider_precedence: {
+      type: "string",
+      path: ["general", "calendar_provider_precedence"],
+      default: JSON.stringify(["apple", "google", "outlook"]) as string,
     },
   },
   tables: {
@@ -300,7 +328,10 @@ export const StoreComponent = () => {
   }, [store]);
 
   const synchronizer = useCreateSynchronizer(store, async (store) =>
-    createBroadcastChannelSynchronizer(store, "meetspace-sync-settings").startSync(),
+    createBroadcastChannelSynchronizer(
+      store,
+      "meetspace-sync-settings",
+    ).startSync(),
   );
 
   const queries = useCreateQueries(store, (store) =>
@@ -412,12 +443,6 @@ const SETTINGS_LISTENERS: SettingsListeners = {
   current_stt_model: (store) => syncLocalSttServer(store),
   telemetry_consent: (_store, newValue) => {
     analyticsCommands.setDisabled(!newValue).catch(console.error);
-  },
-  show_app_in_dock: (_store, newValue) => {
-    windowsCommands.setShowAppInDock(newValue).catch(console.error);
-  },
-  show_tray_icon: (_store, newValue) => {
-    trayCommands.setTrayIconVisible(newValue).catch(console.error);
   },
 };
 
