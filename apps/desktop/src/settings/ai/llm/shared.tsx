@@ -7,6 +7,10 @@ import {
   type ProviderRequirement,
   requiresConfigField,
 } from "~/settings/ai/shared/eligibility";
+import {
+  keepLocalProviders,
+  LOCAL_LLM_PROVIDER_IDS,
+} from "~/settings/ai/shared/local-providers";
 import { sortProviders } from "~/settings/ai/shared/sort-providers";
 
 type Provider = {
@@ -82,7 +86,10 @@ const _PROVIDERS = [
   },
 ] as const satisfies readonly Provider[];
 
-export const PROVIDERS = sortProviders(_PROVIDERS);
+// Hide cloud providers: only the local-provider allowlist reaches the UI.
+export const PROVIDERS = sortProviders(
+  keepLocalProviders(_PROVIDERS, LOCAL_LLM_PROVIDER_IDS),
+);
 export type ProviderId = (typeof _PROVIDERS)[number]["id"];
 
 export const llmProviderRequiresApiKey = (providerId: ProviderId) => {

@@ -46,6 +46,15 @@ So:
 In short: conflict in feature/UI code → take upstream; conflict in
 auth/billing/cloud → keep the fork's removal/stub.
 
+**Hide, don't delete.** Prefer hiding commercial surface over deleting upstream
+code — it keeps syncs clean. AI providers do this: `settings/ai/shared/local-
+providers.ts` holds the local allowlists, and `llm/shared.tsx` / `stt/shared.tsx`
+gate `PROVIDERS` through `keepLocalProviders(...)`. **At sync, take upstream's
+full `_PROVIDERS` array as-is — don't trim it**; the allowlist hides cloud
+providers, and keeping the full provider type avoids the enhance/provider
+type-drift that trimming caused. `local-providers.test.ts` fails if a hosted
+provider becomes visible. Adding a local provider = add its id to the allowlist.
+
 ### What is handled for you
 
 - **Generated/lock files** (`Cargo.lock`, `pnpm-lock.yaml`,
