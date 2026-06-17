@@ -13,6 +13,28 @@ export async function mockCommands(
   }, overrides);
 }
 
+// Seed the session store with fake sessions so the timeline renders populated.
+// Feeds the session persister's scan_and_read with synthetic _meta.json files.
+export async function seedSessions(
+  page: Page,
+  sessions: { id: string; title: string; createdAt: string }[],
+) {
+  const sessionFiles: Record<string, string> = {};
+  for (const s of sessions) {
+    sessionFiles[`${s.id}/_meta.json`] = JSON.stringify({
+      user_id: "local-user",
+      created_at: s.createdAt,
+      title: s.title,
+      participants: [],
+    });
+  }
+  await page.addInitScript((files) => {
+    (window as unknown as Record<string, unknown>).__VISUAL_SEED__ = {
+      sessionFiles: files,
+    };
+  }, sessionFiles);
+}
+
 // Boot to the main shell (empty state).
 export async function openShell(page: Page) {
   await page.goto("/app/main");

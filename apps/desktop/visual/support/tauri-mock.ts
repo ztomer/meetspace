@@ -23,6 +23,19 @@ export function installTauriMock() {
     "plugin:db|execute": [],
     "plugin:db|subscribe": () => ++callbackId,
     "plugin:store2|get": null,
+    // filesystem: vault root + directory scans. Session files come from the
+    // per-test seed (seedSessions) and only for the sessions dir, so other
+    // persisters (chat/events/…) get an empty scan rather than mis-parsing.
+    "plugin:settings|vault_base": "/data",
+    "plugin:fs-sync|scan_and_read": (args: unknown) => {
+      const seed =
+        ((window as unknown as Record<string, unknown>).__VISUAL_SEED__ as {
+          sessionFiles?: Record<string, string>;
+        }) ?? {};
+      const dir = (args as { scanDir?: string })?.scanDir ?? "";
+      const files = dir.endsWith("sessions") ? (seed.sessionFiles ?? {}) : {};
+      return { files };
+    },
     // os / detect
     "plugin:os|platform": "macos",
     "plugin:os|arch": "aarch64",
@@ -48,6 +61,8 @@ export function installTauriMock() {
     },
     unregisterCallback: noop,
     convertFileSrc: (p: string) => p,
+    // @tauri-apps/api/path sep() reads this synchronously.
+    plugins: { path: { sep: "/" } },
     // some plugins read metadata off this object
     metadata: {
       currentWindow: { label: "main" },
