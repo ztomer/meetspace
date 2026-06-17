@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
 
 import {
-  AppFloatingPanel,
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@meetspace/ui/components/ui/popover";
+import { AppFloatingPanel } from "@meetspace/ui/components/ui/popover";
 import { cn } from "@meetspace/utils";
 
 import * as main from "~/store/tinybase/store/main";
@@ -17,15 +17,11 @@ export function SpeakerAssignPopover({
   transcriptId,
   color,
   label,
-  className,
-  onAssigned,
 }: {
   segment: Segment;
   transcriptId: string;
   color: string;
   label: string;
-  className?: string;
-  onAssigned?: (humanId: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const store = main.UI.useStore(main.STORE_ID);
@@ -50,18 +46,13 @@ export function SpeakerAssignPopover({
         humanId,
         anchorWordId,
       );
-      onAssigned?.(humanId);
       setOpen(false);
     },
-    [onAssigned, store, transcriptId, segment.key, segment.words],
+    [store, transcriptId, segment.key, segment.words],
   );
 
   if (isSelf) {
-    return (
-      <span className={className} style={{ color }}>
-        {label}
-      </span>
-    );
+    return <span style={{ color }}>{label}</span>;
   }
 
   return (
@@ -72,7 +63,6 @@ export function SpeakerAssignPopover({
           className={cn([
             "-ml-1 cursor-pointer rounded-xs px-1",
             "hover:bg-accent transition-colors",
-            className,
           ])}
           style={{ color }}
         >

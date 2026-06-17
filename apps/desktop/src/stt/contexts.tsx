@@ -11,10 +11,7 @@ import {
   type NotificationIcon,
 } from "@meetspace/plugin-notification";
 
-import {
-  AUTO_STOP_CONFIRM_TIMEOUT_SECONDS,
-  createAutoStopEndedNotificationKey,
-} from "./auto-stop-notification";
+import { createAutoStopEndedNotificationKey } from "./auto-stop-notification";
 
 import { getSessionEventById } from "~/session/utils";
 import * as main from "~/store/tinybase/store/main";
@@ -64,53 +61,19 @@ const BROWSER_AUTO_STOP_APP_IDS = new Set([
   "org.torproject.torbrowser",
 ]);
 
-const UNRELIABLE_AUTO_STOP_APP_IDS = new Set(["com.kakao.KakaoTalkMac"]);
-
 type MainStore = NonNullable<ReturnType<typeof main.UI.useStore>>;
-type MicApp = { id: string; name: string };
 
-const IPHONE_CALL_ICON: NotificationIcon = {
-  type: "system_symbol",
-  name: "phone.fill",
-};
+function getIgnorableApps(apps: { id: string; name: string }[]) {
+  const seen = new Set<string>();
 
-const MIC_APP_NOTIFICATION_OVERRIDES = [
-  {
-    ids: new Set([
-      "com.apple.avconferenced",
-      "com.apple.TelephonyUtilities",
-      "com.apple.TelephonyUtilities.callservicesd",
-    ]),
-    names: new Set(["av capture", "avcapture", "iphone call"]),
-    displayName: "iPhone Call",
-    icon: IPHONE_CALL_ICON,
-  },
-  {
-    ids: new Set(["com.apple.FaceTime"]),
-    names: new Set(["facetime"]),
-    displayName: "FaceTime",
-    icon: {
-      type: "bundle_id",
-      bundle_id: "com.apple.FaceTime",
-    } satisfies NotificationIcon,
-  },
-  {
-    ids: new Set(["com.kakao.KakaoTalkMac"]),
-    names: new Set(["kakaotalk", "kakaotalk helper"]),
-    displayName: "KakaoTalk",
-    icon: {
-      type: "bundle_id",
-      bundle_id: "com.kakao.KakaoTalkMac",
-    } satisfies NotificationIcon,
-  },
-];
+  return apps.filter((app) => {
+    if (!app.id || app.id.startsWith("pid:") || seen.has(app.id)) {
+      return false;
+    }
 
-function getMicAppNotificationOverride(app: MicApp) {
-  const normalizedName = app.name.trim().toLowerCase();
-  return MIC_APP_NOTIFICATION_OVERRIDES.find(
-    (override) =>
-      override.ids.has(app.id) || override.names.has(normalizedName),
-  );
+    seen.add(app.id);
+    return true;
+  });
 }
 
 function getNotificationIconForAppId(appId: string): NotificationIcon | null {
@@ -125,43 +88,8 @@ function getNotificationIconForAppId(appId: string): NotificationIcon | null {
   return { type: "bundle_id", bundle_id: appId };
 }
 
-function getNotificationIconForApp(app: MicApp): NotificationIcon | null {
-  return (
-    getMicAppNotificationOverride(app)?.icon ??
-    getNotificationIconForAppId(app.id)
-  );
-}
-
-function getNotificationIconForApps(apps: MicApp[]): NotificationIcon | null {
-  for (const app of apps) {
-    const icon = getNotificationIconForApp(app);
-    if (icon) {
-      return icon;
-    }
-  }
-
-  return null;
-}
-
-function getNotificationAppName(app: MicApp) {
-  return getMicAppNotificationOverride(app)?.displayName ?? app.name;
-}
-
-function getIgnorableApps(apps: MicApp[]) {
-  const seen = new Set<string>();
-
-  return apps.filter((app) => {
-    if (!app.id || app.id.startsWith("pid:") || seen.has(app.id)) {
-      return false;
-    }
-
-    seen.add(app.id);
-    return true;
-  });
-}
-
-function getIgnoreAppsFooterText(apps: MicApp[]) {
-  const firstName = apps[0] ? getNotificationAppName(apps[0]).trim() : "";
+function getIgnoreAppsFooterText(apps: { name: string }[]) {
+  const firstName = apps[0]?.name.trim();
 
   if (apps.length === 1) {
     return firstName ? `Ignore ${firstName}?` : "Ignore this app?";
@@ -171,7 +99,7 @@ function getIgnoreAppsFooterText(apps: MicApp[]) {
     return "Ignore these apps?";
   }
 
-  const secondName = apps[1] ? getNotificationAppName(apps[1]).trim() : "";
+  const secondName = apps[1]?.name.trim();
   if (apps.length === 2 && secondName) {
     return `Ignore ${firstName} and ${secondName}?`;
   }
@@ -248,20 +176,13 @@ function getAutoStopCandidateAppIds(
   const trigger = triggerAppIds ?? [];
   const stoppedIds = new Set(stoppedApps.map((app) => app.id));
   const stoppedTriggerAppIds = trigger.filter((id) => stoppedIds.has(id));
-  const candidateAppIds =
-    stoppedTriggerAppIds.length > 0 ? stoppedTriggerAppIds : trigger;
 
-  return candidateAppIds.filter((id) => !UNRELIABLE_AUTO_STOP_APP_IDS.has(id));
+  return stoppedTriggerAppIds.length > 0 ? stoppedTriggerAppIds : trigger;
 }
 
-function getAutoStopActiveCheckAppIds(
-  triggerAppIds: string[] | null | undefined,
-  candidateAppIds: string[],
-) {
-  const unreliableTriggerAppIds =
-    triggerAppIds?.filter((id) => UNRELIABLE_AUTO_STOP_APP_IDS.has(id)) ?? [];
-
-  return [...new Set([...candidateAppIds, ...unreliableTriggerAppIds])];
+function getStoppedAppLabel(app: { name: string } | null) {
+  const name = app?.name.trim();
+  return name || "The meeting app";
 }
 
 function showMeetingEndedPrompt({
@@ -278,17 +199,17 @@ function showMeetingEndedPrompt({
   void notificationCommands.showNotification({
     key: createAutoStopEndedNotificationKey(sessionId),
     title: "Did your meeting end?",
-    message: `Meetspace will stop listening in ${AUTO_STOP_CONFIRM_TIMEOUT_SECONDS} seconds.`,
-    timeout: { secs: AUTO_STOP_CONFIRM_TIMEOUT_SECONDS, nanos: 0 },
+    message: `${getStoppedAppLabel(app)} stopped using the microphone before the scheduled end time.`,
+    timeout: { secs: 60, nanos: 0 },
     source: null,
     start_time: null,
     participants: null,
     event_details: null,
-    action_label: "Stop",
+    action_label: "Stop meeting",
     action_variant: "destructive",
     options: null,
     footer: null,
-    icon: app ? getNotificationIconForApp(app) : null,
+    icon: app ? getNotificationIconForAppId(app.id) : null,
   });
 }
 
@@ -400,20 +321,13 @@ const useHandleDetectEvents = (store: ListenerStore) => {
         return;
       }
 
-      const activeCheckAppIds = getAutoStopActiveCheckAppIds(
-        currentTrigger,
-        candidateAppIds,
-      );
-      const hasUnreliableActiveCheckApp = activeCheckAppIds.some(
-        (id) => !candidateAppIds.includes(id),
-      );
       const result = await detectCommands.listMicUsingApplications();
       if (result.status === "ok") {
         const activeAppIds = new Set(result.data.map((app) => app.id));
-        if (activeCheckAppIds.some((id) => activeAppIds.has(id))) {
+        if (candidateAppIds.some((id) => activeAppIds.has(id))) {
           return;
         }
-      } else if (requireMicSnapshot || hasUnreliableActiveCheckApp) {
+      } else if (requireMicSnapshot) {
         return;
       }
 
@@ -475,7 +389,7 @@ const useHandleDetectEvents = (store: ListenerStore) => {
               ? {
                   text: getIgnoreAppsFooterText(ignorableApps),
                   actionLabel: "Yes",
-                  icon: getNotificationIconForApp(ignorableApps[0]!),
+                  icon: getNotificationIconForAppId(ignorableApps[0]!.id),
                 }
               : null;
 
@@ -486,7 +400,7 @@ const useHandleDetectEvents = (store: ListenerStore) => {
             timeout: { secs: 15, nanos: 0 },
             source: {
               type: "mic_detected",
-              app_names: payload.apps.map((app) => getNotificationAppName(app)),
+              app_names: payload.apps.map((a) => a.name),
               app_ids: appIds,
               event_ids: nearbyEvents.map((e) => e.id),
             },
@@ -497,7 +411,7 @@ const useHandleDetectEvents = (store: ListenerStore) => {
             action_variant: null,
             options,
             footer,
-            icon: getNotificationIconForApps(payload.apps),
+            icon: null,
           });
         } else if (payload.type === "micStopped") {
           const autoStopEnabled =

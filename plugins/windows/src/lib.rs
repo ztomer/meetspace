@@ -14,10 +14,7 @@ pub use window::*;
 const PLUGIN_NAME: &str = "windows";
 
 use std::collections::HashMap;
-use std::sync::{
-    Mutex,
-    atomic::{AtomicBool, Ordering},
-};
+use std::sync::Mutex;
 
 #[derive(Clone, Copy)]
 pub struct SavedFrame {
@@ -32,24 +29,6 @@ pub struct SavedFrames(pub Mutex<HashMap<String, SavedFrame>>);
 
 #[derive(Default)]
 pub struct WindowExpansions(pub Mutex<HashMap<String, Vec<(f64, f64, bool)>>>);
-
-pub struct DockVisibilityState(AtomicBool);
-
-impl Default for DockVisibilityState {
-    fn default() -> Self {
-        Self(AtomicBool::new(true))
-    }
-}
-
-impl DockVisibilityState {
-    pub fn set_show_app_in_dock(&self, value: bool) {
-        self.0.store(value, Ordering::SeqCst);
-    }
-
-    pub fn show_app_in_dock(&self) -> bool {
-        self.0.load(Ordering::SeqCst)
-    }
-}
 
 use tauri::Manager;
 use tokio::sync::oneshot;
@@ -102,7 +81,6 @@ fn make_specta_builder() -> tauri_specta::Builder<tauri::Wry> {
             commands::window_restore_frame_animated,
             commands::window_expand_width,
             commands::window_restore_width,
-            commands::set_show_app_in_dock,
             commands::floating_bar_show,
             commands::floating_bar_hide,
             commands::floating_bar_update,
@@ -129,11 +107,6 @@ pub fn init() -> tauri::plugin::TauriPlugin<tauri::Wry> {
             {
                 let ready_state = WindowReadyState::default();
                 app.manage(ready_state);
-            }
-
-            {
-                let dock_visibility_state = DockVisibilityState::default();
-                app.manage(dock_visibility_state);
             }
 
             {
