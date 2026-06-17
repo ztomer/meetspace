@@ -497,6 +497,8 @@ dependencies = [
 ]
 
 [[package]]
+<<<<<<<
+=======
 name = "api"
 version = "0.1.0"
 dependencies = [
@@ -540,6 +542,7 @@ dependencies = [
 ]
 
 [[package]]
+>>>>>>>
 name = "api-agent"
 version = "0.1.0"
 dependencies = [
@@ -664,7 +667,7 @@ version = "0.1.0"
 dependencies = [
  "api-error",
  "axum 0.8.9",
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "slack-web",
@@ -1258,7 +1261,6 @@ dependencies = [
 [[package]]
 name = "async-openai"
 version = "0.27.2"
-source = "git+https://github.com/fastrepl/async-openai?rev=6404d307f3f706e818ad91544dc82fac5c545aee#6404d307f3f706e818ad91544dc82fac5c545aee"
 dependencies = [
  "backoff",
  "base64 0.22.1",
@@ -4759,7 +4761,7 @@ dependencies = [
 
 [[package]]
 name = "desktop"
-version = "0.0.0"
+version = "1.0.37-meet4"
 dependencies = [
  "audio-actual",
  "audio-mock",
@@ -4793,6 +4795,7 @@ dependencies = [
  "tauri-plugin-deeplink2",
  "tauri-plugin-detect",
  "tauri-plugin-dialog",
+ "tauri-plugin-diarize",
  "tauri-plugin-dictation",
  "tauri-plugin-dock",
  "tauri-plugin-export",
@@ -4812,6 +4815,7 @@ dependencies = [
  "tauri-plugin-misc",
  "tauri-plugin-notification",
  "tauri-plugin-notify",
+ "tauri-plugin-oauth",
  "tauri-plugin-opener",
  "tauri-plugin-opener2",
  "tauri-plugin-os",
@@ -5487,15 +5491,6 @@ dependencies = [
  "env_filter",
  "jiff",
  "log",
-]
-
-[[package]]
-name = "envy"
-version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3f47e0157f2cb54f5ae1bd371b30a2ae4311e1c028f575cd4e81de7353215965"
-dependencies = [
- "serde",
 ]
 
 [[package]]
@@ -6285,7 +6280,6 @@ dependencies = [
 [[package]]
 name = "gbnf-validator"
 version = "0.1.0"
-source = "git+https://github.com/fastrepl/gbnf-validator?rev=3dec055#3dec0551311840ae8c9a0feb10e556dd18ffe291"
 dependencies = [
  "anyhow",
  "tempfile",
@@ -6536,7 +6530,7 @@ dependencies = [
 name = "github-issues"
 version = "0.1.0"
 dependencies = [
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "specta",
@@ -8180,7 +8174,7 @@ name = "google-calendar"
 version = "0.1.0"
 dependencies = [
  "chrono",
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "specta",
@@ -8194,7 +8188,7 @@ dependencies = [
 name = "google-drive"
 version = "0.1.0"
 dependencies = [
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "thiserror 2.0.18",
@@ -8206,7 +8200,7 @@ dependencies = [
 name = "google-mail"
 version = "0.1.0"
 dependencies = [
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "specta",
@@ -8214,29 +8208,6 @@ dependencies = [
  "tokio",
  "urlencoding",
  "utoipa",
-]
-
-[[package]]
-name = "governor"
-version = "0.10.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9efcab3c1958580ff1f25a2a41be1668f7603d849bb63af523b208a3cc1223b8"
-dependencies = [
- "cfg-if",
- "dashmap",
- "futures-sink",
- "futures-timer",
- "futures-util",
- "getrandom 0.3.4",
- "hashbrown 0.16.1",
- "nonzero_ext",
- "parking_lot",
- "portable-atomic",
- "quanta",
- "rand 0.9.4",
- "smallvec 1.15.1",
- "spinning_top",
- "web-time",
 ]
 
 [[package]]
@@ -9080,10 +9051,6 @@ name = "hypher"
 version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bef68590049bab63a464eee1a1158ac04c6f6613a546d8d90f78636b8b94f171"
-
-[[package]]
-name = "hypr-http-utils"
-version = "0.1.0"
 
 [[package]]
 name = "iana-time-zone"
@@ -10317,7 +10284,7 @@ dependencies = [
  "tokio",
  "tokio-stream",
  "tokio-util",
- "tonic 0.11.0",
+ "tonic",
  "tonic-web",
  "tower 0.4.13",
  "tower-http 0.4.4",
@@ -10416,7 +10383,7 @@ dependencies = [
  "tokio",
  "tokio-stream",
  "tokio-util",
- "tonic 0.11.0",
+ "tonic",
  "tracing",
  "uuid",
  "zerocopy 0.7.35",
@@ -10471,7 +10438,7 @@ dependencies = [
 name = "linear"
 version = "0.1.0"
 dependencies = [
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "specta",
@@ -10989,6 +10956,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "meetspace-http-utils"
+version = "0.1.0"
+
+[[package]]
 name = "memchr"
 version = "2.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -11330,7 +11301,7 @@ version = "0.1.0"
 dependencies = [
  "hex",
  "hmac 0.13.0",
- "hypr-http-utils",
+ "meetspace-http-utils",
  "reqwest 0.13.2",
  "schemars 1.2.1",
  "serde",
@@ -11460,12 +11431,6 @@ checksum = "df9761775871bdef83bee530e60050f7e54b1105350d6884eb0fb4f46c2f9405"
 dependencies = [
  "memchr",
 ]
-
-[[package]]
-name = "nonzero_ext"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38bf9645c8b145698bb0b18a4637dcacbc421ea49bef2317e4fd8065a387cf21"
 
 [[package]]
 name = "normalize-line-endings"
@@ -12469,50 +12434,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "opentelemetry-http"
-version = "0.30.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "50f6639e842a97dbea8886e3439710ae463120091e2e064518ba8e716e6ac36d"
-dependencies = [
- "async-trait",
- "bytes",
- "http 1.4.0",
- "opentelemetry",
- "reqwest 0.12.28",
-]
-
-[[package]]
-name = "opentelemetry-otlp"
-version = "0.30.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dbee664a43e07615731afc539ca60c6d9f1a9425e25ca09c57bc36c87c55852b"
-dependencies = [
- "http 1.4.0",
- "opentelemetry",
- "opentelemetry-http",
- "opentelemetry-proto",
- "opentelemetry_sdk",
- "prost 0.13.5",
- "reqwest 0.12.28",
- "thiserror 2.0.18",
- "tokio",
- "tonic 0.13.1",
- "tracing",
-]
-
-[[package]]
-name = "opentelemetry-proto"
-version = "0.30.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2e046fd7660710fe5a05e8748e70d9058dc15c94ba914e7c4faa7c728f0e8ddc"
-dependencies = [
- "opentelemetry",
- "opentelemetry_sdk",
- "prost 0.13.5",
- "tonic 0.13.1",
-]
-
-[[package]]
 name = "opentelemetry_sdk"
 version = "0.30.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -12624,7 +12545,7 @@ name = "outlook-calendar"
 version = "0.1.0"
 dependencies = [
  "chrono",
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "specta",
@@ -13939,21 +13860,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "edecfcd5d755a5e5d98e24cf43113e7cdaec5a070edd0f6b250c03a573da30fa"
 
 [[package]]
-name = "quanta"
-version = "0.12.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f3ab5a9d756f0d97bdc89019bd2e4ea098cf9cde50ee7564dde6b81ccc8f06c7"
-dependencies = [
- "crossbeam-utils",
- "libc",
- "once_cell",
- "raw-cpuid",
- "wasi 0.11.1+wasi-snapshot-preview1",
- "web-sys",
- "winapi",
-]
-
-[[package]]
 name = "quick-error"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -14261,15 +14167,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "12a5a2d6c7039059af621472a4389be1215a816df61aa4d531cfe85264aee95f"
 dependencies = [
  "num-traits",
-]
-
-[[package]]
-name = "raw-cpuid"
-version = "11.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "498cd0dc59d73224351ee52a95fee0f1a617a2eae0e7d9d720cc622c73a54186"
-dependencies = [
- "bitflags 2.11.1",
 ]
 
 [[package]]
@@ -15541,7 +15438,6 @@ dependencies = [
  "sentry-core",
  "sentry-debug-images",
  "sentry-panic",
- "sentry-tower",
  "sentry-tracing",
  "tokio",
  "ureq",
@@ -15627,21 +15523,6 @@ dependencies = [
  "minidumper-child",
  "sentry",
  "thiserror 2.0.18",
-]
-
-[[package]]
-name = "sentry-tower"
-version = "0.42.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4a303d0127d95ae928a937dcc0886931d28b4186e7338eea7d5786827b69b002"
-dependencies = [
- "axum 0.8.9",
- "http 1.4.0",
- "pin-project",
- "sentry-core",
- "tower-layer",
- "tower-service",
- "url",
 ]
 
 [[package]]
@@ -16233,7 +16114,7 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
 name = "slack-web"
 version = "0.1.0"
 dependencies = [
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "thiserror 2.0.18",
@@ -16473,15 +16354,6 @@ name = "spin"
 version = "0.9.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67"
-dependencies = [
- "lock_api",
-]
-
-[[package]]
-name = "spinning_top"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d96d2d1d716fb500937168cc09353ffdc7a012be8475ac7308e1bdf0e3923300"
 dependencies = [
  "lock_api",
 ]
@@ -18141,6 +18013,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "tauri-plugin-diarize"
+version = "0.1.0"
+dependencies = [
+ "pyannote-local",
+ "rodio",
+ "serde",
+ "simsimd",
+ "specta",
+ "specta-typescript",
+ "tauri",
+ "tauri-plugin",
+ "tauri-specta",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "tauri-plugin-dictation"
 version = "0.1.0"
 dependencies = [
@@ -18558,6 +18448,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "tauri-plugin-oauth"
+version = "0.1.0"
+dependencies = [
+ "axum 0.8.9",
+ "base64 0.22.1",
+ "getrandom 0.2.17",
+ "reqwest 0.13.2",
+ "serde",
+ "serde_json",
+ "sha2 0.11.0",
+ "specta",
+ "specta-typescript",
+ "tauri",
+ "tauri-plugin",
+ "tauri-plugin-opener2",
+ "tauri-specta",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "url",
+]
+
+[[package]]
 name = "tauri-plugin-opener"
 version = "2.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -18921,7 +18834,7 @@ dependencies = [
  "api-client",
  "apple-todo",
  "github-issues",
- "hypr-http-utils",
+ "meetspace-http-utils",
  "reqwest 0.13.2",
  "serde",
  "specta",
@@ -19270,7 +19183,7 @@ dependencies = [
 name = "teems"
 version = "0.1.0"
 dependencies = [
- "hypr-http-utils",
+ "meetspace-http-utils",
  "serde",
  "serde_json",
  "thiserror 2.0.18",
@@ -19991,32 +19904,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tonic"
-version = "0.13.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7e581ba15a835f4d9ea06c55ab1bd4dce26fc53752c69a04aac00703bfb49ba9"
-dependencies = [
- "async-trait",
- "base64 0.22.1",
- "bytes",
- "http 1.4.0",
- "http-body 1.0.1",
- "http-body-util",
- "hyper 1.9.0",
- "hyper-timeout 0.5.2",
- "hyper-util",
- "percent-encoding",
- "pin-project",
- "prost 0.13.5",
- "tokio",
- "tokio-stream",
- "tower 0.5.3",
- "tower-layer",
- "tower-service",
- "tracing",
-]
-
-[[package]]
 name = "tonic-web"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -20029,7 +19916,7 @@ dependencies = [
  "hyper 0.14.32",
  "pin-project",
  "tokio-stream",
- "tonic 0.11.0",
+ "tonic",
  "tower-http 0.4.4",
  "tower-layer",
  "tower-service",
@@ -20064,9 +19951,7 @@ checksum = "ebe5ef63511595f1344e2d5cfa636d973292adc0eec1f0ad45fae9f0851ab1d4"
 dependencies = [
  "futures-core",
  "futures-util",
- "indexmap 2.14.0",
  "pin-project-lite",
- "slab",
  "sync_wrapper 1.0.2",
  "tokio",
  "tokio-util",
@@ -20117,7 +20002,6 @@ dependencies = [
  "tower-layer",
  "tower-service",
  "tracing",
- "uuid",
 ]
 
 [[package]]

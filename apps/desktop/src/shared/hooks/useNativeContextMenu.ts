@@ -11,7 +11,10 @@ export type MenuItemDef =
     }
   | { separator: true };
 
-async function showNativeContextMenu(items: MenuItemDef[], e: MouseEvent) {
+export async function showNativeContextMenu(
+  items: MenuItemDef[],
+  e: MouseEvent,
+) {
   e.preventDefault();
   e.stopPropagation();
 

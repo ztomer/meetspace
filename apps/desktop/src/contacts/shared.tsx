@@ -59,7 +59,7 @@ export type SortOption =
   | "oldest"
   | "newest";
 
-function SortDropdown({
+export function SortDropdown({
   sortOption,
   setSortOption,
 }: {

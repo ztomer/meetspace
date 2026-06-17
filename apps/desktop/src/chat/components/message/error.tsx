@@ -41,7 +41,7 @@ export function ErrorMessage({
         {showContextLengthHelp && (
           <button
             onClick={handleOpenFaq}
-            className="mt-2 flex items-center gap-1 text-xs text-red-700 underline hover:text-red-900"
+            className="text-destructive hover:text-destructive-fg mt-2 flex items-center gap-1 text-xs underline"
           >
             <ExternalLink className="h-3 w-3" />
             Learn how to fix this

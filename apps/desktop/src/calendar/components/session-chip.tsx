@@ -1,8 +1,6 @@
 import { format } from "date-fns";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
-import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
-import { commands as openerCommands } from "@meetspace/plugin-opener2";
 import { Button } from "@meetspace/ui/components/ui/button";
 import {
   AppFloatingPanel,
@@ -13,72 +11,24 @@ import {
 import { cn } from "@meetspace/utils";
 
 import { toTz, useTimezone } from "~/calendar/hooks";
-import { useDeleteSession } from "~/session/hooks/useDeleteSession";
-import { getSessionEvent } from "~/session/utils";
-import {
-  type MenuItemDef,
-  useNativeContextMenu,
-} from "~/shared/hooks/useNativeContextMenu";
 import * as main from "~/store/tinybase/store/main";
 import { useTabs } from "~/store/zustand/tabs";
 
 export function SessionChip({ sessionId }: { sessionId: string }) {
   const tz = useTimezone();
-  const openNew = useTabs((state) => state.openNew);
-  const deleteSession = useDeleteSession();
   const session = main.UI.useResultRow(
     main.QUERIES.timelineSessions,
     sessionId,
     main.STORE_ID,
   );
-  const title = session?.title as string | undefined;
-  const eventJson = session?.event_json as string | null | undefined;
-  const createdAt = session?.created_at
-    ? format(toTz(session.created_at as string, tz), "h:mm a")
-    : null;
 
-  const handleOpenNewTab = useCallback(() => {
-    openNew({ type: "sessions", id: sessionId });
-  }, [openNew, sessionId]);
-
-  const handleShowInFinder = useCallback(async () => {
-    const result = await fsSyncCommands.sessionDir(sessionId);
-    if (result.status === "ok") {
-      await openerCommands.openPath(result.data, null);
-    }
-  }, [sessionId]);
-
-  const handleDelete = useCallback(() => {
-    const sessionEvent = getSessionEvent({ event_json: eventJson });
-    deleteSession(sessionId, sessionEvent?.tracking_id);
-  }, [deleteSession, sessionId, eventJson]);
-
-  const contextMenu = useMemo<MenuItemDef[]>(
-    () => [
-      {
-        id: "open-new-tab",
-        text: "Open in New Tab",
-        action: handleOpenNewTab,
-      },
-      {
-        id: "show",
-        text: "Show in Finder",
-        action: handleShowInFinder,
-      },
-      { separator: true },
-      {
-        id: "delete",
-        text: "Delete Note",
-        action: handleDelete,
-      },
-    ],
-    [handleOpenNewTab, handleShowInFinder, handleDelete],
-  );
-  const showContextMenu = useNativeContextMenu(contextMenu);
-
-  if (!session || !title) {
+  if (!session || !session.title) {
     return null;
   }
+
+  const createdAt = session.created_at
+    ? format(toTz(session.created_at as string, tz), "h:mm a")
+    : null;
 
   return (
     <Popover>
@@ -86,12 +36,11 @@ export function SessionChip({ sessionId }: { sessionId: string }) {
         <button
           className={cn([
             "flex w-full items-center gap-1 rounded pl-0.5 text-left text-xs leading-tight",
-            "cursor-pointer select-none hover:opacity-80",
+            "cursor-pointer hover:opacity-80",
           ])}
-          onContextMenu={showContextMenu}
         >
           <div className="border-border w-[4px] shrink-0 self-stretch rounded-full border bg-transparent" />
-          <span className="truncate">{title}</span>
+          <span className="truncate">{session.title as string}</span>
           {createdAt && (
             <span className="text-muted-foreground ml-auto shrink-0 font-mono">
               {createdAt}
@@ -140,12 +89,10 @@ function SessionPopoverContent({ sessionId }: { sessionId: string }) {
         {session.title as string}
       </div>
       <div className="bg-accent h-px" />
-      {createdAt && (
-        <div className="text-muted-foreground text-sm">{createdAt}</div>
-      )}
+      {createdAt && <div className="text-foreground text-sm">{createdAt}</div>}
       <Button
         size="sm"
-        className="bg-primary text-primary-foreground hover:bg-primary/90 min-h-8 w-full"
+        className="bg-primary hover:bg-primary text-primary-foreground min-h-8 w-full"
         onClick={handleOpen}
       >
         Open note

@@ -3,6 +3,48 @@ import { vi } from "vitest";
 
 Object.defineProperty(globalThis.crypto, "randomUUID", { value: randomUUID });
 
+class ResizeObserverMock {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+globalThis.ResizeObserver = ResizeObserverMock;
+
+if (typeof window !== "undefined") {
+  window.HTMLElement.prototype.scrollIntoView = vi.fn();
+}
+
+if (typeof window !== "undefined" && !window.PointerEvent) {
+  class PointerEventMock extends MouseEvent {
+    pointerId: number;
+    pointerType: string;
+    width: number;
+    height: number;
+    pressure: number;
+    tangentialPressure: number;
+    tiltX: number;
+    tiltY: number;
+    twist: number;
+    isPrimary: boolean;
+
+    constructor(type: string, params: PointerEventInit = {}) {
+      super(type, params);
+      this.pointerId = params.pointerId ?? 0;
+      this.pointerType = params.pointerType ?? "mouse";
+      this.width = params.width ?? 1;
+      this.height = params.height ?? 1;
+      this.pressure = params.pressure ?? 0;
+      this.tangentialPressure = params.tangentialPressure ?? 0;
+      this.tiltX = params.tiltX ?? 0;
+      this.tiltY = params.tiltY ?? 0;
+      this.twist = params.twist ?? 0;
+      this.isPrimary = params.isPrimary ?? false;
+    }
+  }
+  globalThis.PointerEvent = PointerEventMock as any;
+  window.PointerEvent = PointerEventMock as any;
+}
+
 Object.defineProperty(globalThis.window, "__TAURI_INTERNALS__", {
   value: {
     metadata: {
@@ -21,6 +63,20 @@ Object.defineProperty(globalThis.window, "__TAURI_INTERNALS__", {
 
 vi.mock("@tauri-apps/api/path", () => ({
   sep: vi.fn().mockReturnValue("/"),
+}));
+
+vi.mock("@tauri-apps/plugin-os", () => ({
+  platform: vi.fn().mockReturnValue("macos"),
+}));
+
+vi.mock("@tanstack/react-router", () => ({
+  useRouteContext: vi.fn().mockReturnValue({ persistedStore: {} }),
+  useRouter: vi.fn().mockReturnValue({
+    state: {
+      location: { href: "/" },
+    },
+    navigate: vi.fn(),
+  }),
 }));
 
 vi.mock("@meetspace/plugin-db", () => ({

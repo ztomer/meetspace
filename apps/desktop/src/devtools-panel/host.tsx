@@ -8,9 +8,6 @@ import {
   openUrlWithInstruction,
 } from "@meetspace/plugin-windows";
 
-import { useBillingAccess } from "~/auth/billing";
-import { TrialEndedDialog } from "~/billing/trial-ended-dialog";
-import { TrialStartedDialog } from "~/billing/trial-started-dialog";
 import { getLatestVersion } from "~/changelog";
 import { useDevtoolsStore, useDevtoolsUserId } from "~/devtools-panel/hooks";
 import { populateRecurringMeetingNotes } from "~/devtools-panel/recurring-notes";
@@ -128,7 +125,7 @@ function useDevtoolsPanelActions() {
   const openNew = useTabs((s) => s.openNew);
   const store = useDevtoolsStore();
   const user_id = useDevtoolsUserId();
-  const { trialDaysRemaining, upgradeToPro } = useBillingAccess();
+
   const showToastPreview = useDevtoolsToastPreview(
     (state) => state.showPreview,
   );
@@ -137,8 +134,6 @@ function useDevtoolsPanelActions() {
   );
   const showOtaPreview = useDevtoolsOtaPreview((state) => state.showPreview);
   const clearOtaPreview = useDevtoolsOtaPreview((state) => state.clearPreview);
-  const [trialStartedOpen, setTrialStartedOpen] = useState(false);
-  const [trialEndedOpen, setTrialEndedOpen] = useState(false);
   const [shouldThrow, setShouldThrow] = useState(false);
 
   const showMainWindow = useCallback(async () => {
@@ -449,10 +444,11 @@ function useDevtoolsPanelActions() {
           void notificationCommands.clearNotifications();
           return;
         case "billing:trial-started":
-          setTrialStartedOpen(true);
           return;
         case "billing:trial-ended":
-          setTrialEndedOpen(true);
+          return;
+        case "notes:populate-recurring":
+          void populateRecurringNotes();
           return;
         case "notes:populate-recurring":
           void populateRecurringNotes();
@@ -498,20 +494,7 @@ function useDevtoolsPanelActions() {
   );
 
   return {
-    dialogs: (
-      <>
-        <TrialStartedDialog
-          open={trialStartedOpen}
-          onOpenChange={setTrialStartedOpen}
-          trialDaysRemaining={trialDaysRemaining}
-        />
-        <TrialEndedDialog
-          open={trialEndedOpen}
-          onOpenChange={setTrialEndedOpen}
-          onUpgrade={upgradeToPro}
-        />
-      </>
-    ),
+    dialogs: null,
     handleAction,
     shouldThrow,
   };

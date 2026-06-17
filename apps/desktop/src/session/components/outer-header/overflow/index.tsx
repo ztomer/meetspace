@@ -1,6 +1,5 @@
 import {
   AudioLinesIcon,
-  FileDownIcon,
   FileTextIcon,
   MoreHorizontalIcon,
   PictureInPicture2Icon,
@@ -19,8 +18,11 @@ import {
 
 import { DeleteNote, DeleteRecording } from "./delete";
 import { ExportModal } from "./export-modal";
+import { CreateLinearIssue } from "./linear";
 import { Listening } from "./listening";
-import { ShowInFinder } from "./misc";
+import { Copy, ShowInFinder } from "./misc";
+import { ExportToNotion } from "./notion";
+import { ExportToObsidian } from "./obsidian";
 
 import { useAudioPlayer } from "~/audio-player";
 import { openFloatingMeetingPanel } from "~/meeting-float/host";
@@ -87,13 +89,17 @@ export function OverflowButton({
         </DropdownMenuTrigger>
         <DropdownMenuContent variant="app" align="end" className="w-56">
           <AppFloatingPanel className="overflow-hidden p-1">
+            <Copy />
             <DropdownMenuItem
               onClick={openExportModal}
               className="cursor-pointer"
             >
-              <FileDownIcon />
+              <FileTextIcon />
               <span>Export</span>
             </DropdownMenuItem>
+            <ExportToObsidian sessionId={sessionId} />
+            <ExportToNotion sessionId={sessionId} />
+            <CreateLinearIssue sessionId={sessionId} />
             <DropdownMenuSeparator />
             <Listening sessionId={sessionId} hasTranscript={hasTranscript} />
             {!currentNoteHasContent && (

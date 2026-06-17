@@ -1,8 +1,8 @@
 import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 
-import type { CharTask } from "@meetspace/api-client";
 import { commands as miscCommands } from "@meetspace/plugin-misc";
 
+import type { CharTask } from "~/shared/api-types";
 import {
   CHAR_TASK_HEADER,
   DEVICE_FINGERPRINT_HEADER,

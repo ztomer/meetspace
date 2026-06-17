@@ -1,0 +1,8 @@
+[package]
+name = "gbnf-validator"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.97"
+tempfile = "3.19.1"

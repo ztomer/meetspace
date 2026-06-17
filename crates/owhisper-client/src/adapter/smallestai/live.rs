@@ -211,6 +211,7 @@ struct SmallestRealtimeWord {
     #[serde(default)]
     speaker: Option<SmallestSpeaker>,
     #[serde(default)]
+    #[allow(dead_code)] // Round-tripped from the API for parity; not consumed yet.
     speaker_confidence: Option<f64>,
     #[serde(default)]
     language: Option<String>,

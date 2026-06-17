@@ -212,7 +212,10 @@ pub async fn handler(
         ctx.insert("meetspace.audio.sample_rate_hz".into(), sample_rate.into());
         ctx.insert("meetspace.audio.channel_count".into(), channels.into());
         ctx.insert("meetspace.stt.keyword_count".into(), keywords.into());
-        ctx.insert("meetspace.stt.language_count".into(), languages.len().into());
+        ctx.insert(
+            "meetspace.stt.language_count".into(),
+            languages.len().into(),
+        );
         scope.set_context(
             "meetspace.stt.request",
             sentry::protocol::Context::Other(ctx),

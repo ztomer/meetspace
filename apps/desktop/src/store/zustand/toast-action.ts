@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type ToastActionTarget = "stt" | null;
+type ToastActionTarget = "stt" | "llm" | null;
 
 interface ToastActionState {
   target: ToastActionTarget;

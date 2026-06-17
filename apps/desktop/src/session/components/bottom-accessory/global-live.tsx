@@ -17,7 +17,6 @@ import { type Tab } from "~/store/zustand/tabs";
 import { useListener } from "~/stt/contexts";
 
 const GLOBAL_LIVE_AFTER_BORDER_EXPANDED_SIZE = 22;
-const LIVE_TRANSCRIPT_HANDLE_CLASS = "bg-card dark:bg-app-floating-chrome";
 
 export function GlobalLiveTranscriptAccessory({
   children,
@@ -93,8 +92,8 @@ function GlobalLiveTranscriptAccessoryContent({
         }))
       }
       label="Live"
-      collapsedClassName={LIVE_TRANSCRIPT_HANDLE_CLASS}
-      expandedClassName={LIVE_TRANSCRIPT_HANDLE_CLASS}
+      collapsedClassName="bg-muted"
+      expandedClassName="bg-muted"
     />
   ) : null;
 

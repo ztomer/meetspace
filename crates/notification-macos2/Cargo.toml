@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-meetspace-notification-interface = { workspace = true }
 log = { workspace = true }
+meetspace-notification-interface = { workspace = true }
 uuid = { workspace = true, features = ["v4"] }
 
 [dev-dependencies]
