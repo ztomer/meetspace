@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
 
-import type { ConnectionItem } from "@meetspace/api-client";
 import {
   Tooltip,
   TooltipContent,
@@ -17,6 +16,7 @@ import { useAuth } from "~/auth";
 import { useBillingAccess } from "~/auth/billing";
 import { useConnections } from "~/auth/useConnections";
 import type { CalendarProvider } from "~/calendar/components/shared";
+import type { ConnectionItem } from "~/shared/api-types";
 import { openIntegrationUrl } from "~/shared/integration";
 
 export function OAuthProviderContent({
@@ -124,7 +124,7 @@ export function OAuthProviderContent({
   if (isError) {
     return (
       <div className="pt-1 pb-2">
-        <span className="text-xs text-red-600">
+        <span className="text-destructive text-xs">
           Failed to load integration status
         </span>
       </div>
@@ -156,7 +156,7 @@ function ReconnectRequiredContent({
 }) {
   return (
     <div className="flex flex-col gap-2 pb-2">
-      <div className="flex items-center gap-2 text-xs text-amber-700">
+      <div className="text-warning-fg flex items-center gap-2 text-xs">
         <ReconnectRequiredIndicator />
         <span>Reconnect required for {config.displayName} Calendar</span>
       </div>
@@ -175,7 +175,7 @@ function ReconnectRequiredContent({
         <span className="text-muted-foreground text-xs">or</span>
         <button
           onClick={onDisconnect}
-          className="cursor-pointer text-xs text-red-500 underline transition-colors hover:text-red-700"
+          className="text-destructive hover:text-destructive cursor-pointer text-xs underline transition-colors"
         >
           Disconnect
         </button>

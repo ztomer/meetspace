@@ -9,10 +9,9 @@ import {
   openUrlWithInstruction,
 } from "@meetspace/plugin-windows";
 
-import { useBillingAccess } from "~/auth/billing";
-import { TrialEndedDialog } from "~/billing/trial-ended-dialog";
-import { TrialStartedDialog } from "~/billing/trial-started-dialog";
+import { getLatestVersion } from "~/changelog";
 import { useDevtoolsStore, useDevtoolsUserId } from "~/devtools-panel/hooks";
+import { populateRecurringMeetingNotes } from "~/devtools-panel/recurring-notes";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 import {
   type DevtoolsOtaPreviewStatus,
@@ -35,11 +34,14 @@ const canResolveDevtoolsPanel = import.meta.env.MODE !== "test";
 
 type DevtoolsPanelAction =
   | "navigation:onboarding"
+  | "navigation:empty"
+  | "navigation:changelog"
   | "instruction:sign-in"
   | "instruction:billing"
   | "instruction:integration"
   | `toasts:preview:${DevtoolsToastPreview}`
-  | "toasts:clear"
+  | "toasts:preview:clear"
+  | "toasts:reset-dismissed"
   | "ota:available"
   | "ota:downloading"
   | "ota:ready"
@@ -53,12 +55,12 @@ type DevtoolsPanelAction =
   | "notifications:clear"
   | "billing:trial-started"
   | "billing:trial-ended"
+  | "notes:populate-recurring"
+  | "countdown:note-20"
   | "countdown:note-60"
-  | "countdown:note-300"
+  | "countdown:note-290"
+  | "countdown:zoom-20"
   | "countdown:zoom-60"
-  | "countdown:zoom-300"
-  | "panel:opened"
-  | "panel:closed"
   | "error:trigger";
 
 export function DevtoolsFloatingPanelHost() {
@@ -104,6 +106,8 @@ function DevtoolsFloatingPanelSync() {
     let cancelled = false;
     let unlistenAction: (() => void) | undefined;
 
+    void showDevtoolsPanel();
+
     windowsEvents.devtoolsPanelAction
       .listen(({ payload }) => {
         actionHandlerRef.current(payload.action);
@@ -135,7 +139,7 @@ function useDevtoolsPanelActions() {
   const openNew = useTabs((s) => s.openNew);
   const store = useDevtoolsStore();
   const user_id = useDevtoolsUserId();
-  const { trialDaysRemaining, upgradeToPro } = useBillingAccess();
+
   const showToastPreview = useDevtoolsToastPreview(
     (state) => state.showPreview,
   );
@@ -144,18 +148,30 @@ function useDevtoolsPanelActions() {
   );
   const showOtaPreview = useDevtoolsOtaPreview((state) => state.showPreview);
   const clearOtaPreview = useDevtoolsOtaPreview((state) => state.clearPreview);
-  const [trialStartedOpen, setTrialStartedOpen] = useState(false);
-  const [trialEndedOpen, setTrialEndedOpen] = useState(false);
   const [shouldThrow, setShouldThrow] = useState(false);
 
   const showMainWindow = useCallback(async () => {
     await windowsCommands.windowShow({ type: "main" });
   }, []);
 
+  const isClassicMain =
+    typeof window !== "undefined" &&
+    (window.location.pathname === "/app/main" ||
+      window.location.pathname.startsWith("/app/main/"));
+
   const showOnboarding = useCallback(async () => {
     await showMainWindow();
     openNew({ type: "onboarding" });
   }, [openNew, showMainWindow]);
+
+  const showEmptyTab = useCallback(async () => {
+    if (!isClassicMain) {
+      return;
+    }
+
+    await showMainWindow();
+    openNew({ type: "empty" });
+  }, [isClassicMain, openNew, showMainWindow]);
 
   const showInstruction = useCallback((type: string) => {
     void openUrlWithInstruction(
@@ -164,6 +180,18 @@ function useDevtoolsPanelActions() {
       async () => ({ status: "ok" as const }),
     );
   }, []);
+
+  const showChangelog = useCallback(() => {
+    const latestVersion = getLatestVersion();
+    if (!latestVersion) {
+      return;
+    }
+
+    openNew({
+      type: "changelog",
+      state: { current: latestVersion, previous: null },
+    });
+  }, [openNew]);
 
   const showToastPreviewInMainWindow = useCallback(
     async (preview: DevtoolsToastPreview) => {
@@ -180,6 +208,16 @@ function useDevtoolsPanelActions() {
     },
     [showMainWindow, showOtaPreview],
   );
+
+  const populateRecurringNotes = useCallback(async () => {
+    if (!store) {
+      return;
+    }
+
+    const sessionId = populateRecurringMeetingNotes({ store, userId: user_id });
+    await showMainWindow();
+    openNew({ type: "sessions", id: sessionId });
+  }, [openNew, showMainWindow, store, user_id]);
 
   const showCalendarNotification = useCallback(async () => {
     const eventId = `devtool-event-${crypto.randomUUID()}`;
@@ -264,21 +302,21 @@ function useDevtoolsPanelActions() {
   const showMicOptionsNotification = useCallback(async () => {
     await notificationCommands.showNotification({
       key: `devtool-mic-options-${crypto.randomUUID()}`,
-      title: "Are you in Design sync right now?",
+      title: "Are you in a meeting?",
       message: "",
       timeout: { secs: 15, nanos: 0 },
       source: {
         type: "mic_detected",
         app_names: ["Zoom", "Google Chrome"],
         app_ids: ["us.zoom.xos", "com.google.Chrome"],
-        event_ids: ["devtool-event-1"],
+        event_ids: [],
       },
       start_time: null,
       participants: null,
       event_details: null,
-      action_label: "Yes",
+      action_label: null,
       action_variant: null,
-      options: null,
+      options: ["Design sync", "Customer call"],
       footer: {
         text: "Ignore Zoom and Chrome?",
         actionLabel: "Yes",
@@ -349,6 +387,12 @@ function useDevtoolsPanelActions() {
         case "navigation:onboarding":
           void showOnboarding();
           return;
+        case "navigation:empty":
+          void showEmptyTab();
+          return;
+        case "navigation:changelog":
+          showChangelog();
+          return;
         case "instruction:sign-in":
           showInstruction("sign-in");
           return;
@@ -373,8 +417,11 @@ function useDevtoolsPanelActions() {
         case "toasts:preview:pro":
           void showToastPreviewInMainWindow("pro");
           return;
-        case "toasts:clear":
+        case "toasts:preview:clear":
           clearToastPreview();
+          return;
+        case "toasts:reset-dismissed":
+          void commands.setDismissedToasts([]);
           return;
         case "ota:available":
           void showOtaPreviewInMainWindow("available");
@@ -410,25 +457,29 @@ function useDevtoolsPanelActions() {
           void notificationCommands.clearNotifications();
           return;
         case "billing:trial-started":
-          setTrialStartedOpen(true);
           return;
         case "billing:trial-ended":
-          setTrialEndedOpen(true);
+          return;
+        case "notes:populate-recurring":
+          void populateRecurringNotes();
+          return;
+        case "notes:populate-recurring":
+          void populateRecurringNotes();
+          return;
+        case "countdown:note-20":
+          createWithCountdown(20);
           return;
         case "countdown:note-60":
           createWithCountdown(60);
           return;
-        case "countdown:note-300":
-          createWithCountdown(300);
+        case "countdown:note-290":
+          createWithCountdown(290);
+          return;
+        case "countdown:zoom-20":
+          createWithCountdown(20, "https://zoom.us/j/1234567890");
           return;
         case "countdown:zoom-60":
           createWithCountdown(60, "https://zoom.us/j/1234567890");
-          return;
-        case "countdown:zoom-300":
-          createWithCountdown(300, "https://zoom.us/j/1234567890");
-          return;
-        case "panel:opened":
-        case "panel:closed":
           return;
         case "error:trigger":
           setShouldThrow(true);
@@ -441,10 +492,13 @@ function useDevtoolsPanelActions() {
       createWithCountdown,
       showAutoStopNotification,
       showCalendarNotification,
+      showChangelog,
+      showEmptyTab,
       showInstruction,
       showMicDetectedNotification,
       showMicOptionsNotification,
       showOnboarding,
+      populateRecurringNotes,
       showToastPreviewInMainWindow,
       showOtaPreviewInMainWindow,
       clearToastPreview,
@@ -453,23 +507,17 @@ function useDevtoolsPanelActions() {
   );
 
   return {
-    dialogs: (
-      <>
-        <TrialStartedDialog
-          open={trialStartedOpen}
-          onOpenChange={setTrialStartedOpen}
-          trialDaysRemaining={trialDaysRemaining}
-        />
-        <TrialEndedDialog
-          open={trialEndedOpen}
-          onOpenChange={setTrialEndedOpen}
-          onUpgrade={upgradeToPro}
-        />
-      </>
-    ),
+    dialogs: null,
     handleAction,
     shouldThrow,
   };
+}
+
+async function showDevtoolsPanel() {
+  const result = await windowsCommands.devtoolsPanelShow();
+  if (result.status === "error") {
+    console.error("Failed to show Devtools panel:", result.error);
+  }
 }
 
 async function hideDevtoolsPanel() {

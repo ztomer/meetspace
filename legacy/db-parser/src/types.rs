@@ -1,1 +1,1 @@
-pub use hypr_importer_core::ir::*;
+pub use meetspace_importer_core::ir::*;

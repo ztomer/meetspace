@@ -51,7 +51,9 @@ pub(crate) fn cloudsync_error(error: impl std::fmt::Display) -> BridgeError {
     }
 }
 
-pub(crate) fn cloudsync_runtime_error(error: meetspace_db_core::CloudsyncRuntimeError) -> BridgeError {
+pub(crate) fn cloudsync_runtime_error(
+    error: meetspace_db_core::CloudsyncRuntimeError,
+) -> BridgeError {
     BridgeError::CloudsyncFailed {
         reason: error.to_string(),
     }

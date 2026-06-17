@@ -78,8 +78,9 @@ mod tests {
 
     #[test]
     fn test_build_ws_url_from_base_proxy() {
-        let (url, params) =
-            DashScopeAdapter::build_ws_url_from_base("https://api.meetspace.com?provider=dashscope");
+        let (url, params) = DashScopeAdapter::build_ws_url_from_base(
+            "https://api.meetspace.com?provider=dashscope",
+        );
         assert_eq!(url.as_str(), "wss://api.meetspace.com/listen");
         assert_eq!(
             params,

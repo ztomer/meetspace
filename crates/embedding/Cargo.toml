@@ -10,8 +10,8 @@ coreml = ["onnx", "meetspace-onnx/coreml"]
 directml = ["onnx", "meetspace-onnx/directml"]
 
 [dependencies]
-meetspace-onnx = { workspace = true, optional = true }
 knf-rs = { git = "https://github.com/thewh1teagle/pyannote-rs", rev = "e23bd29", package = "knf-rs", optional = true }
+meetspace-onnx = { workspace = true, optional = true }
 
 serde = { workspace = true }
 thiserror = { workspace = true }

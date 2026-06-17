@@ -21,8 +21,8 @@ const hoisted = vi.hoisted(() => ({
   templateId: undefined as string | undefined,
   llmStatus: {
     status: "success",
-    providerId: "meetspace",
-    isHosted: true,
+    providerId: "custom",
+    isHosted: false,
   } as LLMConnectionStatus,
   isCaretNearBottom: false,
   sessionMode: "inactive",
@@ -175,8 +175,8 @@ describe("FloatingActionButton", () => {
     hoisted.templateId = undefined;
     hoisted.llmStatus = {
       status: "success",
-      providerId: "meetspace",
-      isHosted: true,
+      providerId: "custom",
+      isHosted: false,
     };
     hoisted.isCaretNearBottom = false;
     hoisted.sessionMode = "inactive";
@@ -502,7 +502,7 @@ describe("FloatingActionButton", () => {
     const status = screen.getByRole("status");
 
     expect(status.textContent).toBe("Not enough words recorded (3/5 minimum)");
-    expect(status.className).toContain("text-red-400");
+    expect(status.className).toContain("text-destructive");
     expect(status.parentElement?.className).toContain("pb-4");
     expect(
       screen.queryByRole("button", { name: "Ask Meetspace anything" }),
