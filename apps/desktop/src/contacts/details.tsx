@@ -95,7 +95,7 @@ export function DetailsColumn({
                   Duplicate Contact
                   {duplicatesWithData.length > 1 ? "s" : ""} Found
                 </h4>
-                <p className="mb-3 text-sm text-red-800">
+                <p className="text-destructive-fg mb-3 text-sm">
                   {duplicatesWithData.length > 1
                     ? `${duplicatesWithData.length} contacts`
                     : "Another contact"}{" "}

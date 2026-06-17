@@ -14,8 +14,8 @@ impl TrayVersion {
             "com.meetspace.staging" => "staging",
             "com.meetspace.dev" => "dev",
             _ => match app_name {
-                "Meetspace" | "Char" | "Meetspace" => "stable",
-                "Meetspace Staging" | "Char Staging" | "Meetspace Staging" => "staging",
+                "Meetspace" | "Char" => "stable",
+                "Meetspace Staging" | "Char Staging" => "staging",
                 _ => "dev",
             },
         }

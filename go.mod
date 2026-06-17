@@ -1,4 +1,4 @@
-module hyprnote
+module meetspace
 
 go 1.25.5
 
