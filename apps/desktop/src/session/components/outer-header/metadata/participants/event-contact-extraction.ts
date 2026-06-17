@@ -4,14 +4,14 @@ import { z } from "zod";
 import {
   commands as templateCommands,
   type EventContactCandidate as TemplateEventContactCandidate,
-} from "@hypr/plugin-template";
+} from "@meetspace/plugin-template";
 import type {
   EventParticipant,
   HumanStorage,
   MappingSessionParticipantStorage,
   OrganizationStorage,
   SessionEvent,
-} from "@hypr/store";
+} from "@meetspace/store";
 
 import { DEFAULT_USER_ID, id } from "~/shared/utils";
 import type * as main from "~/store/tinybase/store/main";

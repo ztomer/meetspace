@@ -1,4 +1,4 @@
-import { commands as notificationCommands } from "@hypr/plugin-notification";
+import { commands as notificationCommands } from "@meetspace/plugin-notification";
 
 import type * as main from "~/store/tinybase/store/main";
 import type * as settings from "~/store/tinybase/store/settings";

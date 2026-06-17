@@ -1,8 +1,8 @@
 import { ChevronDownIcon, HeadsetIcon, MicOff } from "lucide-react";
 
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { DancingSticks } from "@hypr/ui/components/ui/dancing-sticks";
-import { cn, safeParseDate } from "@hypr/utils";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { DancingSticks } from "@meetspace/ui/components/ui/dancing-sticks";
+import { cn, safeParseDate } from "@meetspace/utils";
 
 import { MetadataButton } from "./metadata";
 import { OverflowButton } from "./overflow";

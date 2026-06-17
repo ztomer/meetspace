@@ -133,7 +133,7 @@ describe("getBatchProvider", () => {
   });
 
   test("maps local soniqo models to soniqo batch provider", () => {
-    expect(getBatchProvider("hyprnote", "soniqo-parakeet-batch")).toBe(
+    expect(getBatchProvider("meetspace", "soniqo-parakeet-batch")).toBe(
       "soniqo",
     );
   });

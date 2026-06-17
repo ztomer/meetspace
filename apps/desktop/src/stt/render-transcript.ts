@@ -1,15 +1,15 @@
 import type {
   SessionContentData,
   TranscriptSpeakerHint,
-} from "@hypr/plugin-fs-sync";
-import { commands as listenerCommands } from "@hypr/plugin-transcription";
+} from "@meetspace/plugin-fs-sync";
+import { commands as listenerCommands } from "@meetspace/plugin-transcription";
 import type {
   IdentityAssignment,
   RenderTranscriptHuman,
   RenderTranscriptInput,
   RenderTranscriptRequest,
   RenderedTranscriptSegment,
-} from "@hypr/plugin-transcription";
+} from "@meetspace/plugin-transcription";
 
 import type * as main from "~/store/tinybase/store/main";
 import type { SegmentWord } from "~/stt/live-segment";

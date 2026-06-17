@@ -1,14 +1,14 @@
 import { Loader2Icon, SparklesIcon, X } from "lucide-react";
 import { useCallback } from "react";
 
-import { Badge } from "@hypr/ui/components/ui/badge";
-import { Button } from "@hypr/ui/components/ui/button";
+import { Badge } from "@meetspace/ui/components/ui/badge";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/tooltip";
+import { cn } from "@meetspace/utils";
 
 import * as main from "~/store/tinybase/store/main";
 import { useTabs } from "~/store/zustand/tabs/index";

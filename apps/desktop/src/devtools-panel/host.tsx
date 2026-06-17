@@ -1,12 +1,12 @@
 import { useCallback, useRef, useState } from "react";
 
-import { commands as notificationCommands } from "@hypr/plugin-notification";
+import { commands as notificationCommands } from "@meetspace/plugin-notification";
 import {
   commands as windowsCommands,
   events as windowsEvents,
   getCurrentWebviewWindowLabel,
   openUrlWithInstruction,
-} from "@hypr/plugin-windows";
+} from "@meetspace/plugin-windows";
 
 import { useBillingAccess } from "~/auth/billing";
 import { TrialEndedDialog } from "~/billing/trial-ended-dialog";

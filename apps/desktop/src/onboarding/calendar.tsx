@@ -2,8 +2,8 @@ import { platform } from "@tauri-apps/plugin-os";
 import { motion } from "motion/react";
 import { useCallback, useMemo, useState } from "react";
 
-import type { ConnectionItem } from "@hypr/api-client";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
+import type { ConnectionItem } from "@meetspace/api-client";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
 
 import { OnboardingButton } from "./shared";
 

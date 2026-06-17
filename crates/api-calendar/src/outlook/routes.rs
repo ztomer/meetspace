@@ -1,7 +1,7 @@
 use axum::{Extension, Json};
-use hypr_api_auth::AuthContext;
-use hypr_api_nango::{NangoConnectionState, NangoIntegrationId, Outlook};
-use hypr_outlook_calendar::{ListCalendarsResponse, ListEventsResponse, OutlookCalendarClient};
+use meetspace_api_auth::AuthContext;
+use meetspace_api_nango::{NangoConnectionState, NangoIntegrationId, Outlook};
+use meetspace_outlook_calendar::{ListCalendarsResponse, ListEventsResponse, OutlookCalendarClient};
 use serde::Deserialize;
 use utoipa::ToSchema;
 
@@ -118,7 +118,7 @@ pub async fn list_events(
         other => other.to_string(),
     });
 
-    let outlook_req = hypr_outlook_calendar::ListEventsRequest {
+    let outlook_req = meetspace_outlook_calendar::ListEventsRequest {
         calendar_id: req.calendar_id,
         start_date_time,
         end_date_time,

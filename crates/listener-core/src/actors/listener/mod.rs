@@ -36,7 +36,7 @@ pub enum ListenerMsg {
 #[derive(Clone)]
 pub struct ListenerArgs {
     pub runtime: Arc<dyn ListenerRuntime>,
-    pub languages: Vec<hypr_language::Language>,
+    pub languages: Vec<meetspace_language::Language>,
     pub onboarding: bool,
     pub model: String,
     pub base_url: String,
@@ -66,7 +66,7 @@ pub(super) enum ChannelSender {
 }
 
 pub(super) enum SoniqoAudioMsg {
-    Single(hypr_transcribe_soniqo::TranscriptSource, Bytes),
+    Single(meetspace_transcribe_soniqo::TranscriptSource, Bytes),
     Dual(Bytes, Bytes),
 }
 
@@ -192,9 +192,9 @@ impl Actor for ListenerActor {
                 ChannelSender::Soniqo(tx) => {
                     let source =
                         if matches!(state.args.mode, crate::actors::ChannelMode::SpeakerOnly) {
-                            hypr_transcribe_soniqo::TranscriptSource::System
+                            meetspace_transcribe_soniqo::TranscriptSource::System
                         } else {
-                            hypr_transcribe_soniqo::TranscriptSource::Microphone
+                            meetspace_transcribe_soniqo::TranscriptSource::Microphone
                         };
                     let _ = tx.try_send(SoniqoAudioMsg::Single(source, audio));
                 }

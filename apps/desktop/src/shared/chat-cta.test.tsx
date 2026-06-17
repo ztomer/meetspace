@@ -31,7 +31,7 @@ describe("ChatCTA", () => {
     render(<ChatCTA />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: "Ask Anarlog anything" }),
+      screen.getByRole("button", { name: "Ask Meetspace anything" }),
     );
 
     expect(mocks.sendEvent).toHaveBeenCalledWith({ type: "OPEN" });
@@ -43,7 +43,7 @@ describe("ChatCTA", () => {
     render(<ChatCTA />);
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).toBeNull();
   });
 
@@ -53,7 +53,7 @@ describe("ChatCTA", () => {
     render(<ChatCTA />);
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).toBeNull();
   });
 });

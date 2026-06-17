@@ -1,12 +1,12 @@
 import { MessageCircle } from "lucide-react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { useShell } from "~/contexts/shell";
 import { floatingActionSurfaceClassName } from "~/shared/floating-action-surface";
 
 export function ChatCTA({
-  label = "Ask Anarlog anything",
+  label = "Ask Meetspace anything",
 }: {
   label?: string;
 }) {

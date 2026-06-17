@@ -3,14 +3,14 @@ use std::time::Instant;
 
 use owhisper_client::{
     AdapterKind, AquaVoiceAdapter, ArgmaxAdapter, AssemblyAIAdapter, BatchSttAdapter,
-    DeepgramAdapter, ElevenLabsAdapter, FireworksAdapter, GladiaAdapter, HyprnoteAdapter,
+    DeepgramAdapter, ElevenLabsAdapter, FireworksAdapter, GladiaAdapter, MeetspaceAdapter,
     MistralAdapter, OpenAIAdapter, PyannoteAdapter, SonioxAdapter,
 };
 use tracing::Instrument;
 
-use hypr_audio_chunking::AudioChunk;
-use hypr_audio_utils::Source;
-use hypr_transcribe_core::{
+use meetspace_audio_chunking::AudioChunk;
+use meetspace_audio_utils::Source;
+use meetspace_transcribe_core::{
     TARGET_SAMPLE_RATE, channel_duration_sec, chunk_channel_audio, split_resampled_channels,
 };
 
@@ -52,7 +52,7 @@ pub(super) async fn run_direct_batch_for_adapter_kind(
         ElevenLabs => ElevenLabsAdapter,
         Pyannote => PyannoteAdapter,
         Mistral => MistralAdapter,
-        Hyprnote => HyprnoteAdapter,
+        Meetspace => MeetspaceAdapter,
         AquaVoice => AquaVoiceAdapter,
     }, unsupported: [DashScope])
 }
@@ -79,7 +79,7 @@ async fn run_direct_batch<A: BatchSttAdapter>(
                 let message = format_user_friendly_error(&raw_error);
                 tracing::error!(
                     error = %raw_error,
-                    hyprnote.error.user_message = %message,
+                    meetspace.error.user_message = %message,
                     "batch transcription failed"
                 );
                 return Err(crate::BatchFailure::DirectRequestFailed {
@@ -115,7 +115,7 @@ pub(super) async fn run_soniqo_batch(
                 provider: "soniqo".to_string(),
                 message: "Missing Soniqo model.".to_string(),
             })?
-            .parse::<hypr_transcribe_soniqo::SoniqoModel>()
+            .parse::<meetspace_transcribe_soniqo::SoniqoModel>()
             .map_err(|e| crate::BatchFailure::DirectRequestFailed {
                 provider: "soniqo".to_string(),
                 message: e.to_string(),
@@ -131,14 +131,14 @@ pub(super) async fn run_soniqo_batch(
         let language = listen_params
             .languages
             .first()
-            .map(hypr_language::Language::bcp47_code);
+            .map(meetspace_language::Language::bcp47_code);
         let language_label = language.as_deref().unwrap_or("auto").to_string();
         let started_at = Instant::now();
 
         tracing::info!(
-            hyprnote.stt.provider.name = "soniqo",
-            hyprnote.stt.model = %model,
-            hyprnote.stt.language = %language_label,
+            meetspace.stt.provider.name = "soniqo",
+            meetspace.stt.model = %model,
+            meetspace.stt.language = %language_label,
             file.extension = %file_extension,
             "soniqo_batch_start"
         );
@@ -149,8 +149,8 @@ pub(super) async fn run_soniqo_batch(
         .await
         .map_err(|e| {
             tracing::error!(
-                hyprnote.stt.provider.name = "soniqo",
-                hyprnote.stt.model = %model,
+                meetspace.stt.provider.name = "soniqo",
+                meetspace.stt.model = %model,
                 error = %e,
                 "soniqo_batch_task_join_failed"
             );
@@ -162,10 +162,10 @@ pub(super) async fn run_soniqo_batch(
         .map_err(|e| {
             let message = format_user_friendly_error(&e);
             tracing::error!(
-                hyprnote.stt.provider.name = "soniqo",
-                hyprnote.stt.model = %model,
+                meetspace.stt.provider.name = "soniqo",
+                meetspace.stt.model = %model,
                 error = %e,
-                hyprnote.error.user_message = %message,
+                meetspace.error.user_message = %message,
                 "soniqo_batch_failed"
             );
             crate::BatchFailure::DirectRequestFailed {
@@ -175,14 +175,14 @@ pub(super) async fn run_soniqo_batch(
         })?;
 
         tracing::info!(
-            hyprnote.stt.provider.name = "soniqo",
-            hyprnote.stt.model = %model,
+            meetspace.stt.provider.name = "soniqo",
+            meetspace.stt.model = %model,
             elapsed_ms = started_at.elapsed().as_millis() as u64,
             transcript.channel_count = transcribed.len(),
             "soniqo_batch_completed"
         );
 
-        let response = hypr_transcribe_soniqo::batch_response_from_channels(model, transcribed);
+        let response = meetspace_transcribe_soniqo::batch_response_from_channels(model, transcribed);
 
         Ok(BatchRunOutput {
             session_id: params.session_id,
@@ -195,11 +195,11 @@ pub(super) async fn run_soniqo_batch(
 }
 
 fn transcribe_soniqo_file(
-    model: hypr_transcribe_soniqo::SoniqoModel,
+    model: meetspace_transcribe_soniqo::SoniqoModel,
     file_path: &str,
     language: Option<&str>,
-) -> std::result::Result<Vec<hypr_transcribe_soniqo::FileTranscript>, String> {
-    let source = hypr_audio_utils::source_from_path(file_path).map_err(|e| e.to_string())?;
+) -> std::result::Result<Vec<meetspace_transcribe_soniqo::FileTranscript>, String> {
+    let source = meetspace_audio_utils::source_from_path(file_path).map_err(|e| e.to_string())?;
     let channel_count = u16::from(source.channels()).max(1) as usize;
     let sample_rate = u32::from(source.sample_rate());
     let duration_ms = source
@@ -207,9 +207,9 @@ fn transcribe_soniqo_file(
         .map(|duration| duration.as_millis().min(u128::from(u64::MAX)) as u64);
 
     tracing::info!(
-        hyprnote.stt.provider.name = "soniqo",
-        hyprnote.stt.model = %model,
-        hyprnote.stt.language = %language.unwrap_or("auto"),
+        meetspace.stt.provider.name = "soniqo",
+        meetspace.stt.model = %model,
+        meetspace.stt.language = %language.unwrap_or("auto"),
         audio.channel_count = channel_count,
         audio.sample_rate_hz = sample_rate,
         audio.duration_ms = duration_ms.unwrap_or_default(),
@@ -219,21 +219,21 @@ fn transcribe_soniqo_file(
 
     if channel_count <= 1 {
         tracing::info!(
-            hyprnote.stt.provider.name = "soniqo",
-            hyprnote.stt.model = %model,
+            meetspace.stt.provider.name = "soniqo",
+            meetspace.stt.model = %model,
             "soniqo_single_channel_native_inference_start"
         );
-        return hypr_transcribe_soniqo::transcribe_file(model, file_path, language)
+        return meetspace_transcribe_soniqo::transcribe_file(model, file_path, language)
             .map(|transcript| vec![transcript])
             .map_err(|e| e.to_string());
     }
 
     let resample_started_at = Instant::now();
     let samples =
-        hypr_audio_utils::resample_audio(source, TARGET_SAMPLE_RATE).map_err(|e| e.to_string())?;
+        meetspace_audio_utils::resample_audio(source, TARGET_SAMPLE_RATE).map_err(|e| e.to_string())?;
     tracing::info!(
-        hyprnote.stt.provider.name = "soniqo",
-        hyprnote.stt.model = %model,
+        meetspace.stt.provider.name = "soniqo",
+        meetspace.stt.model = %model,
         elapsed_ms = resample_started_at.elapsed().as_millis() as u64,
         audio.source_sample_rate_hz = sample_rate,
         audio.target_sample_rate_hz = TARGET_SAMPLE_RATE,
@@ -244,8 +244,8 @@ fn transcribe_soniqo_file(
     let channel_samples =
         collapse_identical_channels(split_resampled_channels(&samples, channel_count));
     tracing::info!(
-        hyprnote.stt.provider.name = "soniqo",
-        hyprnote.stt.model = %model,
+        meetspace.stt.provider.name = "soniqo",
+        meetspace.stt.model = %model,
         audio.source_channel_count = channel_count,
         audio.transcribed_channel_count = channel_samples.len(),
         "soniqo_channels_prepared"
@@ -261,18 +261,18 @@ fn transcribe_soniqo_file(
 }
 
 fn transcribe_soniqo_channel(
-    model: hypr_transcribe_soniqo::SoniqoModel,
+    model: meetspace_transcribe_soniqo::SoniqoModel,
     channel_index: usize,
     samples: &[f32],
     language: Option<&str>,
-) -> std::result::Result<hypr_transcribe_soniqo::FileTranscript, String> {
+) -> std::result::Result<meetspace_transcribe_soniqo::FileTranscript, String> {
     let duration_seconds = channel_duration_sec(samples);
     let chunks =
-        chunk_channel_audio::<hypr_audio_chunking::Error>(samples).map_err(|e| e.to_string())?;
+        chunk_channel_audio::<meetspace_audio_chunking::Error>(samples).map_err(|e| e.to_string())?;
     let chunks = split_soniqo_native_chunks(model, chunks);
     tracing::info!(
-        hyprnote.stt.provider.name = "soniqo",
-        hyprnote.stt.model = %model,
+        meetspace.stt.provider.name = "soniqo",
+        meetspace.stt.model = %model,
         channel.index = channel_index,
         channel.duration_seconds = duration_seconds,
         channel.sample_count = samples.len(),
@@ -287,8 +287,8 @@ fn transcribe_soniqo_channel(
             (chunk.sample_end - chunk.sample_start) * 1000 / TARGET_SAMPLE_RATE as usize;
         let chunk_started_at = Instant::now();
         tracing::info!(
-            hyprnote.stt.provider.name = "soniqo",
-            hyprnote.stt.model = %model,
+            meetspace.stt.provider.name = "soniqo",
+            meetspace.stt.model = %model,
             channel.index = channel_index,
             chunk.index = chunk_index,
             chunk.sample_start = chunk.sample_start,
@@ -301,8 +301,8 @@ fn transcribe_soniqo_channel(
         let text = transcribe_soniqo_samples(model, &chunk.samples, language)
             .map_err(|e| {
                 tracing::error!(
-                    hyprnote.stt.provider.name = "soniqo",
-                    hyprnote.stt.model = %model,
+                    meetspace.stt.provider.name = "soniqo",
+                    meetspace.stt.model = %model,
                     channel.index = channel_index,
                     chunk.index = chunk_index,
                     elapsed_ms = chunk_started_at.elapsed().as_millis() as u64,
@@ -314,8 +314,8 @@ fn transcribe_soniqo_channel(
             .text;
 
         tracing::info!(
-            hyprnote.stt.provider.name = "soniqo",
-            hyprnote.stt.model = %model,
+            meetspace.stt.provider.name = "soniqo",
+            meetspace.stt.model = %model,
             channel.index = channel_index,
             chunk.index = chunk_index,
             elapsed_ms = chunk_started_at.elapsed().as_millis() as u64,
@@ -329,17 +329,17 @@ fn transcribe_soniqo_channel(
         }
     }
 
-    Ok(hypr_transcribe_soniqo::FileTranscript {
+    Ok(meetspace_transcribe_soniqo::FileTranscript {
         text: texts.join(" "),
         duration_seconds,
     })
 }
 
 fn transcribe_soniqo_samples(
-    model: hypr_transcribe_soniqo::SoniqoModel,
+    model: meetspace_transcribe_soniqo::SoniqoModel,
     samples: &[f32],
     language: Option<&str>,
-) -> std::result::Result<hypr_transcribe_soniqo::FileTranscript, String> {
+) -> std::result::Result<meetspace_transcribe_soniqo::FileTranscript, String> {
     let file = tempfile::Builder::new()
         .prefix("soniqo_channel_")
         .suffix(".wav")
@@ -360,15 +360,15 @@ fn transcribe_soniqo_samples(
         writer.finalize().map_err(|e| e.to_string())?;
     }
 
-    hypr_transcribe_soniqo::transcribe_file(model, file.path(), language).map_err(|e| e.to_string())
+    meetspace_transcribe_soniqo::transcribe_file(model, file.path(), language).map_err(|e| e.to_string())
 }
 
 fn split_soniqo_native_chunks(
-    model: hypr_transcribe_soniqo::SoniqoModel,
+    model: meetspace_transcribe_soniqo::SoniqoModel,
     chunks: Vec<AudioChunk>,
 ) -> Vec<AudioChunk> {
     let max_samples = match model {
-        hypr_transcribe_soniqo::SoniqoModel::ParakeetBatch => SONIQO_PARAKEET_MAX_CHUNK_SAMPLES,
+        meetspace_transcribe_soniqo::SoniqoModel::ParakeetBatch => SONIQO_PARAKEET_MAX_CHUNK_SAMPLES,
         _ => return chunks,
     };
 
@@ -456,7 +456,7 @@ mod tests {
         let sample_start = TARGET_SAMPLE_RATE as usize * 4;
         let oversized = SONIQO_PARAKEET_MAX_CHUNK_SAMPLES + TARGET_SAMPLE_RATE as usize;
         let chunks = split_soniqo_native_chunks(
-            hypr_transcribe_soniqo::SoniqoModel::ParakeetBatch,
+            meetspace_transcribe_soniqo::SoniqoModel::ParakeetBatch,
             vec![AudioChunk {
                 samples: vec![0.0; oversized],
                 sample_start,
@@ -478,7 +478,7 @@ mod tests {
     fn leaves_non_parakeet_chunks_unchanged() {
         let oversized = SONIQO_PARAKEET_MAX_CHUNK_SAMPLES + TARGET_SAMPLE_RATE as usize;
         let chunks = split_soniqo_native_chunks(
-            hypr_transcribe_soniqo::SoniqoModel::Omnilingual,
+            meetspace_transcribe_soniqo::SoniqoModel::Omnilingual,
             vec![AudioChunk {
                 samples: vec![0.0; oversized],
                 sample_start: 0,

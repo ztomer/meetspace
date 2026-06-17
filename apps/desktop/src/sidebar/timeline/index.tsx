@@ -19,9 +19,9 @@ import {
   useScheduledTaskRunIds,
 } from "tinytick/ui-react";
 
-import { Button } from "@hypr/ui/components/ui/button";
-import { Spinner } from "@hypr/ui/components/ui/spinner";
-import { cn } from "@hypr/utils";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { Spinner } from "@meetspace/ui/components/ui/spinner";
+import { cn } from "@meetspace/utils";
 
 import { useAnchor, useAutoScrollToAnchor } from "./anchor";
 import { TimelineItemComponent } from "./item";

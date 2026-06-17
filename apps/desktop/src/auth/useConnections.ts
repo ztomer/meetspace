@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { listConnections } from "@hypr/api-client";
-import { createClient } from "@hypr/api-client/client";
+import { listConnections } from "@meetspace/api-client";
+import { createClient } from "@meetspace/api-client/client";
 
 import { useAuth } from "./context";
 

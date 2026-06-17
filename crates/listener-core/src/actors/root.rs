@@ -14,7 +14,7 @@ use crate::actors::{
     SessionContext, SessionMsg, SessionParams, session_span, spawn_session_supervisor,
 };
 use crate::{ListenerRuntime, SessionLifecycleEvent, StartSessionError, State};
-use hypr_audio::AudioProvider;
+use meetspace_audio::AudioProvider;
 
 pub enum RootMsg {
     StartSession(SessionParams, RpcReplyPort<Result<(), StartSessionError>>),

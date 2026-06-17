@@ -13,12 +13,12 @@ import {
   useCreateManager,
 } from "tinytick/ui-react";
 
-import "@hypr/ui/globals.css";
+import "@meetspace/ui/globals.css";
 import {
   getCurrentWebviewWindowLabel,
   init as initWindowsPlugin,
-} from "@hypr/plugin-windows";
-import { Toaster } from "@hypr/ui/components/ui/toast";
+} from "@meetspace/plugin-windows";
+import { Toaster } from "@meetspace/ui/components/ui/toast";
 
 import { createToolRegistry } from "./contexts/tool-registry/core";
 import { env } from "./env";
@@ -99,7 +99,7 @@ if (env.VITE_SENTRY_DSN) {
   Sentry.init({
     dsn: env.VITE_SENTRY_DSN,
     release: env.VITE_APP_VERSION
-      ? `hyprnote-desktop@${env.VITE_APP_VERSION}`
+      ? `meetspace-desktop@${env.VITE_APP_VERSION}`
       : undefined,
     environment: import.meta.env.MODE,
     tracePropagationTargets: [],

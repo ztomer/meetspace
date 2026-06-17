@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@hypr/ui/components/ui/button", () => ({
+vi.mock("@meetspace/ui/components/ui/button", () => ({
   Button: ({
     children,
     className,
@@ -14,7 +14,7 @@ vi.mock("@hypr/ui/components/ui/button", () => ({
   ),
 }));
 
-vi.mock("@hypr/ui/components/ui/dropdown-menu", () => ({
+vi.mock("@meetspace/ui/components/ui/dropdown-menu", () => ({
   AppFloatingPanel: ({ children }: { children: ReactNode }) => (
     <div>{children}</div>
   ),
@@ -56,7 +56,7 @@ describe("ChatToolbarControls", () => {
       />,
     );
 
-    const title = screen.getByText("Ask Anarlog AI anything");
+    const title = screen.getByText("Ask Meetspace AI anything");
     expect(title.closest("button")?.className).toContain("rounded-full");
   });
 
@@ -71,7 +71,7 @@ describe("ChatToolbarControls", () => {
       />,
     );
 
-    const title = screen.getByText("Ask Anarlog AI anything");
+    const title = screen.getByText("Ask Meetspace AI anything");
     const titleButton = title.closest("button");
     expect(container.firstElementChild?.className).toContain("px-3");
     expect(container.firstElementChild?.className).not.toContain("pl-2");
@@ -161,7 +161,7 @@ describe("ChatToolbarControls", () => {
     );
 
     const titleButton = screen
-      .getByText("Ask Anarlog AI anything")
+      .getByText("Ask Meetspace AI anything")
       .closest("button");
 
     expect(container.firstElementChild?.className).toContain("px-3");

@@ -11,9 +11,9 @@ export const id = () => crypto.randomUUID() as string;
 export const getScheme = async (): Promise<string> => {
   const id = await getIdentifier();
   const schemes: Record<string, string> = {
-    "com.hyprnote.stable": "hyprnote",
-    "com.hyprnote.staging": "hyprnote-staging",
-    "com.hyprnote.dev": "hypr",
+    "com.meetspace.stable": "meetspace",
+    "com.meetspace.staging": "meetspace-staging",
+    "com.meetspace.dev": "hypr",
   };
   return schemes[id] ?? "hypr";
 };

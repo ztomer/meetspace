@@ -45,7 +45,7 @@ const { notifyListen, notifyUnlisten, settingsLoad, settingsSave, mockState } =
     };
   });
 
-vi.mock("@hypr/plugin-notify", () => ({
+vi.mock("@meetspace/plugin-notify", () => ({
   events: {
     fileChanged: {
       listen: notifyListen,
@@ -53,14 +53,14 @@ vi.mock("@hypr/plugin-notify", () => ({
   },
 }));
 
-vi.mock("@hypr/plugin-settings", () => ({
+vi.mock("@meetspace/plugin-settings", () => ({
   commands: {
     load: settingsLoad,
     save: settingsSave,
   },
 }));
 
-vi.mock("@hypr/plugin-detect", () => ({
+vi.mock("@meetspace/plugin-detect", () => ({
   commands: {
     getPreferredLanguages: vi
       .fn()

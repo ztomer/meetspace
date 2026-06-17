@@ -6,8 +6,8 @@ use ractor::{ActorProcessingErr, ActorRef};
 
 use owhisper_client::{
     AdapterKind, ArgmaxAdapter, AssemblyAIAdapter, DashScopeAdapter, DeepgramAdapter,
-    ElevenLabsAdapter, FireworksAdapter, GladiaAdapter, HyprnoteAdapter, MistralAdapter,
-    RealtimeSttAdapter, SonioxAdapter, hypr_ws_client,
+    ElevenLabsAdapter, FireworksAdapter, GladiaAdapter, MeetspaceAdapter, MistralAdapter,
+    RealtimeSttAdapter, SonioxAdapter, meetspace_ws_client,
 };
 use owhisper_interface::stream::Extra;
 use owhisper_interface::{ControlMessage, MixedMessage};
@@ -102,7 +102,7 @@ pub(super) async fn spawn_rx_task(
         ElevenLabs => ElevenLabsAdapter,
         DashScope => DashScopeAdapter,
         Mistral => MistralAdapter,
-        Hyprnote => HyprnoteAdapter,
+        Meetspace => MeetspaceAdapter,
     }, batch_only: [OpenAI, AquaVoice, Pyannote])?;
 
     Ok((result.0, result.1, result.2, adapter_kind.to_string()))
@@ -110,15 +110,15 @@ pub(super) async fn spawn_rx_task(
 
 fn soniqo_model_for_args(
     args: &ListenerArgs,
-) -> Result<Option<hypr_transcribe_soniqo::SoniqoModel>, ActorProcessingErr> {
+) -> Result<Option<meetspace_transcribe_soniqo::SoniqoModel>, ActorProcessingErr> {
     if let Some(model) =
-        hypr_transcribe_soniqo::local_model_from_request(&args.base_url, &args.model)
+        meetspace_transcribe_soniqo::local_model_from_request(&args.base_url, &args.model)
     {
         return Ok(Some(model));
     }
 
-    if hypr_transcribe_soniqo::is_local_base_url(&args.base_url) {
-        return hypr_transcribe_soniqo::SoniqoModel::from_str(&args.model)
+    if meetspace_transcribe_soniqo::is_local_base_url(&args.base_url) {
+        return meetspace_transcribe_soniqo::SoniqoModel::from_str(&args.model)
             .map(Some)
             .map_err(|e| actor_error(format!("soniqo_model_invalid: {e}")));
     }
@@ -127,7 +127,7 @@ fn soniqo_model_for_args(
 }
 
 async fn spawn_soniqo_rx_task(
-    model: hypr_transcribe_soniqo::SoniqoModel,
+    model: meetspace_transcribe_soniqo::SoniqoModel,
     args: ListenerArgs,
     myself: ActorRef<ListenerMsg>,
 ) -> Result<
@@ -143,7 +143,7 @@ async fn spawn_soniqo_rx_task(
     let (tx, mut rx) = tokio::sync::mpsc::channel::<SoniqoAudioMsg>(32);
 
     let session = tokio::task::spawn_blocking(move || {
-        hypr_transcribe_soniqo::LiveTranscriptionSession::start(model)
+        meetspace_transcribe_soniqo::LiveTranscriptionSession::start(model)
     })
     .await
     .map_err(|e| actor_error(format!("soniqo_live_start_join_failed: {e}")))?
@@ -171,10 +171,10 @@ async fn spawn_soniqo_rx_task(
                     match msg {
                         SoniqoAudioMsg::Single(source, audio) => {
                             match source {
-                                hypr_transcribe_soniqo::TranscriptSource::Microphone => {
+                                meetspace_transcribe_soniqo::TranscriptSource::Microphone => {
                                     mic_buffer.extend(i16_bytes_to_f32(&audio));
                                 }
-                                hypr_transcribe_soniqo::TranscriptSource::System => {
+                                meetspace_transcribe_soniqo::TranscriptSource::System => {
                                     spk_buffer.extend(i16_bytes_to_f32(&audio));
                                 }
                             }
@@ -195,7 +195,7 @@ async fn spawn_soniqo_rx_task(
                         match flush_soniqo_source(
                             session,
                             model,
-                            hypr_transcribe_soniqo::TranscriptSource::Microphone,
+                            meetspace_transcribe_soniqo::TranscriptSource::Microphone,
                             samples,
                             start,
                             duration,
@@ -222,7 +222,7 @@ async fn spawn_soniqo_rx_task(
                         match flush_soniqo_source(
                             session,
                             model,
-                            hypr_transcribe_soniqo::TranscriptSource::System,
+                            meetspace_transcribe_soniqo::TranscriptSource::System,
                             samples,
                             start,
                             duration,
@@ -251,7 +251,7 @@ async fn spawn_soniqo_rx_task(
             match flush_soniqo_source(
                 session,
                 model,
-                hypr_transcribe_soniqo::TranscriptSource::Microphone,
+                meetspace_transcribe_soniqo::TranscriptSource::Microphone,
                 samples,
                 start,
                 duration,
@@ -277,7 +277,7 @@ async fn spawn_soniqo_rx_task(
             match flush_soniqo_source(
                 session,
                 model,
-                hypr_transcribe_soniqo::TranscriptSource::System,
+                meetspace_transcribe_soniqo::TranscriptSource::System,
                 samples,
                 start,
                 duration,
@@ -298,7 +298,7 @@ async fn spawn_soniqo_rx_task(
         match finalize_soniqo_source(
             session,
             model,
-            hypr_transcribe_soniqo::TranscriptSource::Microphone,
+            meetspace_transcribe_soniqo::TranscriptSource::Microphone,
             mic_cursor,
             myself.clone(),
             session_offset_secs,
@@ -316,7 +316,7 @@ async fn spawn_soniqo_rx_task(
         match finalize_soniqo_source(
             session,
             model,
-            hypr_transcribe_soniqo::TranscriptSource::System,
+            meetspace_transcribe_soniqo::TranscriptSource::System,
             spk_cursor,
             myself,
             session_offset_secs,
@@ -338,16 +338,16 @@ async fn spawn_soniqo_rx_task(
 }
 
 async fn flush_soniqo_source(
-    session: hypr_transcribe_soniqo::LiveTranscriptionSession,
-    model: hypr_transcribe_soniqo::SoniqoModel,
-    source: hypr_transcribe_soniqo::TranscriptSource,
+    session: meetspace_transcribe_soniqo::LiveTranscriptionSession,
+    model: meetspace_transcribe_soniqo::SoniqoModel,
+    source: meetspace_transcribe_soniqo::TranscriptSource,
     samples: Vec<f32>,
     start: f64,
     duration: f64,
     myself: ActorRef<ListenerMsg>,
     session_offset_secs: f64,
     extra: Extra,
-) -> Result<hypr_transcribe_soniqo::LiveTranscriptionSession, String> {
+) -> Result<meetspace_transcribe_soniqo::LiveTranscriptionSession, String> {
     let joined = tokio::task::spawn_blocking(move || {
         let mut session = session;
         let result = session.append(source, &samples);
@@ -371,14 +371,14 @@ async fn flush_soniqo_source(
 }
 
 async fn finalize_soniqo_source(
-    session: hypr_transcribe_soniqo::LiveTranscriptionSession,
-    model: hypr_transcribe_soniqo::SoniqoModel,
-    source: hypr_transcribe_soniqo::TranscriptSource,
+    session: meetspace_transcribe_soniqo::LiveTranscriptionSession,
+    model: meetspace_transcribe_soniqo::SoniqoModel,
+    source: meetspace_transcribe_soniqo::TranscriptSource,
     start: f64,
     myself: ActorRef<ListenerMsg>,
     session_offset_secs: f64,
     extra: Extra,
-) -> Result<hypr_transcribe_soniqo::LiveTranscriptionSession, String> {
+) -> Result<meetspace_transcribe_soniqo::LiveTranscriptionSession, String> {
     let joined = tokio::task::spawn_blocking(move || {
         let mut session = session;
         let result = session.finalize(source);
@@ -442,14 +442,14 @@ fn expected_speakers(args: &ListenerArgs) -> Option<u32> {
     (participants.len() > 1).then_some(participants.len() as u32)
 }
 
-fn format_languages(languages: &[hypr_language::Language]) -> String {
+fn format_languages(languages: &[meetspace_language::Language]) -> String {
     if languages.is_empty() {
         return "none".to_string();
     }
 
     languages
         .iter()
-        .map(hypr_language::Language::bcp47_code)
+        .map(meetspace_language::Language::bcp47_code)
         .collect::<Vec<_>>()
         .join(", ")
 }
@@ -470,8 +470,8 @@ fn build_extra(args: &ListenerArgs) -> (f64, Extra) {
     (session_offset_secs, extra)
 }
 
-fn desktop_connect_policy() -> hypr_ws_client::client::WebSocketConnectPolicy {
-    hypr_ws_client::client::WebSocketConnectPolicy {
+fn desktop_connect_policy() -> meetspace_ws_client::client::WebSocketConnectPolicy {
+    meetspace_ws_client::client::WebSocketConnectPolicy {
         connect_timeout: Duration::from_secs(4),
         max_attempts: 2,
         retry_delay: Duration::from_secs(1),
@@ -500,7 +500,7 @@ async fn spawn_rx_task_single_with_adapter<A: RealtimeSttAdapter>(
         .api_key(args.api_key.clone())
         .params(build_listen_params(&args))
         .connect_policy(desktop_connect_policy())
-        .extra_header(DEVICE_FINGERPRINT_HEADER, hypr_host::fingerprint())
+        .extra_header(DEVICE_FINGERPRINT_HEADER, meetspace_host::fingerprint())
         .build_single()
         .await;
 
@@ -509,7 +509,7 @@ async fn spawn_rx_task_single_with_adapter<A: RealtimeSttAdapter>(
     let (listen_stream, handle) = match client.from_realtime_audio(outbound).await {
         Err(e) => {
             tracing::error!(
-                hyprnote.session.id = %args.session_id,
+                meetspace.session.id = %args.session_id,
                 error.message = ?e,
                 "listen_ws_connect_failed(single)"
             );
@@ -560,7 +560,7 @@ async fn spawn_rx_task_dual_with_adapter<A: RealtimeSttAdapter>(
         .api_key(args.api_key.clone())
         .params(build_listen_params(&args))
         .connect_policy(desktop_connect_policy())
-        .extra_header(DEVICE_FINGERPRINT_HEADER, hypr_host::fingerprint())
+        .extra_header(DEVICE_FINGERPRINT_HEADER, meetspace_host::fingerprint())
         .build_dual()
         .await;
 
@@ -569,7 +569,7 @@ async fn spawn_rx_task_dual_with_adapter<A: RealtimeSttAdapter>(
     let (listen_stream, handle) = match client.from_realtime_audio(outbound).await {
         Err(e) => {
             tracing::error!(
-                hyprnote.session.id = %args.session_id,
+                meetspace.session.id = %args.session_id,
                 error.message = ?e,
                 "listen_ws_connect_failed(dual)"
             );
@@ -607,12 +607,12 @@ mod tests {
 
     struct NoopRuntime;
 
-    impl hypr_storage::StorageRuntime for NoopRuntime {
-        fn global_base(&self) -> Result<std::path::PathBuf, hypr_storage::Error> {
+    impl meetspace_storage::StorageRuntime for NoopRuntime {
+        fn global_base(&self) -> Result<std::path::PathBuf, meetspace_storage::Error> {
             Ok(std::path::PathBuf::from("/tmp"))
         }
 
-        fn vault_base(&self) -> Result<std::path::PathBuf, hypr_storage::Error> {
+        fn vault_base(&self) -> Result<std::path::PathBuf, meetspace_storage::Error> {
             Ok(std::path::PathBuf::from("/tmp"))
         }
     }
@@ -630,7 +630,7 @@ mod tests {
     fn listener_args(base_url: &str, model: &str) -> ListenerArgs {
         ListenerArgs {
             runtime: Arc::new(NoopRuntime),
-            languages: vec![hypr_language::ISO639::En.into()],
+            languages: vec![meetspace_language::ISO639::En.into()],
             onboarding: false,
             model: model.to_string(),
             base_url: base_url.to_string(),
@@ -689,7 +689,7 @@ mod tests {
 
         assert_eq!(
             soniqo_model_for_args(&args).unwrap(),
-            Some(hypr_transcribe_soniqo::SoniqoModel::ParakeetStreaming)
+            Some(meetspace_transcribe_soniqo::SoniqoModel::ParakeetStreaming)
         );
     }
 
@@ -702,7 +702,7 @@ mod tests {
 
     #[test]
     fn format_languages_uses_bcp47_codes() {
-        let languages = vec!["en-US".parse().unwrap(), hypr_language::ISO639::Fr.into()];
+        let languages = vec!["en-US".parse().unwrap(), meetspace_language::ISO639::Fr.into()];
 
         assert_eq!(format_languages(&languages), "en-US, fr");
     }

@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { type MouseEvent, type PointerEvent, useCallback, useRef } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { resolveMainSurfaceChrome } from "./main-surface-chrome";
 import { ClassicMainSidebar } from "./shell-sidebar";

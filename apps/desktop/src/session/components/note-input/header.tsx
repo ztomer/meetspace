@@ -10,22 +10,22 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { json2md, parseJsonContent } from "@hypr/editor/markdown";
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
+import { json2md, parseJsonContent } from "@meetspace/editor/markdown";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@hypr/ui/components/ui/hover-card";
-import { NoteTab } from "@hypr/ui/components/ui/note-tab";
+} from "@meetspace/ui/components/ui/hover-card";
+import { NoteTab } from "@meetspace/ui/components/ui/note-tab";
 import {
   AppFloatingPanel,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@hypr/ui/components/ui/popover";
-import { sonnerToast } from "@hypr/ui/components/ui/toast";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/popover";
+import { sonnerToast } from "@meetspace/ui/components/ui/toast";
+import { cn } from "@meetspace/utils";
 
 import {
   formatTranscriptExportSegments,

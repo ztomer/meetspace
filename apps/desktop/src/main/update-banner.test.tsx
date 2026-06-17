@@ -60,7 +60,7 @@ const {
   },
 }));
 
-vi.mock("@hypr/plugin-updater2", () => ({
+vi.mock("@meetspace/plugin-updater2", () => ({
   commands: {
     check: checkMock,
     download: downloadMock,

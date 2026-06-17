@@ -4,7 +4,7 @@ import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react";
 import type { NodeViewProps } from "@tiptap/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import {
   DEFAULT_EDITOR_WIDTH,

@@ -8,9 +8,9 @@ tempfile = { workspace = true }
 tokio = { workspace = true, features = ["rt", "macros"] }
 
 [dependencies]
-hypr-download-interface = { workspace = true }
-hypr-file = { workspace = true }
-hypr-language = { workspace = true }
+meetspace-download-interface = { workspace = true }
+meetspace-file = { workspace = true }
+meetspace-language = { workspace = true }
 
 reqwest = { workspace = true, features = ["json", "query"] }
 tracing = { workspace = true }

@@ -1,6 +1,6 @@
 import { Streamdown } from "streamdown";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { streamdownComponents } from "../../streamdown";
 
@@ -24,7 +24,7 @@ export function StreamingView({ enhancedNoteId }: { enhancedNoteId: string }) {
             aria-hidden="true"
             className="border-muted-foreground/60 mt-[5px] h-2 w-2 shrink-0 rounded-bl-[2px] border-b border-l"
           />
-          <span>Tip: The Anarlog team loves our users!</span>
+          <span>Tip: The Meetspace team loves our users!</span>
         </p>
       </div>
     );

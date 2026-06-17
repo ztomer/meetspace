@@ -19,7 +19,7 @@ vi.mock("ai", () => ({
   generateText: vi.fn(),
 }));
 
-vi.mock("@hypr/plugin-template", () => ({
+vi.mock("@meetspace/plugin-template", () => ({
   commands: {
     render: mocks.renderTemplate,
   },

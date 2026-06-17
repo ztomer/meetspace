@@ -7,7 +7,7 @@ import {
   useSetTask,
 } from "tinytick/ui-react";
 
-import { events as appleCalendarEvents } from "@hypr/plugin-calendar";
+import { events as appleCalendarEvents } from "@meetspace/plugin-calendar";
 
 import {
   AUDIO_RETENTION_INTERVAL,

@@ -4,7 +4,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
+} from "@meetspace/ui/components/ui/tooltip";
 
 import { TodoFilterField, TODO_FILTER_SETTING_KEYS } from "./filter-field";
 import { GitHubTodoProviderContent } from "./github";

@@ -9,13 +9,13 @@ specta = ["dep:specta"]
 tauri-event = ["specta", "dep:tauri-specta"]
 
 [dependencies]
-hypr-audio-chunking = { workspace = true }
-hypr-audio-utils = { workspace = true }
-hypr-denoise = { workspace = true, features = ["onnx"] }
-hypr-host = { workspace = true }
-hypr-language = { workspace = true }
-hypr-transcribe-core = { workspace = true }
-hypr-transcribe-soniqo = { workspace = true }
+meetspace-audio-chunking = { workspace = true }
+meetspace-audio-utils = { workspace = true }
+meetspace-denoise = { workspace = true, features = ["onnx"] }
+meetspace-host = { workspace = true }
+meetspace-language = { workspace = true }
+meetspace-transcribe-core = { workspace = true }
+meetspace-transcribe-soniqo = { workspace = true }
 
 bytes = { workspace = true }
 hound = { workspace = true }

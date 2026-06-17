@@ -1,8 +1,8 @@
-import type { LocalModel } from "@hypr/plugin-local-stt";
+import type { LocalModel } from "@meetspace/plugin-local-stt";
 import {
   commands as listenerCommands,
   type TranscriptionMode,
-} from "@hypr/plugin-transcription";
+} from "@meetspace/plugin-transcription";
 
 type LiveTranscriptionConfig = {
   languages: string[];
@@ -49,18 +49,18 @@ export function isSupportedLocalSttModel(
   );
 }
 
-export function isHyprnoteCloudSttModel(
+export function isMeetspaceCloudSttModel(
   provider?: string | null,
   model?: string | null,
 ) {
-  return provider === "hyprnote" && model === "cloud";
+  return provider === "meetspace" && model === "cloud";
 }
 
-export function isHyprnoteLocalSttModel(
+export function isMeetspaceLocalSttModel(
   provider?: string | null,
   model?: string | null,
 ): model is LocalModel {
-  return provider === "hyprnote" && isSupportedLocalSttModel(model);
+  return provider === "meetspace" && isSupportedLocalSttModel(model);
 }
 
 export function isConfiguredSttModel(
@@ -71,7 +71,7 @@ export function isConfiguredSttModel(
     return false;
   }
 
-  if (provider === "hyprnote") {
+  if (provider === "meetspace") {
     return model === "cloud" || isSupportedLocalSttModel(model);
   }
 
@@ -192,7 +192,7 @@ export async function getLiveTranscriptionConfig({
   model?: string | null;
   languages: readonly string[];
 }): Promise<LiveTranscriptionConfig> {
-  if (isHyprnoteLocalSttModel(provider, model)) {
+  if (isMeetspaceLocalSttModel(provider, model)) {
     return getOnDeviceTranscriptionConfig(model, languages);
   }
 
