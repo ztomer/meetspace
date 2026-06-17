@@ -1,9 +1,10 @@
 import { useCallback, useRef } from "react";
 
 import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import type { TranscriptStorage } from "@meetspace/store";
 
 import { useListener } from "./contexts";
-import { getSessionKeywords } from "./useKeywords";
+import { useKeywords } from "./useKeywords";
 import {
   canRunBatchTranscription,
   isStoppedTranscriptionError,
@@ -11,16 +12,16 @@ import {
 } from "./useRunBatch";
 import { useSTTConnection } from "./useSTTConnection";
 
-import { useShell } from "~/contexts/shell";
-import {
-  deleteProcessedAudioForRetention,
-  normalizeAudioRetention,
-} from "~/services/audio-retention";
+import { useLanguageModel } from "~/ai/hooks";
+import { maybeDiarizeAndPersist } from "~/services/diarize-on-stop";
 import { getEnhancerService } from "~/services/enhancer";
-import { useSession, useSessionHasTranscript } from "~/session/queries";
-import { getSessionEvent } from "~/session/utils";
+import { maybeResolveSpeakerNames } from "~/services/name-resolve-on-stop";
+import { maybeAutoExportToObsidian } from "~/services/obsidian-auto-export";
+import { getSessionEventById } from "~/session/utils";
 import { useConfigValue } from "~/shared/config";
 import { id } from "~/shared/utils";
+import * as main from "~/store/tinybase/store/main";
+import * as settings from "~/store/tinybase/store/settings";
 import type {
   LiveTranscriptPersistCallback,
   OnStoppedCallback,
@@ -29,12 +30,7 @@ import {
   getLiveTranscriptionConfig,
   getTranscriptionLanguages,
 } from "~/stt/capabilities";
-import {
-  applyLiveTranscriptDeltaToDatabase,
-  createLiveTranscript,
-  softDeleteTranscript,
-  useSessionParticipantHumanIds,
-} from "~/stt/queries";
+import { applyLiveTranscriptDelta } from "~/stt/utils";
 
 export function getPostCaptureAction(
   details: {
@@ -55,50 +51,41 @@ export function getPostCaptureAction(
 }
 
 export function useStartListening(sessionId: string) {
-  const session = useSession(sessionId);
-  const hadTranscriptBeforeStart = useSessionHasTranscript(sessionId);
-  const participantHumanIds = useSessionParticipantHumanIds(sessionId);
+  const { user_id } = main.UI.useValues(main.STORE_ID);
+  const store = main.UI.useStore(main.STORE_ID);
+  const settingsStore = settings.UI.useStore(settings.STORE_ID);
+  const indexes = main.UI.useIndexes(main.STORE_ID);
 
   const aiLanguage = useConfigValue("ai_language");
   const spokenLanguages = useConfigValue("spoken_languages");
-  const dictionaryTerms = useConfigValue("personalization_dictionary_terms");
-  const audioRetention = normalizeAudioRetention(
-    useConfigValue("audio_retention"),
-  );
 
   const start = useListener((state) => state.start);
   const { conn } = useSTTConnection();
   const runBatch = useRunBatch(sessionId);
-  const { leftsidebar } = useShell();
-  const setLeftSidebarExpanded = leftsidebar.setExpanded;
 
+  const keywords = useKeywords(sessionId);
   const runBatchRef = useRef(runBatch);
   const canRunBatchRef = useRef(canRunBatchTranscription(conn));
   runBatchRef.current = runBatch;
   canRunBatchRef.current = canRunBatchTranscription(conn);
 
+  // Captured for the post-stop name-resolution pass. The LLM may be null
+  // (not configured) — the service no-ops in that case.
+  const languageModel = useLanguageModel();
+  const languageModelRef = useRef(languageModel);
+  languageModelRef.current = languageModel;
+
   const startListening = useCallback(async () => {
+    if (!store) {
+      return;
+    }
+
     let transcriptId: string | null = null;
     const startedAt = Date.now();
-    const memoMd = session?.raw_md ?? "";
+    const memoMd = store.getCell("sessions", sessionId, "raw_md");
     const createdAt = new Date().toISOString();
-    let lastTranscriptWrite = Promise.resolve();
-    let transcriptWriteError: unknown;
-    const trackTranscriptWrite = (write: Promise<void>) => {
-      lastTranscriptWrite = write.catch((error) => {
-        transcriptWriteError = error;
-        console.error("[listener] failed to persist transcript", error);
-      });
-    };
-    const keywords = await getSessionKeywords({
-      sessionId,
-      dictionaryTerms,
-    });
 
     const onStopped: OnStoppedCallback = async (_sessionId, details) => {
-      await lastTranscriptWrite;
-      if (transcriptWriteError) return;
-
       const postCaptureAction = getPostCaptureAction(
         details,
         canRunBatchRef.current,
@@ -119,22 +106,31 @@ export function useStartListening(sessionId: string) {
         }
       }
 
-      if (postCaptureAction === "none") {
-        return;
+      if (postCaptureAction !== "none") {
+        getEnhancerService()?.queueAutoEnhanceIfSummaryEmpty(sessionId);
       }
 
-      const service = getEnhancerService();
-      const shouldRegenerateExistingSummary =
-        hadTranscriptBeforeStart &&
-        (transcriptId !== null || postCaptureAction === "batch_then_enhance");
-      if (shouldRegenerateExistingSummary) {
-        await service?.resetEnhanceTasks(sessionId);
-        service?.queueAutoEnhance(sessionId);
-      } else {
-        await service?.queueAutoEnhanceIfSummaryEmpty(sessionId);
+      if (store && settingsStore) {
+        // Chain: diarize -> resolve Speaker N -> human names via LLM ->
+        // Obsidian export, so the exported markdown reflects every post-pass.
+        // Each step swallows its own failures.
+        void maybeDiarizeAndPersist(
+          store,
+          settingsStore,
+          sessionId,
+          details.audioPath ?? null,
+        )
+          .then(() =>
+            maybeResolveSpeakerNames(
+              store,
+              sessionId,
+              languageModelRef.current,
+            ),
+          )
+          .finally(() => {
+            void maybeAutoExportToObsidian(store, settingsStore, sessionId);
+          });
       }
-
-      await deleteProcessedAudioForRetention(audioRetention, sessionId);
     };
 
     const handlePersist: LiveTranscriptPersistCallback = (delta) => {
@@ -144,29 +140,44 @@ export function useStartListening(sessionId: string) {
 
       if (!transcriptId) {
         transcriptId = id();
-        trackTranscriptWrite(
-          createLiveTranscript(
-            {
-              id: transcriptId,
-              sessionId,
-              ownerUserId: session?.user_id ?? "",
-              createdAt,
-              startedAt,
-              memo: memoMd,
-              source: "live_capture",
-              provider: conn?.provider,
-              model: conn?.model,
-            },
-            delta,
-          ),
-        );
-        return;
+        const transcriptRow = {
+          session_id: sessionId,
+          user_id: user_id ?? "",
+          created_at: createdAt,
+          started_at: startedAt,
+          words: "[]",
+          speaker_hints: "[]",
+          memo_md: typeof memoMd === "string" ? memoMd : "",
+        } satisfies TranscriptStorage;
+
+        store.setRow("transcripts", transcriptId, transcriptRow);
       }
 
-      trackTranscriptWrite(
-        applyLiveTranscriptDeltaToDatabase(transcriptId, delta),
-      );
+      store.transaction(() => {
+        applyLiveTranscriptDelta(store, transcriptId!, delta);
+      });
     };
+
+    const participantHumanIds: string[] = [];
+    store.forEachRow(
+      "mapping_session_participant",
+      (mappingId, _forEachCell) => {
+        const sid = store.getCell(
+          "mapping_session_participant",
+          mappingId,
+          "session_id",
+        );
+        if (sid !== sessionId) return;
+        const hid = store.getCell(
+          "mapping_session_participant",
+          mappingId,
+          "human_id",
+        );
+        if (typeof hid === "string" && hid) {
+          participantHumanIds.push(hid);
+        }
+      },
+    );
 
     const languages = getTranscriptionLanguages(aiLanguage, spokenLanguages);
     const liveTranscriptionConfig = await getLiveTranscriptionConfig({
@@ -186,7 +197,7 @@ export function useStartListening(sessionId: string) {
         keywords,
         transcription_mode: liveTranscriptionConfig.transcriptionMode,
         participant_human_ids: participantHumanIds,
-        self_human_id: session?.user_id || null,
+        self_human_id: typeof user_id === "string" ? user_id : null,
       },
       {
         handlePersist,
@@ -195,21 +206,15 @@ export function useStartListening(sessionId: string) {
     );
 
     if (!started) {
-      await lastTranscriptWrite;
-
       if (transcriptId) {
-        await softDeleteTranscript(transcriptId);
+        store.delRow("transcripts", transcriptId);
       }
       return;
     }
 
-    setLeftSidebarExpanded(false);
-
     void analyticsCommands.event({
       event: "session_started",
-      has_calendar_event: Boolean(
-        getSessionEvent({ event_json: session?.event_json }),
-      ),
+      has_calendar_event: !!getSessionEventById(store, sessionId),
       ...(conn
         ? {
             stt_provider: conn.provider,
@@ -219,16 +224,15 @@ export function useStartListening(sessionId: string) {
     });
   }, [
     aiLanguage,
-    audioRetention,
     conn,
-    dictionaryTerms,
-    hadTranscriptBeforeStart,
-    participantHumanIds,
-    session,
+    store,
+    settingsStore,
+    indexes,
     sessionId,
     start,
+    keywords,
+    user_id,
     spokenLanguages,
-    setLeftSidebarExpanded,
   ]);
 
   return startListening;

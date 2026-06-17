@@ -31,10 +31,10 @@ describe("getPreferredProviderModel", () => {
   test("falls back to the first available model when none is remembered", () => {
     expect(
       getPreferredProviderModel(undefined, [
-        { id: "stt-rt-v5" },
-        { id: "stt-rt-v4" },
+        { id: "stt-v4" },
+        { id: "stt-v3" },
       ]),
-    ).toBe("stt-rt-v5");
+    ).toBe("stt-v4");
   });
 
   test("falls back to the first available model when the remembered model is gone", () => {
@@ -83,31 +83,6 @@ describe("getPreferredProviderModel", () => {
         { id: "universal-2" },
       ]),
     ).toBe("universal-3-pro");
-  });
-
-  test("migrates Soniox aliases to explicit realtime models", () => {
-    expect(
-      getPreferredProviderModel("stt-v5", [
-        { id: "stt-rt-v5" },
-        { id: "stt-rt-v4" },
-      ]),
-    ).toBe("stt-rt-v5");
-
-    expect(
-      getPreferredProviderModel("stt-async-v4", [
-        { id: "stt-rt-v5" },
-        { id: "stt-rt-v4" },
-      ]),
-    ).toBe("stt-rt-v4");
-  });
-
-  test("migrates removed Soniox v3 aliases to v4 realtime", () => {
-    expect(
-      getPreferredProviderModel("stt-rt-v3", [
-        { id: "stt-rt-v5" },
-        { id: "stt-rt-v4" },
-      ]),
-    ).toBe("stt-rt-v4");
   });
 
   test("keeps the remembered value when the provider does not expose a static list", () => {

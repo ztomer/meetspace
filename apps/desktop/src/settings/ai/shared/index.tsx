@@ -38,7 +38,6 @@ import {
   useSetAiProvider,
 } from "~/settings/providers";
 
-export * from "./meetspace-cloud-button";
 export * from "./model-combobox";
 
 type ProviderType = "stt" | "llm";
