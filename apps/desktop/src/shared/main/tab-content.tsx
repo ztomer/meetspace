@@ -1,4 +1,5 @@
 import { TabContentCalendar } from "~/calendar";
+import { TabContentPrep } from "~/calendar/components/prep-card";
 import { TabContentChangelog } from "~/changelog";
 import { TabContentContact } from "~/contacts";
 import { TabContentHuman } from "~/contacts/humans";
@@ -22,6 +23,9 @@ export function MainTabContent({ tab }: { tab: Tab }) {
   }
   if (tab.type === "calendar") {
     return <TabContentCalendar />;
+  }
+  if (tab.type === "prep") {
+    return <TabContentPrep />;
   }
   if (tab.type === "changelog") {
     return <TabContentChangelog tab={tab} />;

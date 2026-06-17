@@ -18,6 +18,15 @@ const hoisted = vi.hoisted(() => ({
     requestedLiveTranscription: true as boolean | null,
     liveTranscriptionActive: true as boolean | null,
   },
+  pastNotes: [] as Array<{
+    sessionId: string;
+    title: string;
+    dateLabel: string;
+    summary: string | null;
+    isGenerating: boolean;
+  }>,
+  generateMissingPastNotes: vi.fn(),
+  regeneratePastNote: vi.fn(),
 }));
 
 vi.mock("react-hotkeys-hook", () => ({
@@ -38,6 +47,17 @@ vi.mock("./during-session", () => ({
 
 vi.mock("./post-session", () => ({
   PostSessionAccessory: () => null,
+}));
+
+vi.mock("./past-notes", () => ({
+  usePastSessionNotes: () => ({
+    notes: hoisted.pastNotes,
+    hasPastNotes: hoisted.pastNotes.length > 0,
+    isGenerating: false,
+    canGenerate: true,
+    generateMissing: hoisted.generateMissingPastNotes,
+    regenerate: hoisted.regeneratePastNote,
+  }),
 }));
 
 vi.mock("~/stt/contexts", () => ({
@@ -73,6 +93,9 @@ describe("useSessionBottomAccessory", () => {
     hoisted.live.sessionId = null;
     hoisted.live.requestedLiveTranscription = true;
     hoisted.live.liveTranscriptionActive = true;
+    hoisted.pastNotes = [];
+    hoisted.generateMissingPastNotes.mockClear();
+    hoisted.regeneratePastNote.mockClear();
     useShellMock.mockReturnValue({
       chat: {
         mode: "Closed",
@@ -202,6 +225,45 @@ describe("useSessionBottomAccessory", () => {
     expect(result.current.bottomAccessory).not.toBeNull();
   });
 
+  it("generates missing past note facts when the past notes tab opens", () => {
+    hoisted.pastNotes = [
+      {
+        sessionId: "past-session",
+        title: "Weekly sync",
+        dateLabel: "May 28, 2026",
+        summary: null,
+        isGenerating: false,
+      },
+    ];
+
+    const { result } = renderHook(() =>
+      useSessionBottomAccessory({
+        sessionId: "session-1",
+        sessionMode: "inactive",
+        audioUrl: "file:///session.wav",
+        hasTranscript: true,
+      }),
+    );
+
+    const handle = result.current.bottomBorderHandle;
+    expect(
+      isValidElement<{ onSelect: (tab: "past_notes") => void }>(handle),
+    ).toBe(true);
+    if (!isValidElement<{ onSelect: (tab: "past_notes") => void }>(handle)) {
+      return;
+    }
+
+    act(() => {
+      handle.props.onSelect("past_notes");
+    });
+
+    expect(hoisted.generateMissingPastNotes).toHaveBeenCalledTimes(1);
+    expect(result.current.bottomAccessoryState).toEqual({
+      mode: "playback",
+      expanded: true,
+    });
+  });
+
   it("hides the bottom accessory while recording for batch transcription", () => {
     hoisted.live.requestedLiveTranscription = false;
     hoisted.live.liveTranscriptionActive = false;
@@ -210,6 +272,21 @@ describe("useSessionBottomAccessory", () => {
       useSessionBottomAccessory({
         sessionId: "session-1",
         sessionMode: "active",
+        audioUrl: null,
+        hasTranscript: false,
+      }),
+    );
+
+    expect(result.current.bottomAccessoryState).toBeNull();
+    expect(result.current.bottomAccessory).toBeNull();
+    expect(result.current.bottomBorderHandle).toBeNull();
+  });
+
+  it("hides the bottom accessory while finalizing", () => {
+    const { result } = renderHook(() =>
+      useSessionBottomAccessory({
+        sessionId: "session-1",
+        sessionMode: "finalizing",
         audioUrl: null,
         hasTranscript: false,
       }),
@@ -347,7 +424,7 @@ describe("useSessionBottomAccessory", () => {
     }
 
     expect(toggle.props.label).toBe("Live");
-    expect(toggle.props.expandedClassName).toBe("bg-neutral-50");
+    expect(toggle.props.expandedClassName).toBe("bg-muted");
 
     act(() => {
       toggle.props.onToggle();

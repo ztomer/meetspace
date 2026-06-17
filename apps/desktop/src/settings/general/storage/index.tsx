@@ -1,6 +1,13 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { homeDir } from "@tauri-apps/api/path";
-import { FolderIcon, type LucideIcon, Settings2Icon } from "lucide-react";
+import { open as selectFolder } from "@tauri-apps/plugin-dialog";
+import {
+  ArchiveIcon,
+  FolderIcon,
+  Loader2Icon,
+  type LucideIcon,
+  Settings2Icon,
+} from "lucide-react";
 import { type ReactNode } from "react";
 import { useState } from "react";
 
@@ -125,6 +132,7 @@ export function StorageSettingsView() {
           path={othersBase}
           home={home}
         />
+        <BackupRow currentPath={contentBase} />
       </div>
       <ChangeContentPathDialog
         open={showDialog}
@@ -158,17 +166,19 @@ function AudioRetentionRow() {
   return (
     <div className="flex items-center gap-3">
       <div className="flex w-24 shrink-0 cursor-default items-center gap-2">
-        <Settings2Icon className="size-4 text-neutral-500" />
+        <Settings2Icon className="text-muted-foreground size-4" />
         <span className="text-sm font-medium">Audio</span>
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm text-neutral-700">
+        <p className="text-muted-foreground truncate text-sm">
           Save audio after meeting
         </p>
-        <p className="text-xs text-neutral-500">{selectedOption.description}</p>
+        <p className="text-muted-foreground text-xs">
+          {selectedOption.description}
+        </p>
       </div>
       <Select value={audioRetention} onValueChange={setAudioRetention}>
-        <SelectTrigger className="w-36 bg-white shadow-none focus:ring-0">
+        <SelectTrigger className="bg-card w-36 shadow-none focus:ring-0">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -270,18 +280,18 @@ function ChangeContentPathDialog({
               className={cn([
                 "flex items-center gap-3 rounded-lg border px-3 py-2",
                 isNewPathChosen && isNewPathEmpty === false
-                  ? "border-yellow-400 bg-neutral-50"
-                  : "border-neutral-900",
+                  ? "bg-muted border-yellow-400"
+                  : "border-foreground",
               ])}
             >
               <div className="min-w-0 flex-1">
-                <p className="text-sm text-neutral-700">
+                <p className="text-muted-foreground text-sm">
                   {selectedPath
                     ? displayPath(selectedPath, home)
                     : displayPath(currentPath, home)}
                 </p>
                 {isNewPathChosen && isNewPathEmpty === false && (
-                  <p className="mt-1 text-xs text-yellow-600">
+                  <p className="text-warning-fg mt-1 text-xs">
                     Folder is not empty. Uncheck Move to use it as-is, or pick a
                     dedicated empty folder (for example "meetings") for a full
                     migration.
@@ -306,7 +316,7 @@ function ChangeContentPathDialog({
                   <button
                     key={vault.path}
                     onClick={() => selectPath(vault.path)}
-                    className="flex cursor-pointer items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-2 text-left text-sm text-neutral-500 transition-colors hover:bg-neutral-100"
+                    className="border-border bg-muted text-muted-foreground hover:bg-accent flex cursor-pointer items-center gap-2 rounded-full border px-3 py-2 text-left text-sm transition-colors"
                   >
                     <img
                       src="/assets/obsidian-icon.svg"
@@ -323,7 +333,7 @@ function ChangeContentPathDialog({
           </div>
         </div>
 
-        {error && <p className="text-sm text-red-500">{error.message}</p>}
+        {error && <p className="text-destructive text-sm">{error.message}</p>}
 
         {isNewPathChosen && (
           <DialogFooter className="items-center">
@@ -334,10 +344,10 @@ function ChangeContentPathDialog({
                   onCheckedChange={(v) => setMoveVault(v === true)}
                 />
                 <div className="flex flex-row gap-1">
-                  <span className="text-sm font-semibold text-neutral-600">
+                  <span className="text-muted-foreground text-sm font-semibold">
                     Move
                   </span>
-                  <span className="text-sm text-neutral-600">
+                  <span className="text-muted-foreground text-sm">
                     existing data to new location
                   </span>
                 </div>
@@ -374,6 +384,86 @@ function ChangeContentPathDialog({
   );
 }
 
+function BackupRow({ currentPath }: { currentPath: string | undefined }) {
+  const [lastBackupPath, setLastBackupPath] = useState<string | null>(null);
+
+  const backup = useMutation({
+    mutationFn: async () => {
+      const dest = await selectFolder({
+        title: "Choose a backup destination",
+        directory: true,
+        multiple: false,
+      });
+      if (typeof dest !== "string") {
+        return null;
+      }
+      const result = await settingsCommands.copyVault(dest);
+      if (result.status === "error") {
+        throw new Error(result.error);
+      }
+      return dest;
+    },
+    onSuccess: (dest) => {
+      if (dest) setLastBackupPath(dest);
+    },
+  });
+
+  return (
+    <div className="flex items-center gap-3">
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>
+          <div className="flex w-24 shrink-0 cursor-default items-center gap-2">
+            <ArchiveIcon className="text-muted-foreground size-4" />
+            <span className="text-sm font-medium">Backup</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="top">
+          <p className="text-xs">
+            Copy a snapshot of notes, recordings, and session data into a folder
+            you can sync via Dropbox, iCloud, git, etc.
+          </p>
+        </TooltipContent>
+      </Tooltip>
+      <div className="min-w-0 flex-1">
+        {lastBackupPath ? (
+          <button
+            onClick={() => openerCommands.openPath(lastBackupPath, null)}
+            className="text-success-fg cursor-pointer truncate text-left text-sm hover:underline"
+          >
+            Backed up to {lastBackupPath}
+          </button>
+        ) : (
+          <p className="text-muted-foreground truncate text-sm">
+            Copy your vault to another folder. To restore, use Content →
+            Customize and pick the backup folder.
+          </p>
+        )}
+        {backup.error && (
+          <p className="text-destructive mt-1 text-xs">
+            {(backup.error as Error).message}
+          </p>
+        )}
+      </div>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => backup.mutate()}
+        disabled={!currentPath || backup.isPending}
+        className="shrink-0"
+      >
+        {backup.isPending ? (
+          <>
+            <Loader2Icon className="mr-1 size-3 animate-spin" />
+            Backing up…
+          </>
+        ) : (
+          "Backup now"
+        )}
+      </Button>
+    </div>
+  );
+}
+
 function StoragePathRow({
   icon: Icon,
   title,
@@ -394,7 +484,7 @@ function StoragePathRow({
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
           <div className="flex w-24 shrink-0 cursor-default items-center gap-2">
-            <Icon className="size-4 text-neutral-500" />
+            <Icon className="text-muted-foreground size-4" />
             <span className="text-sm font-medium">{title}</span>
           </div>
         </TooltipTrigger>
@@ -404,7 +494,7 @@ function StoragePathRow({
       </Tooltip>
       <button
         onClick={() => path && openerCommands.openPath(path, null)}
-        className="min-w-0 flex-1 cursor-pointer truncate text-left text-sm text-neutral-500 hover:underline"
+        className="text-muted-foreground min-w-0 flex-1 cursor-pointer truncate text-left text-sm hover:underline"
       >
         {displayPath(path, home)}
       </button>

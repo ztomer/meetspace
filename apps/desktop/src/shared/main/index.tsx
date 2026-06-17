@@ -8,6 +8,9 @@ import {
 } from "@meetspace/ui/components/ui/resizable";
 import { cn } from "@meetspace/utils";
 
+import { hasLeftSurfaceCustomSidebarTab } from "~/sidebar/use-custom-sidebar";
+import { useTabs } from "~/store/zustand/tabs";
+
 const RESIZABLE_AFTER_BORDER_EXPANDED_SIZE = 22;
 
 export { MainShellBodyFrame } from "./body-frame";
@@ -42,6 +45,9 @@ export function StandardTabWrapper({
   mergeAfterBorder?: boolean;
   noBorder?: boolean;
 }) {
+  const currentTab = useTabs((state) => state.currentTab);
+  const hasLeftSurfaceCustomSidebar =
+    hasLeftSurfaceCustomSidebarTab(currentTab);
   const afterBorderPanelRef = useRef<ImperativePanelHandle>(null);
   const afterBorderSize = RESIZABLE_AFTER_BORDER_EXPANDED_SIZE;
   const hasAfterBorder = Boolean(afterBorder);
@@ -68,7 +74,12 @@ export function StandardTabWrapper({
   );
 
   return (
-    <div className="flex h-full flex-col">
+    <div
+      className={cn([
+        "flex h-full flex-col",
+        hasLeftSurfaceCustomSidebar ? "pt-11" : "pt-0",
+      ])}
+    >
       <ResizablePanelGroup direction="vertical" className="min-h-0 flex-1">
         <ResizablePanel
           defaultSize={useResizableAfterBorder ? 100 - afterBorderSize : 100}
@@ -153,14 +164,14 @@ function MainPanel({
         data-main-has-after-border={afterBorder ? "" : undefined}
         data-main-show-after-border-divider={afterBorder ? "" : undefined}
         className={cn([
-          "relative flex min-h-0 flex-1 flex-col overflow-hidden bg-white",
+          "bg-card relative flex min-h-0 flex-1 flex-col overflow-hidden",
           mergeAfterBorder && afterBorder
             ? "rounded-t-xl rounded-b-none"
             : "rounded-xl",
           !noBorder &&
             (mergeAfterBorder && afterBorder
-              ? "border border-b-0 border-neutral-200"
-              : "border border-neutral-200"),
+              ? "border-border border border-b-0"
+              : "border-border border"),
         ])}
       >
         {children}

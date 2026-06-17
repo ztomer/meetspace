@@ -1,9 +1,10 @@
 import {
   ChevronDown,
   MessageCircle,
-  PanelRightClose,
-  PanelRightOpen,
+  PanelRight,
+  PictureInPicture2,
   Plus,
+  X,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -21,6 +22,7 @@ import * as main from "~/store/tinybase/store/main";
 export function ChatToolbarControls({
   currentChatGroupId,
   layout = "floating",
+  onClose,
   onNewChat,
   onOpenFloating,
   onOpenRightPanel,
@@ -29,6 +31,7 @@ export function ChatToolbarControls({
 }: {
   currentChatGroupId: string | undefined;
   layout?: "floating" | "right-panel";
+  onClose?: () => void;
   onNewChat: () => void;
   onOpenFloating?: () => void;
   onOpenRightPanel?: () => void;
@@ -40,10 +43,7 @@ export function ChatToolbarControls({
 
   return (
     <div
-      className={cn([
-        "flex h-full w-full min-w-0 items-center gap-2",
-        isRightPanel ? "px-3" : isDark ? "px-2" : "px-0",
-      ])}
+      className={cn(["flex h-full w-full min-w-0 items-center gap-2", "px-3"])}
     >
       <div className="flex min-w-0 flex-1 items-center gap-1">
         <ChatGroups
@@ -52,42 +52,54 @@ export function ChatToolbarControls({
           surface={surface}
         />
       </div>
-      <div className="flex shrink-0 items-center gap-1">
+      <div
+        data-chat-toolbar-actions
+        className="flex shrink-0 items-center gap-0"
+      >
         <ChatActionButton
           icon={<Plus size={16} />}
           label="New chat"
           onClick={onNewChat}
           className={isDark ? darkToolbarButtonClassName : undefined}
         />
-        <ChatActionButton
-          icon={
-            isRightPanel ? (
-              <PanelRightClose size={16} />
-            ) : (
-              <PanelRightOpen size={16} />
-            )
-          }
-          onClick={
-            isRightPanel
-              ? (onOpenFloating ?? (() => {}))
-              : (onOpenRightPanel ?? (() => {}))
-          }
-          label={isRightPanel ? "Float chat" : "Open in right panel"}
-          className={cn([
-            isDark
-              ? darkToolbarButtonClassName
-              : isRightPanel &&
-                "bg-neutral-100 text-neutral-900 hover:bg-neutral-100",
-            isRightPanel && "mr-1",
-          ])}
-        />
+        {isRightPanel ? (
+          <>
+            <ChatActionButton
+              icon={<PictureInPicture2 size={16} />}
+              label="Float chat"
+              onClick={onOpenFloating ?? (() => {})}
+              className={isDark ? darkToolbarButtonClassName : undefined}
+            />
+            <ChatActionButton
+              icon={<X size={16} />}
+              label="Close chat"
+              onClick={onClose ?? (() => {})}
+              className={isDark ? darkToolbarButtonClassName : undefined}
+            />
+          </>
+        ) : (
+          <>
+            <ChatActionButton
+              icon={<PanelRight size={16} />}
+              label="Open in right panel"
+              onClick={onOpenRightPanel ?? (() => {})}
+              className={isDark ? darkToolbarButtonClassName : undefined}
+            />
+            <ChatActionButton
+              icon={<X size={16} />}
+              label="Close chat"
+              onClick={onClose ?? (() => {})}
+              className={isDark ? darkToolbarButtonClassName : undefined}
+            />
+          </>
+        )}
       </div>
     </div>
   );
 }
 
 const darkToolbarButtonClassName =
-  "size-8 bg-transparent text-stone-300 hover:!bg-white/7 hover:!text-white focus-visible:!bg-white/7 focus-visible:!text-white active:!bg-white/10";
+  "size-8 bg-transparent text-primary-foreground/60 hover:!bg-primary-foreground/7 hover:!text-primary-foreground focus-visible:!bg-primary-foreground/7 focus-visible:!text-primary-foreground active:!bg-primary-foreground/10";
 
 function ChatActionButton({
   className,
@@ -106,7 +118,7 @@ function ChatActionButton({
       onClick={onClick}
       size="icon"
       variant="ghost"
-      className={cn(["rounded-full text-neutral-600", className])}
+      className={cn(["text-muted-foreground rounded-full", className])}
     >
       {icon}
     </Button>
@@ -146,18 +158,19 @@ function ChatGroups({
         <Button
           variant="ghost"
           className={cn([
-            "group flex h-8 max-w-full min-w-0 justify-start gap-1.5 px-2 py-0 text-left",
+            "group flex h-8 max-w-full min-w-0 justify-start gap-1.5 py-0 text-left",
+            "-ml-2 px-2",
             isDark
-              ? "w-fit rounded-full text-stone-100 hover:bg-white/7 hover:text-white data-[state=open]:bg-white/7"
-              : "text-neutral-700",
+              ? "text-primary-foreground hover:bg-primary-foreground/7 hover:text-primary-foreground data-[state=open]:bg-primary-foreground/7 w-fit rounded-full"
+              : "text-foreground hover:bg-accent hover:text-foreground data-[state=open]:bg-accent w-fit rounded-full",
           ])}
         >
           <h3
             className={cn([
               "max-w-64 min-w-0 truncate text-left font-medium",
               isDark
-                ? "text-[15px] text-stone-100"
-                : "text-xs text-neutral-700",
+                ? "text-primary-foreground text-[15px]"
+                : "text-foreground text-[15px]",
             ])}
           >
             {currentChatTitle || "Ask Meetspace AI anything"}
@@ -165,7 +178,7 @@ function ChatGroups({
           <ChevronDown
             className={cn([
               "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
-              isDark ? "text-stone-300" : "text-neutral-400",
+              isDark ? "text-primary-foreground/60" : "text-muted-foreground",
               isDropdownOpen && "rotate-180",
             ])}
           />
@@ -179,7 +192,7 @@ function ChatGroups({
       >
         <AppFloatingPanel className="flex flex-col gap-0.5 p-1.5">
           <div className="px-2 py-1.5">
-            <h4 className="text-[10px] font-semibold tracking-wider text-neutral-500 uppercase">
+            <h4 className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
               Recent Chats
             </h4>
           </div>
@@ -199,8 +212,8 @@ function ChatGroups({
             </div>
           ) : (
             <div className="px-3 py-6 text-center">
-              <MessageCircle className="mx-auto mb-1.5 h-6 w-6 text-neutral-300" />
-              <p className="text-xs text-neutral-400">No recent chats</p>
+              <MessageCircle className="text-muted-foreground/70 mx-auto mb-1.5 h-6 w-6" />
+              <p className="text-muted-foreground text-xs">No recent chats</p>
             </div>
           )}
         </AppFloatingPanel>
@@ -237,8 +250,8 @@ function ChatGroupItem({
       className={cn([
         "group h-auto w-full justify-start px-2.5 py-1.5",
         isActive
-          ? "bg-neutral-100 shadow-xs hover:bg-neutral-100"
-          : "hover:bg-neutral-50 active:bg-neutral-100",
+          ? "bg-muted hover:bg-accent shadow-xs"
+          : "hover:bg-accent active:bg-muted",
       ])}
     >
       <div className="flex w-full items-center gap-2.5">
@@ -247,8 +260,8 @@ function ChatGroupItem({
             className={cn([
               "h-3.5 w-3.5 transition-colors",
               isActive
-                ? "text-neutral-700"
-                : "text-neutral-400 group-hover:text-neutral-600",
+                ? "text-muted-foreground"
+                : "text-muted-foreground group-hover:text-muted-foreground",
             ])}
           />
         </div>
@@ -256,12 +269,12 @@ function ChatGroupItem({
           <div
             className={cn([
               "truncate text-sm font-medium",
-              isActive ? "text-neutral-900" : "text-neutral-700",
+              isActive ? "text-foreground" : "text-muted-foreground",
             ])}
           >
             {chatGroup.title}
           </div>
-          <div className="mt-0.5 text-[11px] text-neutral-500">
+          <div className="text-muted-foreground mt-0.5 text-[11px]">
             {formattedTime}
           </div>
         </div>

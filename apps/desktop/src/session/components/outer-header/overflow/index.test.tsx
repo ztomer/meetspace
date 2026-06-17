@@ -66,7 +66,20 @@ vi.mock("./listening", () => ({
 }));
 
 vi.mock("./misc", () => ({
+  Copy: () => <button type="button">Copy link</button>,
   ShowInFinder: () => <button type="button">Show in Finder</button>,
+}));
+
+vi.mock("./notion", () => ({
+  ExportToNotion: () => null,
+}));
+
+vi.mock("./obsidian", () => ({
+  ExportToObsidian: () => null,
+}));
+
+vi.mock("./linear", () => ({
+  CreateLinearIssue: () => null,
 }));
 
 vi.mock("~/audio-player", () => ({
@@ -85,6 +98,7 @@ vi.mock("~/session/components/shared", () => ({
 
 vi.mock("~/shared/config", () => ({
   useConfigValue: useConfigValueMock,
+  useConfigValues: vi.fn(() => ({})),
 }));
 
 vi.mock("~/stt/contexts", () => ({

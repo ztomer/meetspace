@@ -66,12 +66,12 @@ export function ToolGeneric({ part }: { part: Record<string, unknown> }) {
         <div className="flex flex-col gap-2">
           <InputDisplay input={part.input} />
           {failed ? (
-            <p className="text-xs text-red-500">
+            <p className="text-destructive text-xs">
               {String(part.errorText ?? "Unknown error")}
             </p>
           ) : null}
           {outputText ? (
-            <p className="text-xs whitespace-pre-wrap text-neutral-600">
+            <p className="text-muted-foreground text-xs whitespace-pre-wrap">
               {outputText}
             </p>
           ) : null}
@@ -97,10 +97,10 @@ function InputDisplay({ input }: { input: unknown }) {
   if (entries.length === 0) return null;
 
   return (
-    <dl className="flex flex-col gap-1 text-xs text-neutral-500">
+    <dl className="text-muted-foreground flex flex-col gap-1 text-xs">
       {entries.map(([key, value]) => (
         <div key={key}>
-          <dt className="inline font-medium text-neutral-600">{key}: </dt>
+          <dt className="text-muted-foreground inline font-medium">{key}: </dt>
           <dd className="inline wrap-break-word whitespace-pre-wrap">
             {typeof value === "string" ? value : JSON.stringify(value)}
           </dd>

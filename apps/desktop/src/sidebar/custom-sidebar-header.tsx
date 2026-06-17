@@ -78,7 +78,7 @@ export function CustomSidebarHeader({
             </CustomSidebarHeaderButton>
           </>
         ) : null}
-        <h3 className="truncate font-sans text-sm font-medium select-none">
+        <h3 className="truncate font-sans text-sm font-medium text-neutral-900 select-none dark:text-neutral-100">
           {title}
         </h3>
       </div>
@@ -116,9 +116,9 @@ function CustomSidebarHeaderButton({
       disabled={disabled}
       className={cn([
         "relative z-50 flex size-6 shrink-0 items-center justify-center rounded-full",
-        "text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900",
-        "focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden",
-        "disabled:text-neutral-300 disabled:hover:bg-transparent disabled:hover:text-neutral-300",
+        "text-muted-foreground hover:bg-accent hover:text-foreground transition-colors",
+        "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-hidden",
+        "disabled:text-muted-foreground/70 disabled:hover:text-muted-foreground/70 disabled:hover:bg-transparent",
       ])}
       onClick={onClick}
     >

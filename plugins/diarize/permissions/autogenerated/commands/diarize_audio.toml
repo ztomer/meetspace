@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-diarize-audio"
+description = "Enables the diarize_audio command without any pre-configured scope."
+commands.allow = ["diarize_audio"]
+
+[[permission]]
+identifier = "deny-diarize-audio"
+description = "Denies the diarize_audio command without any pre-configured scope."
+commands.deny = ["diarize_audio"]

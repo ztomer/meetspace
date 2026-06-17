@@ -1,3 +1,4 @@
+import { useLingui } from "@lingui/react/macro";
 import { Check, ChevronDown } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
@@ -48,12 +49,13 @@ export function SearchableSelect({
   value,
   onChange,
   options,
-  placeholder = "Select...",
-  searchPlaceholder = "Search...",
-  emptyMessage = "No results found.",
+  placeholder,
+  searchPlaceholder,
+  emptyMessage,
   className,
   dropdownClassName,
 }: SearchableSelectProps) {
+  const { t } = useLingui();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -80,7 +82,7 @@ export function SearchableSelect({
           role="combobox"
           aria-expanded={open}
           className={cn([
-            "justify-between bg-white font-normal shadow-none focus-visible:ring-0",
+            "bg-card justify-between font-normal shadow-none focus-visible:ring-0",
             "rounded-full px-3",
             className,
           ])}
@@ -90,7 +92,7 @@ export function SearchableSelect({
               ? selectedOption.detail
                 ? `${selectedOption.label} (${selectedOption.detail})`
                 : selectedOption.label
-              : placeholder}
+              : (placeholder ?? t`Select...`)}
           </span>
           <ChevronDown className="-mr-1 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -111,13 +113,13 @@ export function SearchableSelect({
             className="rounded-[inherit] border-0 bg-transparent"
           >
             <CommandInput
-              placeholder={searchPlaceholder}
+              placeholder={searchPlaceholder ?? t`Search...`}
               value={query}
               onValueChange={setQuery}
             />
             <CommandEmpty>
               <div className="text-muted-foreground px-2 py-1.5 text-sm">
-                {emptyMessage}
+                {emptyMessage ?? t`No results found.`}
               </div>
             </CommandEmpty>
             <CommandList>
@@ -133,12 +135,12 @@ export function SearchableSelect({
                     onSelect={() => handleSelect(option.value)}
                     className={cn([
                       "cursor-pointer",
-                      "hover:bg-neutral-200! focus:bg-neutral-200! aria-selected:bg-transparent",
+                      "hover:bg-accent! focus:bg-accent! aria-selected:bg-transparent",
                     ])}
                   >
                     <span className="flex-1 truncate">{option.label}</span>
                     {option.detail && (
-                      <span className="shrink-0 font-mono text-[10px] text-neutral-400">
+                      <span className="text-muted-foreground shrink-0 font-mono text-[10px]">
                         {option.detail}
                       </span>
                     )}

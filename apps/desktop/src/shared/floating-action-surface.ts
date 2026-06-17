@@ -1,0 +1,4 @@
+// @theme-keep-file — dark:bg-white / dark:hover:bg-white are intentional: this is
+// an inverted-colour "floating action" primary button where white IS the brand colour.
+export const floatingActionSurfaceClassName =
+  "border-primary/80 bg-primary text-primary-foreground hover:bg-primary/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.22),0_10px_28px_rgba(0,0,0,0.28)] dark:border-black/15 dark:bg-white/92 dark:text-primary dark:hover:bg-white dark:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.18),0_16px_40px_rgba(0,0,0,0.52),0_0_0_1px_rgba(255,255,255,0.14)]";

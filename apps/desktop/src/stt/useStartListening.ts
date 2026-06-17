@@ -12,11 +12,16 @@ import {
 } from "./useRunBatch";
 import { useSTTConnection } from "./useSTTConnection";
 
+import { useLanguageModel } from "~/ai/hooks";
+import { maybeDiarizeAndPersist } from "~/services/diarize-on-stop";
 import { getEnhancerService } from "~/services/enhancer";
+import { maybeResolveSpeakerNames } from "~/services/name-resolve-on-stop";
+import { maybeAutoExportToObsidian } from "~/services/obsidian-auto-export";
 import { getSessionEventById } from "~/session/utils";
 import { useConfigValue } from "~/shared/config";
 import { id } from "~/shared/utils";
 import * as main from "~/store/tinybase/store/main";
+import * as settings from "~/store/tinybase/store/settings";
 import type {
   LiveTranscriptPersistCallback,
   OnStoppedCallback,
@@ -48,6 +53,7 @@ export function getPostCaptureAction(
 export function useStartListening(sessionId: string) {
   const { user_id } = main.UI.useValues(main.STORE_ID);
   const store = main.UI.useStore(main.STORE_ID);
+  const settingsStore = settings.UI.useStore(settings.STORE_ID);
   const indexes = main.UI.useIndexes(main.STORE_ID);
 
   const aiLanguage = useConfigValue("ai_language");
@@ -62,6 +68,12 @@ export function useStartListening(sessionId: string) {
   const canRunBatchRef = useRef(canRunBatchTranscription(conn));
   runBatchRef.current = runBatch;
   canRunBatchRef.current = canRunBatchTranscription(conn);
+
+  // Captured for the post-stop name-resolution pass. The LLM may be null
+  // (not configured) — the service no-ops in that case.
+  const languageModel = useLanguageModel();
+  const languageModelRef = useRef(languageModel);
+  languageModelRef.current = languageModel;
 
   const startListening = useCallback(async () => {
     if (!store) {
@@ -94,11 +106,31 @@ export function useStartListening(sessionId: string) {
         }
       }
 
-      if (postCaptureAction === "none") {
-        return;
+      if (postCaptureAction !== "none") {
+        getEnhancerService()?.queueAutoEnhanceIfSummaryEmpty(sessionId);
       }
 
-      getEnhancerService()?.queueAutoEnhanceIfSummaryEmpty(sessionId);
+      if (store && settingsStore) {
+        // Chain: diarize -> resolve Speaker N -> human names via LLM ->
+        // Obsidian export, so the exported markdown reflects every post-pass.
+        // Each step swallows its own failures.
+        void maybeDiarizeAndPersist(
+          store,
+          settingsStore,
+          sessionId,
+          details.audioPath ?? null,
+        )
+          .then(() =>
+            maybeResolveSpeakerNames(
+              store,
+              sessionId,
+              languageModelRef.current,
+            ),
+          )
+          .finally(() => {
+            void maybeAutoExportToObsidian(store, settingsStore, sessionId);
+          });
+      }
     };
 
     const handlePersist: LiveTranscriptPersistCallback = (delta) => {
@@ -194,6 +226,7 @@ export function useStartListening(sessionId: string) {
     aiLanguage,
     conn,
     store,
+    settingsStore,
     indexes,
     sessionId,
     start,

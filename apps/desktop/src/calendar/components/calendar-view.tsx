@@ -1,3 +1,4 @@
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addDays,
   addMonths,
@@ -30,7 +31,13 @@ import { cn } from "@meetspace/utils";
 import { useSync } from "./context";
 import { DayCell } from "./day-cell";
 
-import { useCalendarData, useNow, useWeekStartsOn } from "~/calendar/hooks";
+import {
+  useCalendarData,
+  useEnabledCalendars,
+  useNow,
+  useWeekStartsOn,
+} from "~/calendar/hooks";
+import type { CalendarSyncRange } from "~/services/calendar";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 
 const WEEKDAY_HEADERS_SUN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -45,6 +52,8 @@ const VIEW_BREAKPOINTS = [
 
 const COMPACT_SCROLL_PAST_DAYS = 42;
 const COMPACT_SCROLL_FUTURE_DAYS = 42;
+const VISIBLE_RANGE_SYNC_QUERY_KEY = "calendar-visible-range-sync";
+const VISIBLE_RANGE_SYNC_STALE_MS = 60 * 1000;
 
 function useVisibleCols(ref: React.RefObject<HTMLDivElement | null>) {
   const [cols, setCols] = useState(7);
@@ -82,6 +91,7 @@ export function CalendarView() {
   const compactBaseRef = useRef(startOfDay(now));
   const cols = useVisibleCols(containerRef);
   const calendarData = useCalendarData();
+  const enabledCalendars = useEnabledCalendars();
 
   useMountEffect(() => {
     scheduleSync();
@@ -137,6 +147,28 @@ export function CalendarView() {
     });
   }, [currentMonth, isMonthView, visibleStart, weekOpts]);
 
+  const visibleRange = useMemo<CalendarSyncRange | null>(() => {
+    const firstDay = days[0];
+    const lastDay = days[days.length - 1];
+    if (!firstDay || !lastDay) return null;
+
+    return {
+      from: startOfDay(firstDay),
+      to: startOfDay(addDays(lastDay, 1)),
+    };
+  }, [days]);
+
+  const enabledCalendarKey = useMemo(
+    () =>
+      enabledCalendars
+        .map((calendar) => calendar.id)
+        .sort()
+        .join(","),
+    [enabledCalendars],
+  );
+
+  useVisibleRangeSync(visibleRange, enabledCalendarKey);
+
   const visibleHeaders =
     weekStartsOn === 1 ? WEEKDAY_HEADERS_MON : WEEKDAY_HEADERS_SUN;
 
@@ -189,11 +221,11 @@ export function CalendarView() {
         data-tauri-drag-region
         className={cn([
           "flex items-center justify-between",
-          "h-12 border-b border-neutral-200 py-2 pr-3 pl-3 select-none",
+          "border-border h-12 border-b py-2 pr-3 pl-3 select-none",
         ])}
       >
         <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold text-neutral-900">
+          <h2 className="text-foreground text-sm font-semibold">
             {isMonthView
               ? format(currentMonth, "MMMM yyyy")
               : format(compactVisibleStart, "MMMM yyyy")}
@@ -203,35 +235,35 @@ export function CalendarView() {
         <ButtonGroup
           data-tauri-drag-region="false"
           className={cn([
-            "h-8 overflow-hidden rounded-full border border-neutral-200",
-            "bg-white shadow-xs",
+            "border-border h-8 overflow-hidden rounded-full border",
+            "bg-card",
           ])}
         >
           <Button
             variant="ghost"
             size="icon"
-            className="h-full w-10 rounded-none border-0 bg-transparent shadow-none hover:bg-neutral-50"
+            className="hover:bg-accent h-full w-10 rounded-none border-0 bg-transparent shadow-none"
             onClick={goToPrev}
           >
             <ChevronLeftIcon className="h-4 w-4" />
           </Button>
-          <ButtonGroupSeparator className="bg-neutral-200" />
+          <ButtonGroupSeparator className="bg-accent" />
           <Button
             variant="ghost"
             size="sm"
             className={cn([
               "h-full rounded-none border-0",
-              "bg-transparent px-3 text-sm shadow-none hover:bg-neutral-50",
+              "hover:bg-accent bg-transparent px-3 text-sm shadow-none",
             ])}
             onClick={goToToday}
           >
             Today
           </Button>
-          <ButtonGroupSeparator className="bg-neutral-200" />
+          <ButtonGroupSeparator className="bg-accent" />
           <Button
             variant="ghost"
             size="icon"
-            className="h-full w-10 rounded-none border-0 bg-transparent shadow-none hover:bg-neutral-50"
+            className="hover:bg-accent h-full w-10 rounded-none border-0 bg-transparent shadow-none"
             onClick={goToNext}
           >
             <ChevronRightIcon className="h-4 w-4" />
@@ -242,7 +274,7 @@ export function CalendarView() {
       {isMonthView ? (
         <>
           <div
-            className="grid border-b border-neutral-200"
+            className="border-border grid border-b"
             style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
           >
             {visibleHeaders.map((day, i) => (
@@ -251,11 +283,10 @@ export function CalendarView() {
                 className={cn([
                   "text-center text-xs font-medium",
                   "py-2",
-                  i < visibleHeaders.length - 1 &&
-                    "border-r border-r-neutral-200",
+                  i < visibleHeaders.length - 1 && "border-r-border border-r",
                   day === "Sat" || day === "Sun"
-                    ? "text-neutral-400"
-                    : "text-neutral-900",
+                    ? "text-muted-foreground"
+                    : "text-foreground",
                 ])}
               >
                 {day}
@@ -299,11 +330,11 @@ export function CalendarView() {
                 <div
                   key={`header-${day.toISOString()}`}
                   className={cn([
-                    "snap-start border-r border-b border-r-neutral-200 border-b-neutral-200",
+                    "border-r-border border-b-border snap-start border-r border-b",
                     "py-2 text-center text-xs font-medium",
                     label === "Sat" || label === "Sun"
-                      ? "text-neutral-400"
-                      : "text-neutral-900",
+                      ? "text-muted-foreground"
+                      : "text-foreground",
                   ])}
                 >
                   {label}
@@ -325,7 +356,30 @@ export function CalendarView() {
   );
 }
 
+function useVisibleRangeSync(
+  range: CalendarSyncRange | null,
+  enabledCalendarKey: string,
+) {
+  const { canSync, syncRange } = useSync();
+  const from = range?.from.toISOString();
+  const to = range?.to.toISOString();
+
+  useQuery({
+    queryKey: [VISIBLE_RANGE_SYNC_QUERY_KEY, from, to, enabledCalendarKey],
+    queryFn: async ({ signal }) => {
+      if (!range) return null;
+      await syncRange(range, signal);
+      return null;
+    },
+    enabled: Boolean(range && canSync),
+    staleTime: VISIBLE_RANGE_SYNC_STALE_MS,
+    gcTime: 10 * VISIBLE_RANGE_SYNC_STALE_MS,
+    retry: false,
+  });
+}
+
 function CalendarSyncHeaderControls() {
+  const queryClient = useQueryClient();
   const { status, cancelDebouncedSync, scheduleSync } = useSync();
   const refreshFeedbackTimeoutRef = useRef<ReturnType<
     typeof setTimeout
@@ -350,9 +404,12 @@ function CalendarSyncHeaderControls() {
       refreshFeedbackTimeoutRef.current = null;
       setShowManualRefreshFeedback(false);
     }, 1500);
+    void queryClient.invalidateQueries({
+      queryKey: [VISIBLE_RANGE_SYNC_QUERY_KEY],
+    });
     cancelDebouncedSync();
     scheduleSync();
-  }, [cancelDebouncedSync, scheduleSync]);
+  }, [cancelDebouncedSync, queryClient, scheduleSync]);
 
   const showSyncIndicator = showManualRefreshFeedback || status !== "idle";
   const statusText =
@@ -367,7 +424,7 @@ function CalendarSyncHeaderControls() {
       {showSyncIndicator ? (
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
-            <span className="flex size-6 items-center justify-center text-neutral-500">
+            <span className="text-muted-foreground flex size-6 items-center justify-center">
               <Spinner size={12} />
             </span>
           </TooltipTrigger>

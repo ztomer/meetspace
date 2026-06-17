@@ -18,8 +18,8 @@ const hoisted = vi.hoisted(() => ({
   enhancedContent: "Generated summary",
   llmStatus: {
     status: "success",
-    providerId: "meetspace",
-    isHosted: true,
+    providerId: "custom",
+    isHosted: false,
   } as LLMConnectionStatus,
   isCaretNearBottom: false,
   sessionMode: "inactive",
@@ -94,8 +94,8 @@ describe("FloatingActionButton", () => {
     hoisted.enhancedContent = "Generated summary";
     hoisted.llmStatus = {
       status: "success",
-      providerId: "meetspace",
-      isHosted: true,
+      providerId: "custom",
+      isHosted: false,
     };
     hoisted.isCaretNearBottom = false;
     hoisted.sessionMode = "inactive";
@@ -180,6 +180,8 @@ describe("FloatingActionButton", () => {
     );
     expect(wrapper?.className).toContain("group-hover:pointer-events-auto");
     expect(wrapper?.className).toContain("group-hover:translate-y-0");
+    expect(wrapper?.className).toContain("hover:pointer-events-auto");
+    expect(wrapper?.className).toContain("hover:translate-y-0");
   });
 
   it("tucks the chat FAB near the editor caret and reveals it from the hover zone", () => {
@@ -198,6 +200,8 @@ describe("FloatingActionButton", () => {
     );
     expect(wrapper?.className).toContain("group-hover:pointer-events-auto");
     expect(wrapper?.className).toContain("group-hover:translate-y-0");
+    expect(wrapper?.className).toContain("hover:pointer-events-auto");
+    expect(wrapper?.className).toContain("hover:translate-y-0");
   });
 
   it("keeps the chat FAB tucked during active meetings", () => {
@@ -217,6 +221,8 @@ describe("FloatingActionButton", () => {
     expect(wrapper?.className).toContain("pointer-events-none");
     expect(wrapper?.className).toContain("group-hover:pointer-events-auto");
     expect(wrapper?.className).toContain("group-hover:translate-y-0");
+    expect(wrapper?.className).toContain("hover:pointer-events-auto");
+    expect(wrapper?.className).toContain("hover:translate-y-0");
   });
 
   it("shows the tucked chat FAB during active meetings before transcript exists", () => {
@@ -274,7 +280,7 @@ describe("FloatingActionButton", () => {
     const status = screen.getByRole("status");
 
     expect(status.textContent).toBe("Not enough words recorded (3/5 minimum)");
-    expect(status.className).toContain("text-red-400");
+    expect(status.className).toContain("text-destructive");
     expect(status.parentElement?.className).toContain("pb-4");
     expect(
       screen.queryByRole("button", { name: "Ask Meetspace anything" }),

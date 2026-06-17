@@ -34,7 +34,7 @@ export function WordSpan(props: WordSpanProps) {
   const className = useMemo(
     () =>
       cn([
-        canSeek && "cursor-pointer hover:bg-neutral-200/60",
+        canSeek && "hover:bg-accent/60 cursor-pointer",
         !props.word.is_final && ["opacity-60", "italic"],
       ]),
     [canSeek, props.word.is_final],
@@ -87,7 +87,7 @@ function useHighlightedContent(
       segment.isMatch ? (
         <span
           key={`${baseKey}-match-${index}`}
-          className={isActive ? "bg-yellow-500" : "bg-yellow-200/50"}
+          className={isActive ? "bg-warning" : "bg-warning-bg/50"}
         >
           {segment.text}
         </span>

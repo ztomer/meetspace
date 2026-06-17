@@ -55,7 +55,7 @@ final class FloatingBarManager {
   func update(state: FloatingBarStatePayload) {
     DispatchQueue.main.async { [weak self] in
       guard let self else { return }
-      self.model.degraded = state.degraded
+      self.model.status = state.status
       self.model.amplitude = min(max(state.amplitude, 0), 1)
     }
   }
@@ -85,10 +85,16 @@ final class FloatingBarManager {
   }
 
   private func position(_ panel: NSPanel, force: Bool = false) {
-    placement.position(panel, force: force) { screen in
+    placement.position(
+      panel,
+      force: force,
+      size: NSSize(
+        width: FloatingBarLayout.containerWidth,
+        height: FloatingBarLayout.containerHeight)
+    ) { screen, size in
       let frame = screen.visibleFrame
-      let x = frame.maxX - FloatingBarLayout.containerWidth - FloatingBarLayout.screenMargin
-      let y = frame.midY - FloatingBarLayout.containerHeight / 2
+      let x = frame.maxX - size.width - FloatingBarLayout.screenMargin
+      let y = frame.midY - size.height / 2
       return NSPoint(x: x, y: y)
     }
   }

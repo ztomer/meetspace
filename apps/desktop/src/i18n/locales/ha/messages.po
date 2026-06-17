@@ -25,27 +25,27 @@ msgstr "Ƙara yaren magana"
 msgid "Additional spoken languages"
 msgstr "Ƙarin harsunan magana"
 
-#: src/settings/general/index.tsx:152
+#: src/settings/general/index.tsx:163
 msgid "Always ready without manually launching."
 msgstr "Koyaushe a shirye ba tare da ƙaddamar da hannu ba."
 
 #: src/settings/general/index.tsx:136
-msgid "App"
-msgstr "App"
+#~ msgid "App"
+#~ msgstr "App"
 
-#: src/settings/general/index.tsx:159
+#: src/settings/general/index.tsx:170
 msgid "Automatically start listening when an event-backed note reaches its scheduled start time."
 msgstr "Fara sauraro ta atomatik lokacin da bayanin kula da abin ya faru ya kai lokacin farawa da aka tsara."
 
-#: src/settings/general/index.tsx:169
+#: src/settings/general/index.tsx:180
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "Dakatar da saurare ta atomatik lokacin da app ɗin taron ya saki makirufo."
 
-#: src/settings/general/index.tsx:265
+#: src/settings/general/index.tsx:278
 msgid "Data"
 msgstr "Bayanai"
 
-#: src/settings/general/index.tsx:214
+#: src/settings/general/index.tsx:227
 msgid "Language & Region"
 msgstr "Harshe & Yanki"
 
@@ -66,7 +66,7 @@ msgstr "Taro"
 msgid "No matching languages found"
 msgstr "Ba a sami yarukan da suka dace ba"
 
-#: src/settings/general/index.tsx:277
+#: src/settings/general/index.tsx:290
 msgid "Notifications"
 msgstr "Sanarwa"
 
@@ -79,34 +79,42 @@ msgid "Select language"
 msgstr "Zaɓi harshe"
 
 #: src/settings/general/index.tsx:193
-msgid "Send anonymous usage analytics to help improve Anarlog."
-msgstr "Aika bayanan amfani da ba a san su ba don taimakawa inganta Anarlog."
+#~ msgid "Send anonymous usage analytics to help improve Anarlog."
+#~ msgstr "Aika bayanan amfani da ba a san su ba don taimakawa inganta Anarlog."
 
-#: src/settings/general/index.tsx:192
+#: src/settings/general/index.tsx:204
+msgid "Send anonymous usage analytics to help improve Meetspace."
+msgstr ""
+
+#: src/settings/general/index.tsx:203
 msgid "Share usage data"
 msgstr "Raba bayanan amfani"
 
-#: src/settings/general/index.tsx:175
+#: src/settings/general/index.tsx:186
 msgid "Show floating bar"
 msgstr "Nuna mashaya mai iyo"
 
-#: src/settings/general/index.tsx:176
+#: src/settings/general/index.tsx:187
 msgid "Show the compact floating control while listening."
 msgstr "Nuna ƙaramin iko mai iyo yayin sauraro."
 
-#: src/settings/general/index.tsx:182
+#: src/settings/general/index.tsx:193
 msgid "Show timeline in sidebar"
 msgstr "Nuna layin lokaci a mashigin gefe"
 
 #: src/settings/general/index.tsx:151
-msgid "Start Anarlog at login"
-msgstr "Fara Anarlog a login"
+#~ msgid "Start Anarlog at login"
+#~ msgstr "Fara Anarlog a login"
 
-#: src/settings/general/index.tsx:158
+#: src/settings/general/index.tsx:162
+msgid "Start Meetspace at login"
+msgstr ""
+
+#: src/settings/general/index.tsx:169
 msgid "Start when meeting begins"
 msgstr "Fara lokacin da aka fara taro"
 
-#: src/settings/general/index.tsx:168
+#: src/settings/general/index.tsx:179
 msgid "Stop when meeting ends"
 msgstr "Dakata lokacin da taro ya ƙare"
 
@@ -114,6 +122,6 @@ msgstr "Dakata lokacin da taro ya ƙare"
 msgid "The main language is always included for transcription"
 msgstr "Koyaushe ana haɗa babban harshe don rubutawa"
 
-#: src/settings/general/index.tsx:183
+#: src/settings/general/index.tsx:194
 msgid "Use the left sidebar timeline instead of the top timeline."
 msgstr "Yi amfani da layin lokaci na gefen hagu maimakon babban tsarin lokaci."

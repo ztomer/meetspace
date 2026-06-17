@@ -2,18 +2,28 @@ import {
   ArrowDownIcon,
   ArrowUpIcon,
   CalendarDaysIcon,
+  SearchIcon,
+  SquarePenIcon,
   SunIcon,
 } from "lucide-react";
 import {
   type ReactNode,
+  type RefCallback,
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
+import {
+  useManager,
+  useRunningTaskRunIds,
+  useScheduledTaskRunIds,
+} from "tinytick/ui-react";
 
 import { Button } from "@meetspace/ui/components/ui/button";
-import { cn, startOfDay } from "@meetspace/utils";
+import { Spinner } from "@meetspace/ui/components/ui/spinner";
+import { cn } from "@meetspace/utils";
 
 import { useAnchor, useAutoScrollToAnchor } from "./anchor";
 import { TimelineItemComponent } from "./item";
@@ -36,8 +46,11 @@ import {
   type TimelineSessionsTable,
 } from "./utils";
 
+import { CALENDAR_SYNC_TASK_ID } from "~/services/calendar";
 import { useConfigValue } from "~/shared/config";
 import { useNativeContextMenu } from "~/shared/hooks/useNativeContextMenu";
+import { useOpenNoteDialog } from "~/shared/open-note-dialog";
+import { useNewNote } from "~/shared/useNewNote";
 import { useIgnoredEvents } from "~/store/tinybase/hooks";
 import {
   captureSessionData,
@@ -48,6 +61,13 @@ import * as main from "~/store/tinybase/store/main";
 import { useTabs } from "~/store/zustand/tabs";
 import { useTimelineSelection } from "~/store/zustand/timeline-selection";
 import { useUndoDelete } from "~/store/zustand/undo-delete";
+import { useListener } from "~/stt/contexts";
+
+const SIDEBAR_ACTIONS_REVEAL_DELAY_MS = 900;
+const DUE_CALENDAR_SYNC_VISIBLE_WINDOW_MS = 1000;
+const CALENDAR_SYNC_STATUS_TICK_MS = 500;
+type SidebarTimelineActionId = "new-note" | "search" | "calendar";
+type SidebarCalendarSyncStatus = "idle" | "scheduled" | "syncing";
 
 export function TimelineView({
   showOpenCalendarButton = true,
@@ -66,9 +86,12 @@ export function TimelineView({
   const [showIgnored, setShowIgnored] = useState(false);
   const [isScrolledToTop, setIsScrolledToTop] = useState(true);
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
+  const [areSidebarActionsHidden, setAreSidebarActionsHidden] = useState(false);
 
   const { isIgnored } = useIgnoredEvents();
   const openNew = useTabs((state) => state.openNew);
+  const createNewNote = useNewNote();
+  const openNoteDialog = useOpenNoteDialog();
 
   const buckets = useMemo(() => {
     if (showIgnored) {
@@ -102,24 +125,6 @@ export function TimelineView({
     );
   }, [timelineEventsTable, showIgnored, isIgnored]);
 
-  const showOpenCalendarChip = useMemo(
-    () =>
-      showOpenCalendarButton &&
-      isScrolledToTop &&
-      hasTimelineItemsAfterTomorrow({
-        timelineEventsTable: visibleTimelineEventsTable,
-        timelineSessionsTable,
-        timezone,
-      }),
-    [
-      isScrolledToTop,
-      visibleTimelineEventsTable,
-      timelineSessionsTable,
-      timezone,
-      showOpenCalendarButton,
-    ],
-  );
-
   const hasMoreFutureItems = useMemo(
     () =>
       hasTimelineItemsAfterTomorrow({
@@ -129,13 +134,48 @@ export function TimelineView({
       }),
     [visibleTimelineEventsTable, timelineSessionsTable, timezone],
   );
+  const calendarSyncStatus = useCalendarSyncStatus();
+  const showCalendarSyncStatus =
+    topChromeInset && calendarSyncStatus !== "idle";
 
-  const reserveOpenCalendarChipSpace =
-    topChromeInset && showOpenCalendarButton && hasMoreFutureItems;
+  const showOpenCalendarChip =
+    !topChromeInset &&
+    showOpenCalendarButton &&
+    isScrolledToTop &&
+    hasMoreFutureItems;
+
+  const topSpacerClassName = topChromeInset
+    ? showCalendarSyncStatus
+      ? "h-28"
+      : "h-[5.25rem]"
+    : "h-10";
+  const bucketHeaderTopClassName = topChromeInset
+    ? showCalendarSyncStatus
+      ? "top-28"
+      : isScrolledToTop
+        ? "top-[5.25rem]"
+        : "top-12"
+    : "top-0";
 
   const hasToday = useMemo(
     () => buckets.some((bucket) => bucket.label === "Today"),
     [buckets],
+  );
+  const currentTimeMs = useCurrentTimeMs();
+  const activeSessionId = useListener((state) =>
+    state.live.status === "active" || state.live.status === "finalizing"
+      ? state.live.sessionId
+      : null,
+  );
+  const hasActiveVisibleSession = useMemo(
+    () =>
+      !!activeSessionId &&
+      buckets.some((bucket) =>
+        bucket.items.some(
+          (item) => item.type === "session" && item.id === activeSessionId,
+        ),
+      ),
+    [activeSessionId, buckets],
   );
 
   const currentTab = useTabs((state) => state.currentTab);
@@ -170,6 +210,36 @@ export function TimelineView({
     registerAnchor: setCurrentTimeIndicatorRef,
     anchorNode: todayAnchorNode,
   } = useAnchor();
+  const selectedSessionScrollFrameRef = useRef<number | null>(null);
+  const previousScrollTopRef = useRef(0);
+  const areSidebarActionsHiddenRef = useRef(false);
+  const sidebarActionsRevealTimerRef = useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
+  const setSidebarActionsHidden = useCallback((hidden: boolean) => {
+    areSidebarActionsHiddenRef.current = hidden;
+    setAreSidebarActionsHidden(hidden);
+  }, []);
+  const scrollSelectedSessionIntoView = useCallback<
+    RefCallback<HTMLDivElement>
+  >(
+    (node) => {
+      if (selectedSessionScrollFrameRef.current !== null) {
+        cancelAnimationFrame(selectedSessionScrollFrameRef.current);
+        selectedSessionScrollFrameRef.current = null;
+      }
+
+      if (!node || currentTab?.type !== "sessions") {
+        return;
+      }
+
+      selectedSessionScrollFrameRef.current = requestAnimationFrame(() => {
+        selectedSessionScrollFrameRef.current = null;
+        scrollTimelineItemIntoView(containerRef.current, node);
+      });
+    },
+    [containerRef, currentTab],
+  );
 
   useEffect(() => {
     const container = containerRef.current;
@@ -177,24 +247,70 @@ export function TimelineView({
       return;
     }
 
+    const clearSidebarActionsRevealTimer = () => {
+      if (sidebarActionsRevealTimerRef.current !== null) {
+        clearTimeout(sidebarActionsRevealTimerRef.current);
+        sidebarActionsRevealTimerRef.current = null;
+      }
+    };
+
+    const revealSidebarActionsSoon = () => {
+      clearSidebarActionsRevealTimer();
+      sidebarActionsRevealTimerRef.current = setTimeout(() => {
+        setSidebarActionsHidden(false);
+        sidebarActionsRevealTimerRef.current = null;
+      }, SIDEBAR_ACTIONS_REVEAL_DELAY_MS);
+    };
+
     const updateScrollPosition = () => {
       const maxScrollTop = Math.max(
         0,
         container.scrollHeight - container.clientHeight,
       );
-      setIsScrolledToTop(container.scrollTop <= 12);
-      setIsScrolledToBottom(maxScrollTop - container.scrollTop <= 12);
+      const nextScrollTop = container.scrollTop;
+      const scrolledToTop = nextScrollTop <= 12;
+      const scrollDelta = nextScrollTop - previousScrollTopRef.current;
+
+      setIsScrolledToTop(scrolledToTop);
+      setIsScrolledToBottom(maxScrollTop - nextScrollTop <= 12);
+
+      if (topChromeInset && scrollDelta > 2 && !scrolledToTop) {
+        setSidebarActionsHidden(true);
+        revealSidebarActionsSoon();
+      } else if (topChromeInset && (scrolledToTop || scrollDelta < -2)) {
+        clearSidebarActionsRevealTimer();
+        setSidebarActionsHidden(false);
+      }
+
+      previousScrollTopRef.current = nextScrollTop;
+
+      return { scrolledToTop };
     };
 
-    updateScrollPosition();
+    const { scrolledToTop } = updateScrollPosition();
+    if (
+      topChromeInset &&
+      !scrolledToTop &&
+      areSidebarActionsHiddenRef.current &&
+      sidebarActionsRevealTimerRef.current === null
+    ) {
+      revealSidebarActionsSoon();
+    }
     container.addEventListener("scroll", updateScrollPosition, {
       passive: true,
     });
 
     return () => {
+      clearSidebarActionsRevealTimer();
       container.removeEventListener("scroll", updateScrollPosition);
     };
-  }, [containerRef, buckets.length, flatItemKeys.length]);
+  }, [
+    containerRef,
+    buckets.length,
+    flatItemKeys.length,
+    topChromeInset,
+    setSidebarActionsHidden,
+  ]);
 
   const scrollFadeMask = useMemo(() => {
     const topFadeEnd = isScrolledToTop ? "0px" : "28px";
@@ -215,23 +331,12 @@ export function TimelineView({
     deps: [todayBucketLength],
   });
 
-  const todayTimestamp = useMemo(() => startOfDay(new Date()).getTime(), []);
   const indicatorIndex = useMemo(() => {
     if (hasToday) {
       return -1;
     }
-    return buckets.findIndex(
-      (bucket) =>
-        bucket.items.length > 0 &&
-        (() => {
-          const itemDate = getItemTimestamp(bucket.items[0]);
-          if (!itemDate) {
-            return false;
-          }
-          return itemDate.getTime() < todayTimestamp;
-        })(),
-    );
-  }, [buckets, hasToday, todayTimestamp]);
+    return getFallbackIndicatorIndex(buckets, Date.now());
+  }, [buckets, hasToday, currentTimeMs]);
 
   const toggleShowIgnored = useCallback(() => {
     setShowIgnored((prev) => !prev);
@@ -240,6 +345,10 @@ export function TimelineView({
   const handleOpenCalendar = useCallback(() => {
     openNew({ type: "calendar" });
   }, [openNew]);
+
+  const handleOpenNoteDialog = useCallback(() => {
+    openNoteDialog.open();
+  }, [openNoteDialog]);
 
   const handleDeleteSelected = useCallback(() => {
     if (!store || !indexes) {
@@ -319,6 +428,7 @@ export function TimelineView({
     <div className="relative h-full">
       <div
         ref={containerRef}
+        data-sidebar-timeline-scroll
         onContextMenu={showContextMenu}
         className={cn([
           "scrollbar-hide flex h-full flex-col overflow-y-auto",
@@ -332,37 +442,44 @@ export function TimelineView({
         {(topChromeInset || hasMoreFutureItems) && (
           <div
             aria-hidden
-            className={cn([
-              topChromeInset
-                ? reserveOpenCalendarChipSpace
-                  ? "h-20"
-                  : "h-12"
-                : "h-10",
-              "shrink-0",
-            ])}
+            data-sidebar-timeline-top-spacer
+            className={cn([topSpacerClassName, "shrink-0"])}
           />
         )}
         {buckets.map((bucket, index) => {
           const isToday = bucket.label === "Today";
-          const shouldRenderIndicatorBefore =
+          const shouldPlaceIndicatorBefore =
             !hasToday && indicatorIndex === index;
+          const shouldRenderIndicatorBefore =
+            shouldPlaceIndicatorBefore && !hasActiveVisibleSession;
+          const shouldRenderIndicatorAnchorBefore =
+            shouldPlaceIndicatorBefore && hasActiveVisibleSession;
           const isTopIndicator = shouldRenderIndicatorBefore && index === 0;
 
           return (
             <div key={bucket.label} className={cn([isTopIndicator && "pt-3"])}>
               {shouldRenderIndicatorBefore && (
-                <CurrentTimeIndicator
-                  ref={setCurrentTimeIndicatorRef}
-                  timezone={timezone}
+                <div data-sidebar-current-time-header-gap className="pb-3">
+                  <CurrentTimeIndicator
+                    ref={setCurrentTimeIndicatorRef}
+                    timezone={timezone}
+                  />
+                </div>
+              )}
+              {shouldRenderIndicatorAnchorBefore && (
+                <CurrentTimeAnchor
+                  registerIndicator={setCurrentTimeIndicatorRef}
                 />
               )}
               <div
+                data-sidebar-timeline-bucket-header
                 className={cn([
-                  "sticky top-0 z-10",
-                  "bg-neutral-50 py-1 pr-1 pl-3",
+                  "sticky z-20",
+                  bucketHeaderTopClassName,
+                  "bg-background/95 py-1 pr-1 pl-3 backdrop-blur",
                 ])}
               >
-                <div className="text-base font-bold text-neutral-900">
+                <div className="text-foreground text-base font-bold">
                   {bucket.label}
                 </div>
               </div>
@@ -372,6 +489,8 @@ export function TimelineView({
                   precision={bucket.precision}
                   registerIndicator={setCurrentTimeIndicatorRef}
                   selectedSessionId={selectedSessionId}
+                  selectedNodeRef={scrollSelectedSessionIntoView}
+                  suppressCurrentTimeIndicator={hasActiveVisibleSession}
                   timezone={timezone}
                   selectedIds={selectedIds}
                   flatItemKeys={flatItemKeys}
@@ -390,6 +509,9 @@ export function TimelineView({
                       timezone={timezone}
                       multiSelected={selectedIds.includes(itemKey)}
                       flatItemKeys={flatItemKeys}
+                      selectedNodeRef={
+                        selected ? scrollSelectedSessionIntoView : undefined
+                      }
                     />
                   );
                 })
@@ -398,23 +520,43 @@ export function TimelineView({
           );
         })}
         {!hasToday &&
-          (indicatorIndex === -1 || indicatorIndex === buckets.length) && (
+          (indicatorIndex === -1 || indicatorIndex === buckets.length) &&
+          (hasActiveVisibleSession ? (
+            <CurrentTimeAnchor registerIndicator={setCurrentTimeIndicatorRef} />
+          ) : (
             <CurrentTimeIndicator
               ref={setCurrentTimeIndicatorRef}
               timezone={timezone}
             />
-          )}
+          ))}
       </div>
 
       {topChromeInset && (
         <div
           aria-hidden
+          data-sidebar-timeline-top-fade
           className={cn([
             "pointer-events-none absolute inset-x-0 top-0 z-[15]",
-            isScrolledToTop
-              ? "h-12 bg-neutral-50"
-              : "h-20 bg-linear-to-b from-neutral-50 via-neutral-50/95 via-55% to-neutral-50/0",
+            showCalendarSyncStatus
+              ? "bg-background h-28"
+              : areSidebarActionsHidden
+                ? "from-background via-background/95 to-background/0 h-20 bg-linear-to-b via-60%"
+                : isScrolledToTop
+                  ? "bg-background h-[5.25rem]"
+                  : "from-background via-background/95 to-background/0 h-28 bg-linear-to-b via-55%",
           ])}
+        />
+      )}
+
+      {topChromeInset && (
+        <SidebarTimelineActions
+          key={areSidebarActionsHidden ? "hidden" : "visible"}
+          hidden={areSidebarActionsHidden}
+          onNewNote={createNewNote}
+          onOpenCalendar={handleOpenCalendar}
+          onSearch={handleOpenNoteDialog}
+          showCalendarAction={showOpenCalendarButton}
+          calendarSyncStatus={calendarSyncStatus}
         />
       )}
 
@@ -422,7 +564,11 @@ export function TimelineView({
         <div
           className={cn([
             "absolute left-1/2 z-20 flex -translate-x-1/2 transform flex-col items-center gap-2",
-            topChromeInset ? "top-12" : "top-2",
+            topChromeInset
+              ? areSidebarActionsHidden
+                ? "top-10"
+                : "top-24"
+              : "top-2",
           ])}
         >
           {showOpenCalendarChip && (
@@ -430,8 +576,8 @@ export function TimelineView({
               onClick={handleOpenCalendar}
               size="sm"
               className={cn([
-                "rounded-full bg-white hover:bg-neutral-50",
-                "border border-neutral-200 text-neutral-700",
+                "bg-card hover:bg-accent rounded-full",
+                "border-border text-muted-foreground border",
                 "flex items-center gap-1",
                 "px-3",
                 "shadow-xs",
@@ -462,6 +608,232 @@ export function TimelineView({
   );
 }
 
+function SidebarTimelineActions({
+  hidden,
+  onNewNote,
+  onOpenCalendar,
+  onSearch,
+  showCalendarAction,
+  calendarSyncStatus,
+}: {
+  hidden: boolean;
+  onNewNote: () => void;
+  onOpenCalendar: () => void;
+  onSearch: () => void;
+  showCalendarAction: boolean;
+  calendarSyncStatus: SidebarCalendarSyncStatus;
+}) {
+  const [expandedActionId, setExpandedActionId] =
+    useState<SidebarTimelineActionId | null>(null);
+  const activeActionId = expandedActionId ?? "new-note";
+  const showCalendarSyncStatus = calendarSyncStatus !== "idle";
+  const hideActionContainer = hidden && !showCalendarSyncStatus;
+  const actionItems = useMemo(
+    () => [
+      {
+        ariaLabel: "New note",
+        icon: <SquarePenIcon size={15} />,
+        id: "new-note" as const,
+        label: "New note",
+        onClick: onNewNote,
+      },
+      {
+        ariaLabel: "Search",
+        icon: <SearchIcon size={15} />,
+        id: "search" as const,
+        label: "Search",
+        onClick: onSearch,
+      },
+      ...(showCalendarAction
+        ? [
+            {
+              ariaLabel: "Open calendar",
+              icon: <CalendarDaysIcon size={15} />,
+              id: "calendar" as const,
+              label: "Calendar",
+              onClick: onOpenCalendar,
+            },
+          ]
+        : []),
+    ],
+    [onNewNote, onOpenCalendar, onSearch, showCalendarAction],
+  );
+
+  return (
+    <div
+      data-sidebar-timeline-actions
+      className={cn([
+        "absolute inset-x-0 top-10 z-30 pt-1 pb-2",
+        "bg-background/95 backdrop-blur",
+        "transition-[opacity,transform] duration-150 ease-out",
+        hideActionContainer
+          ? "pointer-events-none -translate-y-2 opacity-0"
+          : "translate-y-0 opacity-100",
+      ])}
+    >
+      <div
+        data-sidebar-timeline-action-tabs
+        role="toolbar"
+        aria-label="Sidebar actions"
+        className={cn([
+          "flex w-full items-center gap-1",
+          "transition-[opacity,transform] duration-150 ease-out",
+          hidden
+            ? "pointer-events-none -translate-y-2 opacity-0"
+            : "translate-y-0 opacity-100",
+        ])}
+        onMouseLeave={() => setExpandedActionId(null)}
+        onBlur={(event) => {
+          const nextFocusedNode = event.relatedTarget as Node | null;
+          if (!event.currentTarget.contains(nextFocusedNode)) {
+            setExpandedActionId(null);
+          }
+        }}
+      >
+        {actionItems.map((action) => (
+          <SidebarTimelineActionButton
+            key={action.id}
+            active={activeActionId === action.id}
+            ariaLabel={action.ariaLabel}
+            icon={action.icon}
+            id={action.id}
+            label={action.label}
+            onClick={action.onClick}
+            onExpand={setExpandedActionId}
+          />
+        ))}
+      </div>
+      <SidebarCalendarSyncStatus status={calendarSyncStatus} />
+    </div>
+  );
+}
+
+function SidebarCalendarSyncStatus({
+  status,
+}: {
+  status: SidebarCalendarSyncStatus;
+}) {
+  if (status === "idle") {
+    return null;
+  }
+
+  const label =
+    status === "scheduled" ? "Starting calendar sync" : "Syncing calendar";
+
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      data-sidebar-calendar-sync-status
+      className={cn([
+        "mt-1.5 flex h-5 items-center gap-1.5 px-3",
+        "text-muted-foreground text-[11px] leading-none font-medium",
+      ])}
+    >
+      <span className="text-muted-foreground flex size-3 shrink-0 items-center justify-center">
+        {status === "syncing" ? (
+          <Spinner size={12} />
+        ) : (
+          <CalendarDaysIcon size={12} />
+        )}
+      </span>
+      <span className="truncate">{label}</span>
+    </div>
+  );
+}
+
+function SidebarTimelineActionButton({
+  active,
+  ariaLabel,
+  icon,
+  id,
+  label,
+  onClick,
+  onExpand,
+}: {
+  active: boolean;
+  ariaLabel: string;
+  icon: ReactNode;
+  id: SidebarTimelineActionId;
+  label: string;
+  onClick: () => void;
+  onExpand: (id: SidebarTimelineActionId) => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={ariaLabel}
+      data-sidebar-timeline-action={id}
+      className={cn([
+        "flex h-8 min-w-8 items-center overflow-hidden rounded-full",
+        "border border-transparent",
+        "text-muted-foreground text-sm font-medium",
+        "transition-[width,flex-grow,background-color,border-color,color] duration-150 ease-out",
+        "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-hidden",
+        active
+          ? "border-border bg-card text-foreground flex-1 justify-center px-3 shadow-xs"
+          : "hover:bg-card/80 hover:text-foreground w-8 flex-none justify-center px-2",
+      ])}
+      onClick={onClick}
+      onFocus={() => onExpand(id)}
+      onMouseEnter={() => onExpand(id)}
+    >
+      <span
+        className={cn([
+          "flex size-4 shrink-0 items-center justify-center",
+          active ? "text-foreground" : "text-muted-foreground",
+        ])}
+      >
+        {icon}
+      </span>
+      <span
+        aria-hidden
+        className={cn([
+          "truncate whitespace-nowrap transition-[margin,max-width,opacity] duration-150 ease-out",
+          active ? "ml-2 max-w-28 opacity-100" : "ml-0 max-w-0 opacity-0",
+        ])}
+      >
+        {label}
+      </span>
+    </button>
+  );
+}
+
+function getFallbackIndicatorIndex(buckets: TimelineBucket[], nowMs: number) {
+  let staleFutureBoundary: number | null = null;
+
+  for (let index = 0; index < buckets.length; index++) {
+    const bucket = buckets[index];
+    const firstItem = bucket?.items[0];
+    if (!bucket || !firstItem) {
+      continue;
+    }
+
+    const itemDate = getItemTimestamp(firstItem);
+    if (!itemDate || itemDate.getTime() >= nowMs) {
+      continue;
+    }
+
+    if (isFutureBucketLabel(bucket.label)) {
+      staleFutureBoundary = index + 1;
+      continue;
+    }
+
+    return staleFutureBoundary ?? index;
+  }
+
+  return staleFutureBoundary ?? -1;
+}
+
+function isFutureBucketLabel(label: string) {
+  return (
+    label === "Tomorrow" ||
+    label === "next week" ||
+    label === "next month" ||
+    label.startsWith("in ")
+  );
+}
+
 function TimelineNowChip({
   className,
   direction,
@@ -478,9 +850,9 @@ function TimelineNowChip({
       type="button"
       aria-label="Go back to now"
       className={cn([
-        "flex h-6 items-center gap-1 rounded-full border border-neutral-200 bg-white/95 px-2.5 text-xs font-semibold text-neutral-900 shadow-md backdrop-blur",
-        "transition-colors hover:border-neutral-300 hover:bg-white hover:text-neutral-950",
-        "focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden",
+        "border-border bg-card/95 text-foreground flex h-6 items-center gap-1 rounded-full border px-2.5 text-xs font-semibold shadow-md backdrop-blur",
+        "hover:border-border hover:bg-accent hover:text-foreground transition-colors",
+        "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-hidden",
         className,
       ])}
       onClick={onClick}
@@ -493,11 +865,40 @@ function TimelineNowChip({
   );
 }
 
+function CurrentTimeAnchor({
+  progress = 0.5,
+  registerIndicator,
+  variant = "seam",
+}: {
+  progress?: number;
+  registerIndicator: (node: HTMLDivElement | null) => void;
+  variant?: "seam" | "inside";
+}) {
+  return (
+    <div
+      ref={registerIndicator}
+      aria-hidden
+      data-sidebar-current-time-anchor
+      className={cn([
+        "pointer-events-none opacity-0",
+        variant === "inside"
+          ? "absolute inset-x-0 z-20 h-px"
+          : "relative z-20 h-px",
+      ])}
+      style={
+        variant === "inside" ? { top: `${(1 - progress) * 100}%` } : undefined
+      }
+    />
+  );
+}
+
 function TodayBucket({
   items,
   precision,
   registerIndicator,
   selectedSessionId,
+  selectedNodeRef,
+  suppressCurrentTimeIndicator,
   timezone,
   selectedIds,
   flatItemKeys,
@@ -506,6 +907,8 @@ function TodayBucket({
   precision: TimelinePrecision;
   registerIndicator: (node: HTMLDivElement | null) => void;
   selectedSessionId: string | undefined;
+  selectedNodeRef: RefCallback<HTMLDivElement>;
+  suppressCurrentTimeIndicator: boolean;
   timezone?: string;
   selectedIds: string[];
   flatItemKeys: string[];
@@ -532,8 +935,12 @@ function TodayBucket({
     if (entries.length === 0) {
       return (
         <>
-          <CurrentTimeIndicator ref={registerIndicator} timezone={timezone} />
-          <div className="px-3 py-4 text-center text-sm text-neutral-400">
+          {suppressCurrentTimeIndicator ? (
+            <CurrentTimeAnchor registerIndicator={registerIndicator} />
+          ) : (
+            <CurrentTimeIndicator ref={registerIndicator} timezone={timezone} />
+          )}
+          <div className="text-muted-foreground px-3 py-4 text-center text-sm">
             No items today
           </div>
         </>
@@ -548,11 +955,18 @@ function TodayBucket({
         index === indicatorPlacement.index
       ) {
         nodes.push(
-          <CurrentTimeIndicator
-            ref={registerIndicator}
-            key="current-time-indicator"
-            timezone={timezone}
-          />,
+          suppressCurrentTimeIndicator ? (
+            <CurrentTimeAnchor
+              key="current-time-anchor"
+              registerIndicator={registerIndicator}
+            />
+          ) : (
+            <CurrentTimeIndicator
+              ref={registerIndicator}
+              key="current-time-indicator"
+              timezone={timezone}
+            />
+          ),
         );
       }
 
@@ -569,6 +983,7 @@ function TodayBucket({
           timezone={timezone}
           multiSelected={selectedIds.includes(itemKey)}
           flatItemKeys={flatItemKeys}
+          selectedNodeRef={selected ? selectedNodeRef : undefined}
         />
       );
 
@@ -578,13 +993,21 @@ function TodayBucket({
       ) {
         nodes.push(
           <div key={`${itemKey}-wrapper`} className="relative">
-            <CurrentTimeIndicator
-              ref={registerIndicator}
-              key="current-time-indicator-inside"
-              timezone={timezone}
-              variant="inside"
-              progress={indicatorPlacement.progress}
-            />
+            {suppressCurrentTimeIndicator ? (
+              <CurrentTimeAnchor
+                registerIndicator={registerIndicator}
+                variant="inside"
+                progress={indicatorPlacement.progress}
+              />
+            ) : (
+              <CurrentTimeIndicator
+                ref={registerIndicator}
+                key="current-time-indicator-inside"
+                timezone={timezone}
+                variant="inside"
+                progress={indicatorPlacement.progress}
+              />
+            )}
             {itemNode}
           </div>,
         );
@@ -596,11 +1019,18 @@ function TodayBucket({
 
     if (indicatorPlacement.type === "after") {
       nodes.push(
-        <CurrentTimeIndicator
-          ref={registerIndicator}
-          key="current-time-indicator-end"
-          timezone={timezone}
-        />,
+        suppressCurrentTimeIndicator ? (
+          <CurrentTimeAnchor
+            key="current-time-anchor-end"
+            registerIndicator={registerIndicator}
+          />
+        ) : (
+          <CurrentTimeIndicator
+            ref={registerIndicator}
+            key="current-time-indicator-end"
+            timezone={timezone}
+          />
+        ),
       );
     }
 
@@ -611,12 +1041,82 @@ function TodayBucket({
     precision,
     registerIndicator,
     selectedSessionId,
+    selectedNodeRef,
+    suppressCurrentTimeIndicator,
     timezone,
     selectedIds,
     flatItemKeys,
   ]);
 
   return renderedEntries;
+}
+
+function scrollTimelineItemIntoView(
+  container: HTMLDivElement | null,
+  item: HTMLDivElement,
+) {
+  if (!container) {
+    return;
+  }
+
+  const containerRect = container.getBoundingClientRect();
+  const itemRect = item.getBoundingClientRect();
+  const margin = 12;
+  const aboveViewport = itemRect.top < containerRect.top + margin;
+  const belowViewport = itemRect.bottom > containerRect.bottom - margin;
+
+  if (!aboveViewport && !belowViewport) {
+    return;
+  }
+
+  const itemCenter =
+    itemRect.top -
+    containerRect.top +
+    container.scrollTop +
+    itemRect.height / 2;
+  const targetScrollTop = Math.max(
+    itemCenter - container.clientHeight * 0.45,
+    0,
+  );
+
+  container.scrollTo({
+    top: targetScrollTop,
+    behavior: "smooth",
+  });
+}
+
+function useCalendarSyncStatus(): SidebarCalendarSyncStatus {
+  const manager = useManager();
+  const scheduledTaskRunIds = useScheduledTaskRunIds();
+  const runningTaskRunIds = useRunningTaskRunIds();
+  const currentTimeMs = useCurrentTimeMs(CALENDAR_SYNC_STATUS_TICK_MS);
+
+  return useMemo(() => {
+    if (!manager) {
+      return "idle";
+    }
+
+    const hasRunningSync = runningTaskRunIds?.some(
+      (taskRunId) =>
+        manager.getTaskRunInfo(taskRunId)?.taskId === CALENDAR_SYNC_TASK_ID,
+    );
+    if (hasRunningSync) {
+      return "syncing";
+    }
+
+    const visibleFrom = currentTimeMs - DUE_CALENDAR_SYNC_VISIBLE_WINDOW_MS;
+    const visibleUntil = currentTimeMs + DUE_CALENDAR_SYNC_VISIBLE_WINDOW_MS;
+    const hasDueScheduledSync = scheduledTaskRunIds?.some((taskRunId) => {
+      const info = manager.getTaskRunInfo(taskRunId);
+      return (
+        info?.taskId === CALENDAR_SYNC_TASK_ID &&
+        info.nextTimestamp >= visibleFrom &&
+        info.nextTimestamp <= visibleUntil
+      );
+    });
+
+    return hasDueScheduledSync ? "scheduled" : "idle";
+  }, [manager, scheduledTaskRunIds, runningTaskRunIds, currentTimeMs]);
 }
 
 function useTimelineTables(): {

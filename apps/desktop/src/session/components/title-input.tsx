@@ -1,6 +1,7 @@
 import { usePrevious } from "@uidotdev/usehooks";
 import { SparklesIcon } from "lucide-react";
 import {
+  type CSSProperties,
   forwardRef,
   memo,
   useCallback,
@@ -19,7 +20,6 @@ import {
 import { cn } from "@meetspace/utils";
 
 import { useTitleGenerating } from "~/ai/hooks";
-import { useMainEscapeShortcutAction } from "~/shared/useTabsShortcuts";
 import * as main from "~/store/tinybase/store/main";
 import { useLiveTitle } from "~/store/zustand/live-title";
 import { type Tab } from "~/store/zustand/tabs";
@@ -145,22 +145,25 @@ const TitleInputInner = memo(
     ) => {
       const [localTitle, setLocalTitle] = useState(() => getInitialTitle());
       const [isOverflowing, setIsOverflowing] = useState(false);
+      const [overflowDistance, setOverflowDistance] = useState(0);
       const [isTitleFocused, setIsTitleFocused] = useState(false);
       const isFocused = useRef(false);
       const internalRef = useRef<HTMLInputElement>(null);
       const store = main.UI.useStore(main.STORE_ID);
       const setLiveTitle = useLiveTitle((s) => s.setTitle);
       const clearLiveTitle = useLiveTitle((s) => s.clearTitle);
-      const runEscapeShortcut = useMainEscapeShortcutAction();
 
       const updateOverflowState = useCallback(
         (node?: HTMLInputElement | null) => {
           const input = node ?? internalRef.current;
           if (!input) {
             setIsOverflowing(false);
+            setOverflowDistance(0);
             return;
           }
-          setIsOverflowing(input.scrollWidth > input.clientWidth + 1);
+          const distance = Math.max(input.scrollWidth - input.clientWidth, 0);
+          setIsOverflowing(distance > 1);
+          setOverflowDistance(distance);
         },
         [],
       );
@@ -172,6 +175,7 @@ const TitleInputInner = memo(
             requestAnimationFrame(() => updateOverflowState(node));
           } else {
             setIsOverflowing(false);
+            setOverflowDistance(0);
           }
         },
         [updateOverflowState],
@@ -195,6 +199,19 @@ const TitleInputInner = memo(
               maskSize: "100% 100%",
             }
           : undefined;
+      const showHoverReveal =
+        isOverflowing && !isTitleFocused && localTitle.length > 0;
+      const titleHoverScrollStyle = showHoverReveal
+        ? ({
+            "--title-hover-scroll-distance": `-${Math.ceil(
+              overflowDistance,
+            )}px`,
+            "--title-hover-scroll-duration": `${Math.min(
+              Math.max(overflowDistance / 48, 2.5),
+              8,
+            ).toFixed(2)}s`,
+          } as CSSProperties)
+        : undefined;
 
       useImperativeHandle(
         ref,
@@ -266,13 +283,6 @@ const TitleInputInner = memo(
       );
 
       const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Escape") {
-          e.preventDefault();
-          e.stopPropagation();
-          runEscapeShortcut();
-          return;
-        }
-
         if (e.key === "ArrowUp") {
           e.preventDefault();
           return;
@@ -332,7 +342,7 @@ const TitleInputInner = memo(
         localTitle.length === 0 ? onGenerateTitle : undefined;
 
       return (
-        <div className="relative flex h-8 w-full items-center">
+        <div className="group/title-input relative flex h-8 w-full items-center overflow-hidden">
           <input
             ref={setInputRef}
             id={`title-input-${sessionId}-${editorId}`}
@@ -342,7 +352,7 @@ const TitleInputInner = memo(
               const value = e.target.value;
               setLocalTitle(value);
               setLiveTitle(sessionId, value);
-              setIsOverflowing(e.target.scrollWidth > e.target.clientWidth + 1);
+              updateOverflowState(e.target);
             }}
             onKeyDown={handleKeyDown}
             onFocus={() => {
@@ -354,16 +364,30 @@ const TitleInputInner = memo(
               setIsTitleFocused(false);
               setStoreTitle(localTitle);
               clearLiveTitle(sessionId);
-              setIsOverflowing(e.target.scrollWidth > e.target.clientWidth + 1);
+              updateOverflowState(e.target);
             }}
             value={localTitle}
-            style={overflowFadeStyle}
+            style={showHoverReveal ? undefined : overflowFadeStyle}
             className={cn([
               "w-full min-w-0 transition-opacity duration-200",
               "border-none bg-transparent focus:outline-hidden",
               "placeholder:text-muted-foreground text-xl font-semibold",
+              showHoverReveal && "text-transparent caret-transparent",
             ])}
           />
+          {showHoverReveal ? (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 flex items-center overflow-hidden"
+            >
+              <span
+                style={titleHoverScrollStyle}
+                className="group-hover/title-input:animate-title-hover-scroll text-xl font-semibold whitespace-nowrap group-hover/title-input:will-change-transform"
+              >
+                {localTitle}
+              </span>
+            </div>
+          ) : null}
           {generateTitleHandler && (
             <GenerateButton
               className="absolute top-1/2 left-[84px] -translate-y-1/2"

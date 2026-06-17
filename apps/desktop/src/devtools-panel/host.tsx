@@ -8,11 +8,9 @@ import {
   openUrlWithInstruction,
 } from "@meetspace/plugin-windows";
 
-import { useBillingAccess } from "~/auth/billing";
-import { TrialEndedDialog } from "~/billing/trial-ended-dialog";
-import { TrialStartedDialog } from "~/billing/trial-started-dialog";
 import { getLatestVersion } from "~/changelog";
 import { useDevtoolsStore, useDevtoolsUserId } from "~/devtools-panel/hooks";
+import { populateRecurringMeetingNotes } from "~/devtools-panel/recurring-notes";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 import {
   type DevtoolsOtaPreviewStatus,
@@ -54,6 +52,7 @@ type DevtoolsPanelAction =
   | "notifications:clear"
   | "billing:trial-started"
   | "billing:trial-ended"
+  | "notes:populate-recurring"
   | "countdown:note-20"
   | "countdown:note-60"
   | "countdown:note-290"
@@ -126,7 +125,7 @@ function useDevtoolsPanelActions() {
   const openNew = useTabs((s) => s.openNew);
   const store = useDevtoolsStore();
   const user_id = useDevtoolsUserId();
-  const { trialDaysRemaining, upgradeToPro } = useBillingAccess();
+
   const showToastPreview = useDevtoolsToastPreview(
     (state) => state.showPreview,
   );
@@ -135,8 +134,6 @@ function useDevtoolsPanelActions() {
   );
   const showOtaPreview = useDevtoolsOtaPreview((state) => state.showPreview);
   const clearOtaPreview = useDevtoolsOtaPreview((state) => state.clearPreview);
-  const [trialStartedOpen, setTrialStartedOpen] = useState(false);
-  const [trialEndedOpen, setTrialEndedOpen] = useState(false);
   const [shouldThrow, setShouldThrow] = useState(false);
 
   const showMainWindow = useCallback(async () => {
@@ -198,6 +195,16 @@ function useDevtoolsPanelActions() {
     [showMainWindow, showOtaPreview],
   );
 
+  const populateRecurringNotes = useCallback(async () => {
+    if (!store) {
+      return;
+    }
+
+    const sessionId = populateRecurringMeetingNotes({ store, userId: user_id });
+    await showMainWindow();
+    openNew({ type: "sessions", id: sessionId });
+  }, [openNew, showMainWindow, store, user_id]);
+
   const showCalendarNotification = useCallback(async () => {
     const eventId = `devtool-event-${crypto.randomUUID()}`;
     const startedAt = new Date(Date.now() + 5 * 60 * 1000);
@@ -248,6 +255,7 @@ function useDevtoolsPanelActions() {
         location: "Conference Room",
       },
       action_label: "Open notes",
+      action_variant: null,
       options: null,
       footer: null,
       icon: null,
@@ -270,6 +278,7 @@ function useDevtoolsPanelActions() {
       participants: null,
       event_details: null,
       action_label: null,
+      action_variant: null,
       options: null,
       footer: null,
       icon: null,
@@ -292,6 +301,7 @@ function useDevtoolsPanelActions() {
       participants: null,
       event_details: null,
       action_label: null,
+      action_variant: null,
       options: ["Design sync", "Customer call"],
       footer: {
         text: "Ignore Zoom and Chrome?",
@@ -317,7 +327,8 @@ function useDevtoolsPanelActions() {
       start_time: null,
       participants: null,
       event_details: null,
-      action_label: "Stop recording",
+      action_label: "Stop meeting",
+      action_variant: "destructive",
       options: null,
       footer: null,
       icon: { type: "bundle_id", bundle_id: "com.google.Chrome" },
@@ -433,10 +444,11 @@ function useDevtoolsPanelActions() {
           void notificationCommands.clearNotifications();
           return;
         case "billing:trial-started":
-          setTrialStartedOpen(true);
           return;
         case "billing:trial-ended":
-          setTrialEndedOpen(true);
+          return;
+        case "notes:populate-recurring":
+          void populateRecurringNotes();
           return;
         case "countdown:note-20":
           createWithCountdown(20);
@@ -470,28 +482,16 @@ function useDevtoolsPanelActions() {
       showMicDetectedNotification,
       showMicOptionsNotification,
       showOnboarding,
+      populateRecurringNotes,
       showToastPreviewInMainWindow,
+      showOtaPreviewInMainWindow,
       clearToastPreview,
-      showOtaPreview,
       clearOtaPreview,
     ],
   );
 
   return {
-    dialogs: (
-      <>
-        <TrialStartedDialog
-          open={trialStartedOpen}
-          onOpenChange={setTrialStartedOpen}
-          trialDaysRemaining={trialDaysRemaining}
-        />
-        <TrialEndedDialog
-          open={trialEndedOpen}
-          onOpenChange={setTrialEndedOpen}
-          onUpgrade={upgradeToPro}
-        />
-      </>
-    ),
+    dialogs: null,
     handleAction,
     shouldThrow,
   };

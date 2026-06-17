@@ -4,7 +4,6 @@ mod url_builder;
 mod aquavoice;
 mod argmax;
 pub(crate) mod assemblyai;
-mod cactus;
 mod dashscope;
 pub mod deepgram;
 mod deepgram_compat;
@@ -12,8 +11,8 @@ pub(crate) mod elevenlabs;
 mod fireworks;
 mod gladia;
 pub mod http;
-mod meetspace;
 mod language;
+mod meetspace;
 mod mistral;
 mod openai;
 mod owhisper;
@@ -25,14 +24,13 @@ mod whispercpp;
 pub use aquavoice::*;
 pub use argmax::*;
 pub use assemblyai::*;
-pub use cactus::*;
 pub use dashscope::*;
 pub use deepgram::*;
 pub use elevenlabs::*;
 pub use fireworks::*;
 pub use gladia::*;
-pub use meetspace::*;
 pub use language::{LanguageQuality, LanguageSupport};
+pub use meetspace::*;
 pub use mistral::*;
 pub use openai::*;
 pub use pyannote::*;
@@ -303,7 +301,9 @@ pub fn is_meetspace_proxy(base_url: &str) -> bool {
     is_meetspace_cloud(base_url) || is_meetspace_local_proxy(base_url)
 }
 
-pub fn normalize_languages(languages: &[meetspace_language::Language]) -> Vec<meetspace_language::Language> {
+pub fn normalize_languages(
+    languages: &[meetspace_language::Language],
+) -> Vec<meetspace_language::Language> {
     let mut seen = HashSet::new();
     let mut result = Vec::with_capacity(languages.len());
 
@@ -323,10 +323,6 @@ pub fn normalize_languages(languages: &[meetspace_language::Language]) -> Vec<me
 
 fn is_local_argmax(base_url: &str) -> bool {
     host_matches(base_url, is_local_host) && !is_meetspace_local_proxy(base_url)
-}
-
-fn is_cactus_model(model: &str) -> bool {
-    model.parse::<meetspace_cactus_model::CactusSttModel>().is_ok()
 }
 
 pub(crate) fn build_ws_url_from_base_with(
@@ -426,8 +422,6 @@ pub enum AdapterKind {
     Pyannote,
     #[strum(serialize = "meetspace")]
     Meetspace,
-    #[strum(serialize = "cactus")]
-    Cactus,
 }
 
 impl AdapterKind {
@@ -443,11 +437,6 @@ impl AdapterKind {
         }
 
         if is_local_argmax(base_url) {
-            if let Some(model) = _model
-                && is_cactus_model(model)
-            {
-                return Self::Cactus;
-            }
             return Self::Argmax;
         }
 
@@ -458,7 +447,7 @@ impl AdapterKind {
 
     pub fn has_live_mode(&self) -> bool {
         match self {
-            Self::AquaVoice | Self::Argmax | Self::OpenAI | Self::Pyannote | Self::Cactus => false,
+            Self::AquaVoice | Self::Argmax | Self::OpenAI | Self::Pyannote => false,
             Self::Soniox
             | Self::Fireworks
             | Self::Deepgram
@@ -490,15 +479,6 @@ impl AdapterKind {
             Self::ElevenLabs => ElevenLabsAdapter::language_support_live(languages),
             Self::DashScope => DashScopeAdapter::language_support_live(languages),
             Self::Argmax => ArgmaxAdapter::language_support_live(languages, model),
-            Self::Cactus => {
-                if CactusAdapter::is_supported_languages_live(languages, model) {
-                    LanguageSupport::Supported {
-                        quality: LanguageQuality::NoData,
-                    }
-                } else {
-                    LanguageSupport::NotSupported
-                }
-            }
             Self::Mistral => MistralAdapter::language_support_live(languages),
             Self::Pyannote => LanguageSupport::NotSupported,
             Self::Meetspace => MeetspaceAdapter::language_support_live(languages, model),
@@ -527,9 +507,6 @@ impl AdapterKind {
             Self::Mistral => MistralAdapter::language_support_batch(languages),
             Self::Pyannote => PyannoteAdapter::language_support_batch(languages, model),
             Self::Meetspace => MeetspaceAdapter::language_support_batch(languages, model),
-            Self::Cactus => LanguageSupport::Supported {
-                quality: LanguageQuality::NoData,
-            },
         }
     }
 
@@ -703,7 +680,12 @@ mod tests {
     fn test_adapter_kind_from_url_and_languages() {
         use meetspace_language::ISO639::*;
 
-        let cases: &[(&str, &[meetspace_language::ISO639], Option<&str>, AdapterKind)] = &[
+        let cases: &[(
+            &str,
+            &[meetspace_language::ISO639],
+            Option<&str>,
+            AdapterKind,
+        )] = &[
             // MeetspaceCloud - always routes to Meetspace adapter (proxy owns provider selection)
             (
                 "https://api.meetspace.com/stt",
@@ -792,17 +774,11 @@ mod tests {
                 None,
                 AdapterKind::Argmax,
             ),
-            // localhost cactus
-            (
-                "http://localhost:50060/v1",
-                &[En],
-                Some("cactus-parakeet-tdt-0.6b-v3-int8"),
-                AdapterKind::Cactus,
-            ),
         ];
 
         for (url, langs, model, expected) in cases {
-            let langs: Vec<meetspace_language::Language> = langs.iter().map(|l| (*l).into()).collect();
+            let langs: Vec<meetspace_language::Language> =
+                langs.iter().map(|l| (*l).into()).collect();
             assert_eq!(
                 AdapterKind::from_url_and_languages(url, &langs, *model),
                 *expected,
@@ -833,7 +809,6 @@ mod tests {
             AdapterKind::Argmax,
             AdapterKind::OpenAI,
             AdapterKind::Pyannote,
-            AdapterKind::Cactus,
         ];
         for kind in batch_only {
             assert!(
@@ -971,7 +946,8 @@ mod tests {
             &[&[En], &[Ko], &[Ar], &[En, De], &[En, Ko], &[Zh]];
 
         for langs in combos {
-            let langs: Vec<meetspace_language::Language> = langs.iter().map(|l| (*l).into()).collect();
+            let langs: Vec<meetspace_language::Language> =
+                langs.iter().map(|l| (*l).into()).collect();
             assert!(
                 AdapterKind::Meetspace.is_supported_languages_live(&langs, Some("cloud")),
                 "Meetspace adapter should support all languages: {langs:?}"
@@ -1031,20 +1007,14 @@ mod tests {
             AdapterKind::from_url_and_languages("http://localhost:50060/v1", &en, None),
             AdapterKind::Argmax,
         );
-        assert_eq!(
-            AdapterKind::from_url_and_languages(
-                "http://localhost:50060/v1",
-                &en,
-                Some("cactus-parakeet-tdt-0.6b-v3-int8"),
-            ),
-            AdapterKind::Cactus,
-        );
     }
 
     #[test]
     fn test_append_provider_param_replaces_existing() {
-        let url =
-            append_provider_param("https://api.meetspace.com/stt?provider=deepgram", "meetspace");
+        let url = append_provider_param(
+            "https://api.meetspace.com/stt?provider=deepgram",
+            "meetspace",
+        );
         assert!(
             url.contains("provider=meetspace"),
             "new provider value should be present: {url}"

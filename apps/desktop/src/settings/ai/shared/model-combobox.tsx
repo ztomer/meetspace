@@ -147,7 +147,7 @@ export function ModelCombobox({
           disabled={disabled || isLoadingModels}
           aria-expanded={open}
           className={cn([
-            "w-full justify-between bg-white font-normal shadow-none focus-visible:ring-0",
+            "bg-card w-full justify-between font-normal shadow-none focus-visible:ring-0",
             "rounded-full px-3",
           ])}
         >
@@ -164,7 +164,7 @@ export function ModelCombobox({
             {suffix}
           </span>
           {isConfigured ? (
-            <Check className="-mr-1 h-4 w-4 shrink-0 text-green-600" />
+            <Check className="text-success-fg -mr-1 h-4 w-4 shrink-0" />
           ) : (
             <ChevronDown className="-mr-1 h-4 w-4 shrink-0 opacity-50" />
           )}
@@ -219,7 +219,7 @@ export function ModelCombobox({
                     }}
                     className={cn([
                       "cursor-pointer",
-                      "hover:bg-neutral-200! focus:bg-neutral-200! aria-selected:bg-transparent",
+                      "hover:bg-accent! focus:bg-accent! aria-selected:bg-transparent",
                     ])}
                   >
                     <span className="truncate">
@@ -247,7 +247,7 @@ export function ModelCombobox({
                       }}
                       className={cn([
                         "cursor-pointer opacity-50",
-                        "hover:bg-neutral-200! focus:bg-neutral-200! aria-selected:bg-transparent",
+                        "hover:bg-accent! focus:bg-accent! aria-selected:bg-transparent",
                       ])}
                     >
                       <Tooltip delayDuration={10}>
@@ -283,7 +283,7 @@ export function ModelCombobox({
                     }}
                     className={cn([
                       "cursor-pointer",
-                      "hover:bg-neutral-200! focus:bg-neutral-200! aria-selected:bg-transparent",
+                      "hover:bg-accent! focus:bg-accent! aria-selected:bg-transparent",
                     ])}
                   >
                     <CirclePlus className="mr-2 h-4 w-4" />

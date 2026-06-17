@@ -203,7 +203,7 @@ describe("useStartListening", () => {
     useSTTConnectionMock.mockReturnValue({
       conn: {
         provider: "meetspace",
-        model: "cactus-parakeet-tdt-0.6b-v3-int8",
+        model: "soniqo-qwen3-small",
         baseUrl: "http://localhost:8080",
         apiKey: "",
       },

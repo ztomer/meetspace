@@ -25,27 +25,27 @@ msgstr "Engeza ulimi olukhulunywayo"
 msgid "Additional spoken languages"
 msgstr "Izilimi ezengeziwe ezikhulunywayo"
 
-#: src/settings/general/index.tsx:152
+#: src/settings/general/index.tsx:163
 msgid "Always ready without manually launching."
 msgstr "Ihlala ilungile ngaphandle kokuyiqalisa mathupha."
 
 #: src/settings/general/index.tsx:136
-msgid "App"
-msgstr "Uhlelo lokusebenza"
+#~ msgid "App"
+#~ msgstr "Uhlelo lokusebenza"
 
-#: src/settings/general/index.tsx:159
+#: src/settings/general/index.tsx:170
 msgid "Automatically start listening when an event-backed note reaches its scheduled start time."
 msgstr "Qala ngokuzenzakalelayo ukulalela lapho inothi elisekelwa umcimbi lifinyelela isikhathi salo sokuqala esihleliwe."
 
-#: src/settings/general/index.tsx:169
+#: src/settings/general/index.tsx:180
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "Yeka ukulalela ngokuzenzakalela uma uhlelo lokusebenza lomhlangano lukhulula imakrofoni."
 
-#: src/settings/general/index.tsx:265
+#: src/settings/general/index.tsx:278
 msgid "Data"
 msgstr "Idatha"
 
-#: src/settings/general/index.tsx:214
+#: src/settings/general/index.tsx:227
 msgid "Language & Region"
 msgstr "Ulimi Nesifunda"
 
@@ -66,7 +66,7 @@ msgstr "Imihlangano"
 msgid "No matching languages found"
 msgstr "Azikho izilimi ezifanayo ezitholiwe"
 
-#: src/settings/general/index.tsx:277
+#: src/settings/general/index.tsx:290
 msgid "Notifications"
 msgstr "Izaziso"
 
@@ -79,34 +79,42 @@ msgid "Select language"
 msgstr "Khetha ulimi"
 
 #: src/settings/general/index.tsx:193
-msgid "Send anonymous usage analytics to help improve Anarlog."
-msgstr "Thumela izibalo zokusetshenziswa ezingaziwa ukuze usize ukuthuthukisa i-Anarlog."
+#~ msgid "Send anonymous usage analytics to help improve Anarlog."
+#~ msgstr "Thumela izibalo zokusetshenziswa ezingaziwa ukuze usize ukuthuthukisa i-Anarlog."
 
-#: src/settings/general/index.tsx:192
+#: src/settings/general/index.tsx:204
+msgid "Send anonymous usage analytics to help improve Meetspace."
+msgstr ""
+
+#: src/settings/general/index.tsx:203
 msgid "Share usage data"
 msgstr "Yabelana ngedatha yokusetshenziswa"
 
-#: src/settings/general/index.tsx:175
+#: src/settings/general/index.tsx:186
 msgid "Show floating bar"
 msgstr "Bonisa ibha entantayo"
 
-#: src/settings/general/index.tsx:176
+#: src/settings/general/index.tsx:187
 msgid "Show the compact floating control while listening."
 msgstr "Bonisa isilawuli esintantayo esihlangene ngenkathi ulalele."
 
-#: src/settings/general/index.tsx:182
+#: src/settings/general/index.tsx:193
 msgid "Show timeline in sidebar"
 msgstr "Bonisa umugqa wesikhathi kubha eseceleni"
 
 #: src/settings/general/index.tsx:151
-msgid "Start Anarlog at login"
-msgstr "Qala i-Anarlog ekungeneni ngemvume"
+#~ msgid "Start Anarlog at login"
+#~ msgstr "Qala i-Anarlog ekungeneni ngemvume"
 
-#: src/settings/general/index.tsx:158
+#: src/settings/general/index.tsx:162
+msgid "Start Meetspace at login"
+msgstr ""
+
+#: src/settings/general/index.tsx:169
 msgid "Start when meeting begins"
 msgstr "Qala uma umhlangano uqala"
 
-#: src/settings/general/index.tsx:168
+#: src/settings/general/index.tsx:179
 msgid "Stop when meeting ends"
 msgstr "Yima lapho umhlangano uphela"
 
@@ -114,6 +122,6 @@ msgstr "Yima lapho umhlangano uphela"
 msgid "The main language is always included for transcription"
 msgstr "Ulimi oluyinhloko luhlala lufakiwe ekulotshweni"
 
-#: src/settings/general/index.tsx:183
+#: src/settings/general/index.tsx:194
 msgid "Use the left sidebar timeline instead of the top timeline."
 msgstr "Sebenzisa umugqa wesikhathi webha eseceleni yesokunxele esikhundleni somugqa wesikhathi ophezulu."

@@ -1,21 +1,21 @@
-import { Trans, useLingui } from "@lingui/react/macro";
+import { Trans } from "@lingui/react/macro";
 import { useForm } from "@tanstack/react-form";
+import { useQuery } from "@tanstack/react-query";
 import { disable, enable } from "@tauri-apps/plugin-autostart";
 
 import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as listenerCommands } from "@meetspace/plugin-transcription";
 import type { General, GeneralStorage } from "@meetspace/store";
 
-export { SettingsAccount } from "./account";
 import { AppSettingsView } from "./app-settings";
-import {
-  CORE_TRANSCRIPTION_LANGUAGE_CODES,
-  getAdditionalSpokenLanguages,
-} from "./language";
+import { AppearanceSettings } from "./appearance";
+import { getAdditionalSpokenLanguages } from "./language";
 import { MainLanguageView } from "./main-language";
 import { NotificationSettingsView } from "./notification";
 import { Permissions } from "./permissions";
 import { SpokenLanguagesView } from "./spoken-languages";
 import { StorageSettingsView } from "./storage";
+import { ThemeSelector } from "./theme";
 import { TimezoneSelector } from "./timezone";
 import { WeekStartSelector } from "./week-start";
 
@@ -30,12 +30,12 @@ function useSettingsForm() {
     "auto_start_scheduled_meetings",
     "auto_stop_meetings",
     "floating_bar_enabled",
-    "sidebar_timeline_enabled",
     "notification_detect",
     "telemetry_consent",
     "ai_language",
     "spoken_languages",
     "current_stt_provider",
+    "sidebar_timeline_enabled",
   ] as const);
 
   const setPartialValues = settings.UI.useSetPartialValuesCallback(
@@ -68,8 +68,8 @@ function useSettingsForm() {
       auto_start_scheduled_meetings: value.auto_start_scheduled_meetings,
       auto_stop_meetings: value.auto_stop_meetings,
       floating_bar_enabled: value.floating_bar_enabled,
-      sidebar_timeline_enabled: value.sidebar_timeline_enabled,
       notification_detect: value.notification_detect,
+      sidebar_timeline_enabled: value.sidebar_timeline_enabled,
       telemetry_consent: value.telemetry_consent,
       ai_language: value.ai_language,
       spoken_languages: getAdditionalSpokenLanguages(
@@ -112,8 +112,8 @@ function useSettingsForm() {
           normalizedValue.auto_start_scheduled_meetings,
         auto_stop_meetings: normalizedValue.auto_stop_meetings,
         floating_bar_enabled: normalizedValue.floating_bar_enabled,
-        sidebar_timeline_enabled: normalizedValue.sidebar_timeline_enabled,
         notification_detect: normalizedValue.notification_detect,
+        sidebar_timeline_enabled: normalizedValue.sidebar_timeline_enabled,
         telemetry_consent: normalizedValue.telemetry_consent,
       });
       void analyticsCommands.setProperties({
@@ -128,86 +128,92 @@ function useSettingsForm() {
 }
 
 export function SettingsApp() {
-  const { t } = useLingui();
   const { form } = useSettingsForm();
+
+  const supportedLanguagesQuery = useQuery({
+    queryKey: ["documented-language-codes", "live"],
+    queryFn: async () => {
+      const result = await listenerCommands.listDocumentedLanguageCodesLive();
+      if (result.status === "error") {
+        throw new Error(result.error);
+      }
+      return result.data;
+    },
+    staleTime: Infinity,
+  });
+  const supportedLanguages = supportedLanguagesQuery.data ?? ["en"];
 
   return (
     <div className="flex flex-col gap-8">
-      <SettingsPageTitle title={t`App`} />
-      <form.Field name="autostart">
-        {(autostartField) => (
-          <form.Field name="auto_start_scheduled_meetings">
-            {(autoStartScheduledMeetingsField) => (
-              <form.Field name="auto_stop_meetings">
-                {(autoStopMeetingsField) => (
-                  <form.Field name="floating_bar_enabled">
-                    {(floatingBarEnabledField) => (
-                      <form.Field name="sidebar_timeline_enabled">
-                        {(sidebarTimelineEnabledField) => (
-                          <form.Field name="telemetry_consent">
-                            {(telemetryConsentField) => (
-                              <AppSettingsView
-                                autostart={{
-                                  title: t`Start Meetspace at login`,
-                                  description: t`Always ready without manually launching.`,
-                                  value: autostartField.state.value,
-                                  onChange: (val) =>
-                                    autostartField.handleChange(val),
-                                }}
-                                autoStartScheduledMeetings={{
-                                  title: t`Start when meeting begins`,
-                                  description: t`Automatically start listening when an event-backed note reaches its scheduled start time.`,
-                                  value:
-                                    autoStartScheduledMeetingsField.state.value,
-                                  onChange: (val) =>
-                                    autoStartScheduledMeetingsField.handleChange(
-                                      val,
-                                    ),
-                                }}
-                                autoStopMeetings={{
-                                  title: t`Stop when meeting ends`,
-                                  description: t`Automatically stop listening when the meeting app releases the microphone.`,
-                                  value: autoStopMeetingsField.state.value,
-                                  onChange: (val) =>
-                                    autoStopMeetingsField.handleChange(val),
-                                }}
-                                floatingBar={{
-                                  title: t`Show floating bar`,
-                                  description: t`Show the compact floating control while listening.`,
-                                  value: floatingBarEnabledField.state.value,
-                                  onChange: (val) =>
-                                    floatingBarEnabledField.handleChange(val),
-                                }}
-                                sidebarTimeline={{
-                                  title: t`Show timeline in sidebar`,
-                                  description: t`Use the left sidebar timeline instead of the top timeline.`,
-                                  value:
-                                    sidebarTimelineEnabledField.state.value,
-                                  onChange: (val) =>
-                                    sidebarTimelineEnabledField.handleChange(
-                                      val,
-                                    ),
-                                }}
-                                telemetryConsent={{
-                                  title: t`Share usage data`,
-                                  description: t`Send anonymous usage analytics to help improve Meetspace.`,
-                                  value: telemetryConsentField.state.value,
-                                  onChange: (val) =>
-                                    telemetryConsentField.handleChange(val),
-                                }}
-                              />
-                            )}
-                          </form.Field>
-                        )}
-                      </form.Field>
-                    )}
-                  </form.Field>
-                )}
-              </form.Field>
-            )}
-          </form.Field>
-        )}
-      </form.Field>
+      <SettingsPageTitle title={<Trans>App</Trans>} />
+      <div className="flex flex-col gap-4">
+        <ThemeSelector />
+        <form.Field name="autostart">
+          {(autostartField) => (
+            <form.Field name="auto_start_scheduled_meetings">
+              {(autoStartScheduledMeetingsField) => (
+                <form.Field name="auto_stop_meetings">
+                  {(autoStopMeetingsField) => (
+                    <form.Field name="floating_bar_enabled">
+                      {(floatingBarEnabledField) => (
+                        <form.Field name="sidebar_timeline_enabled">
+                          {(sidebarTimelineEnabledField) => (
+                            <form.Field name="telemetry_consent">
+                              {(telemetryConsentField) => (
+                                <AppSettingsView
+                                  autostart={{
+                                    value: autostartField.state.value,
+                                    onChange: (val) =>
+                                      autostartField.handleChange(val),
+                                  }}
+                                  autoStartScheduledMeetings={{
+                                    value:
+                                      autoStartScheduledMeetingsField.state
+                                        .value,
+                                    onChange: (val) =>
+                                      autoStartScheduledMeetingsField.handleChange(
+                                        val,
+                                      ),
+                                  }}
+                                  autoStopMeetings={{
+                                    value: autoStopMeetingsField.state.value,
+                                    onChange: (val) =>
+                                      autoStopMeetingsField.handleChange(val),
+                                  }}
+                                  floatingBar={{
+                                    value: floatingBarEnabledField.state.value,
+                                    onChange: (val) =>
+                                      floatingBarEnabledField.handleChange(val),
+                                  }}
+                                  sidebarTimeline={{
+                                    value:
+                                      sidebarTimelineEnabledField.state.value,
+                                    onChange: (val) =>
+                                      sidebarTimelineEnabledField.handleChange(
+                                        val,
+                                      ),
+                                  }}
+                                  telemetryConsent={{
+                                    value: telemetryConsentField.state.value,
+                                    onChange: (val) =>
+                                      telemetryConsentField.handleChange(val),
+                                  }}
+                                />
+                              )}
+                            </form.Field>
+                          )}
+                        </form.Field>
+                      )}
+                    </form.Field>
+                  )}
+                </form.Field>
+              )}
+            </form.Field>
+          )}
+        </form.Field>
+      </div>
+
+      <AppearanceSettings />
 
       <div>
         <h2 className="mb-4 font-sans text-lg font-semibold">
@@ -228,7 +234,7 @@ export function SettingsApp() {
                     ),
                   );
                 }}
-                supportedLanguages={CORE_TRANSCRIPTION_LANGUAGE_CODES}
+                supportedLanguages={supportedLanguages}
               />
             )}
           </form.Field>
@@ -247,7 +253,7 @@ export function SettingsApp() {
                     ),
                   )
                 }
-                supportedLanguages={CORE_TRANSCRIPTION_LANGUAGE_CODES}
+                supportedLanguages={supportedLanguages}
               />
             )}
           </form.Field>
@@ -258,11 +264,9 @@ export function SettingsApp() {
 }
 
 export function SettingsData() {
-  const { t } = useLingui();
-
   return (
     <div className="flex flex-col gap-8">
-      <SettingsPageTitle title={t`Data`} />
+      <SettingsPageTitle title={<Trans>Data</Trans>} />
       <StorageSettingsView />
       <Data />
     </div>
@@ -270,11 +274,9 @@ export function SettingsData() {
 }
 
 export function SettingsNotifications() {
-  const { t } = useLingui();
-
   return (
     <div className="flex flex-col gap-6">
-      <SettingsPageTitle title={t`Notifications`} />
+      <SettingsPageTitle title={<Trans>Notifications</Trans>} />
       <NotificationSettingsView />
     </div>
   );
@@ -283,7 +285,7 @@ export function SettingsNotifications() {
 export function SettingsPermissions() {
   return (
     <div className="flex flex-col gap-8">
-      <SettingsPageTitle title="Permissions" />
+      <SettingsPageTitle title={<Trans>Permissions</Trans>} />
       <Permissions />
     </div>
   );

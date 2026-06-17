@@ -100,7 +100,7 @@ export function Data() {
 
   return (
     <div>
-      <StyledStreamdown className="text-neutral-500">
+      <StyledStreamdown className="text-muted-foreground">
         {
           "Import data from other apps. Read more about [import](https://char.com/docs/data/#import) and [export](https://char.com/docs/data/#export)."
         }
@@ -145,7 +145,7 @@ export function Data() {
         )}
 
         {(importMutation.isError || dryImportMutation.isError) && (
-          <div className="flex items-center gap-2 text-xs text-red-600">
+          <div className="text-destructive flex items-center gap-2 text-xs">
             <XCircleIcon size={14} />
             <span>
               {importMutation.isError

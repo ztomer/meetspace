@@ -1,5 +1,5 @@
 import { useForm } from "@tanstack/react-form";
-import { CalendarIcon, CheckIcon, XIcon } from "lucide-react";
+import { CheckIcon, PencilIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@meetspace/ui/components/ui/button";
@@ -26,17 +26,17 @@ export function DateEditor({ sessionId }: { sessionId: string }) {
     return (
       <div className="flex h-9 items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <div className="text-sm text-neutral-700">{noteDate}</div>
+          <div className="text-muted-foreground text-sm">{noteDate}</div>
         </div>
         <Button
           type="button"
           variant="ghost"
           size="icon"
-          className="size-7 rounded-md text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
+          className="text-muted-foreground hover:bg-accent hover:text-foreground size-7 rounded-md"
           onClick={() => setIsEditing(true)}
           aria-label="Edit date"
         >
-          <CalendarIcon size={16} />
+          <PencilIcon size={16} />
         </Button>
       </div>
     );
@@ -138,7 +138,7 @@ function EditableDateForm({
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="size-7 shrink-0 rounded-md text-neutral-400 hover:bg-red-50 hover:text-red-600"
+                className="text-muted-foreground size-7 shrink-0 rounded-md hover:bg-red-50 hover:text-red-600"
                 onClick={onCancel}
                 aria-label="Cancel date edit"
               >
@@ -152,7 +152,7 @@ function EditableDateForm({
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="size-7 shrink-0 rounded-md text-neutral-400 hover:bg-green-50 hover:text-green-600"
+                  className="text-muted-foreground size-7 shrink-0 rounded-md hover:bg-green-50 hover:text-green-600"
                   onClick={() => void form.handleSubmit()}
                   disabled={!canSubmit}
                   aria-label="Save date"
@@ -168,7 +168,7 @@ function EditableDateForm({
       <form.Field name="createdAt">
         {(field) =>
           field.state.meta.errors[0] ? (
-            <div className="text-xs text-red-600">
+            <div className="text-destructive text-xs">
               {field.state.meta.errors[0]}
             </div>
           ) : null

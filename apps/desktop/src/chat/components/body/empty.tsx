@@ -1,6 +1,7 @@
 import {
   ListChecksIcon,
   MailIcon,
+  MessageCircleIcon,
   SearchIcon,
   SparklesIcon,
 } from "lucide-react";
@@ -9,7 +10,6 @@ import { useCallback } from "react";
 import { cn } from "@meetspace/utils";
 
 import type { ContextRef } from "~/chat/context/entities";
-import { useShell } from "~/contexts/shell";
 import { useTabs } from "~/store/zustand/tabs";
 
 const SUGGESTIONS = [
@@ -43,10 +43,7 @@ export function ChatBodyEmpty({
     contextRefs?: ContextRef[],
   ) => void;
 }) {
-  const { chat } = useShell();
   const openNew = useTabs((state) => state.openNew);
-  const isDarkSurface =
-    chat.mode === "FloatingOpen" || chat.mode === "RightPanelOpen";
 
   const handleGoToSettings = useCallback(() => {
     openNew({ type: "settings", state: { tab: "intelligence" } });
@@ -64,30 +61,21 @@ export function ChatBodyEmpty({
       <div className="flex justify-start py-2 pb-1">
         <div className="flex w-full flex-col">
           <div className="mb-2 flex items-center gap-2">
-            <span
-              className={cn([
-                "text-sm font-medium",
-                isDarkSurface ? "text-white" : "text-neutral-800",
-              ])}
-            >
+            <MessageCircleIcon className="text-muted-foreground size-4" />
+            <span className="text-foreground text-sm font-medium">
               Meetspace AI
             </span>
             <BetaChip />
           </div>
-          <p
-            className={cn([
-              "mb-2 text-sm",
-              isDarkSurface ? "text-stone-200" : "text-neutral-700",
-            ])}
-          >
+          <p className="text-foreground mb-2 text-sm">
             Hi, I'm Meetspace AI. Set up a language model and I'll be ready to
             help.
           </p>
           <button
             onClick={handleGoToSettings}
             className={cn([
-              "inline-flex w-fit items-center gap-1.5 rounded-full border border-stone-600 bg-stone-800 px-3 py-1.5 text-xs font-medium text-white",
-              "shadow-[0_4px_14px_rgba(87,83,78,0.18)] transition-colors hover:bg-stone-700",
+              "border-border bg-primary text-primary-foreground inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium",
+              "hover:bg-primary shadow-[0_4px_14px_rgba(87,83,78,0.18)] transition-colors",
             ])}
           >
             <SparklesIcon size={12} />
@@ -102,24 +90,15 @@ export function ChatBodyEmpty({
     <div className="flex justify-start pb-1">
       <div className="flex w-full flex-col">
         <div className="mb-2 flex items-center gap-2">
-          <span
-            className={cn([
-              "text-sm font-medium",
-              isDarkSurface ? "text-white" : "text-neutral-800",
-            ])}
-          >
+          <MessageCircleIcon className="text-muted-foreground size-4" />
+          <span className="text-foreground text-sm font-medium">
             Meetspace AI
           </span>
           <BetaChip />
         </div>
-        <p
-          className={cn([
-            "mb-2 text-sm",
-            isDarkSurface ? "text-stone-200" : "text-neutral-700",
-          ])}
-        >
-          Hi, I'm Meetspace AI. I can help you pull context from your notes, find
-          key decisions, and draft what comes next.
+        <p className="text-foreground mb-2 text-sm">
+          Hi, I'm Meetspace AI. I can help you pull context from your notes,
+          find key decisions, and draft what comes next.
         </p>
         {hasContext && (
           <div className="flex flex-wrap gap-1.5">
@@ -128,11 +107,8 @@ export function ChatBodyEmpty({
                 key={label}
                 onClick={() => handleSuggestionClick(prompt)}
                 className={cn([
-                  "inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px]",
-                  isDarkSurface
-                    ? "border-stone-600 bg-stone-700 text-stone-100 hover:bg-stone-600"
-                    : "border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-100",
-                  "transition-colors",
+                  "border-border bg-background text-foreground inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px]",
+                  "hover:bg-muted transition-colors",
                 ])}
               >
                 <Icon size={12} />
@@ -148,7 +124,7 @@ export function ChatBodyEmpty({
 
 function BetaChip() {
   return (
-    <span className="rounded-full bg-sky-100 px-1.5 py-0.5 text-[10px] font-medium text-sky-900">
+    <span className="bg-info-bg text-info-fg rounded-full px-1.5 py-0.5 text-[10px] font-medium">
       Beta
     </span>
   );

@@ -7,7 +7,6 @@ edition = "2024"
 default = []
 specta = ["dep:specta"]
 tauri-event = ["specta", "dep:tauri-specta"]
-cactus = ["dep:meetspace-transcribe-cactus"]
 whisper-cpp = ["dep:meetspace-transcribe-whisper-local"]
 coreml = ["whisper-cpp", "meetspace-transcribe-whisper-local/coreml"]
 directml = ["whisper-cpp", "meetspace-transcribe-whisper-local/directml"]
@@ -19,7 +18,6 @@ vulkan = ["whisper-cpp", "meetspace-transcribe-whisper-local/vulkan"]
 openmp = ["whisper-cpp", "meetspace-transcribe-whisper-local/openmp"]
 
 [dependencies]
-meetspace-transcribe-cactus = { workspace = true, optional = true }
 meetspace-transcribe-whisper-local = { workspace = true, optional = true }
 
 axum = { workspace = true }

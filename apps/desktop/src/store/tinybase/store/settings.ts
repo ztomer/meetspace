@@ -12,15 +12,16 @@ import {
 
 import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 import { commands as detectCommands } from "@meetspace/plugin-detect";
-import {
-  commands as localSttCommands,
-  type LocalModel,
-} from "@meetspace/plugin-local-stt";
+import { commands as localSttCommands } from "@meetspace/plugin-local-stt";
 import { getCurrentWebviewWindowLabel } from "@meetspace/plugin-windows";
 
 import { registerSaveHandler } from "./save";
 
 import { useSettingsPersister } from "~/store/tinybase/persister/settings";
+import {
+  isConfiguredSttModel,
+  isMeetspaceLocalSttModel,
+} from "~/stt/capabilities";
 
 export const STORE_ID = "settings";
 
@@ -61,6 +62,11 @@ export const SETTINGS_MAPPING = {
       path: ["general", "audio_retention"],
       default: "forever" as string,
       schemaDefault: false,
+    },
+    theme: {
+      type: "string",
+      path: ["general", "theme"],
+      default: "system" as string,
     },
     notification_event: {
       type: "boolean",
@@ -124,14 +130,6 @@ export const SETTINGS_MAPPING = {
       type: "string",
       path: ["ai", "current_stt_model"],
     },
-    cactus_cloud_handoff: {
-      type: "boolean",
-      path: ["cactus", "cloud_handoff"],
-    },
-    cactus_min_chunk_sec: {
-      type: "number",
-      path: ["cactus", "min_chunk_sec"],
-    },
     timezone: {
       type: "string",
       path: ["general", "timezone"],
@@ -153,6 +151,78 @@ export const SETTINGS_MAPPING = {
       type: "string",
       path: ["todo", "github_repository"],
       default: "" as string,
+    },
+    obsidian_vault_path: {
+      type: "string",
+      path: ["general", "obsidian_vault_path"],
+    },
+    obsidian_subfolder: {
+      type: "string",
+      path: ["general", "obsidian_subfolder"],
+      default: "Meetspace" as string,
+    },
+    obsidian_auto_export: {
+      type: "boolean",
+      path: ["general", "obsidian_auto_export"],
+      default: false as boolean,
+    },
+    notion_token: {
+      type: "string",
+      path: ["general", "notion_token"],
+    },
+    notion_database_id: {
+      type: "string",
+      path: ["general", "notion_database_id"],
+    },
+    linear_api_key: {
+      type: "string",
+      path: ["general", "linear_api_key"],
+    },
+    linear_team_id: {
+      type: "string",
+      path: ["general", "linear_team_id"],
+    },
+    google_client_id: {
+      type: "string",
+      path: ["general", "google_client_id"],
+    },
+    google_refresh_token: {
+      type: "string",
+      path: ["general", "google_refresh_token"],
+    },
+    google_access_token: {
+      type: "string",
+      path: ["general", "google_access_token"],
+    },
+    google_token_expires_at: {
+      type: "number",
+      path: ["general", "google_token_expires_at"],
+    },
+    outlook_client_id: {
+      type: "string",
+      path: ["general", "outlook_client_id"],
+    },
+    outlook_refresh_token: {
+      type: "string",
+      path: ["general", "outlook_refresh_token"],
+    },
+    outlook_access_token: {
+      type: "string",
+      path: ["general", "outlook_access_token"],
+    },
+    outlook_token_expires_at: {
+      type: "number",
+      path: ["general", "outlook_token_expires_at"],
+    },
+    diarize_auto: {
+      type: "boolean",
+      path: ["general", "diarize_auto"],
+      default: false as boolean,
+    },
+    calendar_provider_precedence: {
+      type: "string",
+      path: ["general", "calendar_provider_precedence"],
+      default: JSON.stringify(["apple", "google", "outlook"]) as string,
     },
   },
   tables: {
@@ -258,7 +328,10 @@ export const StoreComponent = () => {
   }, [store]);
 
   const synchronizer = useCreateSynchronizer(store, async (store) =>
-    createBroadcastChannelSynchronizer(store, "meetspace-sync-settings").startSync(),
+    createBroadcastChannelSynchronizer(
+      store,
+      "meetspace-sync-settings",
+    ).startSync(),
   );
 
   const queries = useCreateQueries(store, (store) =>
@@ -308,6 +381,38 @@ type SettingsListeners = {
   ) => void;
 };
 
+function clearInvalidSttModel(store: Store) {
+  const provider = store.getValue("current_stt_provider") as string | undefined;
+  const model = store.getValue("current_stt_model") as string | undefined;
+
+  if (
+    provider === "meetspace" &&
+    model &&
+    !isConfiguredSttModel(provider, model)
+  ) {
+    store.delValue("current_stt_model");
+    return true;
+  }
+
+  return false;
+}
+
+function syncLocalSttServer(store: Store) {
+  if (clearInvalidSttModel(store)) {
+    localSttCommands.stopServer(null).catch(console.error);
+    return;
+  }
+
+  const provider = store.getValue("current_stt_provider") as string | undefined;
+  const model = store.getValue("current_stt_model") as string | undefined;
+
+  if (isMeetspaceLocalSttModel(provider, model)) {
+    localSttCommands.startServer(model).catch(console.error);
+  } else {
+    localSttCommands.stopServer(null).catch(console.error);
+  }
+}
+
 const SETTINGS_LISTENERS: SettingsListeners = {
   autostart: (_store, newValue) => {
     if (newValue) {
@@ -334,28 +439,8 @@ const SETTINGS_LISTENERS: SettingsListeners = {
   mic_active_threshold: (_store, newValue) => {
     detectCommands.setMicActiveThreshold(newValue).catch(console.error);
   },
-  current_stt_provider: (store) => {
-    const provider = store.getValue("current_stt_provider") as
-      | string
-      | undefined;
-    const model = store.getValue("current_stt_model") as string | undefined;
-
-    if (provider === "meetspace" && model && model !== "cloud") {
-      localSttCommands.startServer(model as LocalModel).catch(console.error);
-    }
-  },
-  current_stt_model: (store) => {
-    const provider = store.getValue("current_stt_provider") as
-      | string
-      | undefined;
-    const model = store.getValue("current_stt_model") as string | undefined;
-
-    if (provider === "meetspace" && model && model !== "cloud") {
-      localSttCommands.startServer(model as LocalModel).catch(console.error);
-    } else {
-      localSttCommands.stopServer(null).catch(console.error);
-    }
-  },
+  current_stt_provider: (store) => syncLocalSttServer(store),
+  current_stt_model: (store) => syncLocalSttServer(store),
   telemetry_consent: (_store, newValue) => {
     analyticsCommands.setDisabled(!newValue).catch(console.error);
   },
@@ -374,6 +459,8 @@ function registerSettingsListeners(store: Store): () => void {
       }),
     );
   }
+
+  clearInvalidSttModel(store);
 
   return () => {
     for (const id of cleanups) {

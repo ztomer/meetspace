@@ -25,27 +25,27 @@ msgstr "Taapirihia te reo korero"
 msgid "Additional spoken languages"
 msgstr "Apiti atu reo korero"
 
-#: src/settings/general/index.tsx:152
+#: src/settings/general/index.tsx:163
 msgid "Always ready without manually launching."
 msgstr "Kua reri tonu me te kore e whakarewa ringa."
 
 #: src/settings/general/index.tsx:136
-msgid "App"
-msgstr "Taupānga"
+#~ msgid "App"
+#~ msgstr "Taupānga"
 
-#: src/settings/general/index.tsx:159
+#: src/settings/general/index.tsx:170
 msgid "Automatically start listening when an event-backed note reaches its scheduled start time."
 msgstr "Ka timata te whakarongo aunoa ina tae te tuhipoka tautoko takahanga ki tona wa tiimata kua whakaritea."
 
-#: src/settings/general/index.tsx:169
+#: src/settings/general/index.tsx:180
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "Kati aunoa te whakarongo ina tukuna e te taupānga hui te hopuoro."
 
-#: src/settings/general/index.tsx:265
+#: src/settings/general/index.tsx:278
 msgid "Data"
 msgstr "Raraunga"
 
-#: src/settings/general/index.tsx:214
+#: src/settings/general/index.tsx:227
 msgid "Language & Region"
 msgstr "Reo me te Rohe"
 
@@ -66,7 +66,7 @@ msgstr "Nga Hui"
 msgid "No matching languages found"
 msgstr "Kāore he reo ōrite i kitea"
 
-#: src/settings/general/index.tsx:277
+#: src/settings/general/index.tsx:290
 msgid "Notifications"
 msgstr "Whakamōhiotanga"
 
@@ -79,34 +79,42 @@ msgid "Select language"
 msgstr "Tīpakohia te reo"
 
 #: src/settings/general/index.tsx:193
-msgid "Send anonymous usage analytics to help improve Anarlog."
-msgstr "Tukuna nga tātaritanga whakamahinga ingoamuna hei whakapai ake i te Anarlog."
+#~ msgid "Send anonymous usage analytics to help improve Anarlog."
+#~ msgstr "Tukuna nga tātaritanga whakamahinga ingoamuna hei whakapai ake i te Anarlog."
 
-#: src/settings/general/index.tsx:192
+#: src/settings/general/index.tsx:204
+msgid "Send anonymous usage analytics to help improve Meetspace."
+msgstr ""
+
+#: src/settings/general/index.tsx:203
 msgid "Share usage data"
 msgstr "Tirihia nga raraunga whakamahinga"
 
-#: src/settings/general/index.tsx:175
+#: src/settings/general/index.tsx:186
 msgid "Show floating bar"
 msgstr "Whakaatuhia te pae rewa"
 
-#: src/settings/general/index.tsx:176
+#: src/settings/general/index.tsx:187
 msgid "Show the compact floating control while listening."
 msgstr "Whakaatuhia te mana maanu kiato i te wa e whakarongo ana."
 
-#: src/settings/general/index.tsx:182
+#: src/settings/general/index.tsx:193
 msgid "Show timeline in sidebar"
 msgstr "Whakaatuhia te rarangi wa ki te paetaha"
 
 #: src/settings/general/index.tsx:151
-msgid "Start Anarlog at login"
-msgstr "Tīmata Anarlog i te takiuru"
+#~ msgid "Start Anarlog at login"
+#~ msgstr "Tīmata Anarlog i te takiuru"
 
-#: src/settings/general/index.tsx:158
+#: src/settings/general/index.tsx:162
+msgid "Start Meetspace at login"
+msgstr ""
+
+#: src/settings/general/index.tsx:169
 msgid "Start when meeting begins"
 msgstr "Timata ina timata te hui"
 
-#: src/settings/general/index.tsx:168
+#: src/settings/general/index.tsx:179
 msgid "Stop when meeting ends"
 msgstr "Kati ina mutu te hui"
 
@@ -114,6 +122,6 @@ msgstr "Kati ina mutu te hui"
 msgid "The main language is always included for transcription"
 msgstr "Kei roto tonu te reo matua mo te tuhi"
 
-#: src/settings/general/index.tsx:183
+#: src/settings/general/index.tsx:194
 msgid "Use the left sidebar timeline instead of the top timeline."
 msgstr "Whakamahia te rarangi waahi paetaha maui hei utu mo te raarangi o runga."

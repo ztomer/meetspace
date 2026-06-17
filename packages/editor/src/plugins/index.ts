@@ -1,4 +1,5 @@
 export { appLinkPastePlugin } from "./app-link-paste";
+export { autolinkPlugin } from "./autolink";
 export { clipboardPlugin, serializeClipboardText } from "./clipboard";
 export { clearMarksOnEnterPlugin } from "./clear-marks-on-enter";
 export {
@@ -16,6 +17,11 @@ export {
   imageTrailingParagraphPlugin,
 } from "./image-trailing-paragraph";
 export { linkBoundaryGuardPlugin } from "./link-boundary-guard";
+export {
+  getOpenableHref,
+  type LinkOpenHandler,
+  linkOpenPlugin,
+} from "./link-open";
 export {
   type PlaceholderFunction,
   placeholderPlugin,

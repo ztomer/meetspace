@@ -16,7 +16,7 @@ export function ConfigError({ status }: { status: LLMConnectionStatus }) {
 
   return (
     <div className="flex h-full min-h-[400px] flex-col items-center justify-center">
-      <p className="mb-6 max-w-lg text-center text-sm text-neutral-700">
+      <p className="text-muted-foreground mb-6 max-w-lg text-center text-sm">
         {message}
       </p>
       <Button
@@ -38,14 +38,6 @@ function getMessageForStatus(status: LLMConnectionStatus): string {
 
   if (status.status === "pending" && status.reason === "missing_model") {
     return "You need to select a model to summarize this meeting";
-  }
-
-  if (status.status === "error" && status.reason === "unauthenticated") {
-    return "You need to sign in to use Meetspace's language model";
-  }
-
-  if (status.status === "error" && status.reason === "not_pro") {
-    return "Your Meetspace plan has expired. Configure another language model or renew your plan";
   }
 
   if (status.status === "error" && status.reason === "missing_config") {

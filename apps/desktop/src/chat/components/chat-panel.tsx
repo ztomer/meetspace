@@ -1,14 +1,15 @@
-import { useCallback } from "react";
+import { type ReactNode, useCallback } from "react";
 
 import { cn } from "@meetspace/utils";
 
 import { ChatBody } from "./body";
 import { ChatContent } from "./content";
-import { ChatSession } from "./session-provider";
+import { ChatSession, type ChatSessionRenderProps } from "./session-provider";
 import { ChatToolbarControls } from "./toolbar-controls";
 import { useSessionTab } from "./use-session-tab";
 
 import { useLanguageModel } from "~/ai/hooks";
+import { useChatAppearance } from "~/chat/hooks/use-chat-appearance";
 import { useChatActions } from "~/chat/store/use-chat-actions";
 import { useShell } from "~/contexts/shell";
 import * as main from "~/store/tinybase/store/main";
@@ -22,14 +23,62 @@ export function ChatView({
   onOpenFloating?: () => void;
   onOpenRightPanel?: () => void;
 }) {
+  return (
+    <ChatSessionHost>
+      {(sessionProps) => (
+        <ChatPanelFrame
+          layout={layout}
+          onOpenFloating={onOpenFloating}
+          onOpenRightPanel={onOpenRightPanel}
+          sessionProps={sessionProps}
+        />
+      )}
+    </ChatSessionHost>
+  );
+}
+
+export function ChatSessionHost({
+  children,
+}: {
+  children: (sessionProps: ChatSessionRenderProps | null) => ReactNode;
+}) {
   const { chat } = useShell();
-  const { groupId, sessionId, setGroupId } = chat;
-  const isFloating = layout === "floating";
-
+  const { groupId, sessionId } = chat;
   const { currentSessionId } = useSessionTab();
-
-  const model = useLanguageModel("chat");
   const { user_id } = main.UI.useValues(main.STORE_ID);
+
+  if (!user_id) {
+    return <>{children(null)}</>;
+  }
+
+  return (
+    <ChatSession
+      sessionId={sessionId}
+      chatGroupId={groupId}
+      currentSessionId={currentSessionId}
+      unstyled
+    >
+      {children}
+    </ChatSession>
+  );
+}
+
+export function ChatPanelFrame({
+  layout = "floating",
+  onOpenFloating,
+  onOpenRightPanel,
+  sessionProps,
+}: {
+  layout?: "floating" | "right-panel";
+  onOpenFloating?: () => void;
+  onOpenRightPanel?: () => void;
+  sessionProps: ChatSessionRenderProps | null;
+}) {
+  const { chat } = useShell();
+  const { groupId, setGroupId } = chat;
+  const { panelClassName, toolbarSurface } = useChatAppearance();
+  const isFloating = layout === "floating";
+  const model = useLanguageModel("chat");
 
   const handleGroupCreated = useCallback(
     (newGroupId: string) => {
@@ -47,58 +96,49 @@ export function ChatView({
     <div
       className={cn([
         "flex h-full min-h-0 flex-col overflow-hidden",
-        "bg-stone-800 text-white",
+        panelClassName,
       ])}
     >
       <div
         className={cn([
           "flex shrink-0 items-center pr-0 pl-0",
           isFloating ? "h-11" : "h-12",
-          "border-b border-stone-700/80",
         ])}
       >
         <ChatToolbarControls
           currentChatGroupId={groupId}
           layout={layout}
+          onClose={() => chat.sendEvent({ type: "CLOSE" })}
           onNewChat={chat.startNewChat}
           onOpenFloating={onOpenFloating}
           onOpenRightPanel={onOpenRightPanel}
           onSelectChat={chat.selectChat}
-          surface="dark"
+          surface={toolbarSurface}
         />
       </div>
-      {user_id && (
-        <ChatSession
-          key={sessionId}
-          sessionId={sessionId}
-          chatGroupId={groupId}
-          currentSessionId={currentSessionId}
+      {sessionProps && (
+        <ChatContent
+          {...sessionProps}
+          model={model}
+          handleSendMessage={handleSendMessage}
         >
-          {(sessionProps) => (
-            <ChatContent
-              {...sessionProps}
-              model={model}
-              handleSendMessage={handleSendMessage}
-            >
-              <ChatBody
-                messages={sessionProps.messages}
-                status={sessionProps.status}
-                error={sessionProps.error}
-                onReload={sessionProps.regenerate}
-                isModelConfigured={!!model}
-                hasContext={sessionProps.contextEntities.length > 0}
-                onSendMessage={(content, parts) => {
-                  handleSendMessage(
-                    content,
-                    parts,
-                    sessionProps.sendMessage,
-                    sessionProps.pendingRefs,
-                  );
-                }}
-              />
-            </ChatContent>
-          )}
-        </ChatSession>
+          <ChatBody
+            messages={sessionProps.messages}
+            status={sessionProps.status}
+            error={sessionProps.error}
+            onReload={sessionProps.regenerate}
+            isModelConfigured={!!model}
+            hasContext={sessionProps.contextEntities.length > 0}
+            onSendMessage={(content, parts) => {
+              handleSendMessage(
+                content,
+                parts,
+                sessionProps.sendMessage,
+                sessionProps.pendingRefs,
+              );
+            }}
+          />
+        </ChatContent>
       )}
     </div>
   );

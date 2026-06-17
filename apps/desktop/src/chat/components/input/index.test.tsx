@@ -60,6 +60,17 @@ vi.mock("~/contexts/shell", () => ({
   }),
 }));
 
+vi.mock("~/chat/hooks/use-chat-appearance", () => ({
+  useChatAppearance: () => ({
+    isDarkAppearance: true,
+    elevatedSurfaceClassName: "bg-accent text-accent-foreground border-border",
+    inputEditorClassName: "chat-input-editor text-accent-foreground",
+    sendButtonDisabledClassName:
+      "cursor-default border-border text-muted-foreground/60",
+    sendButtonShortcutDisabledClassName: "text-muted-foreground/60",
+  }),
+}));
+
 vi.mock("~/editor-bridge/mention-config", () => ({
   useMentionConfig: () => undefined,
 }));
@@ -114,14 +125,48 @@ describe("ChatMessageInput", () => {
     expect(clearContentMock).toHaveBeenCalled();
   });
 
-  it("keeps typed text visible on the white input surface", () => {
+  it("marks the send control for disabled surface styling before the draft has content", () => {
     render(
       <ChatMessageInput draftKey="chat-input-test" onSendMessage={vi.fn()} />,
     );
 
-    expect(screen.getByTestId("chat-editor").className).toContain(
-      "text-neutral-900",
+    const sendButton = screen.getByRole<HTMLButtonElement>("button", {
+      name: /send/i,
+    });
+
+    expect(sendButton.disabled).toBe(true);
+    expect(sendButton.className).toContain("chat-input-send");
+    expect(sendButton.className).not.toContain("bg-primary");
+  });
+
+  it("uses the elevated dark input surface for typed text", () => {
+    render(
+      <ChatMessageInput draftKey="chat-input-test" onSendMessage={vi.fn()} />,
     );
+
+    const editor = screen.getByTestId("chat-editor");
+    const surface = editor.closest("[data-chat-message-input]")?.parentElement;
+
+    expect(editor.className).toContain("chat-input-editor");
+    expect(surface?.getAttribute("data-chat-input-surface")).toBe("elevated");
+    expect(surface?.className).toContain("bg-accent");
+    expect(surface?.className).toContain("text-accent-foreground");
+  });
+
+  it("uses shared horizontal outer padding while floating", () => {
+    render(
+      <ChatMessageInput draftKey="chat-input-test" onSendMessage={vi.fn()} />,
+    );
+
+    const messageInput = screen
+      .getByTestId("chat-editor")
+      .closest("[data-chat-message-input]");
+    const outerContainer = messageInput?.parentElement?.parentElement;
+
+    expect(outerContainer?.className).toContain("px-3");
+    expect(outerContainer?.className).toContain("pb-2");
+    expect(outerContainer?.className).not.toContain("px-2");
+    expect(outerContainer?.className).not.toContain("pr-0");
   });
 
   it("uses balanced outer padding in the right panel", () => {
@@ -137,7 +182,7 @@ describe("ChatMessageInput", () => {
     const outerContainer = messageInput?.parentElement?.parentElement;
 
     expect(outerContainer?.className).toContain("px-3");
-    expect(outerContainer?.className).toContain("pb-5");
+    expect(outerContainer?.className).toContain("pb-4");
     expect(outerContainer?.className).not.toContain("px-5");
     expect(outerContainer?.className).not.toContain("px-2");
     expect(outerContainer?.className).not.toContain("pr-0");

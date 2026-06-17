@@ -38,9 +38,15 @@ export const CurrentTimeIndicator = forwardRef<
       style={variant === "inside" ? { top: insideOffset } : undefined}
     >
       <div className="absolute inset-x-0 top-0 -translate-y-1/2">
-        <div className="absolute top-1/2 right-0 left-0 h-px -translate-y-1/2 bg-red-400/90 mix-blend-multiply" />
+        <div
+          data-sidebar-current-time-line
+          className="absolute top-1/2 right-0 left-0 h-px -translate-y-1/2 bg-red-500/85 dark:bg-red-400/70"
+        />
         <div className="relative flex h-5 items-center justify-center">
-          <div className="rounded-full bg-red-500 px-2 py-0.5 font-mono text-[11px] font-semibold text-white opacity-0 shadow-xs transition-opacity group-hover:opacity-100">
+          <div
+            data-sidebar-current-time-label
+            className="rounded-full border border-red-500 bg-red-500 px-2 py-0.5 font-mono text-[11px] font-semibold text-white opacity-0 shadow-xs transition-opacity group-hover:opacity-100 dark:border-red-500 dark:bg-red-500 dark:text-white"
+          >
             {label}
           </div>
         </div>
@@ -49,7 +55,7 @@ export const CurrentTimeIndicator = forwardRef<
   );
 });
 
-export function useCurrentTimeMs() {
+export function useCurrentTimeMs(maxTickDelayMs = MINUTE_MS) {
   const [now, setNow] = useState(() => new Date().getTime());
 
   useMountEffect(() => {
@@ -64,7 +70,10 @@ export function useCurrentTimeMs() {
 
     const scheduleUpdate = () => {
       clearUpdate();
-      timeoutId = setTimeout(update, getCurrentTimeTickDelay(Date.now()));
+      timeoutId = setTimeout(
+        update,
+        getCurrentTimeTickDelay(Date.now(), maxTickDelayMs),
+      );
     };
 
     const update = () => {
@@ -96,9 +105,15 @@ export function useCurrentTimeMs() {
   return now;
 }
 
-function getCurrentTimeTickDelay(nowMs: number): number {
+function getCurrentTimeTickDelay(
+  nowMs: number,
+  maxTickDelayMs: number,
+): number {
   const msIntoMinute = nowMs % MINUTE_MS;
-  return MINUTE_MS - msIntoMinute + CURRENT_TIME_TICK_OFFSET_MS;
+  return Math.min(
+    MINUTE_MS - msIntoMinute + CURRENT_TIME_TICK_OFFSET_MS,
+    maxTickDelayMs,
+  );
 }
 
 export function useSmartCurrentTime(

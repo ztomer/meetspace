@@ -1,0 +1,19 @@
+version: "3"
+
+tasks:
+  pre:
+    cmds:
+      - git submodule update --init --recursive
+      - mkdir -p llama.cpp/build
+      - cd llama.cpp/build
+  run:
+    dir: llama.cpp/build
+    cmds:
+      - task: pre
+      - cmake .. -DLLAMA_CURL=OFF -DBUILD_SHARED_LIBS=OFF
+      - cmake --build . --target llama-gbnf-validator
+      - task: post
+  post:
+    cmds:
+      - mkdir -p bin
+      - cp llama.cpp/build/bin/llama-gbnf-validator bin/

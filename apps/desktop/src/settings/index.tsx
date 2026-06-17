@@ -1,7 +1,9 @@
+import { useLingui } from "@lingui/react/macro";
+import { SettingsIcon } from "lucide-react";
+
 import { cn } from "@meetspace/utils";
 
 import {
-  SettingsAccount,
   SettingsApp,
   SettingsData,
   SettingsNotifications,
@@ -12,7 +14,37 @@ import { SettingsTodo } from "./todo";
 import { LLM } from "~/settings/ai/llm";
 import { STT } from "~/settings/ai/stt";
 import { StandardTabWrapper } from "~/shared/main";
+import { type TabItem, TabItemBase } from "~/shared/tabs";
 import { type Tab } from "~/store/zustand/tabs";
+
+export const TabItemSettings: TabItem<Extract<Tab, { type: "settings" }>> = ({
+  tab,
+  tabIndex,
+  handleCloseThis,
+  handleSelectThis,
+  handleCloseOthers,
+  handleCloseAll,
+  handlePinThis,
+  handleUnpinThis,
+}) => {
+  const { t } = useLingui();
+
+  return (
+    <TabItemBase
+      icon={<SettingsIcon className="h-4 w-4" />}
+      title={t`Settings`}
+      selected={tab.active}
+      pinned={tab.pinned}
+      tabIndex={tabIndex}
+      handleCloseThis={() => handleCloseThis(tab)}
+      handleSelectThis={() => handleSelectThis(tab)}
+      handleCloseOthers={handleCloseOthers}
+      handleCloseAll={handleCloseAll}
+      handlePinThis={() => handlePinThis(tab)}
+      handleUnpinThis={() => handleUnpinThis(tab)}
+    />
+  );
+};
 
 export function TabContentSettings({
   tab,
@@ -31,8 +63,6 @@ function SettingsView({ tab }: { tab: Extract<Tab, { type: "settings" }> }) {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "account":
-        return <SettingsAccount />;
       case "app":
         return <SettingsApp />;
       case "data":
@@ -51,7 +81,10 @@ function SettingsView({ tab }: { tab: Extract<Tab, { type: "settings" }> }) {
   };
 
   return (
-    <div className="flex w-full flex-1 flex-col overflow-hidden">
+    <div
+      data-settings-content
+      className="bg-card dark:bg-accent flex w-full flex-1 flex-col overflow-hidden"
+    >
       <div className="relative w-full flex-1 overflow-hidden">
         <div
           className={cn([

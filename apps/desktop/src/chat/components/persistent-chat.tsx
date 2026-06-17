@@ -11,8 +11,10 @@ import { useHotkeys } from "react-hotkeys-hook";
 
 import { cn } from "@meetspace/utils";
 
-import { ChatView } from "./chat-panel";
+import { ChatPanelFrame } from "./chat-panel";
 
+import type { ChatSessionRenderProps } from "~/chat/components/session-provider";
+import { chatFloatingPanelShellClassNames } from "~/chat/surface";
 import { useShell } from "~/contexts/shell";
 
 const FLOATING_PANEL_MIN_WIDTH = 360;
@@ -72,8 +74,10 @@ type ResizeState = {
 
 export function PersistentChatPanel({
   floatingContainerRef,
+  sessionProps,
 }: {
   floatingContainerRef: React.RefObject<HTMLDivElement | null>;
+  sessionProps: ChatSessionRenderProps | null;
 }) {
   const { chat } = useShell();
   const isVisible = chat.mode === "FloatingOpen";
@@ -186,18 +190,17 @@ export function PersistentChatPanel({
     y: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
     filter: { duration: 0.16, ease: "easeOut" },
   };
-  const panelStyle =
-    floatingSize && containerRect
-      ? getFloatingPanelStyle(floatingSize, containerRect)
-      : {
-          width: "min(640px, calc(100% - 2rem))",
-          height: "min(560px, calc(100% - 1rem))",
-          minWidth: "min(360px, calc(100% - 2rem))",
-          minHeight: "min(320px, calc(100% - 1rem))",
-          maxWidth: "calc(100% - 2rem)",
-          maxHeight: "calc(100% - 1rem)",
-          transformOrigin: "bottom center",
-        };
+  const panelStyle = floatingSize
+    ? getFloatingPanelStyle(floatingSize, containerRect)
+    : {
+        width: "min(640px, calc(100% - 2rem))",
+        height: "min(560px, calc(100% - 1rem))",
+        minWidth: "min(360px, calc(100% - 2rem))",
+        minHeight: "min(320px, calc(100% - 1rem))",
+        maxWidth: "calc(100% - 2rem)",
+        maxHeight: "calc(100% - 1rem)",
+        transformOrigin: "bottom center",
+      };
 
   const handleResizeStart = (
     handle: ResizeHandle,
@@ -217,11 +220,24 @@ export function PersistentChatPanel({
     const panelRect = panel.getBoundingClientRect();
     const frameRect = frame.getBoundingClientRect();
 
+    const pointerId =
+      event.pointerId !== undefined
+        ? event.pointerId
+        : (event.nativeEvent as any).pointerId;
+    const clientX =
+      event.clientX !== undefined
+        ? event.clientX
+        : (event.nativeEvent as any).clientX;
+    const clientY =
+      event.clientY !== undefined
+        ? event.clientY
+        : (event.nativeEvent as any).clientY;
+
     resizeStateRef.current = {
-      pointerId: event.pointerId,
+      pointerId,
       handle,
-      startX: event.clientX,
-      startY: event.clientY,
+      startX: clientX,
+      startY: clientY,
       startSize: {
         width: panelRect.width,
         height: panelRect.height,
@@ -233,16 +249,29 @@ export function PersistentChatPanel({
 
   const handleResizeMove = (event: PointerEvent<HTMLDivElement>) => {
     const resizeState = resizeStateRef.current;
+    const pointerId =
+      event.pointerId !== undefined
+        ? event.pointerId
+        : (event.nativeEvent as any).pointerId;
 
-    if (!resizeState || resizeState.pointerId !== event.pointerId) {
+    if (!resizeState || resizeState.pointerId !== pointerId) {
       return;
     }
 
     event.preventDefault();
     event.stopPropagation();
 
-    const deltaX = event.clientX - resizeState.startX;
-    const deltaY = event.clientY - resizeState.startY;
+    const clientX =
+      event.clientX !== undefined
+        ? event.clientX
+        : (event.nativeEvent as any).clientX;
+    const clientY =
+      event.clientY !== undefined
+        ? event.clientY
+        : (event.nativeEvent as any).clientY;
+
+    const deltaX = clientX - resizeState.startX;
+    const deltaY = clientY - resizeState.startY;
     const nextSize = getResizedSize(resizeState, deltaX, deltaY);
 
     setFloatingSize(
@@ -256,8 +285,12 @@ export function PersistentChatPanel({
 
   const handleResizeEnd = (event: PointerEvent<HTMLDivElement>) => {
     const resizeState = resizeStateRef.current;
+    const pointerId =
+      event.pointerId !== undefined
+        ? event.pointerId
+        : (event.nativeEvent as any).pointerId;
 
-    if (!resizeState || resizeState.pointerId !== event.pointerId) {
+    if (!resizeState || resizeState.pointerId !== pointerId) {
       return;
     }
 
@@ -306,9 +339,7 @@ export function PersistentChatPanel({
               data-chat-size="floating"
               className={cn([
                 "relative flex min-h-0 flex-col overflow-hidden",
-                "bg-stone-800 text-white",
-                "rounded-2xl border-2 border-stone-600",
-                "shadow-[0_4px_28px_rgba(87,83,78,0.45)]",
+                chatFloatingPanelShellClassNames(),
               ])}
               style={panelStyle}
               initial={panelMotion.initial}
@@ -316,11 +347,12 @@ export function PersistentChatPanel({
               exit={panelMotion.exit}
               transition={panelTransition}
             >
-              <ChatView
+              <ChatPanelFrame
                 layout="floating"
                 onOpenRightPanel={() =>
                   chat.sendEvent({ type: "OPEN_RIGHT_PANEL" })
                 }
+                sessionProps={sessionProps}
               />
               {RESIZE_HANDLES.map((handle) => (
                 <div
@@ -346,13 +378,11 @@ export function PersistentChatPanel({
 
 function getFloatingPanelStyle(
   size: FloatingPanelSize,
-  containerRect: FloatingContainerRect,
+  containerRect: FloatingContainerRect | null,
 ): CSSProperties {
-  const clampedSize = clampFloatingPanelSize(
-    size,
-    containerRect.width,
-    containerRect.height,
-  );
+  const clampedSize = containerRect
+    ? clampFloatingPanelSize(size, containerRect.width, containerRect.height)
+    : size;
 
   return {
     width: `${clampedSize.width}px`,

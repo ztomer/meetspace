@@ -9,6 +9,8 @@ import {
 
 import { AppLinkView } from "~/editor-bridge/app-link-view";
 import { useMentionConfig } from "~/editor-bridge/mention-config";
+import { openEditorLink } from "~/editor-bridge/open-editor-link";
+import { sessionMentionDropConfig } from "~/editor-bridge/session-mention-drop";
 import { SessionNodeView } from "~/editor-bridge/session-view";
 import { useFileUpload } from "~/shared/hooks/useFileUpload";
 import * as main from "~/store/tinybase/store/main";
@@ -56,7 +58,9 @@ export const EnhancedEditor = forwardRef<
         initialContent={initialContent}
         handleChange={handleChange}
         mentionConfig={mentionConfig}
+        sessionMentionDropConfig={sessionMentionDropConfig}
         onNavigateToTitle={onNavigateToTitle}
+        onLinkOpen={openEditorLink}
         fileHandlerConfig={fileHandlerConfig}
         taskSource={{ type: "enhanced_note", id: enhancedNoteId }}
         extraNodeViews={extraNodeViews}

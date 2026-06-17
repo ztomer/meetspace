@@ -1,3 +1,4 @@
+import type { LocalModel } from "@meetspace/plugin-local-stt";
 import {
   commands as listenerCommands,
   type TranscriptionMode,
@@ -36,6 +37,46 @@ const SONIQO_PARAKEET_BATCH_LANGUAGE_CODES = new Set([
   "sv",
   "uk",
 ]);
+
+export function isSupportedLocalSttModel(
+  model?: string | null,
+): model is LocalModel {
+  return (
+    typeof model === "string" &&
+    (model.startsWith("soniqo-") ||
+      model.startsWith("am-") ||
+      model.startsWith("Quantized"))
+  );
+}
+
+export function isMeetspaceCloudSttModel(
+  provider?: string | null,
+  model?: string | null,
+) {
+  return provider === "meetspace" && model === "cloud";
+}
+
+export function isMeetspaceLocalSttModel(
+  provider?: string | null,
+  model?: string | null,
+): model is LocalModel {
+  return provider === "meetspace" && isSupportedLocalSttModel(model);
+}
+
+export function isConfiguredSttModel(
+  provider?: string | null,
+  model?: string | null,
+) {
+  if (!provider || !model) {
+    return false;
+  }
+
+  if (provider === "meetspace") {
+    return model === "cloud" || isSupportedLocalSttModel(model);
+  }
+
+  return true;
+}
 
 export function isRealtimeLocalModel(model?: string | null) {
   return model === "soniqo-parakeet-streaming";
@@ -151,7 +192,7 @@ export async function getLiveTranscriptionConfig({
   model?: string | null;
   languages: readonly string[];
 }): Promise<LiveTranscriptionConfig> {
-  if (provider === "meetspace" && model !== "cloud") {
+  if (isMeetspaceLocalSttModel(provider, model)) {
     return getOnDeviceTranscriptionConfig(model, languages);
   }
 

@@ -4,6 +4,10 @@ import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 import { Spinner } from "@meetspace/ui/components/ui/spinner";
 
 import { useConfigValues } from "~/shared/config";
+import {
+  isMeetspaceCloudSttModel,
+  isMeetspaceLocalSttModel,
+} from "~/stt/capabilities";
 import { useSTTConnection } from "~/stt/useSTTConnection";
 
 export type HealthStatus = {
@@ -15,7 +19,7 @@ export function HealthStatusIndicator() {
   const health = useConnectionHealth();
 
   if (health.status === "pending") {
-    return <Spinner size={14} className="shrink-0 text-neutral-400" />;
+    return <Spinner size={14} className="text-muted-foreground shrink-0" />;
   }
 
   return null;
@@ -52,14 +56,30 @@ export function useConnectionHealth(): HealthStatus {
     "current_stt_model",
   ] as const);
 
+  const isLocalModel = isMeetspaceLocalSttModel(
+    current_stt_provider,
+    current_stt_model,
+  );
   const isCloud =
-    (current_stt_provider === "meetspace" && current_stt_model === "cloud") ||
+    isMeetspaceCloudSttModel(current_stt_provider, current_stt_model) ||
     current_stt_provider !== "meetspace";
   const isDeepgram = current_stt_provider === "deepgram";
 
   const deepgramHealth = useDeepgramHealth(isDeepgram && !!conn, conn?.apiKey);
 
-  if (!isCloud) {
+  if (
+    current_stt_provider === "meetspace" &&
+    current_stt_model &&
+    !isCloud &&
+    !isLocalModel
+  ) {
+    return {
+      status: "error",
+      message: "Selected model is no longer available.",
+    };
+  }
+
+  if (isLocalModel) {
     const serverStatus = local.data?.status ?? "unavailable";
     if (serverStatus === "not_downloaded") {
       return {

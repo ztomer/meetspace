@@ -9,6 +9,7 @@ import { ChatBodyNonEmpty } from "./non-empty";
 import { useChatAutoScroll } from "./use-chat-auto-scroll";
 
 import type { ContextRef } from "~/chat/context/entities";
+import { chatFloatingControlClassNames } from "~/chat/surface";
 import type { HyprUIMessage } from "~/chat/types";
 import { useShell } from "~/contexts/shell";
 
@@ -57,7 +58,7 @@ export function ChatBody({
           ref={contentRef}
           className={cn([
             "flex min-h-full flex-1 flex-col",
-            isRightPanel ? "px-3 py-5" : "px-2 py-3",
+            isRightPanel ? "px-3 py-5" : "px-3 py-3",
           ])}
         >
           <div className="flex-1" />
@@ -81,7 +82,10 @@ export function ChatBody({
         <Button
           onClick={scrollToBottom}
           size="sm"
-          className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 transform items-center gap-1 rounded-full border border-neutral-200 bg-white text-neutral-700 shadow-xs hover:bg-neutral-50"
+          className={cn([
+            "absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 transform items-center gap-1 rounded-full border shadow-xs",
+            chatFloatingControlClassNames(),
+          ])}
           variant="outline"
         >
           <ChevronDownIcon size={12} />

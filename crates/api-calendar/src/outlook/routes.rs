@@ -1,7 +1,9 @@
 use axum::{Extension, Json};
 use meetspace_api_auth::AuthContext;
 use meetspace_api_nango::{NangoConnectionState, NangoIntegrationId, Outlook};
-use meetspace_outlook_calendar::{ListCalendarsResponse, ListEventsResponse, OutlookCalendarClient};
+use meetspace_outlook_calendar::{
+    ListCalendarsResponse, ListEventsResponse, OutlookCalendarClient,
+};
 use serde::Deserialize;
 use utoipa::ToSchema;
 

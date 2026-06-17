@@ -34,7 +34,9 @@ impl ListenerRuntime for TauriRuntime {
     fn emit_lifecycle(&self, event: meetspace_transcription_core::listener::SessionLifecycleEvent) {
         use tauri_plugin_tray::TrayPluginExt;
         match &event {
-            meetspace_transcription_core::listener::SessionLifecycleEvent::Active { error, .. } => {
+            meetspace_transcription_core::listener::SessionLifecycleEvent::Active {
+                error, ..
+            } => {
                 let _ = self.app.tray().set_start_disabled(true);
                 let _ = self.app.tray().set_degraded(error.is_some());
                 let _ = self.app.tray().set_recording(true);
@@ -56,7 +58,9 @@ impl ListenerRuntime for TauriRuntime {
                     }
                 });
             }
-            meetspace_transcription_core::listener::SessionLifecycleEvent::Finalizing { .. } => {}
+            meetspace_transcription_core::listener::SessionLifecycleEvent::Finalizing {
+                ..
+            } => {}
         }
 
         let capture_event = match event {
@@ -83,9 +87,9 @@ impl ListenerRuntime for TauriRuntime {
                     degraded: error,
                 }
             }
-            meetspace_transcription_core::listener::SessionLifecycleEvent::Finalizing { session_id } => {
-                CaptureLifecycleEvent::Finalizing { session_id }
-            }
+            meetspace_transcription_core::listener::SessionLifecycleEvent::Finalizing {
+                session_id,
+            } => CaptureLifecycleEvent::Finalizing { session_id },
             meetspace_transcription_core::listener::SessionLifecycleEvent::Inactive {
                 session_id,
                 audio_path,

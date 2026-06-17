@@ -25,27 +25,27 @@ msgstr "Забони гуфтугӯиро илова кунед"
 msgid "Additional spoken languages"
 msgstr "Забонҳои иловагии гуфтугӯӣ"
 
-#: src/settings/general/index.tsx:152
+#: src/settings/general/index.tsx:163
 msgid "Always ready without manually launching."
 msgstr "Ҳамеша бидуни оғози дастӣ омода аст."
 
 #: src/settings/general/index.tsx:136
-msgid "App"
-msgstr "Барнома"
+#~ msgid "App"
+#~ msgstr "Барнома"
 
-#: src/settings/general/index.tsx:159
+#: src/settings/general/index.tsx:170
 msgid "Automatically start listening when an event-backed note reaches its scheduled start time."
 msgstr "Ҳангоме ки ёддоште, ки аз рӯйдод пуштибонӣ мешавад, ба вақти ба нақша гирифтаи оғози оғозёбӣ мерасад, ба таври худкор гӯш карданро оғоз кунед."
 
-#: src/settings/general/index.tsx:169
+#: src/settings/general/index.tsx:180
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "Вақте ки барномаи вохӯрӣ микрофонро озод мекунад, худкор гӯш карданро қатъ кунед."
 
-#: src/settings/general/index.tsx:265
+#: src/settings/general/index.tsx:278
 msgid "Data"
 msgstr "Маълумот"
 
-#: src/settings/general/index.tsx:214
+#: src/settings/general/index.tsx:227
 msgid "Language & Region"
 msgstr "Забон ва минтақа"
 
@@ -66,7 +66,7 @@ msgstr "Вохангҳо"
 msgid "No matching languages found"
 msgstr "Ягон забонҳои мувофиқ ёфт нашуд"
 
-#: src/settings/general/index.tsx:277
+#: src/settings/general/index.tsx:290
 msgid "Notifications"
 msgstr "Огоҳиҳо"
 
@@ -79,34 +79,42 @@ msgid "Select language"
 msgstr "Забонро интихоб кунед"
 
 #: src/settings/general/index.tsx:193
-msgid "Send anonymous usage analytics to help improve Anarlog."
-msgstr "Таҳлили истифодаи беном барои беҳтар кардани Anarlog фиристед."
+#~ msgid "Send anonymous usage analytics to help improve Anarlog."
+#~ msgstr "Таҳлили истифодаи беном барои беҳтар кардани Anarlog фиристед."
 
-#: src/settings/general/index.tsx:192
+#: src/settings/general/index.tsx:204
+msgid "Send anonymous usage analytics to help improve Meetspace."
+msgstr ""
+
+#: src/settings/general/index.tsx:203
 msgid "Share usage data"
 msgstr "Мубодилаи маълумоти истифода"
 
-#: src/settings/general/index.tsx:175
+#: src/settings/general/index.tsx:186
 msgid "Show floating bar"
 msgstr "Намоиш додани сатри шинокунанда"
 
-#: src/settings/general/index.tsx:176
+#: src/settings/general/index.tsx:187
 msgid "Show the compact floating control while listening."
 msgstr "Ҳангоми гӯш кардани назорати шинокунандаи паймон нишон диҳед."
 
-#: src/settings/general/index.tsx:182
+#: src/settings/general/index.tsx:193
 msgid "Show timeline in sidebar"
 msgstr "Намоиш додани ҷадвали вақт дар панели паҳлӯ"
 
 #: src/settings/general/index.tsx:151
-msgid "Start Anarlog at login"
-msgstr "Дар ворид шудан ба Anarlog оғоз кунед"
+#~ msgid "Start Anarlog at login"
+#~ msgstr "Дар ворид шудан ба Anarlog оғоз кунед"
 
-#: src/settings/general/index.tsx:158
+#: src/settings/general/index.tsx:162
+msgid "Start Meetspace at login"
+msgstr ""
+
+#: src/settings/general/index.tsx:169
 msgid "Start when meeting begins"
 msgstr "Вақте ки вохӯрӣ оғоз мешавад, оғоз кунед"
 
-#: src/settings/general/index.tsx:168
+#: src/settings/general/index.tsx:179
 msgid "Stop when meeting ends"
 msgstr "Ҳангоми ба охир расидани вохӯрӣ қатъ кунед"
 
@@ -114,6 +122,6 @@ msgstr "Ҳангоми ба охир расидани вохӯрӣ қатъ ку
 msgid "The main language is always included for transcription"
 msgstr "Забони асосӣ ҳамеша барои транскрипсия дохил карда мешавад"
 
-#: src/settings/general/index.tsx:183
+#: src/settings/general/index.tsx:194
 msgid "Use the left sidebar timeline instead of the top timeline."
 msgstr "Ба ҷои ҷадвали болоии ҷадвали панели паҳлӯии чапро истифода баред."

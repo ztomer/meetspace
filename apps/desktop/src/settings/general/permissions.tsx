@@ -22,7 +22,7 @@ function ActionLink({
       onClick={onClick}
       disabled={disabled}
       className={cn([
-        "underline transition-colors hover:text-neutral-900",
+        "hover:text-foreground underline transition-colors",
         disabled && "cursor-not-allowed opacity-50",
       ])}
     >
@@ -72,14 +72,14 @@ function PermissionRow({
           {!isAuthorized && <AlertCircleIcon className="size-4" />}
           <h3 className="text-sm font-medium">{title}</h3>
         </div>
-        <div className="text-xs text-neutral-600">
+        <div className="text-muted-foreground text-xs">
           {!showActions ? (
             <div>
               {!isAuthorized && <span>{description} · </span>}
               <button
                 type="button"
                 onClick={() => setShowActions(true)}
-                className="underline transition-colors hover:text-neutral-900"
+                className="hover:text-foreground underline transition-colors"
               >
                 Having trouble?
               </button>
@@ -109,7 +109,7 @@ function PermissionRow({
         disabled={isPending}
         className={cn([
           "size-8",
-          isAuthorized && "bg-stone-100 text-stone-800 hover:bg-stone-200",
+          isAuthorized && "bg-muted text-foreground hover:bg-accent",
         ])}
         aria-label={
           isAuthorized
@@ -136,7 +136,7 @@ function PermissionGroup({
 }) {
   return (
     <div>
-      <h3 className="mb-3 text-xs font-semibold tracking-wide text-neutral-500 uppercase">
+      <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wide uppercase">
         {title}
       </h3>
       <div className="flex flex-col gap-4">{children}</div>
@@ -146,12 +146,9 @@ function PermissionGroup({
 
 export function Permissions() {
   const calendar = usePermission("calendar");
-  const reminders = usePermission("reminders");
   const mic = usePermission("microphone");
   const systemAudio = usePermission("systemAudio");
-  const screenRecording = usePermission("screenRecording");
   const accessibility = usePermission("accessibility");
-  const inputMonitoring = usePermission("inputMonitoring");
 
   return (
     <div className="flex flex-col gap-8">
@@ -186,15 +183,6 @@ export function Permissions() {
           onReset={accessibility.reset}
           onOpen={accessibility.open}
         />
-        <PermissionRow
-          title="Screen recording"
-          description="Required to capture screenshots and on-screen context for vision and activity features"
-          status={screenRecording.status}
-          isPending={screenRecording.isPending}
-          onRequest={screenRecording.request}
-          onReset={screenRecording.reset}
-          onOpen={screenRecording.open}
-        />
       </PermissionGroup>
 
       <PermissionGroup title="Others">
@@ -206,24 +194,6 @@ export function Permissions() {
           onRequest={calendar.request}
           onReset={calendar.reset}
           onOpen={calendar.open}
-        />
-        <PermissionRow
-          title="Reminders"
-          description="Required to sync Apple Reminders into Meetspace"
-          status={reminders.status}
-          isPending={reminders.isPending}
-          onRequest={reminders.request}
-          onReset={reminders.reset}
-          onOpen={reminders.open}
-        />
-        <PermissionRow
-          title="Input monitoring"
-          description="Required to listen for global dictation hotkeys"
-          status={inputMonitoring.status}
-          isPending={inputMonitoring.isPending}
-          onRequest={inputMonitoring.request}
-          onReset={inputMonitoring.reset}
-          onOpen={inputMonitoring.open}
         />
       </PermissionGroup>
     </div>

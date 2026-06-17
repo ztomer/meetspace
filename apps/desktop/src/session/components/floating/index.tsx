@@ -59,7 +59,7 @@ export function FloatingActionButton({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="max-w-full translate-y-0 text-center text-sm whitespace-nowrap text-red-400"
+            className="text-destructive max-w-full translate-y-0 text-center text-sm whitespace-nowrap"
           >
             {skipReason}
           </motion.div>
@@ -81,7 +81,7 @@ export function FloatingActionButton({
             className={cn([
               "max-w-full translate-y-[var(--floating-fab-tuck-offset)] transition-transform duration-200 ease-out",
               tuckAction
-                ? "pointer-events-none visible group-hover:pointer-events-auto group-hover:translate-y-0"
+                ? "pointer-events-none visible group-hover:pointer-events-auto group-hover:translate-y-0 hover:pointer-events-auto hover:translate-y-0"
                 : "pointer-events-auto visible",
             ])}
           >
@@ -152,7 +152,7 @@ function isBlockingLLMStatus(status: LLMConnectionStatus) {
   return (
     status.status === "error" &&
     (status.reason === "missing_config" ||
-      status.reason === "not_pro" ||
-      status.reason === "unauthenticated")
+      (status.reason as string) === "not_pro" ||
+      (status.reason as string) === "unauthenticated")
   );
 }

@@ -1,5 +1,5 @@
 import { CalendarIcon, MapPinIcon, VideoIcon } from "lucide-react";
-import { forwardRef, useState } from "react";
+import { forwardRef, type ReactElement, useState } from "react";
 
 import { commands as openerCommands } from "@meetspace/plugin-opener2";
 import { Button } from "@meetspace/ui/components/ui/button";
@@ -9,36 +9,40 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@meetspace/ui/components/ui/popover";
-import {
-  cn,
-  differenceInDays,
-  safeFormat,
-  safeParseDate,
-  startOfDay,
-  TZDate,
-} from "@meetspace/utils";
+import { cn, safeFormat, safeParseDate, TZDate } from "@meetspace/utils";
 
 import { DateEditor } from "./date";
 import { ParticipantsDisplay } from "./participants";
 
 import { useConfigValue } from "~/shared/config";
 import { useSessionEvent } from "~/store/tinybase/hooks";
-import * as main from "~/store/tinybase/store/main";
 
-export function MetadataButton({ sessionId }: { sessionId: string }) {
+export function MetadataButton({
+  sessionId,
+  renderTrigger,
+}: {
+  sessionId: string;
+  renderTrigger?: (props: { open: boolean; label: string }) => ReactElement;
+}) {
   const [open, setOpen] = useState(false);
+  const sessionEvent = useSessionEvent(sessionId);
+  const label = sessionEvent ? "Open event metadata" : "Open note metadata";
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <TriggerInner sessionId={sessionId} open={open} />
+        {renderTrigger ? (
+          renderTrigger({ open, label })
+        ) : (
+          <TriggerInner label={label} open={open} />
+        )}
       </PopoverTrigger>
       <PopoverContent
         variant="app"
         align="end"
-        className="flex max-h-[80vh] w-85 flex-col overflow-visible"
+        className="w-85 overflow-visible"
       >
-        <AppFloatingPanel className="overflow-visible">
+        <AppFloatingPanel className="flex max-h-[80vh] min-h-0 flex-col overflow-visible">
           <ContentInner sessionId={sessionId} />
         </AppFloatingPanel>
       </PopoverContent>
@@ -48,41 +52,24 @@ export function MetadataButton({ sessionId }: { sessionId: string }) {
 
 const TriggerInner = forwardRef<
   HTMLButtonElement,
-  { sessionId: string; open?: boolean }
->(({ sessionId, open, ...props }, ref) => {
-  const createdAt = main.UI.useCell(
-    "sessions",
-    sessionId,
-    "created_at",
-    main.STORE_ID,
-  );
-  const sessionEvent = useSessionEvent(sessionId);
-
-  const hasEvent = !!sessionEvent;
-  const parsedDate = safeParseDate(createdAt);
-  const displayText = hasEvent
-    ? sessionEvent.title || "Untitled Event"
-    : formatRelativeOrAbsolute(parsedDate ?? new Date());
-
+  { label: string; open?: boolean }
+>(({ label, open, ...props }, ref) => {
   return (
     <Button
       ref={ref}
       {...props}
       variant="ghost"
-      size="sm"
+      size="icon"
+      type="button"
+      aria-label={label}
+      title={label}
       className={cn([
-        "rounded-full px-3",
-        "text-neutral-600 hover:bg-neutral-100 hover:text-black",
-        open && "bg-neutral-100",
-        hasEvent && "max-w-50",
+        "rounded-full",
+        "text-muted-foreground hover:bg-accent hover:text-foreground",
+        open && "bg-muted text-foreground",
       ])}
     >
-      {hasEvent && sessionEvent?.meeting_link ? (
-        <VideoIcon size={14} className="shrink-0" />
-      ) : (
-        <CalendarIcon size={14} className="shrink-0" />
-      )}
-      <span className={cn([hasEvent && "truncate"])}>{displayText}</span>
+      <CalendarIcon size={16} />
     </Button>
   );
 });
@@ -103,14 +90,14 @@ function ContentInner({ sessionId }: { sessionId: string }) {
     : null;
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      {!eventDisplayData && <DateEditor sessionId={sessionId} />}
-      {eventDisplayData && (
-        <EventDisplay event={eventDisplayData}>
-          <ParticipantsDisplay sessionId={sessionId} />
-        </EventDisplay>
-      )}
-      {!eventDisplayData && <ParticipantsDisplay sessionId={sessionId} />}
+    <div className="flex min-h-0 flex-col overflow-visible">
+      <div className="flex min-h-0 flex-col gap-4 overflow-y-auto p-4 pb-0">
+        {!eventDisplayData && <DateEditor sessionId={sessionId} />}
+        {eventDisplayData && <EventDisplay event={eventDisplayData} />}
+      </div>
+      <div className="p-4">
+        <ParticipantsDisplay sessionId={sessionId} />
+      </div>
     </div>
   );
 }
@@ -195,16 +182,16 @@ export function EventDisplay({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="text-base font-medium text-neutral-900">
+      <div className="text-foreground text-base font-medium">
         {event.title || "Untitled Event"}
       </div>
 
-      <div className="h-px bg-neutral-200" />
+      <div className="bg-accent h-px" />
 
       {shouldShowLocation && (
         <>
-          <div className="flex items-center gap-2 text-sm text-neutral-700">
-            <MapPinIcon size={16} className="shrink-0 text-neutral-500" />
+          <div className="text-muted-foreground flex items-center gap-2 text-sm">
+            <MapPinIcon size={16} className="text-muted-foreground shrink-0" />
             <span>{event.location}</span>
           </div>
         </>
@@ -213,8 +200,8 @@ export function EventDisplay({
       {event.meetingLink && (
         <>
           <div className="flex items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2 text-sm text-neutral-700">
-              <VideoIcon size={16} className="shrink-0 text-neutral-500" />
+            <div className="text-muted-foreground flex min-w-0 items-center gap-2 text-sm">
+              <VideoIcon size={16} className="text-muted-foreground shrink-0" />
               <span className="truncate">
                 {meetingDomain || "Meeting link"}
               </span>
@@ -232,15 +219,17 @@ export function EventDisplay({
       )}
 
       {event.startedAt && (
-        <div className="text-sm text-neutral-700">{formatEventDateTime()}</div>
+        <div className="text-muted-foreground text-sm">
+          {formatEventDateTime()}
+        </div>
       )}
 
       {children}
 
       {event.description && (
         <>
-          <div className="h-px bg-neutral-200" />
-          <div className="select-text-deep max-h-40 overflow-y-auto text-sm break-words whitespace-pre-wrap text-neutral-700">
+          <div className="bg-accent h-px" />
+          <div className="select-text-deep text-muted-foreground max-h-40 overflow-y-auto text-sm break-words whitespace-pre-wrap">
             {renderDescriptionWithLinks(event.description)}
           </div>
         </>
@@ -305,7 +294,7 @@ function renderDescriptionWithLinks(description: string): React.ReactNode {
       <a
         key={`description-link-${linkIndex}`}
         href={url}
-        className="cursor-pointer underline transition-colors hover:text-neutral-900"
+        className="hover:text-foreground cursor-pointer underline transition-colors"
         onClick={(e) => {
           e.preventDefault();
           void openerCommands.openUrl(url, null);
@@ -327,32 +316,4 @@ function renderDescriptionWithLinks(description: string): React.ReactNode {
   }
 
   return nodes.length > 0 ? nodes : description;
-}
-
-function formatRelativeOrAbsolute(date: Date): string {
-  const now = startOfDay(new Date());
-  const targetDay = startOfDay(date);
-  const daysDiff = differenceInDays(targetDay, now);
-  const absDays = Math.abs(daysDiff);
-
-  if (daysDiff === 0) {
-    return "Today";
-  }
-  if (daysDiff === -1) {
-    return "Yesterday";
-  }
-  if (daysDiff === 1) {
-    return "Tomorrow";
-  }
-
-  if (daysDiff < 0 && absDays <= 6) {
-    return `${absDays} days ago`;
-  }
-
-  if (daysDiff < 0 && absDays <= 27) {
-    const weeks = Math.max(1, Math.round(absDays / 7));
-    return weeks === 1 ? "a week ago" : `${weeks} weeks ago`;
-  }
-
-  return safeFormat(date, "MMM d, yyyy", "Unknown date");
 }

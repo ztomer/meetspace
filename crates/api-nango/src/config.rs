@@ -37,8 +37,11 @@ impl NangoConfig {
     }
 }
 
-pub(crate) fn build_nango_client(config: &NangoConfig) -> Result<NangoClient, meetspace_nango::Error> {
-    let mut builder = meetspace_nango::NangoClient::builder().api_key(&config.nango.nango_secret_key);
+pub(crate) fn build_nango_client(
+    config: &NangoConfig,
+) -> Result<NangoClient, meetspace_nango::Error> {
+    let mut builder =
+        meetspace_nango::NangoClient::builder().api_key(&config.nango.nango_secret_key);
     if let Some(api_base) = &config.nango.nango_api_base {
         builder = builder.api_base(api_base);
     }

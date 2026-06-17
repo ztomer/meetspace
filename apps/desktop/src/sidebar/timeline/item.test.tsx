@@ -147,6 +147,7 @@ describe("TimelineItemComponent", () => {
     cleanup();
     mocks.amplitude = { mic: 0.4, speaker: 0.3 };
     mocks.sessionMode = "inactive";
+    mocks.storeTitle = "Live Note";
     mocks.stop.mockClear();
     mocks.openCurrent.mockClear();
     mocks.openNew.mockClear();
@@ -179,14 +180,78 @@ describe("TimelineItemComponent", () => {
 
     const rowButton = screen.getByText("Live Note").closest("button");
 
-    expect(rowButton?.className).toContain("bg-red-500");
-    expect(rowButton?.className).toContain("text-white");
-    expect(rowButton?.className).not.toContain("bg-neutral-200");
+    expect(rowButton?.className).toContain("bg-destructive");
+    expect(rowButton?.className).toContain("text-destructive-foreground");
+    expect(rowButton?.className).not.toContain("bg-accent");
     expect(screen.getByTestId("dancing-sticks").dataset.amplitude).toBe("0.5");
 
     fireEvent.click(screen.getByRole("button", { name: "Stop listening" }));
 
     expect(mocks.stop).toHaveBeenCalledOnce();
     expect(mocks.openCurrent).not.toHaveBeenCalled();
+  });
+
+  it("exposes the selected session row for sidebar scroll anchoring", () => {
+    const selectedNodeRef = vi.fn();
+
+    render(
+      <TimelineItemComponent
+        item={{
+          type: "session",
+          id: "session-live",
+          data: {
+            title: "Live Note",
+            created_at: "2024-01-15T10:30:00.000Z",
+          },
+        }}
+        precision="time"
+        selected
+        selectedNodeRef={selectedNodeRef}
+        timezone="UTC"
+        multiSelected={false}
+        flatItemKeys={["session-session-live"]}
+      />,
+    );
+
+    const row = screen
+      .getByText("Live Note")
+      .closest("[data-sidebar-timeline-session-id]");
+
+    expect(row?.getAttribute("data-sidebar-timeline-session-id")).toBe(
+      "session-live",
+    );
+    expect(selectedNodeRef.mock.calls.some(([node]) => node === row)).toBe(
+      true,
+    );
+  });
+
+  it("renders finalizing session spinner at the end of the row", () => {
+    mocks.sessionMode = "finalizing";
+    mocks.storeTitle = "Finalizing Note";
+
+    render(
+      <TimelineItemComponent
+        item={{
+          type: "session",
+          id: "session-finalizing",
+          data: {
+            title: "Finalizing Note",
+            created_at: "2024-01-15T10:30:00.000Z",
+          },
+        }}
+        precision="time"
+        selected={false}
+        timezone="UTC"
+        multiSelected={false}
+        flatItemKeys={["session-session-finalizing"]}
+      />,
+    );
+
+    const rowButton = screen.getByText("Finalizing Note").closest("button");
+    const spinnerSlot = screen.getByTestId("spinner").parentElement;
+
+    expect(rowButton?.className).toContain("pr-10");
+    expect(spinnerSlot?.className).toContain("absolute");
+    expect(spinnerSlot?.className).toContain("right-3");
   });
 });

@@ -25,27 +25,27 @@ msgstr "কথিত ভাষা যোগ কৰক"
 msgid "Additional spoken languages"
 msgstr "অতিৰিক্ত কথিত ভাষা"
 
-#: src/settings/general/index.tsx:152
+#: src/settings/general/index.tsx:163
 msgid "Always ready without manually launching."
 msgstr "হস্তচালিতভাৱে আৰম্ভ নকৰাকৈ সদায় সাজু।"
 
 #: src/settings/general/index.tsx:136
-msgid "App"
-msgstr "এপ্প"
+#~ msgid "App"
+#~ msgstr "এপ্প"
 
-#: src/settings/general/index.tsx:159
+#: src/settings/general/index.tsx:170
 msgid "Automatically start listening when an event-backed note reaches its scheduled start time."
 msgstr "স্বয়ংক্ৰিয়ভাৱে শুনা আৰম্ভ কৰক যেতিয়া এটা ইভেন্ট-সমৰ্থিত টোকা ইয়াৰ নিৰ্ধাৰিত আৰম্ভণি সময় পোৱা যায়।"
 
-#: src/settings/general/index.tsx:169
+#: src/settings/general/index.tsx:180
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "মিটিং এপে মাইক্ৰ'ফোন মুকলি কৰাৰ সময়ত স্বয়ংক্ৰিয়ভাৱে শুনা বন্ধ কৰক।"
 
-#: src/settings/general/index.tsx:265
+#: src/settings/general/index.tsx:278
 msgid "Data"
 msgstr "তথ্য"
 
-#: src/settings/general/index.tsx:214
+#: src/settings/general/index.tsx:227
 msgid "Language & Region"
 msgstr "ভাষা আৰু অঞ্চল"
 
@@ -66,7 +66,7 @@ msgstr "সভাসমূহ"
 msgid "No matching languages found"
 msgstr "কোনো মিল থকা ভাষা পোৱা নগ'ল"
 
-#: src/settings/general/index.tsx:277
+#: src/settings/general/index.tsx:290
 msgid "Notifications"
 msgstr "জাননীসমূহ"
 
@@ -79,34 +79,42 @@ msgid "Select language"
 msgstr "ভাষা নিৰ্বাচন কৰক"
 
 #: src/settings/general/index.tsx:193
-msgid "Send anonymous usage analytics to help improve Anarlog."
-msgstr "Anarlog উন্নত কৰাত সহায় কৰিবলে বেনামী ব্যৱহাৰ বিশ্লেষণ পঠাওক।"
+#~ msgid "Send anonymous usage analytics to help improve Anarlog."
+#~ msgstr "Anarlog উন্নত কৰাত সহায় কৰিবলে বেনামী ব্যৱহাৰ বিশ্লেষণ পঠাওক।"
 
-#: src/settings/general/index.tsx:192
+#: src/settings/general/index.tsx:204
+msgid "Send anonymous usage analytics to help improve Meetspace."
+msgstr ""
+
+#: src/settings/general/index.tsx:203
 msgid "Share usage data"
 msgstr "ব্যৱহাৰৰ তথ্য অংশীদাৰী কৰক"
 
-#: src/settings/general/index.tsx:175
+#: src/settings/general/index.tsx:186
 msgid "Show floating bar"
 msgstr "ভাসমান বাৰ দেখুৱাওক"
 
-#: src/settings/general/index.tsx:176
+#: src/settings/general/index.tsx:187
 msgid "Show the compact floating control while listening."
 msgstr "শুনি থকাৰ সময়ত কমপেক্ট ভাসমান নিয়ন্ত্ৰণ দেখুৱাওক।"
 
-#: src/settings/general/index.tsx:182
+#: src/settings/general/index.tsx:193
 msgid "Show timeline in sidebar"
 msgstr "চাইডবাৰত সময়ৰেখা দেখুৱাওক"
 
 #: src/settings/general/index.tsx:151
-msgid "Start Anarlog at login"
-msgstr "প্ৰৱেশৰ সময়ত Anarlog আৰম্ভ কৰক"
+#~ msgid "Start Anarlog at login"
+#~ msgstr "প্ৰৱেশৰ সময়ত Anarlog আৰম্ভ কৰক"
 
-#: src/settings/general/index.tsx:158
+#: src/settings/general/index.tsx:162
+msgid "Start Meetspace at login"
+msgstr ""
+
+#: src/settings/general/index.tsx:169
 msgid "Start when meeting begins"
 msgstr "মিটিং আৰম্ভ হ'লে আৰম্ভ কৰক"
 
-#: src/settings/general/index.tsx:168
+#: src/settings/general/index.tsx:179
 msgid "Stop when meeting ends"
 msgstr "মিটিং শেষ হ'লে বন্ধ কৰক"
 
@@ -114,6 +122,6 @@ msgstr "মিটিং শেষ হ'লে বন্ধ কৰক"
 msgid "The main language is always included for transcription"
 msgstr "প্ৰধান ভাষাটো সদায় লিপিবদ্ধ কৰাৰ বাবে অন্তৰ্ভুক্ত কৰা হয়"
 
-#: src/settings/general/index.tsx:183
+#: src/settings/general/index.tsx:194
 msgid "Use the left sidebar timeline instead of the top timeline."
 msgstr "শীৰ্ষৰ সময়ৰেখাৰ পৰিবৰ্তে বাওঁফালৰ বাৰৰ সময়ৰেখা ব্যৱহাৰ কৰক।"

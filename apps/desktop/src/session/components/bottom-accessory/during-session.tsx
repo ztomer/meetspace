@@ -25,28 +25,12 @@ import {
 export function DuringSessionAccessory({
   sessionId,
   fillHeight = false,
-  isFinalizing = false,
   isExpanded = false,
 }: {
   sessionId: string;
   fillHeight?: boolean;
-  isFinalizing?: boolean;
   isExpanded?: boolean;
 }) {
-  if (isFinalizing) {
-    return (
-      <div className="relative w-full pt-1 select-none">
-        <div className="rounded-xl bg-neutral-50">
-          <div className="flex min-h-9 items-center gap-2 px-2 py-1">
-            <div className="min-w-0 flex-1">
-              <span className="text-xs text-neutral-400">Finalizing...</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <LiveTranscriptFooter
       sessionId={sessionId}
@@ -119,10 +103,7 @@ function LiveTranscriptFooterContent({
   return (
     <div className={cn(["w-full select-none", fillHeight && "h-full min-h-0"])}>
       <div
-        className={cn([
-          "rounded-xl bg-neutral-50",
-          fillHeight && "h-full min-h-0",
-        ])}
+        className={cn(["bg-muted rounded-xl", fillHeight && "h-full min-h-0"])}
       >
         <LiveTranscriptContent
           fillHeight={fillHeight}
@@ -191,7 +172,7 @@ function LiveTranscriptContent({
       ])}
     >
       {segments.length === 0 ? (
-        <span className="py-4 text-center text-xs text-neutral-400">
+        <span className="text-muted-foreground py-4 text-center text-xs">
           Transcript will appear here as you speak.
         </span>
       ) : (
@@ -240,7 +221,7 @@ function CollapsedFooterMessage({ message }: { message: string }) {
       ])}
     >
       <div className="min-w-0 flex-1 select-none">
-        <p className="truncate text-left text-xs text-neutral-600 [direction:rtl]">
+        <p className="text-muted-foreground truncate text-left text-xs [direction:rtl]">
           {message}
         </p>
       </div>
@@ -370,7 +351,7 @@ function TranscriptSegmentRow({
   return (
     <div className="grid min-w-0 grid-cols-[92px_minmax(0,1fr)] items-start gap-x-3">
       <span
-        className="mt-0.5 flex min-h-5 max-w-full min-w-0 items-center justify-start rounded-full px-2 text-[11px] font-medium"
+        className="sticky top-2.5 z-10 mt-0.5 flex min-h-5 max-w-full min-w-0 items-center justify-start rounded-full px-2 text-[11px] font-medium"
         title={label}
         style={{
           backgroundColor: `${color}1A`,
@@ -379,7 +360,7 @@ function TranscriptSegmentRow({
       >
         <span className="min-w-0 truncate">{label}</span>
       </span>
-      <span className="min-w-0 text-xs leading-5 text-neutral-700">
+      <span className="text-muted-foreground min-w-0 text-xs leading-5">
         {getSegmentText(segment)}
       </span>
     </div>

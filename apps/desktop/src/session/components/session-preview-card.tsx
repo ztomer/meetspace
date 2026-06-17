@@ -1,3 +1,4 @@
+import { BarChart3Icon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { useMotionValue, useSpring, useTransform } from "motion/react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { defaultRehypePlugins, Streamdown } from "streamdown";
@@ -10,6 +11,8 @@ import {
   HoverCardTrigger,
 } from "@meetspace/ui/components/ui/hover-card";
 import { cn, format, safeParseDate } from "@meetspace/utils";
+
+import { SessionAnalytics } from "./analytics";
 
 import { extractPlainText } from "~/search/contexts/engine/utils";
 import { streamdownComponents } from "~/session/components/streamdown";
@@ -49,7 +52,7 @@ const previewCardComponents: typeof streamdownComponents = {
         {...props}
         title={title}
         className={cn([
-          "block max-h-32 w-full rounded-md bg-white object-contain",
+          "bg-card block max-h-32 w-full rounded-md object-contain",
           props.className,
         ])}
         style={{
@@ -277,10 +280,10 @@ function ParticipantsList({ mappingIds }: { mappingIds: string[] }) {
   const remaining = names.length - visible.length;
 
   return (
-    <div className="line-clamp-2 text-xs text-neutral-500">
+    <div className="text-muted-foreground line-clamp-2 text-xs">
       {visible.join(", ")}
       {remaining > 0 && (
-        <span className="text-neutral-500"> and {remaining} more</span>
+        <span className="text-muted-foreground"> and {remaining} more</span>
       )}
     </div>
   );
@@ -318,6 +321,7 @@ export function SessionPreviewCard({
   const [openDelay, setOpenDelay] = useState(
     isWarmedUp() ? OPEN_DELAY_WARM : OPEN_DELAY_COLD,
   );
+  const [showAnalytics, setShowAnalytics] = useState(false);
 
   const handleOpenChange = useCallback((open: boolean) => {
     if (open) {
@@ -325,6 +329,7 @@ export function SessionPreviewCard({
     } else {
       markPreviewClosed();
       setOpenDelay(OPEN_DELAY_WARM);
+      setShowAnalytics(false);
     }
   }, []);
 
@@ -357,18 +362,21 @@ export function SessionPreviewCard({
         side={side}
         sideOffset={8}
         followStyle={style}
-        className={cn(["w-[228px] pb-0!", "pointer-events-none"])}
+        className={cn([
+          "border-border/40 pointer-events-auto! w-80 border pb-3! shadow-2xl backdrop-blur-xl",
+          showAnalytics && "max-h-[85vh] overflow-y-auto",
+        ])}
       >
         <div className="flex flex-col gap-1">
           {dateDisplay && (
-            <div className="text-xs text-neutral-500">{dateDisplay}</div>
+            <div className="text-muted-foreground text-xs">{dateDisplay}</div>
           )}
 
           <div className="text-sm font-medium">{title || "Untitled"}</div>
           <ParticipantsList mappingIds={participantMappingIds} />
 
           {previewMarkdown || previewPlainText ? (
-            <div className="mt-1 flex max-h-32 flex-col overflow-hidden mask-[linear-gradient(to_bottom,black_60%,transparent)] text-neutral-600">
+            <div className="text-muted-foreground mt-1 flex max-h-32 flex-col overflow-hidden mask-[linear-gradient(to_bottom,black_60%,transparent)]">
               {previewHasImage && previewImage ? (
                 <img
                   src={previewImage.src}
@@ -393,6 +401,33 @@ export function SessionPreviewCard({
             </div>
           ) : (
             <div className="h-4" />
+          )}
+
+          <div className="border-border/10 mt-2 flex shrink-0 items-center justify-between border-t pt-2">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowAnalytics(!showAnalytics);
+              }}
+              className="text-muted-foreground hover:text-foreground flex cursor-pointer items-center gap-1.5 text-[11px] font-medium transition-colors select-none"
+            >
+              <BarChart3Icon size={12} className="text-muted-foreground/75" />
+              <span>
+                {showAnalytics ? "Hide Analytics" : "Show Speaker Analytics"}
+              </span>
+              {showAnalytics ? (
+                <ChevronUpIcon size={12} />
+              ) : (
+                <ChevronDownIcon size={12} />
+              )}
+            </button>
+          </div>
+
+          {showAnalytics && (
+            <div className="border-border/10 mt-3 flex shrink-0 flex-col gap-2 border-t pt-3">
+              <SessionAnalytics sessionId={sessionId} />
+            </div>
           )}
         </div>
       </HoverCardContent>

@@ -16,7 +16,9 @@ use tauri_plugin_windows::{AppWindow, WindowsPluginExt};
 #[cfg(any(feature = "dev", feature = "devtools"))]
 const STAGING_BUNDLE_ID: &str = "com.meetspace.staging";
 
-fn create_audio_provider(_bundle_id: &str) -> std::sync::Arc<dyn meetspace_audio_actual::AudioProvider> {
+fn create_audio_provider(
+    _bundle_id: &str,
+) -> std::sync::Arc<dyn meetspace_audio_actual::AudioProvider> {
     #[cfg(any(feature = "dev", feature = "devtools"))]
     {
         let bundle_id = _bundle_id;
@@ -108,6 +110,8 @@ pub async fn main() {
     builder = builder
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_opener2::init())
+        .plugin(tauri_plugin_oauth::init())
+        .plugin(tauri_plugin_diarize::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_analytics::init())
         .plugin(tauri_plugin_agent::init())
@@ -165,13 +169,6 @@ pub async fn main() {
                     .map(|ctx| ctx.supervisor.get_cell()),
             },
         ))
-        .plugin(tauri_plugin_network::init(
-            tauri_plugin_network::InitOptions {
-                parent_supervisor: root_supervisor_ctx
-                    .as_ref()
-                    .map(|ctx| ctx.supervisor.get_cell()),
-            },
-        ))
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             Some(vec!["--background"]),
@@ -202,7 +199,7 @@ pub async fn main() {
         .on_window_event(tauri_plugin_windows::on_window_event)
         .setup(move |app| {
             let app_handle = app.handle().clone();
-            let app_clone = app_handle.clone();
+            let _app_clone = app_handle.clone();
 
             specta_builder.mount_events(&app_handle);
 

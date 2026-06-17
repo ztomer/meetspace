@@ -5,9 +5,9 @@ use bytes::Bytes;
 use ractor::{ActorProcessingErr, ActorRef};
 
 use owhisper_client::{
-    AdapterKind, ArgmaxAdapter, AssemblyAIAdapter, CactusAdapter, DashScopeAdapter,
-    DeepgramAdapter, ElevenLabsAdapter, FireworksAdapter, GladiaAdapter, MeetspaceAdapter,
-    MistralAdapter, RealtimeSttAdapter, SonioxAdapter, meetspace_ws_client,
+    AdapterKind, ArgmaxAdapter, AssemblyAIAdapter, DashScopeAdapter, DeepgramAdapter,
+    ElevenLabsAdapter, FireworksAdapter, GladiaAdapter, MeetspaceAdapter, MistralAdapter,
+    RealtimeSttAdapter, SonioxAdapter, meetspace_ws_client,
 };
 use owhisper_interface::stream::Extra;
 use owhisper_interface::{ControlMessage, MixedMessage};
@@ -103,7 +103,6 @@ pub(super) async fn spawn_rx_task(
         DashScope => DashScopeAdapter,
         Mistral => MistralAdapter,
         Meetspace => MeetspaceAdapter,
-        Cactus => CactusAdapter,
     }, batch_only: [OpenAI, AquaVoice, Pyannote])?;
 
     Ok((result.0, result.1, result.2, adapter_kind.to_string()))
@@ -696,14 +695,17 @@ mod tests {
 
     #[test]
     fn soniqo_model_for_args_ignores_loopback_non_soniqo_model() {
-        let args = listener_args("http://localhost:50060/v1", "cactus-whisper-small-int8");
+        let args = listener_args("http://localhost:50060/v1", "whisper-small");
 
         assert_eq!(soniqo_model_for_args(&args).unwrap(), None);
     }
 
     #[test]
     fn format_languages_uses_bcp47_codes() {
-        let languages = vec!["en-US".parse().unwrap(), meetspace_language::ISO639::Fr.into()];
+        let languages = vec![
+            "en-US".parse().unwrap(),
+            meetspace_language::ISO639::Fr.into(),
+        ];
 
         assert_eq!(format_languages(&languages), "en-US, fr");
     }

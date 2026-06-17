@@ -341,15 +341,33 @@ export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
     (event: PointerEvent<HTMLDivElement>) => {
       suppressNextClickRef.current = false;
 
-      if (event.button !== 0) {
+      const button =
+        event.button !== undefined
+          ? event.button
+          : (event.nativeEvent as any).button;
+
+      if (button !== undefined && button !== 0) {
         windowDragStartRef.current = null;
         return;
       }
 
+      const pointerId =
+        event.pointerId !== undefined
+          ? event.pointerId
+          : (event.nativeEvent as any).pointerId;
+      const clientX =
+        event.clientX !== undefined
+          ? event.clientX
+          : (event.nativeEvent as any).clientX;
+      const clientY =
+        event.clientY !== undefined
+          ? event.clientY
+          : (event.nativeEvent as any).clientY;
+
       windowDragStartRef.current = {
-        pointerId: event.pointerId,
-        clientX: event.clientX,
-        clientY: event.clientY,
+        pointerId,
+        clientX,
+        clientY,
         dragging: false,
       };
     },
@@ -359,11 +377,15 @@ export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
   const handleTimelinePointerMove = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
       const dragStart = windowDragStartRef.current;
+      const pointerId =
+        event.pointerId !== undefined
+          ? event.pointerId
+          : (event.nativeEvent as any).pointerId;
 
       if (
         !dragStart ||
         dragStart.dragging ||
-        dragStart.pointerId !== event.pointerId ||
+        dragStart.pointerId !== pointerId ||
         !isTimelineWindowDrag(dragStart, event)
       ) {
         return;
@@ -476,9 +498,9 @@ export function TopMeetingTimeline({ currentTab }: { currentTab: Tab | null }) {
           <button
             type="button"
             className={cn([
-              "absolute top-1/2 z-40 flex h-6 -translate-y-1/2 items-center gap-1 rounded-full border border-neutral-200 bg-white/95 px-2.5 text-xs font-semibold text-neutral-900 shadow-md backdrop-blur",
-              "transition-colors hover:border-neutral-300 hover:bg-white hover:text-neutral-950",
-              "focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden",
+              "border-border bg-card/95 text-foreground absolute top-1/2 z-40 flex h-6 -translate-y-1/2 items-center gap-1 rounded-full border px-2.5 text-xs font-semibold shadow-md backdrop-blur",
+              "hover:border-border hover:bg-accent hover:text-foreground transition-colors",
+              "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-hidden",
               todayChipDirection === "left" ? "left-3" : "right-3",
             ])}
             onClick={handleGoToToday}
@@ -519,9 +541,12 @@ function TopCurrentTimeIndicator({
       className="pointer-events-none absolute top-0 bottom-0 z-40 w-0"
       style={{ left }}
     >
-      <div className="absolute top-0 bottom-1 left-0 w-px -translate-x-1/2 bg-red-500/90 shadow-[0_0_0_1px_rgba(255,255,255,0.85)]" />
-      <div className="absolute top-0 left-0 size-1.5 -translate-x-1/2 rounded-full bg-red-500 shadow-[0_0_0_1px_rgba(255,255,255,0.95)]" />
-      <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500 px-2 py-1 font-mono text-[10px] leading-none font-semibold whitespace-nowrap text-white opacity-0 shadow-xs transition-opacity group-hover/timeline-strip:opacity-100">
+      <div
+        className={cn([
+          "absolute top-0 bottom-1 left-0 w-px -translate-x-1/2 bg-red-500/90 shadow-[0_0_0_1px_rgba(255,255,255,0.85)]",
+        ])}
+      />
+      <div className="bg-destructive text-destructive-foreground absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 rounded-full px-2 py-1 font-mono text-[10px] leading-none font-semibold whitespace-nowrap opacity-0 shadow-xs transition-opacity group-hover/timeline-strip:opacity-100">
         {label}
       </div>
     </div>
@@ -770,12 +795,12 @@ function TimelineCreateNoteCard({
       <button
         type="button"
         className={cn([
-          "flex h-10 w-full flex-col justify-center rounded-md border border-dashed border-neutral-300 bg-white/80 px-2 text-left shadow-xs",
-          "transition-colors hover:border-neutral-600 hover:bg-white focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden",
+          "border-border bg-card/80 flex h-10 w-full flex-col justify-center rounded-md border border-dashed px-2 text-left shadow-xs",
+          "hover:border-border hover:bg-accent focus-visible:ring-ring transition-colors focus-visible:ring-2 focus-visible:outline-hidden",
         ])}
         onClick={onClick}
       >
-        <span className="flex min-w-0 items-center gap-1.5 truncate text-xs font-semibold text-neutral-700">
+        <span className="text-muted-foreground flex min-w-0 items-center gap-1.5 truncate text-xs font-semibold">
           <PlusIcon size={12} className="shrink-0" />
           <span className="truncate">Create new note</span>
         </span>
@@ -800,8 +825,8 @@ function TimelineOpenCalendarCard({
       <button
         type="button"
         className={cn([
-          "flex h-10 w-full items-center gap-1.5 rounded-md border border-dashed border-neutral-300 bg-white/80 px-2 text-left text-xs font-semibold text-neutral-700 shadow-xs",
-          "transition-colors hover:border-neutral-600 hover:bg-white focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden",
+          "border-border bg-card/80 text-muted-foreground flex h-10 w-full items-center gap-1.5 rounded-md border border-dashed px-2 text-left text-xs font-semibold shadow-xs",
+          "hover:border-border hover:bg-accent focus-visible:ring-ring transition-colors focus-visible:ring-2 focus-visible:outline-hidden",
         ])}
         onClick={onClick}
       >
@@ -912,15 +937,15 @@ function TimelineCardButton({
         className={cn([
           "flex h-10 w-full flex-col justify-center rounded-md border py-0 pl-2 text-left shadow-xs",
           showSuffix ? "pr-8" : "pr-2",
-          "transition-colors hover:border-neutral-700 focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:outline-hidden",
+          "hover:border-border focus-visible:ring-ring transition-colors focus-visible:ring-2 focus-visible:outline-hidden",
           item.type === "session" &&
             (showLiveStop
-              ? "border-red-500 bg-red-500 text-white hover:border-red-600 hover:bg-red-600"
+              ? "border-destructive bg-destructive text-destructive-foreground hover:border-destructive/90 hover:bg-destructive/90"
               : item.selected
-                ? "border-neutral-900 bg-neutral-900 text-white hover:bg-neutral-800"
-                : "border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50"),
+                ? "border-ring bg-accent text-foreground hover:bg-accent/90"
+                : "border-border bg-card text-foreground hover:bg-accent"),
           item.type === "event" &&
-            "border-dashed border-neutral-300 bg-white/80 text-neutral-600 hover:bg-white",
+            "border-border bg-card/80 text-muted-foreground hover:bg-accent border-dashed",
           item.muted && !item.selected && !showLiveStop && "opacity-60",
         ])}
       >
@@ -932,9 +957,9 @@ function TimelineCardButton({
         <FadedTimelineLabel
           className={cn([
             "font-mono text-[10px]",
-            item.selected || showLiveStop
-              ? "text-white/65"
-              : "text-neutral-500",
+            showLiveStop
+              ? "text-primary-foreground/65"
+              : "text-muted-foreground",
           ])}
         >
           {startLabel}
@@ -946,7 +971,7 @@ function TimelineCardButton({
           aria-label="Loading timeline item"
           className={cn([
             "absolute top-1/2 right-2 flex size-5 -translate-y-1/2 items-center justify-center",
-            item.selected ? "text-white/70" : "text-neutral-500",
+            "text-muted-foreground",
           ])}
         >
           <Spinner size={12} />
@@ -958,8 +983,8 @@ function TimelineCardButton({
           onClick={handleStopClick}
           className={cn([
             "absolute top-1/2 right-2 flex size-5 -translate-y-1/2 items-center justify-center rounded-sm",
-            "text-white/80 transition-colors hover:bg-white/15 hover:text-white",
-            "focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-hidden",
+            "text-primary-foreground/80 hover:bg-primary-foreground/15 hover:text-primary-foreground transition-colors",
+            "focus-visible:ring-primary-foreground/70 focus-visible:ring-2 focus-visible:outline-hidden",
           ])}
         >
           <span
@@ -1153,10 +1178,19 @@ function getTimelineCarouselWidth(items: TimelineCarouselItem[]): number {
 
 export function isTimelineWindowDrag(
   start: { clientX: number; clientY: number },
-  current: { clientX: number; clientY: number },
+  current: any,
 ): boolean {
-  const deltaX = current.clientX - start.clientX;
-  const deltaY = current.clientY - start.clientY;
+  const currentClientX =
+    current.clientX !== undefined
+      ? current.clientX
+      : (current.nativeEvent?.clientX ?? 0);
+  const currentClientY =
+    current.clientY !== undefined
+      ? current.clientY
+      : (current.nativeEvent?.clientY ?? 0);
+
+  const deltaX = currentClientX - start.clientX;
+  const deltaY = currentClientY - start.clientY;
 
   return (
     deltaX * deltaX + deltaY * deltaY >=

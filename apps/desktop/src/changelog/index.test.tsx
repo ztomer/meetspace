@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   close: vi.fn(),
   leftsidebar: {
     expanded: true,
+    setExpanded: vi.fn(),
   },
   sidebarTimelineEnabled: false,
 }));
@@ -88,11 +89,8 @@ describe("TabContentChangelog", () => {
 });
 
 function getHeader() {
-  const heading = screen.getByRole("heading", {
-    name: "What's new in 1.0.36?",
-  });
-
-  return heading.parentElement?.parentElement?.parentElement as HTMLElement;
+  const breadcrumb = screen.getByText("Changelog");
+  return breadcrumb.closest(".w-full") as HTMLElement;
 }
 
 function buildChangelogTab(): Extract<Tab, { type: "changelog" }> {

@@ -12,16 +12,9 @@ meetspace-gguf = { workspace = true }
 meetspace-lmstudio = { workspace = true }
 meetspace-local-model = { workspace = true }
 
-axum = { workspace = true }
 dirs = { workspace = true }
 serde = { workspace = true }
-serde_json = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
-tower-http = { workspace = true, features = ["cors"] }
-tracing = { workspace = true }
 
 specta = { workspace = true, optional = true }
-
-[target.'cfg(target_arch = "aarch64")'.dependencies]
-meetspace-llm-cactus = { workspace = true }

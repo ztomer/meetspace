@@ -20,6 +20,7 @@ import { cn } from "@meetspace/utils";
 
 import * as AudioPlayer from "~/audio-player";
 import { getEnhancerService } from "~/services/enhancer";
+import type { PastSessionNote } from "~/session/components/bottom-accessory/past-notes";
 import { Transcript } from "~/session/components/note-input/transcript";
 import {
   formatTranscriptExportSegments,
@@ -30,22 +31,36 @@ import { showTransientToast } from "~/sidebar/toast/transient";
 import { useListener } from "~/stt/contexts";
 import { isStoppedTranscriptionError, useRunBatch } from "~/stt/useRunBatch";
 
+export type PostSessionTab = "transcript" | "past_notes";
+
 export function PostSessionAccessory({
   sessionId,
   hasAudio,
   hasTranscript,
   isTranscriptExpanded,
+  activeTab = "transcript",
+  pastNotes = [],
+  onRegeneratePastNote,
   fillHeight = false,
 }: {
   sessionId: string;
   hasAudio: boolean;
   hasTranscript: boolean;
   isTranscriptExpanded: boolean;
+  activeTab?: PostSessionTab;
+  pastNotes?: PastSessionNote[];
+  onRegeneratePastNote?: (sessionId: string) => void;
   fillHeight?: boolean;
 }) {
   const screen = useTranscriptScreen({ sessionId });
   const isBatching = screen.kind === "running_batch";
-  const shouldFillTranscriptPanel = fillHeight && (hasTranscript || isBatching);
+  const effectiveActiveTab =
+    activeTab === "past_notes" && pastNotes.length > 0
+      ? "past_notes"
+      : "transcript";
+  const shouldFillExpandedPanel =
+    fillHeight &&
+    (effectiveActiveTab === "past_notes" || hasTranscript || isBatching);
   const timeline = isBatching ? (
     <BatchProgressTimeline sessionId={sessionId} screen={screen} />
   ) : hasAudio ? (
@@ -60,25 +75,33 @@ export function PostSessionAccessory({
     <div
       className={cn([
         "flex min-h-0 flex-col",
-        fillHeight && "h-full overflow-hidden",
+        shouldFillExpandedPanel && "h-full overflow-hidden",
       ])}
     >
       {isTranscriptExpanded ? (
         <div
           className={cn([
-            shouldFillTranscriptPanel
+            shouldFillExpandedPanel
               ? "min-h-[114px] flex-1 overflow-hidden"
               : "shrink-0",
           ])}
         >
-          <TranscriptPanel
-            sessionId={sessionId}
-            screen={screen}
-            hasAudio={hasAudio}
-            hasTranscript={hasTranscript}
-            isExpanded={isTranscriptExpanded}
-            fillHeight={shouldFillTranscriptPanel}
-          />
+          {effectiveActiveTab === "past_notes" ? (
+            <PastNotesPanel
+              notes={pastNotes}
+              onRegenerateNote={onRegeneratePastNote}
+              fillHeight={shouldFillExpandedPanel}
+            />
+          ) : (
+            <TranscriptPanel
+              sessionId={sessionId}
+              screen={screen}
+              hasAudio={hasAudio}
+              hasTranscript={hasTranscript}
+              isExpanded={isTranscriptExpanded}
+              fillHeight={shouldFillExpandedPanel}
+            />
+          )}
         </div>
       ) : null}
       {timeline ? (
@@ -104,6 +127,137 @@ function TimelineSlot({
     >
       {children}
     </div>
+  );
+}
+
+function PastNotesPanel({
+  notes,
+  onRegenerateNote,
+  fillHeight,
+}: {
+  notes: PastSessionNote[];
+  onRegenerateNote?: (sessionId: string) => void;
+  fillHeight: boolean;
+}) {
+  return (
+    <TranscriptCard fillHeight={fillHeight}>
+      <div className="flex shrink-0 items-center justify-between px-3 py-1.5">
+        <span className="text-muted-foreground text-xs font-medium">
+          Related meetings
+        </span>
+      </div>
+
+      <div
+        className={cn([
+          "min-h-0 overflow-y-auto px-4 pb-4",
+          fillHeight ? "flex-1" : "max-h-[300px]",
+        ])}
+      >
+        <div className="relative flex flex-col gap-4 pt-2">
+          <div className="bg-accent absolute top-2 bottom-0 left-[3px] w-px" />
+          {notes.map((note) => (
+            <div
+              key={note.sessionId}
+              className="relative grid min-w-0 grid-cols-1 overflow-hidden pl-5"
+            >
+              <div className="border-border bg-card absolute top-1.5 left-0 h-2 w-2 rounded-full border" />
+              <div className="flex min-w-0 flex-col gap-1 overflow-hidden">
+                <div className="flex min-w-0 items-center justify-between gap-2">
+                  <div className="flex min-w-0 items-baseline gap-2">
+                    <span className="text-muted-foreground shrink-0 text-[11px]">
+                      {note.dateLabel}
+                    </span>
+                    <span className="text-muted-foreground min-w-0 truncate text-xs font-medium">
+                      {note.title}
+                    </span>
+                  </div>
+                  {onRegenerateNote ? (
+                    <RegeneratePastNoteButton
+                      isDisabled={
+                        note.isGenerating || note.isRegenerateDisabled === true
+                      }
+                      isGenerating={note.isGenerating}
+                      onClick={() => onRegenerateNote(note.sessionId)}
+                    />
+                  ) : null}
+                </div>
+                {note.summary ? (
+                  <ul className="text-muted-foreground min-w-0 list-outside list-disc space-y-1 overflow-hidden pr-1 pl-4 text-xs leading-5">
+                    {splitKeyFacts(note.summary).map((fact) => (
+                      <li key={fact} className="min-w-0 break-words">
+                        <span className="line-clamp-2">{fact}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-muted-foreground text-xs leading-5">
+                    {note.isGenerating
+                      ? "Generating key facts..."
+                      : "Key facts will be generated when this tab opens."}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </TranscriptCard>
+  );
+}
+
+function splitKeyFacts(content: string): string[] {
+  return content
+    .split("\n")
+    .map((fact) =>
+      fact
+        .replace(/^[-*]\s+/, "")
+        .replace(/^\d+[.)]\s+/, "")
+        .trim(),
+    )
+    .filter(Boolean)
+    .slice(0, 3);
+}
+
+function RegeneratePastNoteButton({
+  isDisabled,
+  isGenerating,
+  onClick,
+}: {
+  isDisabled: boolean;
+  isGenerating: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label="Regenerate past note summary"
+          disabled={isDisabled}
+          onClick={onClick}
+          className={cn([
+            "text-muted-foreground h-5 w-5 shrink-0",
+            "hover:bg-accent/60 hover:text-muted-foreground",
+            "disabled:text-muted-foreground/70 disabled:cursor-not-allowed",
+          ])}
+        >
+          {isGenerating ? (
+            <Loader2Icon size={10} className="animate-spin" />
+          ) : (
+            <RefreshCw size={10} />
+          )}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom">
+        <p>
+          {isGenerating
+            ? "Regenerating past note summary"
+            : "Regenerate past note summary"}
+        </p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
 
@@ -206,13 +360,15 @@ function BatchingTranscriptPanel({
   return (
     <TranscriptCard fillHeight={fillHeight}>
       <div className="flex shrink-0 items-center justify-between px-3 py-1.5">
-        <span className="text-xs font-medium text-neutral-500">Transcript</span>
+        <span className="text-muted-foreground text-xs font-medium">
+          Transcript
+        </span>
         <div className="flex items-center gap-1 px-1 py-0.5">
           <Spinner size={10} />
-          <span className="text-[11px] text-neutral-500">
+          <span className="text-muted-foreground text-[11px]">
             {phaseLabel}
             {typeof percentage === "number" && percentage > 0 && (
-              <span className="ml-1 text-neutral-400 tabular-nums">
+              <span className="text-muted-foreground ml-1 tabular-nums">
                 {Math.round(percentage * 100)}%
               </span>
             )}
@@ -264,14 +420,14 @@ function BatchTranscriptSkeleton({ fillHeight }: { fillHeight: boolean }) {
             <div className="flex w-[72px] shrink-0 flex-col gap-3 pt-0.5">
               <div
                 className={cn([
-                  "h-2.5 rounded-full bg-neutral-200/80",
+                  "bg-accent/80 h-2.5 rounded-full",
                   "animate-pulse",
                   row.speaker,
                 ])}
               />
               <div
                 className={cn([
-                  "h-1.5 rounded-full bg-neutral-100",
+                  "bg-muted h-1.5 rounded-full",
                   "animate-pulse",
                   row.time,
                 ])}
@@ -282,7 +438,7 @@ function BatchTranscriptSkeleton({ fillHeight }: { fillHeight: boolean }) {
                 <div
                   key={lineIndex}
                   className={cn([
-                    "h-2.5 rounded-full bg-neutral-100",
+                    "bg-muted h-2.5 rounded-full",
                     "animate-pulse",
                     lineWidth,
                   ])}
@@ -325,7 +481,7 @@ function BatchProgressTimeline({
         <div
           className={cn([
             "flex h-7 w-7 items-center justify-center rounded-full",
-            "border border-neutral-200 bg-white shadow-xs",
+            "border-border bg-card border shadow-xs",
             "shrink-0",
           ])}
         >
@@ -342,13 +498,13 @@ function BatchProgressTimeline({
       }
       main={
         <div className="flex h-6 items-center">
-          <div className="relative h-2 w-full overflow-hidden rounded-full bg-neutral-200/80">
+          <div className="bg-accent/80 relative h-2 w-full overflow-hidden rounded-full">
             <div
-              className="absolute inset-y-0 left-0 rounded-full bg-neutral-400 transition-[width] duration-300 ease-out"
+              className="bg-muted-foreground absolute inset-y-0 left-0 rounded-full transition-[width] duration-300 ease-out"
               style={{ width: `${Math.max(progress * 100, 8)}%` }}
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="px-2 text-[10px] font-medium tracking-[0.02em] text-neutral-500">
+              <span className="text-muted-foreground px-2 text-[10px] font-medium tracking-[0.02em]">
                 {phaseLabel}
               </span>
             </div>
@@ -374,7 +530,7 @@ function StopTranscriptionButton({
           variant="ghost"
           size="icon"
           className={cn([
-            "text-neutral-500 hover:text-neutral-700",
+            "text-muted-foreground hover:text-muted-foreground",
             compact ? "h-5 w-5" : "h-6 w-6",
           ])}
           onClick={onClick}
@@ -430,7 +586,7 @@ function TranscriptReadyPanel({
                 disabled
                 className={cn([
                   "flex items-center gap-1 rounded-full px-1.5 py-0.5",
-                  "text-[11px] font-medium text-neutral-300",
+                  "text-muted-foreground/70 text-[11px] font-medium",
                   "cursor-not-allowed",
                 ])}
               >
@@ -449,10 +605,10 @@ function TranscriptReadyPanel({
             aria-label="Copy transcript"
             className={cn([
               "flex items-center gap-1 rounded-full px-1.5 py-0.5",
-              "text-[11px] font-medium text-neutral-500",
-              "transition-colors hover:bg-neutral-200/60 hover:text-neutral-700",
-              "disabled:cursor-not-allowed disabled:text-neutral-300",
-              "disabled:hover:bg-transparent disabled:hover:text-neutral-300",
+              "text-muted-foreground text-[11px] font-medium",
+              "hover:bg-accent/60 hover:text-muted-foreground transition-colors",
+              "disabled:text-muted-foreground/70 disabled:cursor-not-allowed",
+              "disabled:hover:text-muted-foreground/70 disabled:hover:bg-transparent",
             ])}
           >
             <CopyIcon size={10} />
@@ -463,8 +619,8 @@ function TranscriptReadyPanel({
             onClick={regenerate}
             className={cn([
               "flex items-center gap-1 rounded-full px-1.5 py-0.5",
-              "text-[11px] font-medium text-neutral-500",
-              "transition-colors hover:bg-neutral-200/60 hover:text-neutral-700",
+              "text-muted-foreground text-[11px] font-medium",
+              "hover:bg-accent/60 hover:text-muted-foreground transition-colors",
             ])}
           >
             <RefreshCw size={10} />
@@ -543,7 +699,9 @@ function TranscriptEmptyPanel({
         {error ? (
           <span className="text-xs text-red-500">{error}</span>
         ) : (
-          <span className="text-xs text-neutral-400">No transcript yet</span>
+          <span className="text-muted-foreground text-xs">
+            No transcript yet
+          </span>
         )}
 
         <div className="flex items-center gap-1.5">
@@ -551,7 +709,7 @@ function TranscriptEmptyPanel({
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 gap-1.5 text-xs text-neutral-500"
+              className="text-muted-foreground h-7 gap-1.5 text-xs"
               onClick={regenerate}
             >
               <RefreshCw size={12} />
@@ -596,7 +754,7 @@ function TranscriptCard({
     <div
       data-session-transcript-card
       className={cn([
-        "overflow-hidden rounded-b-xl border border-neutral-200 bg-white",
+        "border-border bg-card overflow-hidden rounded-b-xl border",
         fillHeight && "flex h-full flex-col",
         fillHeight && reserveMinHeight && "min-h-[114px]",
         !fillHeight && reserveMinHeight && "min-h-[96px]",

@@ -1,15 +1,16 @@
 import { SquareIcon } from "lucide-react";
-import { memo, type DragEvent, useCallback, useMemo } from "react";
+import {
+  memo,
+  type DragEvent,
+  type RefCallback,
+  useCallback,
+  useMemo,
+} from "react";
 
 import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
 import { commands as openerCommands } from "@meetspace/plugin-opener2";
 import { DancingSticks } from "@meetspace/ui/components/ui/dancing-sticks";
 import { Spinner } from "@meetspace/ui/components/ui/spinner";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@meetspace/ui/components/ui/tooltip";
 import { cn, format, getYear, safeParseDate, TZDate } from "@meetspace/utils";
 
 import {
@@ -48,6 +49,7 @@ export const TimelineItemComponent = memo(
     timezone,
     multiSelected,
     flatItemKeys,
+    selectedNodeRef,
   }: {
     item: TimelineItem;
     precision: TimelinePrecision;
@@ -55,6 +57,7 @@ export const TimelineItemComponent = memo(
     timezone?: string;
     multiSelected: boolean;
     flatItemKeys: string[];
+    selectedNodeRef?: RefCallback<HTMLDivElement>;
   }) => {
     if (item.type === "event") {
       return (
@@ -65,6 +68,7 @@ export const TimelineItemComponent = memo(
           timezone={timezone}
           multiSelected={multiSelected}
           flatItemKeys={flatItemKeys}
+          selectedNodeRef={selectedNodeRef}
         />
       );
     }
@@ -76,6 +80,7 @@ export const TimelineItemComponent = memo(
         timezone={timezone}
         multiSelected={multiSelected}
         flatItemKeys={flatItemKeys}
+        selectedNodeRef={selectedNodeRef}
       />
     );
   },
@@ -84,7 +89,6 @@ export const TimelineItemComponent = memo(
 function ItemBase({
   title,
   displayTime,
-  calendarId,
   isLive,
   amplitude,
   showSpinner,
@@ -99,10 +103,11 @@ function ItemBase({
   onDragStart,
   contextMenu,
   draggable,
+  selectedNodeRef,
+  timelineSessionId,
 }: {
   title: string;
   displayTime: string;
-  calendarId: string | null;
   isLive?: boolean;
   amplitude?: number;
   showSpinner?: boolean;
@@ -117,12 +122,19 @@ function ItemBase({
   onDragStart?: (event: DragEvent<HTMLElement>) => void;
   contextMenu: MenuItemDef[];
   draggable?: boolean;
+  selectedNodeRef?: RefCallback<HTMLDivElement>;
+  timelineSessionId?: string;
 }) {
   const hasSelection = useTimelineSelection((s) => s.selectedIds.length > 0);
   const showLiveStop = isLive && onStop;
+  const showTrailingStatus = showLiveStop || showSpinner;
 
   return (
-    <div className="group/sidebar-live-item relative">
+    <div
+      ref={selectedNodeRef}
+      data-sidebar-timeline-session-id={timelineSessionId}
+      className="group/sidebar-live-item relative"
+    >
       <InteractiveButton
         onClick={ignored ? undefined : onClick}
         onCmdClick={ignored ? undefined : onCmdClick}
@@ -131,14 +143,14 @@ function ItemBase({
         contextMenu={hasSelection ? undefined : contextMenu}
         className={cn([
           "w-full rounded-lg px-3 py-2 text-left",
-          showLiveStop && "pr-10",
+          showTrailingStatus && "pr-10",
           ignored ? "cursor-default" : "cursor-pointer",
-          multiSelected && "bg-neutral-200",
-          !multiSelected && selected && "bg-neutral-200",
-          !multiSelected && !selected && "hover:bg-neutral-200/50",
+          multiSelected && "bg-accent",
+          !multiSelected && selected && "bg-accent",
+          !multiSelected && !selected && "hover:bg-accent/50",
           isLive && [
-            "bg-red-500 text-white hover:bg-red-600",
-            "focus-visible:ring-2 focus-visible:ring-red-500/40 focus-visible:outline-hidden",
+            "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+            "focus-visible:ring-destructive/40 focus-visible:ring-2 focus-visible:outline-hidden",
           ],
           ignored && "opacity-40",
           !ignored && muted && !isLive && "opacity-65",
@@ -146,11 +158,6 @@ function ItemBase({
         draggable={draggable}
       >
         <div className="flex items-center gap-2">
-          {showSpinner && (
-            <div className="shrink-0">
-              <Spinner size={14} />
-            </div>
-          )}
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
             <div
               className={cn(
@@ -164,16 +171,25 @@ function ItemBase({
               <div
                 className={cn([
                   "font-mono text-xs",
-                  isLive ? "text-white/65" : "text-neutral-500",
+                  isLive
+                    ? "text-destructive-foreground/65"
+                    : "text-muted-foreground",
                 ])}
               >
                 {displayTime}
               </div>
             )}
           </div>
-          {calendarId && <CalendarIndicator calendarId={calendarId} />}
         </div>
       </InteractiveButton>
+      {showSpinner ? (
+        <div
+          aria-hidden
+          className="text-muted-foreground pointer-events-none absolute top-1/2 right-3 flex size-5 -translate-y-1/2 items-center justify-center"
+        >
+          <Spinner size={14} />
+        </div>
+      ) : null}
       {showLiveStop ? (
         <button
           type="button"
@@ -185,8 +201,8 @@ function ItemBase({
           }}
           className={cn([
             "absolute top-1/2 right-3 flex size-5 -translate-y-1/2 items-center justify-center rounded-sm",
-            "text-white/80 transition-colors hover:bg-white/15 hover:text-white",
-            "focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:outline-hidden",
+            "text-destructive-foreground/80 hover:bg-destructive-foreground/15 hover:text-destructive-foreground transition-colors",
+            "focus-visible:ring-destructive-foreground/70 focus-visible:ring-2 focus-visible:outline-hidden",
           ])}
         >
           <span
@@ -222,6 +238,7 @@ const EventItem = memo(
     timezone,
     multiSelected,
     flatItemKeys,
+    selectedNodeRef,
   }: {
     item: EventTimelineItem;
     precision: TimelinePrecision;
@@ -229,6 +246,7 @@ const EventItem = memo(
     timezone?: string;
     multiSelected: boolean;
     flatItemKeys: string[];
+    selectedNodeRef?: RefCallback<HTMLDivElement>;
   }) => {
     const store = main.UI.useStore(main.STORE_ID);
     const openCurrent = useTabs((state) => state.openCurrent);
@@ -360,7 +378,6 @@ const EventItem = memo(
       <ItemBase
         title={title}
         displayTime={displayTime}
-        calendarId={null}
         selected={selected}
         ignored={ignored}
         muted={muted}
@@ -369,6 +386,7 @@ const EventItem = memo(
         onCmdClick={handleCmdClick}
         onShiftClick={handleShiftClick}
         contextMenu={contextMenu}
+        selectedNodeRef={selected ? selectedNodeRef : undefined}
       />
     );
   },
@@ -382,6 +400,7 @@ const SessionItem = memo(
     timezone,
     multiSelected,
     flatItemKeys,
+    selectedNodeRef,
   }: {
     item: SessionTimelineItem;
     precision: TimelinePrecision;
@@ -389,6 +408,7 @@ const SessionItem = memo(
     timezone?: string;
     multiSelected: boolean;
     flatItemKeys: string[];
+    selectedNodeRef?: RefCallback<HTMLDivElement>;
   }) => {
     const store = main.UI.useStore(main.STORE_ID);
     const indexes = main.UI.useIndexes(main.STORE_ID);
@@ -407,12 +427,12 @@ const SessionItem = memo(
     ) as string | undefined;
     const title = useSessionTitle(sessionId, storeTitle);
 
+    const isEnhancing = useIsSessionEnhancing(sessionId);
     const { sessionMode, stop, amplitude } = useListener((state) => ({
       sessionMode: state.getSessionMode(sessionId),
       stop: state.stop,
       amplitude: state.live.amplitude,
     }));
-    const isEnhancing = useIsSessionEnhancing(sessionId);
     const isLive = sessionMode === "active";
     const isFinalizing = sessionMode === "finalizing";
     const isBatching = sessionMode === "running_batch";
@@ -423,8 +443,6 @@ const SessionItem = memo(
       () => getSessionEvent(item.data),
       [item.data.event_json],
     );
-
-    const calendarId = sessionEvent?.calendar_id ?? null;
 
     const displayTime = useMemo(
       () =>
@@ -536,7 +554,6 @@ const SessionItem = memo(
         <ItemBase
           title={title}
           displayTime={displayTime}
-          calendarId={calendarId}
           isLive={isLive}
           amplitude={Math.max(
             0.25,
@@ -552,6 +569,8 @@ const SessionItem = memo(
           onStop={stop}
           onDragStart={handleDragStart}
           contextMenu={contextMenu}
+          selectedNodeRef={selected ? selectedNodeRef : undefined}
+          timelineSessionId={sessionId}
           draggable
         />
       </SessionPreviewCard>
@@ -583,25 +602,4 @@ function formatDisplayTime(
     : format(date, "MMM d, yyyy");
 
   return `${dateStr}, ${time}`;
-}
-
-function CalendarIndicator({ calendarId }: { calendarId: string }) {
-  const calendar = main.UI.useRow("calendars", calendarId, main.STORE_ID);
-
-  const name = calendar?.name ? String(calendar.name) : undefined;
-  const color = calendar?.color ? String(calendar.color) : "#888";
-
-  return (
-    <Tooltip delayDuration={0}>
-      <TooltipTrigger asChild>
-        <div
-          className="size-2 shrink-0 rounded-full opacity-60"
-          style={{ backgroundColor: color }}
-        />
-      </TooltipTrigger>
-      <TooltipContent side="right" className="text-xs">
-        {name || "Calendar"}
-      </TooltipContent>
-    </Tooltip>
-  );
 }
