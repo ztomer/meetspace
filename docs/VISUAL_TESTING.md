@@ -31,11 +31,10 @@ Pixel-snapshot harness: Playwright renders the Vite build in headless Chromium
 with Tauri IPC mocked, in light and dark.
 
 Current coverage (each light + dark): NotFound, main app shell (empty state),
-onboarding (first-run permissions), and all nine Settings sections (App/
-Appearance, Data, Notifications, Permissions, Calendar, Contacts, Intelligence,
-Templates, Integrations). Data-populated screens (a timeline with notes, an
-open editor, a calendar with events) are the next frontier — see "In-app
-screens" below.
+a populated timeline (seeded sessions), onboarding (first-run permissions), and
+all nine Settings sections (App/Appearance, Data, Notifications, Permissions,
+Calendar, Contacts, Intelligence, Templates, Integrations). 13 screens, 26
+baselines. Extend by seeding more data (see "In-app screens" below).
 
 ```bash
 pnpm -F desktop visual:install   # one time: download the chromium binary
@@ -76,14 +75,13 @@ snapshotted in `specs/app-shell.spec.ts`. The mock answers every Tauri command
 with safe empties, so sessions/notes/chat come up **empty** (the persisters
 have no files to load — those errors in the log are caught and harmless).
 
-That covers empty/first-run states. Screens that need **existing data**
-(a populated timeline, an open note, calendar events) need that data seeded.
-Sessions/notes are loaded by filesystem-backed persisters
-(`store/tinybase/persister/**`), so seeding them means either mocking the fs
-read commands those persisters call (return fake session files) or — simpler —
-injecting rows straight into the TinyBase store once it exists. That seam isn't
-built yet; it's the main remaining piece. Use `mockCommands(page, {...})` for
-command-driven data, and add a store-seed init script for table rows.
+That covers empty/first-run states. Screens that need **existing data** are
+seeded through the filesystem-backed persisters. `seedSessions(page, [...])`
+(support/app.ts) injects synthetic session `_meta.json` files that the session
+persister loads — see `timeline.spec.ts`. The mock's `scan_and_read` handler is
+directory-scoped, so seeded files reach only the matching persister. Follow the
+same shape to seed chats/events/calendar (return their files for the matching
+`scanDir`), or extend `seedSessions` with notes/transcripts/participants.
 
 Per-test command overrides: `mockCommands(page, { some_command: value })`
 before navigation (see `onboarding.spec.ts`). Values are the raw `invoke`
