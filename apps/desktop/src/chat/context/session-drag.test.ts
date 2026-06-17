@@ -42,7 +42,7 @@ describe("session drag context", () => {
   it("ignores malformed session drag payloads", () => {
     const dataTransfer = new FakeDataTransfer() as unknown as DataTransfer;
 
-    dataTransfer.setData("application/x-anarlog-session-context", "{");
+    dataTransfer.setData("application/x-meetspace-session-context", "{");
 
     expect(readSessionContextDragData(dataTransfer)).toBeNull();
   });

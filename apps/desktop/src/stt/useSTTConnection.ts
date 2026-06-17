@@ -4,8 +4,8 @@ import { useMemo } from "react";
 import {
   commands as localSttCommands,
   type LocalModel,
-} from "@hypr/plugin-local-stt";
-import type { AIProviderStorage } from "@hypr/store";
+} from "@meetspace/plugin-local-stt";
+import type { AIProviderStorage } from "@meetspace/store";
 
 import { useAuth } from "~/auth";
 import { useBillingAccess } from "~/auth/billing";
@@ -31,15 +31,15 @@ export const useSTTConnection = () => {
   ) as AIProviderStorage | undefined;
 
   const isLocalModel =
-    current_stt_provider === "hyprnote" &&
+    current_stt_provider === "meetspace" &&
     !!current_stt_model &&
     current_stt_model !== "cloud";
 
   const isCloudModel =
-    current_stt_provider === "hyprnote" && current_stt_model === "cloud";
+    current_stt_provider === "meetspace" && current_stt_model === "cloud";
 
   const local = useQuery({
-    enabled: current_stt_provider === "hyprnote",
+    enabled: current_stt_provider === "meetspace",
     queryKey: ["stt-connection", isLocalModel, current_stt_model],
     refetchInterval: 1000,
     queryFn: async () => {

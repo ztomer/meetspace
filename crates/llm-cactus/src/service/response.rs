@@ -1,16 +1,16 @@
 use axum::response::{IntoResponse, Response, sse};
 use futures_util::{StreamExt, stream};
-use hypr_llm_types::{Response as LlmResponse, StreamingParser};
+use meetspace_llm_types::{Response as LlmResponse, StreamingParser};
 
-pub(super) struct ModelError(pub hypr_cactus::Error);
+pub(super) struct ModelError(pub meetspace_cactus::Error);
 
-fn status_code_for(error: &hypr_cactus::Error) -> axum::http::StatusCode {
+fn status_code_for(error: &meetspace_cactus::Error) -> axum::http::StatusCode {
     match error {
-        hypr_cactus::Error::InvalidRequest(_) | hypr_cactus::Error::InvalidJsonSchema { .. } => {
+        meetspace_cactus::Error::InvalidRequest(_) | meetspace_cactus::Error::InvalidJsonSchema { .. } => {
             axum::http::StatusCode::BAD_REQUEST
         }
-        hypr_cactus::Error::InvalidStructuredOutput { .. }
-        | hypr_cactus::Error::JsonSchemaValidation { .. } => {
+        meetspace_cactus::Error::InvalidStructuredOutput { .. }
+        | meetspace_cactus::Error::JsonSchemaValidation { .. } => {
             axum::http::StatusCode::UNPROCESSABLE_ENTITY
         }
         _ => axum::http::StatusCode::INTERNAL_SERVER_ERROR,
@@ -32,7 +32,7 @@ fn model_name(model: &Option<String>) -> &str {
 }
 
 pub(super) fn build_streaming_response(
-    completion_stream: hypr_cactus::CompletionStream,
+    completion_stream: meetspace_cactus::CompletionStream,
     model: &Option<String>,
 ) -> Response {
     let id = format!("chatcmpl-{}", uuid::Uuid::new_v4());
@@ -112,15 +112,15 @@ pub(super) fn build_streaming_response(
 }
 
 pub(super) async fn build_non_streaming_response(
-    model: &std::sync::Arc<hypr_cactus::Model>,
-    messages: Vec<hypr_llm_types::Message>,
-    options: hypr_cactus::CompleteOptions,
+    model: &std::sync::Arc<meetspace_cactus::Model>,
+    messages: Vec<meetspace_llm_types::Message>,
+    options: meetspace_cactus::CompleteOptions,
     model_label: &Option<String>,
 ) -> Response {
     let model = std::sync::Arc::clone(model);
 
     let result = tokio::task::spawn_blocking(move || {
-        hypr_cactus::complete(model.as_ref(), &messages, &options)
+        meetspace_cactus::complete(model.as_ref(), &messages, &options)
     })
     .await;
 
@@ -198,9 +198,9 @@ pub(super) async fn build_non_streaming_response(
     axum::Json(response).into_response()
 }
 
-fn structured_model_error_body(error: &hypr_cactus::Error) -> Option<serde_json::Value> {
+fn structured_model_error_body(error: &meetspace_cactus::Error) -> Option<serde_json::Value> {
     match error {
-        hypr_cactus::Error::InvalidJsonSchema { message } => Some(structured_error(
+        meetspace_cactus::Error::InvalidJsonSchema { message } => Some(structured_error(
             message,
             "invalid_request_error",
             "invalid_json_schema",
@@ -208,7 +208,7 @@ fn structured_model_error_body(error: &hypr_cactus::Error) -> Option<serde_json:
                 "schema_error": message,
             })),
         )),
-        hypr_cactus::Error::InvalidStructuredOutput {
+        meetspace_cactus::Error::InvalidStructuredOutput {
             message,
             raw_output,
         } => Some(structured_error(
@@ -219,7 +219,7 @@ fn structured_model_error_body(error: &hypr_cactus::Error) -> Option<serde_json:
                 "raw_output": raw_output,
             })),
         )),
-        hypr_cactus::Error::JsonSchemaValidation {
+        meetspace_cactus::Error::JsonSchemaValidation {
             message,
             violations,
             raw_output,
@@ -261,7 +261,7 @@ mod tests {
 
     #[test]
     fn invalid_json_schema_maps_to_bad_request_with_structured_body() {
-        let error = hypr_cactus::Error::InvalidJsonSchema {
+        let error = meetspace_cactus::Error::InvalidJsonSchema {
             message: "type must be a string".to_string(),
         };
 
@@ -278,7 +278,7 @@ mod tests {
 
     #[test]
     fn invalid_structured_output_maps_to_unprocessable_entity() {
-        let error = hypr_cactus::Error::InvalidStructuredOutput {
+        let error = meetspace_cactus::Error::InvalidStructuredOutput {
             message: "final output is not valid JSON".to_string(),
             raw_output: "hello".to_string(),
         };
@@ -296,9 +296,9 @@ mod tests {
 
     #[test]
     fn schema_validation_error_includes_violations() {
-        let error = hypr_cactus::Error::JsonSchemaValidation {
+        let error = meetspace_cactus::Error::JsonSchemaValidation {
             message: "schema mismatch".to_string(),
-            violations: vec![hypr_cactus::JsonSchemaViolation {
+            violations: vec![meetspace_cactus::JsonSchemaViolation {
                 message: "\"oops\" is not of type \"integer\"".to_string(),
                 keyword: "type".to_string(),
                 instance_path: "/answer".to_string(),

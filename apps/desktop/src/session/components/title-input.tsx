@@ -15,8 +15,8 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/tooltip";
+import { cn } from "@meetspace/utils";
 
 import { useTitleGenerating } from "~/ai/hooks";
 import { useMainEscapeShortcutAction } from "~/shared/useTabsShortcuts";

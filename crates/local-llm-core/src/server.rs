@@ -4,7 +4,7 @@ mod inner {
     use std::path::Path;
 
     use axum::http::StatusCode;
-    use hypr_llm_cactus::{CompleteService, ModelManagerBuilder};
+    use meetspace_llm_cactus::{CompleteService, ModelManagerBuilder};
     use tokio::net::TcpListener;
     use tower_http::cors::CorsLayer;
 
@@ -84,7 +84,7 @@ mod inner {
         }
     }
 
-    async fn handle_error(err: hypr_llm_cactus::Error) -> (StatusCode, String) {
+    async fn handle_error(err: meetspace_llm_cactus::Error) -> (StatusCode, String) {
         (StatusCode::INTERNAL_SERVER_ERROR, err.to_string())
     }
 }

@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-import { Button } from "@hypr/ui/components/ui/button";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   AppFloatingPanel,
   DropdownMenu,
@@ -15,7 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@hypr/ui/components/ui/dropdown-menu";
+} from "@meetspace/ui/components/ui/dropdown-menu";
 
 import { DeleteNote, DeleteRecording } from "./delete";
 import { ExportModal } from "./export-modal";

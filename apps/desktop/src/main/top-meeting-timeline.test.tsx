@@ -44,7 +44,7 @@ vi.mock("~/session/components/session-preview-card", () => ({
   ),
 }));
 
-vi.mock("@hypr/ui/components/ui/spinner", () => ({
+vi.mock("@meetspace/ui/components/ui/spinner", () => ({
   Spinner: () => <div data-testid="timeline-spinner" />,
 }));
 

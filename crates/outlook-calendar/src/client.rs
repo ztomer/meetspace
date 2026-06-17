@@ -1,4 +1,4 @@
-use hypr_http::HttpClient;
+use meetspace_http::HttpClient;
 
 use crate::error::Error;
 use crate::types::{

@@ -28,7 +28,7 @@ impl Args {
                 eprintln!("error: {e}");
                 std::process::exit(1);
             })
-            .unwrap_or_else(|| PathBuf::from(hypr_data::english_1::AUDIO_PATH));
+            .unwrap_or_else(|| PathBuf::from(meetspace_data::english_1::AUDIO_PATH));
 
         let no_sse: Option<String> = args.opt_value_from_str("--sse").unwrap_or(None);
         let sse = !matches!(no_sse.as_deref(), Some("0" | "false"));
@@ -62,7 +62,7 @@ fn content_type_for_path(path: &Path) -> &'static str {
     }
 }
 
-/// cargo run -p transcribe-cactus --example batch -- --sse --language en --language ko --model ~/Library/Application\ Support/hyprnote/models/cactus/parakeet-tdt-0.6b-v3-int4 --file /Users/yujonglee/dev/char/crates/data/src/english_10/audio.mp3
+/// cargo run -p transcribe-cactus --example batch -- --sse --language en --language ko --model ~/Library/Application\ Support/meetspace/models/cactus/parakeet-tdt-0.6b-v3-int4 --file /Users/yujonglee/dev/char/crates/data/src/english_10/audio.mp3
 #[tokio::main]
 async fn main() {
     let args = Args::parse();

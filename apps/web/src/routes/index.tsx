@@ -4,14 +4,14 @@ import { ArrowRight, ChevronDown, KeyRound, WifiOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
-import { DancingSticks } from "@hypr/ui/components/ui/dancing-sticks";
-import { cn } from "@hypr/utils";
+import { DancingSticks } from "@meetspace/ui/components/ui/dancing-sticks";
+import { cn } from "@meetspace/utils";
 
 import { SiteFooter } from "@/components/site-footer";
 import { desktopSchemeSchema } from "@/functions/desktop-flow";
 import { getGitHubStats } from "@/functions/github";
 import {
-  ANARLOG_SITE_URL,
+  MEETSPACE_SITE_URL,
   ROOT_DESCRIPTION,
   getOrganizationJsonLd,
   getSoftwareApplicationJsonLd,
@@ -23,7 +23,7 @@ const manifestoLetter = [
   "Notetaking matters more than note-takers. A note-taker is passive. A notepad is something you use. You stay present and in control while the room is still alive.",
   "Most AI tools ask you to move your memory into their ecosystem and rules. Meeting notes should move the other way: back to files on your disk and software you can run offline.",
   "Files endure. Interfaces change. Your notes should survive us. Use on-device models or your own keys, not a service you cannot inspect.",
-  "Anarlog is our attempt to build that meeting notepad.",
+  "Meetspace is our attempt to build that meeting notepad.",
   "John Jeong, Yujong Lee",
 ];
 
@@ -54,9 +54,9 @@ const privacyCommitments = [
 ];
 
 const appleSiliconDownloadUrl =
-  "https://cdn.crabnebula.app/download/fastrepl/hyprnote2/latest/platform/dmg-aarch64?channel=stable";
+  "https://cdn.crabnebula.app/download/fastrepl/meetspace2/latest/platform/dmg-aarch64?channel=stable";
 const appleIntelDownloadUrl =
-  "https://cdn.crabnebula.app/download/fastrepl/hyprnote2/latest/platform/dmg-x86_64?channel=stable";
+  "https://cdn.crabnebula.app/download/fastrepl/meetspace2/latest/platform/dmg-x86_64?channel=stable";
 
 const authCallbackSearchSchema = z.object({
   code: z.string().optional(),
@@ -73,7 +73,7 @@ const authCallbackSearchSchema = z.object({
     .optional()
     .catch(undefined),
   flow: z.enum(["desktop", "web"]).optional().catch("desktop"),
-  scheme: desktopSchemeSchema.optional().catch("hyprnote"),
+  scheme: desktopSchemeSchema.optional().catch("meetspace"),
   redirect: z.string().optional(),
   error: z.string().optional(),
   error_description: z.string().optional(),
@@ -90,7 +90,7 @@ export const Route = createFileRoute("/")({
     }
 
     const flow = search.flow ?? "desktop";
-    const scheme = search.scheme ?? "hyprnote";
+    const scheme = search.scheme ?? "meetspace";
 
     throw redirect({
       to: "/auth/",
@@ -111,7 +111,7 @@ export const Route = createFileRoute("/")({
     githubStars: (await getGitHubStats()).stars ?? 8466,
   }),
   head: () => ({
-    links: [{ rel: "canonical", href: ANARLOG_SITE_URL }],
+    links: [{ rel: "canonical", href: MEETSPACE_SITE_URL }],
     scripts: [
       {
         type: "application/ld+json",
@@ -150,7 +150,7 @@ function Component() {
             <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-sm">
               <DownloadButton />
               <a
-                href="https://github.com/fastrepl/anarlog"
+                href="https://github.com/fastrepl/meetspace"
                 className="inline-flex items-center gap-2 rounded-full border border-[#d8d0c5] px-5 py-3 font-medium text-[#181613] transition-colors hover:border-[#b8aea0] hover:bg-[#f7f4ef]"
               >
                 <img
@@ -207,7 +207,7 @@ function PrivacySection() {
           What makes it different
         </h2>
         <p className="mt-6 text-lg leading-8 text-[#4f4940]">
-          Anarlog stays out of the participant list, keeps notes on disk, and
+          Meetspace stays out of the participant list, keeps notes on disk, and
           lets you pick the AI path.
         </p>
       </div>
@@ -376,7 +376,7 @@ function HowItWorksSection() {
           How it works
         </h2>
         <p className="mt-6 text-lg leading-8 text-[#4f4940]">
-          Write rough notes during the meeting. Anarlog turns them into an
+          Write rough notes during the meeting. Meetspace turns them into an
           editable summary afterward.
         </p>
       </div>
@@ -389,7 +389,7 @@ function HowItWorksSection() {
           <div className="flex flex-col gap-4 p-8">
             <p className="text-sm leading-6 text-neutral-600">
               <span className="font-semibold">While you take notes,</span>{" "}
-              Anarlog records from your device. No bot joins the call.
+              Meetspace records from your device. No bot joins the call.
             </p>
           </div>
           <div className="flex flex-1 items-center justify-center bg-stone-50/30 px-8 pb-0">
@@ -559,7 +559,7 @@ function HowItWorksSection() {
           <div className="p-6">
             <p className="mb-4 text-sm leading-6 text-neutral-600">
               <span className="font-semibold">While you take notes,</span>{" "}
-              Anarlog records from your device. No bot joins the call.
+              Meetspace records from your device. No bot joins the call.
             </p>
           </div>
           <div className="relative overflow-clip bg-stone-50/30 px-6 pb-0">

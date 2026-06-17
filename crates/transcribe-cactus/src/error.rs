@@ -6,13 +6,13 @@ pub enum Error {
     Io(#[from] std::io::Error),
 
     #[error(transparent)]
-    Cactus(#[from] hypr_cactus::Error),
+    Cactus(#[from] meetspace_cactus::Error),
 
     #[error(transparent)]
-    Audio(#[from] hypr_audio_utils::Error),
+    Audio(#[from] meetspace_audio_utils::Error),
 
     #[error(transparent)]
-    Chunking(#[from] hypr_audio_chunking::Error),
+    Chunking(#[from] meetspace_audio_chunking::Error),
 
     #[error("{message}")]
     Protocol { message: String },

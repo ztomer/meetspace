@@ -23,10 +23,10 @@ import {
   useState,
 } from "react";
 
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { DancingSticks } from "@hypr/ui/components/ui/dancing-sticks";
-import { Spinner } from "@hypr/ui/components/ui/spinner";
+import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { DancingSticks } from "@meetspace/ui/components/ui/dancing-sticks";
+import { Spinner } from "@meetspace/ui/components/ui/spinner";
 import {
   addDays,
   cn,
@@ -35,7 +35,7 @@ import {
   safeParseDate,
   startOfDay,
   TZDate,
-} from "@hypr/utils";
+} from "@meetspace/utils";
 
 import {
   normalizeEndMs,

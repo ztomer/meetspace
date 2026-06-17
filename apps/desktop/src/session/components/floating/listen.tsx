@@ -1,7 +1,7 @@
 import { HeadsetIcon } from "lucide-react";
 import { useCallback } from "react";
 
-import { commands as openerCommands } from "@hypr/plugin-opener2";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
 
 import { ListenActionButton } from "../listen-action";
 import { FloatingButton } from "./shared";

@@ -1,5 +1,5 @@
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
-import type { TranscriptStorage } from "@hypr/store";
+import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
+import type { TranscriptStorage } from "@meetspace/store";
 
 import * as main from "./main";
 

@@ -1,6 +1,6 @@
 import { ArrowRightIcon } from "lucide-react";
 
-import { Button } from "@hypr/ui/components/ui/button";
+import { Button } from "@meetspace/ui/components/ui/button";
 
 import type { LLMConnectionStatus } from "~/ai/hooks";
 import { useTabs } from "~/store/zustand/tabs";
@@ -41,11 +41,11 @@ function getMessageForStatus(status: LLMConnectionStatus): string {
   }
 
   if (status.status === "error" && status.reason === "unauthenticated") {
-    return "You need to sign in to use Anarlog's language model";
+    return "You need to sign in to use Meetspace's language model";
   }
 
   if (status.status === "error" && status.reason === "not_pro") {
-    return "Your Anarlog plan has expired. Configure another language model or renew your plan";
+    return "Your Meetspace plan has expired. Configure another language model or renew your plan";
   }
 
   if (status.status === "error" && status.reason === "missing_config") {

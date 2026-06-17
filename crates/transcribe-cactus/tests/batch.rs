@@ -7,7 +7,7 @@ use axum::{
 use tower::ServiceExt;
 
 fn audio_wav_bytes() -> Vec<u8> {
-    std::fs::read(hypr_data::english_1::AUDIO_PATH).expect("failed to read audio file")
+    std::fs::read(meetspace_data::english_1::AUDIO_PATH).expect("failed to read audio file")
 }
 
 fn listen_request() -> axum::http::request::Builder {
@@ -144,10 +144,10 @@ async fn health_starts_loading_then_fails_for_invalid_model_path() {
         .unwrap();
     assert_eq!(response.status(), StatusCode::OK);
     let body = to_bytes(response.into_body(), 1024 * 1024).await.unwrap();
-    let health: hypr_cactus_model::CactusServiceHealth = serde_json::from_slice(&body).unwrap();
+    let health: meetspace_cactus_model::CactusServiceHealth = serde_json::from_slice(&body).unwrap();
     assert_eq!(
         health.status,
-        hypr_cactus_model::CactusServiceStatus::Loading
+        meetspace_cactus_model::CactusServiceStatus::Loading
     );
 
     tokio::time::sleep(std::time::Duration::from_millis(25)).await;
@@ -163,10 +163,10 @@ async fn health_starts_loading_then_fails_for_invalid_model_path() {
         .unwrap();
     assert_eq!(response.status(), StatusCode::OK);
     let body = to_bytes(response.into_body(), 1024 * 1024).await.unwrap();
-    let health: hypr_cactus_model::CactusServiceHealth = serde_json::from_slice(&body).unwrap();
+    let health: meetspace_cactus_model::CactusServiceHealth = serde_json::from_slice(&body).unwrap();
     assert_eq!(
         health.status,
-        hypr_cactus_model::CactusServiceStatus::Failed
+        meetspace_cactus_model::CactusServiceStatus::Failed
     );
     assert!(
         health

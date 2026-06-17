@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-hypr-db-core = { workspace = true }
-hypr-db-migrate = { workspace = true }
+meetspace-db-core = { workspace = true }
+meetspace-db-migrate = { workspace = true }
 
 sqlx = { workspace = true, features = ["runtime-tokio", "sqlite", "sqlite-unbundled", "macros"] }
 

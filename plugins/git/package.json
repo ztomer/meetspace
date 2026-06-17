@@ -1,5 +1,5 @@
 {
-  "name": "@hypr/plugin-git",
+  "name": "@meetspace/plugin-git",
   "private": true,
   "main": "./js/index.ts",
   "scripts": {

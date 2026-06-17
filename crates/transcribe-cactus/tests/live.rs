@@ -22,7 +22,7 @@ use tokio_tungstenite::{
     tungstenite::{Error as TungsteniteError, Message as WsMessage},
 };
 
-use hypr_cactus::CloudConfig;
+use meetspace_cactus::CloudConfig;
 use transcribe_cactus::{CactusConfig, TranscribeService};
 
 use common::invalid_model_path;
@@ -48,7 +48,7 @@ async fn run_single_channel_opts(
     let t0 = std::time::Instant::now();
 
     let writer = tokio::spawn(async move {
-        let audio = hypr_data::english_1::AUDIO;
+        let audio = meetspace_data::english_1::AUDIO;
         for chunk in audio.chunks(32_000).cycle().take(audio_secs) {
             tx.send(WsMessage::Binary(chunk.to_vec().into()))
                 .await
@@ -247,7 +247,7 @@ fn e2e_websocket_dual_channel_no_handoff() {
         let (ws, _) = connect_async(&ws_url).await.expect("ws connect failed");
         let (mut tx, mut rx) = ws.split();
 
-        let audio = hypr_data::english_1::AUDIO;
+        let audio = meetspace_data::english_1::AUDIO;
         let num_frames = audio.len() / 2;
         let mut interleaved = Vec::with_capacity(num_frames * 4);
         for i in 0..num_frames {

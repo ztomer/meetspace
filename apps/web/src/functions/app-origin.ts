@@ -5,8 +5,8 @@ import { env } from "@/env";
 const PUBLIC_APP_HOSTS = new Set([
   "char.com",
   "www.char.com",
-  "anarlog.so",
-  "www.anarlog.so",
+  "meetspace.so",
+  "www.meetspace.so",
 ]);
 
 const LOCAL_APP_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);

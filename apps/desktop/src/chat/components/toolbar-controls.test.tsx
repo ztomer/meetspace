@@ -2,7 +2,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@hypr/ui/components/ui/button", () => ({
+vi.mock("@meetspace/ui/components/ui/button", () => ({
   Button: ({
     children,
     className,
@@ -14,7 +14,7 @@ vi.mock("@hypr/ui/components/ui/button", () => ({
   ),
 }));
 
-vi.mock("@hypr/ui/components/ui/dropdown-menu", () => ({
+vi.mock("@meetspace/ui/components/ui/dropdown-menu", () => ({
   AppFloatingPanel: ({ children }: { children: ReactNode }) => (
     <div>{children}</div>
   ),
@@ -56,7 +56,7 @@ describe("ChatToolbarControls", () => {
       />,
     );
 
-    const title = screen.getByText("Ask Anarlog AI anything");
+    const title = screen.getByText("Ask Meetspace AI anything");
     expect(title.closest("button")?.className).toContain("rounded-full");
   });
 

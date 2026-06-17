@@ -38,7 +38,7 @@ fn silero_onnx_mask(audio: &[u8]) -> (Vec<bool>, f32) {
 
     for (i, chunk) in samples_f32.chunks(CHUNK_SIZE_16KHZ).enumerate() {
         if chunk.len() == CHUNK_SIZE_16KHZ {
-            let view = hypr_onnx::ndarray::ArrayView1::from(chunk);
+            let view = meetspace_onnx::ndarray::ArrayView1::from(chunk);
             let prob = model.process_chunk(&view, 16000).unwrap();
             max_prob = max_prob.max(prob);
             let speech = prob > 0.5;
@@ -54,7 +54,7 @@ fn silero_onnx_mask(audio: &[u8]) -> (Vec<bool>, f32) {
 fn silero_cactus_mask(audio: &[u8], total_samples: usize) -> Vec<bool> {
     let home = std::env::var("HOME").unwrap();
     let path = format!(
-        "{}/Library/Application Support/com.hyprnote.dev/models/cactus/whisper-medium-int8-apple/vad",
+        "{}/Library/Application Support/com.meetspace.dev/models/cactus/whisper-medium-int8-apple/vad",
         home
     );
     let model = Model::new(&path).unwrap();
@@ -111,9 +111,9 @@ fn compare(name: &str, audio: &[u8]) {
 
 #[test]
 fn compare_all_engines() {
-    compare("english_1", hypr_data::english_1::AUDIO);
-    compare("english_2", hypr_data::english_2::AUDIO);
-    compare("english_3", hypr_data::english_3::AUDIO);
-    compare("korean_1", hypr_data::korean_1::AUDIO);
-    compare("korean_2", hypr_data::korean_2::AUDIO);
+    compare("english_1", meetspace_data::english_1::AUDIO);
+    compare("english_2", meetspace_data::english_2::AUDIO);
+    compare("english_3", meetspace_data::english_3::AUDIO);
+    compare("korean_1", meetspace_data::korean_1::AUDIO);
+    compare("korean_2", meetspace_data::korean_2::AUDIO);
 }

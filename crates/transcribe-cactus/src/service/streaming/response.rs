@@ -1,7 +1,7 @@
 #[cfg(test)]
 use std::path::Path;
 
-pub(super) use hypr_transcribe_core::{
+pub(super) use meetspace_transcribe_core::{
     WsSender, format_timestamp_now, send_ws, send_ws_best_effort,
 };
 use owhisper_interface::stream::{Alternatives, Channel, Metadata, StreamResponse, Word};

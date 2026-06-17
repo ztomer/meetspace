@@ -7,10 +7,10 @@ edition = "2024"
 specta = ["dep:specta"]
 
 [dependencies]
-hypr-file = { workspace = true }
-hypr-gguf = { workspace = true }
-hypr-lmstudio = { workspace = true }
-hypr-local-model = { workspace = true }
+meetspace-file = { workspace = true }
+meetspace-gguf = { workspace = true }
+meetspace-lmstudio = { workspace = true }
+meetspace-local-model = { workspace = true }
 
 axum = { workspace = true }
 dirs = { workspace = true }
@@ -24,4 +24,4 @@ tracing = { workspace = true }
 specta = { workspace = true, optional = true }
 
 [target.'cfg(target_arch = "aarch64")'.dependencies]
-hypr-llm-cactus = { workspace = true }
+meetspace-llm-cactus = { workspace = true }

@@ -20,7 +20,7 @@ impl CactusAdapter {
     ) -> Result<StreamingBatchStream, Error> {
         let path = file_path.as_ref().to_path_buf();
         tracing::info!(
-            hyprnote.file.path = %path.display(),
+            meetspace.file.path = %path.display(),
             url.full = %api_base,
             "starting_cactus_batch_stream"
         );
@@ -97,8 +97,8 @@ fn load_audio_file(path: PathBuf) -> Result<(Vec<u8>, String, f64), Error> {
 }
 
 fn audio_duration_secs(path: &Path) -> f64 {
-    use hypr_audio_utils::Source;
-    let Ok(source) = hypr_audio_utils::source_from_path(path) else {
+    use meetspace_audio_utils::Source;
+    let Ok(source) = meetspace_audio_utils::source_from_path(path) else {
         return 0.0;
     };
     if let Some(d) = source.total_duration() {

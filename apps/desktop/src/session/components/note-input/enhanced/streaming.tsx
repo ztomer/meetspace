@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Streamdown } from "streamdown";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { streamdownComponents } from "../../streamdown";
 
@@ -54,7 +54,7 @@ export function StreamingView({ enhancedNoteId }: { enhancedNoteId: string }) {
   );
 }
 
-const TIPS = ["The Anarlog team loves our users!"];
+const TIPS = ["The Meetspace team loves our users!"];
 
 function RotatingTip() {
   const [index, setIndex] = useState(() =>

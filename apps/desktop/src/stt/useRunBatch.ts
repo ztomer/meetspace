@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
-import type { TranscriptionParams } from "@hypr/plugin-transcription";
-import type { TranscriptStorage } from "@hypr/store";
+import type { TranscriptionParams } from "@meetspace/plugin-transcription";
+import type { TranscriptStorage } from "@meetspace/store";
 
 import { useListener } from "./contexts";
 import { useKeywords } from "./useKeywords";
@@ -53,11 +53,11 @@ export function getBatchProvider(
   provider: string,
   model: string,
 ): TranscriptionParams["provider"] | null {
-  if (provider === "hyprnote") {
+  if (provider === "meetspace") {
     if (model.startsWith("soniqo-")) return "soniqo";
     if (model.startsWith("am-")) return "am";
     if (model.startsWith("cactus-")) return "cactus";
-    return "hyprnote";
+    return "meetspace";
   }
   if (DIRECT_BATCH_PROVIDERS.has(provider as TranscriptionParams["provider"])) {
     return provider as TranscriptionParams["provider"];

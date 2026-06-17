@@ -1,4 +1,4 @@
-# @hypr/tiptap
+# @meetspace/tiptap
 
 Shared Tiptap extensions and styles used by the web admin blog editor.
 
@@ -6,17 +6,17 @@ Shared Tiptap extensions and styles used by the web admin blog editor.
 
 ## Exports
 
-### Shared extensions (`@hypr/tiptap/shared`)
+### Shared extensions (`@meetspace/tiptap/shared`)
 
 - StarterKit (bold, italic, strike, code, headings, lists, blockquote, code block, horizontal rule, hard break)
 - Tables (resizable), task lists (nestable), images, links, YouTube embeds
 - Hashtag highlighting, AI content highlights, search & replace, streaming animation
 - Markdown conversion (`json2md` / `md2json`), content validation, clipboard serialization
 
-### Styles (`@hypr/tiptap/styles.css`)
+### Styles (`@meetspace/tiptap/styles.css`)
 
 ```css
-@import "@hypr/tiptap/styles.css";
+@import "@meetspace/tiptap/styles.css";
 ```
 
 ## Utilities
@@ -29,7 +29,7 @@ import {
   parseJsonContent,
   extractHashtags,
   EMPTY_TIPTAP_DOC,
-} from "@hypr/tiptap/shared";
+} from "@meetspace/tiptap/shared";
 ```
 
 ## License

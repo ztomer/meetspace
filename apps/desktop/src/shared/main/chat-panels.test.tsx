@@ -10,7 +10,7 @@ const mocks = vi.hoisted(() => ({
   sendEvent: vi.fn(),
 }));
 
-vi.mock("@hypr/ui/components/ui/resizable", () => ({
+vi.mock("@meetspace/ui/components/ui/resizable", () => ({
   ResizablePanelGroup: ({
     children,
     direction,

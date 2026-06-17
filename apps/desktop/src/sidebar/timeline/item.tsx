@@ -1,16 +1,16 @@
 import { SquareIcon } from "lucide-react";
 import { memo, type DragEvent, useCallback, useMemo } from "react";
 
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { DancingSticks } from "@hypr/ui/components/ui/dancing-sticks";
-import { Spinner } from "@hypr/ui/components/ui/spinner";
+import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { DancingSticks } from "@meetspace/ui/components/ui/dancing-sticks";
+import { Spinner } from "@meetspace/ui/components/ui/spinner";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
-import { cn, format, getYear, safeParseDate, TZDate } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/tooltip";
+import { cn, format, getYear, safeParseDate, TZDate } from "@meetspace/utils";
 
 import {
   type EventTimelineItem,

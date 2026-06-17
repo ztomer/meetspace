@@ -8,20 +8,20 @@ import {
   useState,
 } from "react";
 
-import { startTrial } from "@hypr/api-client";
-import { createClient } from "@hypr/api-client/client";
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { openUrlWithInstruction } from "@hypr/plugin-windows";
+import { startTrial } from "@meetspace/api-client";
+import { createClient } from "@meetspace/api-client/client";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { openUrlWithInstruction } from "@meetspace/plugin-windows";
 import {
   getActionForTier,
   PlanFeatureList,
   PLAN_TIERS,
   type PlanTier,
   type TierAction,
-} from "@hypr/pricing";
-import { Button } from "@hypr/ui/components/ui/button";
-import { cn } from "@hypr/utils";
+} from "@meetspace/pricing";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { cn } from "@meetspace/utils";
 
 import { useAuth } from "~/auth";
 import { useBillingAccess } from "~/auth/billing";
@@ -74,7 +74,7 @@ export function SettingsAccount() {
           <SettingsPageTitle title="Account" />
           <Container
             title="Finish sign-in"
-            description="Complete the sign-in flow in your browser, then come back here if Anarlog does not reconnect automatically."
+            description="Complete the sign-in flow in your browser, then come back here if Meetspace does not reconnect automatically."
             action={
               <Button onClick={handleSignIn} variant="outline">
                 Reopen sign-in page
@@ -82,7 +82,7 @@ export function SettingsAccount() {
             }
           >
             <p className="text-xs text-neutral-500">
-              If the browser does not reopen Anarlog, use the paste-link
+              If the browser does not reopen Meetspace, use the paste-link
               fallback in the sign-in instruction window.
             </p>
           </Container>
@@ -97,7 +97,7 @@ export function SettingsAccount() {
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex min-w-0 flex-1 flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <h3 className="text-sm font-medium">Sign in to Anarlog</h3>
+                <h3 className="text-sm font-medium">Sign in to Meetspace</h3>
                 <div className="text-sm text-neutral-600">
                   Sign in to unlock cloud transcription and AI models, plus Pro
                   features like sharing.

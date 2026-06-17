@@ -11,17 +11,17 @@ use axum::{
     http::{Request, StatusCode},
     response::{IntoResponse, Response},
 };
-use hypr_model_manager::{ModelManager, ModelManagerBuilder};
+use meetspace_model_manager::{ModelManager, ModelManagerBuilder};
 use tower::Service;
 
-use hypr_ws_utils::ConnectionManager;
+use meetspace_ws_utils::ConnectionManager;
 use owhisper_interface::ListenParams;
 
 use super::super::batch;
 use super::session;
 use crate::CactusConfig;
 
-type CactusModelManager = ModelManager<hypr_cactus::Model>;
+type CactusModelManager = ModelManager<meetspace_cactus::Model>;
 
 #[derive(Clone)]
 pub struct TranscribeService {
@@ -29,7 +29,7 @@ pub struct TranscribeService {
     manager: CactusModelManager,
     cactus_config: CactusConfig,
     connection_manager: ConnectionManager,
-    health: hypr_cactus::ServiceHealthTracker,
+    health: meetspace_cactus::ServiceHealthTracker,
 }
 
 pub const LISTEN_PATH: &str = "/v1/listen";
@@ -78,8 +78,8 @@ impl TranscribeServiceBuilder {
     }
 
     pub fn build(self) -> TranscribeService {
-        hypr_cactus::init_runtime();
-        let health = hypr_cactus::ServiceHealthTracker::new();
+        meetspace_cactus::init_runtime();
+        let health = meetspace_cactus::ServiceHealthTracker::new();
 
         let model_path = self
             .model_path
@@ -249,7 +249,7 @@ fn parse_listen_params(query: &str) -> Result<ListenParams, serde_html_form::de:
 #[cfg(test)]
 mod tests {
     use super::*;
-    use hypr_language::ISO639;
+    use meetspace_language::ISO639;
 
     #[test]
     fn parse_single_language() {

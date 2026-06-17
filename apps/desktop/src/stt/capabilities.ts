@@ -1,7 +1,7 @@
 import {
   commands as listenerCommands,
   type TranscriptionMode,
-} from "@hypr/plugin-transcription";
+} from "@meetspace/plugin-transcription";
 
 type LiveTranscriptionConfig = {
   languages: string[];
@@ -151,7 +151,7 @@ export async function getLiveTranscriptionConfig({
   model?: string | null;
   languages: readonly string[];
 }): Promise<LiveTranscriptionConfig> {
-  if (provider === "hyprnote" && model !== "cloud") {
+  if (provider === "meetspace" && model !== "cloud") {
     return getOnDeviceTranscriptionConfig(model, languages);
   }
 

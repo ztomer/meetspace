@@ -10,8 +10,8 @@ use crate::{
     ListenerRuntime, SessionDataEvent,
     actors::{ChannelMode, ListenerMsg, RecMsg},
 };
-use hypr_audio_utils::f32_to_i16_bytes;
-use hypr_vad_masking::VadMask;
+use meetspace_audio_utils::f32_to_i16_bytes;
+use meetspace_vad_masking::VadMask;
 
 use super::{ListenerRouting, SourceFrame};
 
@@ -318,7 +318,7 @@ mod tests {
 
     use ractor::{Actor, ActorProcessingErr, ActorRef};
 
-    use hypr_audio::CaptureFrame;
+    use meetspace_audio::CaptureFrame;
 
     use super::*;
     use crate::{
@@ -328,12 +328,12 @@ mod tests {
 
     struct TestRuntime;
 
-    impl hypr_storage::StorageRuntime for TestRuntime {
-        fn global_base(&self) -> Result<PathBuf, hypr_storage::Error> {
+    impl meetspace_storage::StorageRuntime for TestRuntime {
+        fn global_base(&self) -> Result<PathBuf, meetspace_storage::Error> {
             Ok(std::env::temp_dir())
         }
 
-        fn vault_base(&self) -> Result<PathBuf, hypr_storage::Error> {
+        fn vault_base(&self) -> Result<PathBuf, meetspace_storage::Error> {
             Ok(std::env::temp_dir())
         }
     }

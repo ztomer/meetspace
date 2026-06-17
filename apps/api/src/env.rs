@@ -12,40 +12,40 @@ fn default_port() -> u16 {
 pub struct Env {
     #[serde(default = "default_port")]
     pub port: u16,
-    #[serde(default, deserialize_with = "hypr_api_env::filter_empty")]
+    #[serde(default, deserialize_with = "meetspace_api_env::filter_empty")]
     pub sentry_dsn: Option<String>,
-    #[serde(default, deserialize_with = "hypr_api_env::filter_empty")]
+    #[serde(default, deserialize_with = "meetspace_api_env::filter_empty")]
     pub posthog_api_key: Option<String>,
 
     #[serde(flatten)]
     pub observability: crate::observability::Env,
 
     #[serde(flatten)]
-    pub supabase: hypr_api_env::SupabaseEnv,
+    pub supabase: meetspace_api_env::SupabaseEnv,
     #[serde(flatten)]
-    pub nango: hypr_api_env::NangoEnv,
+    pub nango: meetspace_api_env::NangoEnv,
     #[serde(flatten)]
-    pub stripe: hypr_api_env::StripeEnv,
+    pub stripe: meetspace_api_env::StripeEnv,
     #[serde(flatten)]
-    pub pyannote: hypr_api_env::PyannoteEnv,
+    pub pyannote: meetspace_api_env::PyannoteEnv,
     #[serde(flatten)]
-    pub github_app: hypr_api_support::GitHubAppEnv,
+    pub github_app: meetspace_api_support::GitHubAppEnv,
     #[serde(flatten)]
-    pub support_database: hypr_api_support::SupportDatabaseEnv,
+    pub support_database: meetspace_api_support::SupportDatabaseEnv,
     #[serde(flatten)]
-    pub chatwoot: hypr_api_support::ChatwootEnv,
+    pub chatwoot: meetspace_api_support::ChatwootEnv,
 
     pub cactus_api_key: String,
     pub exa_api_key: String,
     pub jina_api_key: String,
 
     #[serde(flatten)]
-    pub loops: hypr_api_env::LoopsEnv,
+    pub loops: meetspace_api_env::LoopsEnv,
 
     #[serde(flatten)]
-    pub llm: hypr_llm_proxy::Env,
+    pub llm: meetspace_llm_proxy::Env,
     #[serde(flatten)]
-    pub stt: hypr_transcribe_proxy::Env,
+    pub stt: meetspace_transcribe_proxy::Env,
 }
 
 static ENV: OnceLock<Env> = OnceLock::new();

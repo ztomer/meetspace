@@ -1,12 +1,12 @@
 # https://docs.netlify.com/build/configure-builds/overview/#definitions
 # We must set package="apps/web" in the UI
 [build]
-command = "VITE_APP_VERSION=$COMMIT_REF pnpm -F @hypr/web build"
+command = "VITE_APP_VERSION=$COMMIT_REF pnpm -F @meetspace/web build"
 publish = "apps/web/dist/client"
 ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF apps/web packages/api-client packages/tiptap packages/ui packages/utils package.json pnpm-lock.yaml"
 
 [build.environment]
-VITE_APP_URL = "https://anarlog.so"
+VITE_APP_URL = "https://meetspace.so"
 NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_VERSION = "22"
 
@@ -14,58 +14,58 @@ NODE_VERSION = "22"
 # https://docs.netlify.com/build/image-cdn/overview/#remote-path
 remote_images = [
   "https://char\\.com/.*",
-  "https://hyprnote\\.com/.*",
+  "https://meetspace\\.com/.*",
   "https://ijoptyyjrfqwaqhyxkxj\\.supabase\\.co/.*",
 ]
 
-# Domain migration: hyprnote.com -> char.com (301 for SEO)
+# Domain migration: meetspace.com -> char.com (301 for SEO)
 # Exclude /admin, /app, /api, /webhook from redirects.
 # Auth paths MUST redirect so PKCE cookies stay on one domain.
 
 [[redirects]]
-from = "https://hyprnote.com/auth"
+from = "https://meetspace.com/auth"
 to = "https://char.com/auth"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/callback/*"
+from = "https://meetspace.com/callback/*"
 to = "https://char.com/callback/:splat"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/blog/*"
+from = "https://meetspace.com/blog/*"
 to = "https://char.com/blog/:splat"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/docs/*"
+from = "https://meetspace.com/docs/*"
 to = "https://char.com/docs/:splat"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/changelog/*"
+from = "https://meetspace.com/changelog/*"
 to = "https://char.com/changelog/:splat"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/gallery/*"
+from = "https://meetspace.com/gallery/*"
 to = "https://char.com/gallery/:splat"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/integrations/*"
+from = "https://meetspace.com/integrations/*"
 to = "https://char.com/integrations/:splat"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/legal/*"
+from = "https://meetspace.com/legal/*"
 to = "https://char.com/legal/:splat"
 status = 301
 force = true
@@ -83,97 +83,97 @@ status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/roadmap"
+from = "https://meetspace.com/roadmap"
 to = "https://char.com/changelog/"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/roadmap/*"
+from = "https://meetspace.com/roadmap/*"
 to = "https://char.com/changelog/"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/vs/*"
+from = "https://meetspace.com/vs/*"
 to = "https://char.com/vs/:splat"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/product/*"
+from = "https://meetspace.com/product/*"
 to = "https://char.com/product/:splat"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/solution/*"
+from = "https://meetspace.com/solution/*"
 to = "https://char.com/solution/:splat"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/company-handbook/*"
+from = "https://meetspace.com/company-handbook/*"
 to = "https://char.com/company-handbook/:splat"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/press-kit/*"
+from = "https://meetspace.com/press-kit/*"
 to = "https://char.com/press-kit/:splat"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/download"
+from = "https://meetspace.com/download"
 to = "https://char.com/download"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/pricing"
+from = "https://meetspace.com/pricing"
 to = "https://char.com/pricing"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/about"
+from = "https://meetspace.com/about"
 to = "https://char.com/about"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/opensource"
+from = "https://meetspace.com/opensource"
 to = "https://char.com/opensource"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/enterprise"
+from = "https://meetspace.com/enterprise"
 to = "https://char.com/enterprise"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/security"
+from = "https://meetspace.com/security"
 to = "https://char.com/security"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/free"
+from = "https://meetspace.com/free"
 to = "https://char.com/free"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com/contact"
+from = "https://meetspace.com/contact"
 to = "https://char.com/contact"
 status = 301
 force = true
 
 [[redirects]]
-from = "https://hyprnote.com"
+from = "https://meetspace.com"
 to = "https://char.com"
 status = 301
 force = true
@@ -202,29 +202,29 @@ to = "https://char.com/:splat"
 status = 301
 force = true
 
-# Domain migration: char.com -> anarlog.so (301 for SEO)
-# Char is shut down except for /blog/* and /legal/* which redirect to anarlog.so
+# Domain migration: char.com -> meetspace.so (301 for SEO)
+# Char is shut down except for /blog/* and /legal/* which redirect to meetspace.so
 
 [[redirects]]
 from = "https://char.com/blog/*"
-to = "https://anarlog.so/blog/:splat"
+to = "https://meetspace.so/blog/:splat"
 status = 301
 force = true
 
 [[redirects]]
 from = "https://www.char.com/blog/*"
-to = "https://anarlog.so/blog/:splat"
+to = "https://meetspace.so/blog/:splat"
 status = 301
 force = true
 
 [[redirects]]
 from = "https://char.com/legal/*"
-to = "https://anarlog.so/legal/:splat"
+to = "https://meetspace.so/legal/:splat"
 status = 301
 force = true
 
 [[redirects]]
 from = "https://www.char.com/legal/*"
-to = "https://anarlog.so/legal/:splat"
+to = "https://meetspace.so/legal/:splat"
 status = 301
 force = true

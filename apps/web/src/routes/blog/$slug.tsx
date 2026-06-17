@@ -4,7 +4,7 @@ import { type Article, allArticles } from "content-collections";
 
 import { mdxComponents } from "@/components/mdx-components";
 import { SiteFooter } from "@/components/site-footer";
-import { ANARLOG_SITE_URL } from "@/lib/seo";
+import { MEETSPACE_SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/blog/$slug")({
   component: Component,
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/blog/$slug")({
   head: ({ loaderData }) => {
     const article = loaderData?.article;
     if (!article) return {};
-    const url = `${ANARLOG_SITE_URL}/blog/${article.slug}`;
+    const url = `${MEETSPACE_SITE_URL}/blog/${article.slug}`;
     return {
       links: [{ rel: "canonical", href: url }],
       meta: [
@@ -47,8 +47,8 @@ function Component() {
     <main className="min-h-screen bg-white text-[#181613]">
       <div className="mx-auto w-full max-w-[700px] px-5 py-8 md:px-8 md:py-12">
         <header className="flex items-center justify-between gap-6">
-          <Link to="/" aria-label="Anarlog home">
-            <img src="/logo.svg" alt="Anarlog" className="h-9 w-auto" />
+          <Link to="/" aria-label="Meetspace home">
+            <img src="/logo.svg" alt="Meetspace" className="h-9 w-auto" />
           </Link>
         </header>
 

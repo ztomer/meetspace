@@ -7,7 +7,7 @@ mod stream;
 
 pub use complete::complete;
 pub use context::LlmContext;
-pub use hypr_llm_types::{Message, ToolCall};
+pub use meetspace_llm_types::{Message, ToolCall};
 pub use request::validate_messages;
 pub use result::CompletionResult;
 pub use stream::{CompletionStream, complete_stream};

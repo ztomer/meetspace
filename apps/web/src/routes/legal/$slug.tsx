@@ -3,7 +3,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { allLegals } from "content-collections";
 
 import { mdxComponents } from "@/components/mdx-components";
-import { ANARLOG_SITE_URL } from "@/lib/seo";
+import { MEETSPACE_SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/legal/$slug")({
   component: Component,
@@ -17,11 +17,11 @@ export const Route = createFileRoute("/legal/$slug")({
   head: ({ loaderData }) => {
     const doc = loaderData?.doc;
     if (!doc) return {};
-    const url = `${ANARLOG_SITE_URL}/legal/${doc.slug}`;
+    const url = `${MEETSPACE_SITE_URL}/legal/${doc.slug}`;
     return {
       links: [{ rel: "canonical", href: url }],
       meta: [
-        { title: `${doc.title} — Anarlog` },
+        { title: `${doc.title} — Meetspace` },
         { name: "description", content: doc.summary || doc.title },
         { property: "og:title", content: doc.title },
         { property: "og:description", content: doc.summary || doc.title },
