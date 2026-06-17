@@ -166,7 +166,7 @@ export function ModelCombobox({
             {suffix}
           </span>
           {isConfigured ? (
-            <Check className="text-success-fg -mr-1 h-4 w-4 shrink-0" />
+            <Check className="-mr-1 h-4 w-4 shrink-0 text-green-600" />
           ) : (
             <ChevronDown className="-mr-1 h-4 w-4 shrink-0 opacity-50" />
           )}
