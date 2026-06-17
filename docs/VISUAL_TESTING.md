@@ -30,6 +30,13 @@ anything visual.
 Pixel-snapshot harness: Playwright renders the Vite build in headless Chromium
 with Tauri IPC mocked, in light and dark.
 
+Current coverage (each light + dark): NotFound, main app shell (empty state),
+onboarding (first-run permissions), and all nine Settings sections (App/
+Appearance, Data, Notifications, Permissions, Calendar, Contacts, Intelligence,
+Templates, Integrations). Data-populated screens (a timeline with notes, an
+open editor, a calendar with events) are the next frontier — see "In-app
+screens" below.
+
 ```bash
 pnpm -F desktop visual:install   # one time: download the chromium binary
 pnpm -F desktop visual           # run + compare against committed baselines
@@ -70,10 +77,17 @@ with safe empties, so sessions/notes/chat come up **empty** (the persisters
 have no files to load — those errors in the log are caught and harmless).
 
 That covers empty/first-run states. Screens that need **existing data**
-(a populated timeline, an open note, calendar events) need that data seeded —
-return it from the relevant command in `support/tauri-mock.ts` `handlers`, or
-push rows into the TinyBase stores via an init script. Add the handler your
-screen calls, navigate, get it to a stable state, snapshot.
+(a populated timeline, an open note, calendar events) need that data seeded.
+Sessions/notes are loaded by filesystem-backed persisters
+(`store/tinybase/persister/**`), so seeding them means either mocking the fs
+read commands those persisters call (return fake session files) or — simpler —
+injecting rows straight into the TinyBase store once it exists. That seam isn't
+built yet; it's the main remaining piece. Use `mockCommands(page, {...})` for
+command-driven data, and add a store-seed init script for table rows.
+
+Per-test command overrides: `mockCommands(page, { some_command: value })`
+before navigation (see `onboarding.spec.ts`). Values are the raw `invoke`
+return; specta bindings wrap them into `{ status: "ok", data }`.
 
 Determinism notes: the clock is frozen (`support/fixtures.ts` → `FIXED_TIME`)
 so on-screen times don't drift; animations are disabled at screenshot time.
