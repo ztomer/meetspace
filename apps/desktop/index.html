@@ -9,11 +9,40 @@
     <title>Meetspace</title>
     <script src="/theme-boot.js"></script>
     <style>
-      html, body, #root {
-        background: transparent !important;
-        background-color: transparent !important;
-      }
+      /* Default: transparent for overlay windows (composer, floating). The
+         inline script below upgrades the main window to a theme-aware solid
+         background so the first paint isn't a white flash. */
+      html, body, #root { background: transparent; }
+      html.meetspace-themed { background-color: hsl(0 0% 100%); }
+      html.meetspace-themed.dark { background-color: hsl(0 0% 3.9%); }
     </style>
+    <script>
+      // Runs before React mounts. Two jobs:
+      //   1. On the main window, set a theme-aware background so the initial
+      //      frame matches the eventual theme. Overlay windows stay
+      //      transparent so they can be glass / floating bars.
+      //   2. Apply the persisted `.dark` class so the bg above resolves
+      //      correctly. Mirrors useApplyTheme(): stored choice wins;
+      //      "system"/unset falls back to OS preference.
+      (function () {
+        try {
+          var path = window.location.pathname;
+          var isOverlay =
+            path.indexOf("/composer") === 0 ||
+            path.indexOf("/floating") === 0 ||
+            path.indexOf("/app/composer") === 0;
+          if (!isOverlay) {
+            document.documentElement.classList.add("meetspace-themed");
+          }
+          var stored = localStorage.getItem("meetspace-theme");
+          var dark =
+            stored === "dark" ||
+            ((stored === "system" || !stored) &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (dark) document.documentElement.classList.add("dark");
+        } catch (_) {}
+      })();
+    </script>
     <script src="/relay-shim.js"></script>
   </head>
   <body spellcheck="false">

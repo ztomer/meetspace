@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Meetspace
+GenericName=AI Meeting Notes
+Comment=The AI notepad for private meetings
+Exec=meetspace %U
+Icon=com.meetspace.Meetspace
+Terminal=false
+Type=Application
+Categories=Office;AudioVideo;Recorder;
+Keywords=notes;meeting;transcription;ai;audio;recording;
+StartupNotify=true
+StartupWMClass=meetspace
+MimeType=x-scheme-handler/meetspace;

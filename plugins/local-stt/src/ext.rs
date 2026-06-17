@@ -31,7 +31,11 @@ impl<R: Runtime> ModelDownloaderRuntime<LocalModel> for TauriModelRuntime<R> {
             .unwrap_or_else(|_| dirs::data_dir().unwrap_or_default().join("models")))
     }
 
-    fn emit_progress(&self, model: &LocalModel, status: meetspace_model_downloader::DownloadStatus) {
+    fn emit_progress(
+        &self,
+        model: &LocalModel,
+        status: meetspace_model_downloader::DownloadStatus,
+    ) {
         let payload = DownloadProgressPayload {
             model: model.clone(),
             status,
@@ -509,6 +513,7 @@ async fn start_external_server<R: Runtime, T: Manager<R>>(
 
     let app_handle = manager.app_handle().clone();
     let cmd_builder = external::CommandBuilder::new(move || {
+        #[allow(unused_mut)]
         let mut cmd = app_handle
             .sidecar2()
             .sidecar("char-sidecar-stt")?

@@ -186,11 +186,11 @@ impl Db {
         result
     }
 
-    pub async fn cloudsync_cleanup(&self, table_name: &str) -> Result<(), meetspace_cloudsync::Error> {
-        let mut connection = self.lock_cloudsync_connection().await?;
-        let result = meetspace_cloudsync::cleanup(&mut **connection.as_mut().unwrap(), table_name).await;
-        self.release_single_pool_connection(&mut connection);
-        result
+    pub async fn cloudsync_cleanup(
+        &self,
+        table_name: &str,
+    ) -> Result<(), meetspace_cloudsync::Error> {
+        meetspace_cloudsync::cleanup(&self.pool, table_name).await
     }
 
     pub async fn cloudsync_terminate(&self) -> Result<(), meetspace_cloudsync::Error> {
@@ -299,12 +299,10 @@ impl Db {
         self.cloudsync_network_receive_changes(max_chunks).await
     }
 
-    pub async fn cloudsync_network_reset_sync_version(&self) -> Result<(), meetspace_cloudsync::Error> {
-        let mut connection = self.lock_cloudsync_connection().await?;
-        let result =
-            meetspace_cloudsync::network_reset_sync_version(&mut **connection.as_mut().unwrap()).await;
-        self.release_single_pool_connection(&mut connection);
-        result
+    pub async fn cloudsync_network_reset_sync_version(
+        &self,
+    ) -> Result<(), meetspace_cloudsync::Error> {
+        meetspace_cloudsync::network_reset_sync_version(&self.pool).await
     }
 
     pub async fn cloudsync_network_logout(&self) -> Result<(), meetspace_cloudsync::Error> {

@@ -56,15 +56,12 @@ export function getBaseLanguageDisplayName(
   code: string,
   displayLocale = "en",
 ): string {
-  const language = getBaseLanguageCode(code);
-  if (!language) {
-    return code;
-  }
+  const { language } = parseLocale(code);
   return getDisplayNames(displayLocale).of(language) ?? code;
 }
 
 export function getBaseLanguageCode(code: string): string {
-  return tryParseLocale(code)?.language ?? "";
+  return parseLocale(code).language;
 }
 
 export function getAdditionalSpokenLanguages(
@@ -95,20 +92,12 @@ export function parseLocale(code: string): {
   language: string;
   region?: string;
 } {
-  return tryParseLocale(code) ?? { language: "en" };
-}
-
-function tryParseLocale(code: string): {
-  language: string;
-  region?: string;
-} | null {
-  let locale: Intl.Locale;
   try {
-    locale = new Intl.Locale(code);
+    const locale = new Intl.Locale(code);
+    return { language: locale.language, region: locale.region };
   } catch {
-    return null;
+    return { language: code };
   }
-  return { language: locale.language, region: locale.region };
 }
 
 function getDisplayNames(displayLocale: string) {

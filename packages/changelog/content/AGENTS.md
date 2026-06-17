@@ -43,7 +43,7 @@ done
 3. To actually see what's changed between two versions, you can use this.
 
 ```bash
-gh api repos/fastrepl/char/compare/<>...<>  --jq '.commits'
+gh api repos/ztomer/meetspace/compare/<>...<>  --jq '.commits'
 ```
 
 # Custom Tags
@@ -60,9 +60,6 @@ Attributes:
 - `variant` (optional): `"warning"` for amber/yellow style, `"info"` for blue style. Defaults to amber/info style.
 
 ```mdx
-<banner title="Hyprnote is now Char!">
-We've renamed the app. All your data is safe and nothing changes on your end.
-</banner>
 
 <banner title="Breaking Change" variant="warning">
 The old plugin format is no longer supported. Please update your plugins.

@@ -1,5 +1,4 @@
 mod agents;
-mod appearance;
 mod commands;
 mod db;
 mod embedded_cli;
@@ -12,33 +11,16 @@ use db::{cloudsync_runtime_config_from_env, open_desktop_db};
 use ext::*;
 use store::*;
 
-use std::sync::atomic::{AtomicBool, Ordering};
-
-use tauri::Emitter;
+use tauri::Manager;
 use tauri_plugin_permissions::{Permission, PermissionsPluginExt};
 use tauri_plugin_windows::{AppWindow, WindowsPluginExt};
 
 #[cfg(any(feature = "dev", feature = "devtools"))]
 const STAGING_BUNDLE_ID: &str = "com.meetspace.staging";
 
-const APP_EXIT_REQUESTED_EVENT: &str = "app-exit-requested";
-static EXIT_FLUSH_COMPLETE: AtomicBool = AtomicBool::new(false);
-
-fn mark_exit_flush_complete() {
-    EXIT_FLUSH_COMPLETE.store(true, Ordering::SeqCst);
-}
-
-fn should_force_quit() -> bool {
-    #[cfg(target_os = "macos")]
-    {
-        return meetspace_intercept::should_force_quit();
-    }
-
-    #[cfg(not(target_os = "macos"))]
-    false
-}
-
-fn create_audio_provider(_bundle_id: &str) -> std::sync::Arc<dyn meetspace_audio_actual::AudioProvider> {
+fn create_audio_provider(
+    _bundle_id: &str,
+) -> std::sync::Arc<dyn meetspace_audio_actual::AudioProvider> {
     #[cfg(any(feature = "dev", feature = "devtools"))]
     {
         let bundle_id = _bundle_id;
@@ -137,8 +119,9 @@ pub async fn main() {
     builder = builder
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_opener2::init())
+        .plugin(tauri_plugin_oauth::init())
+        .plugin(tauri_plugin_diarize::init())
         .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_tracing::init())
         .plugin(tauri_plugin_analytics::init())
         .plugin(tauri_plugin_attachment_sync::init())
         .plugin(tauri_plugin_agent::init())
@@ -157,6 +140,7 @@ pub async fn main() {
         .plugin(tauri_plugin_calendar::init())
         .plugin(tauri_plugin_todo::init())
         .plugin(tauri_plugin_auth::init())
+        .plugin(tauri_plugin_tracing::init())
         .plugin(tauri_plugin_hooks::init())
         .plugin(tauri_plugin_icon::init())
         .plugin(tauri_plugin_shell::init())
@@ -205,6 +189,13 @@ pub async fn main() {
                     .map(|ctx| ctx.supervisor.get_cell()),
             },
         ))
+        .plugin(tauri_plugin_network::init(
+            tauri_plugin_network::InitOptions {
+                parent_supervisor: root_supervisor_ctx
+                    .as_ref()
+                    .map(|ctx| ctx.supervisor.get_cell()),
+            },
+        ))
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             Some(vec!["--background"]),
@@ -229,11 +220,12 @@ pub async fn main() {
 
     let root_supervisor_ctx_for_run = root_supervisor_ctx.clone();
 
-    let app_result = builder
+    let app = builder
         .invoke_handler(specta_builder.invoke_handler())
         .on_window_event(tauri_plugin_windows::on_window_event)
         .setup(move |app| {
             let app_handle = app.handle().clone();
+            let _app_clone = app_handle.clone();
 
             specta_builder.mount_events(&app_handle);
 
@@ -246,19 +238,7 @@ pub async fn main() {
 
             {
                 use tauri_plugin_tray::TrayPluginExt;
-                use tauri_plugin_windows::WindowsPluginExt;
-
-                let appearance_settings =
-                    appearance::load_app_appearance_settings::<tauri::Wry, _>(&app_handle);
-
-                app_handle
-                    .windows()
-                    .set_show_app_in_dock(appearance_settings.show_app_in_dock)
-                    .unwrap();
-
-                if appearance_settings.show_tray_icon {
-                    app_handle.tray().create_tray_menu().unwrap();
-                }
+                app_handle.tray().create_tray_menu().unwrap();
                 app_handle.tray().create_app_menu().unwrap();
             }
 
@@ -297,12 +277,8 @@ pub async fn main() {
 
             Ok(())
         })
-        .build(context);
-
-    let app = match app_result {
-        Ok(app) => app,
-        Err(error) => exit_after_startup_failure(&error),
-    };
+        .build(context)
+        .unwrap();
 
     match get_onboarding_flag() {
         None => {}
@@ -344,20 +320,23 @@ pub async fn main() {
         tauri::RunEvent::Reopen { .. } => {
             AppWindow::Main.show(app).unwrap();
         }
+        #[cfg(target_os = "macos")]
         tauri::RunEvent::ExitRequested { api, .. } => {
             if let Some(ref ctx) = root_supervisor_ctx_for_run {
                 ctx.mark_exiting();
             }
 
-            if EXIT_FLUSH_COMPLETE.load(Ordering::SeqCst) || should_force_quit() {
+            if meetspace_intercept::should_force_quit() {
                 return;
             }
 
             api.prevent_exit();
-            if app.emit_to("main", APP_EXIT_REQUESTED_EVENT, ()).is_err() {
-                mark_exit_flush_complete();
-                app.exit(0);
+
+            for (_, window) in app.webview_windows() {
+                let _ = window.close();
             }
+
+            let _ = app.set_activation_policy(tauri::ActivationPolicy::Accessory);
         }
         tauri::RunEvent::Exit => {
             {
@@ -376,29 +355,6 @@ pub async fn main() {
         }
         _ => {}
     });
-}
-
-fn startup_failure_message(error: &impl std::fmt::Display) -> String {
-    format!("Meetspace failed to start: {error}")
-}
-
-fn exit_after_startup_failure(error: &impl std::fmt::Display) -> ! {
-    let message = startup_failure_message(error);
-    eprintln!("{message}");
-    tracing::error!(error = %error, "desktop startup failed");
-    sentry::capture_message(&message, sentry::Level::Error);
-
-    #[cfg(target_os = "macos")]
-    {
-        let _ = std::process::Command::new("/usr/bin/osascript")
-            .args([
-                "-e",
-                "display alert \"Meetspace could not start\" message \"Your existing data was left unchanged. Please restart the app. If the problem continues, contact support.\" as critical buttons {\"OK\"} default button \"OK\"",
-            ])
-            .spawn();
-    }
-
-    std::process::exit(1);
 }
 
 fn get_onboarding_flag() -> Option<bool> {
@@ -442,8 +398,8 @@ fn make_specta_builder<R: tauri::Runtime>() -> tauri_specta::Builder<R> {
             commands::set_dismissed_toasts::<tauri::Wry>,
             commands::get_env::<tauri::Wry>,
             commands::show_devtool::<tauri::Wry>,
-            commands::complete_app_exit::<tauri::Wry>,
             commands::get_tinybase_values::<tauri::Wry>,
+            commands::set_tinybase_values::<tauri::Wry>,
             commands::get_pinned_tabs::<tauri::Wry>,
             commands::set_pinned_tabs::<tauri::Wry>,
             commands::get_recently_opened_sessions::<tauri::Wry>,
@@ -457,16 +413,6 @@ fn make_specta_builder<R: tauri::Runtime>() -> tauri_specta::Builder<R> {
 #[cfg(test)]
 mod test {
     use super::*;
-
-    #[test]
-    fn startup_failure_message_includes_the_original_error() {
-        let message = startup_failure_message(&"legacy import did not pass parity verification");
-
-        assert_eq!(
-            message,
-            "Meetspace failed to start: legacy import did not pass parity verification"
-        );
-    }
 
     #[test]
     fn export_types() {

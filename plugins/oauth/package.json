@@ -1,0 +1,10 @@
+{
+  "name": "@meetspace/plugin-oauth",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./js/index.ts",
+  "exports": {
+    ".": "./js/index.ts"
+  }
+}

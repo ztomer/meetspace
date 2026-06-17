@@ -12,8 +12,8 @@ specta = { workspace = true, features = ["derive"] }
 thiserror = { workspace = true }
 
 [dev-dependencies]
-hypr-template-eval = { workspace = true }
 insta = { workspace = true }
+meetspace-template-eval = { workspace = true }
 
 [[test]]
 name = "llm_eval"

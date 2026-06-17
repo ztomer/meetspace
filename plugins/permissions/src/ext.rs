@@ -37,7 +37,8 @@ pub enum Permission {
 #[cfg(target_os = "macos")]
 fn should_check_via_sidecar(permission: Permission) -> bool {
     // Accessibility trust is process-scoped, so a helper cannot report the app's status.
-    !matches!(permission, Permission::Accessibility)
+    // Microphone is bypassed to check the true permission status of the main app bundle.
+    !matches!(permission, Permission::Accessibility | Permission::Microphone)
 }
 
 #[cfg(target_os = "macos")]

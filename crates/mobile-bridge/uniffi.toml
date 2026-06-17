@@ -1,5 +1,5 @@
 [bindings.kotlin]
-package_name = "com.hypr.mobilebridge"
+package_name = "com.meetspace.mobilebridge"
 
 [bindings.swift]
 module_name = "HyprMobileBridge"

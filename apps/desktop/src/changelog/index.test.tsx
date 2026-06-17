@@ -9,7 +9,9 @@ const mocks = vi.hoisted(() => ({
   close: vi.fn(),
   leftsidebar: {
     expanded: true,
+    setExpanded: vi.fn(),
   },
+  sidebarTimelineEnabled: false,
 }));
 
 vi.mock("@meetspace/changelog", () => ({
@@ -36,6 +38,10 @@ vi.mock("~/contexts/shell", () => ({
   }),
 }));
 
+vi.mock("~/shared/config", () => ({
+  useConfigValue: () => mocks.sidebarTimelineEnabled,
+}));
+
 vi.mock("~/shared/main", () => ({
   StandardContentWrapper: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
@@ -57,80 +63,34 @@ describe("TabContentChangelog", () => {
     mocks.chat.sendEvent.mockClear();
     mocks.close.mockClear();
     mocks.leftsidebar.expanded = true;
+    mocks.sidebarTimelineEnabled = false;
   });
 
   afterEach(() => {
     cleanup();
   });
 
-  it("adds the note header gutter when the sidebar is collapsed", () => {
+  it("adds the note header gutter when sidebar timeline mode is collapsed", () => {
+    mocks.sidebarTimelineEnabled = true;
     mocks.leftsidebar.expanded = false;
 
     render(<TabContentChangelog tab={buildChangelogTab()} />);
 
-    const heading = screen.getByRole("heading", {
-      name: "What's new in 1.0.36?",
-    });
-    const titleSlot = heading.parentElement;
-
     expect(getHeader().className).toContain("pl-[156px]");
-    expect(titleSlot?.className).toContain("left-[104px]");
-    expect(titleSlot?.className).not.toContain("-translate-y-1");
-    expect(titleSlot?.className).toContain("right-[70px]");
-    expect(titleSlot?.className).toContain("justify-start");
-    expect(titleSlot?.className).not.toContain("left-1/2");
-    expect(heading.className).toContain("text-left");
   });
 
   it("does not add the collapsed sidebar gutter while the left sidebar is expanded", () => {
+    mocks.sidebarTimelineEnabled = true;
+
     render(<TabContentChangelog tab={buildChangelogTab()} />);
 
     expect(getHeader().className).not.toContain("pl-[156px]");
   });
-
-  it("uses the left-edge title slot while the sidebar is expanded", () => {
-    mocks.leftsidebar.expanded = true;
-
-    render(<TabContentChangelog tab={buildChangelogTab()} />);
-
-    const heading = screen.getByRole("heading", {
-      name: "What's new in 1.0.36?",
-    });
-    const titleSlot = heading.parentElement;
-
-    expect(titleSlot?.className).toContain("left-0");
-    expect(titleSlot?.className).toContain("right-[70px]");
-    expect(titleSlot?.className).toContain("justify-start");
-    expect(titleSlot?.className).not.toContain("left-1/2");
-    expect(heading.className).toContain("text-left");
-  });
-
-  it("marks the full top header area as draggable while keeping close clickable", () => {
-    render(<TabContentChangelog tab={buildChangelogTab()} />);
-
-    const header = getHeader();
-    const headerFrame = header.parentElement;
-    const heading = screen.getByRole("heading", {
-      name: "What's new in 1.0.36?",
-    });
-    const titleSlot = heading.parentElement;
-    const closeButton = screen.getByRole("button", {
-      name: "Close changelog",
-    });
-
-    expect(headerFrame?.hasAttribute("data-tauri-drag-region")).toBe(true);
-    expect(header.hasAttribute("data-tauri-drag-region")).toBe(true);
-    expect(titleSlot?.hasAttribute("data-tauri-drag-region")).toBe(true);
-    expect(closeButton.getAttribute("data-tauri-drag-region")).toBe("false");
-  });
 });
 
 function getHeader() {
-  const heading = screen.getByRole("heading", {
-    name: "What's new in 1.0.36?",
-  });
-
-  return heading.parentElement?.parentElement as HTMLElement;
+  const breadcrumb = screen.getByText("Changelog");
+  return breadcrumb.closest(".w-full") as HTMLElement;
 }
 
 function buildChangelogTab(): Extract<Tab, { type: "changelog" }> {
