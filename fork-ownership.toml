@@ -1,0 +1,66 @@
+# Fork ownership manifest — the single source of truth for "which side wins"
+# during an upstream sync. scripts/resolve-conflicts.py reads this to resolve
+# rebase conflicts deterministically (no per-file guessing). The longest-matching
+# glob decides; anything unlisted defaults to UPSTREAM.
+#
+# Polarity note (rebase of fork commits ONTO upstream-track):
+#   fork     -> keep the fork's version   (git checkout --theirs)
+#   upstream -> take upstream's version    (git checkout --ours)
+#   delete   -> keep deleted               (git rm)
+#
+# Principle: UI/features/behavior track upstream; the fork only (1) strips
+# commercial/cloud, (2) keeps its local-first + integration features, (3) hides
+# cloud providers via an allowlist (see [providers]), (4) rebrands (applied last).
+
+[paths]
+# Commercial/cloud the fork removes entirely.
+delete = [
+  "apps/api/**", "apps/web/**", "apps/stripe/**",
+  "supabase/**", "packages/supabase/**", "packages/pricing/**",
+  "apps/desktop/src/billing/**",
+  "apps/desktop/src/onboarding/account/**",
+]
+
+# Fork-owned: keep the fork's version on conflict.
+fork = [
+  # Local-first STT (upstream STT is cloud-only) + fork-customized transcript rendering
+  "apps/desktop/src/stt/**",
+  "apps/desktop/src/settings/ai/stt/**",
+  "apps/desktop/src/session/components/note-input/transcript/**",
+  # Provider allowlist module (the hide-cloud delta)
+  "apps/desktop/src/settings/ai/shared/local-providers.ts",
+  "apps/desktop/src/settings/ai/shared/local-providers.test.ts",
+  # Synthetic local auth stubs (fork REPLACES cloud auth — these are kept, not deleted)
+  "apps/desktop/src/auth/**",
+  "apps/desktop/src/sidebar/profile/**",
+  "apps/desktop/src/shared/api-types.ts",
+  # Fork-rewritten UI: onboarding without login/account, settings layout, config
+  "apps/desktop/src/onboarding/**",
+  "apps/desktop/src/settings/general/**",
+  "apps/desktop/src/shared/config/**",
+  "apps/desktop/src/store/tinybase/store/settings.ts",
+  # Fork-added integrations + plugins + native shell
+  "apps/desktop/src/integrations/**",
+  "apps/desktop/src/settings/integrations/**",
+  "plugins/oauth/**", "plugins/diarize/**", "plugins/windows/**",
+  "apps/desktop/src-tauri/**",
+  # Fork infrastructure (tooling, tests, docs)
+  "apps/desktop/visual/**", "scripts/**", "docs/**", ".githooks/**",
+  ".gitattributes", "AGENTS.md", "CLAUDE.md", "eslint-plugin-meetspace.mjs",
+  "fork-ownership.toml",
+]
+# Everything else -> upstream (enhance, ai/hooks, settings/ai/llm, most UI, packages, crates).
+
+[providers]
+# Only these provider ids reach the UI; all others (cloud) are hidden by the
+# allowlist (settings/ai/shared/local-providers.ts). Keep upstream's full provider
+# LISTS/TYPES intact (wide type keeps enhance/connection code compiling); the
+# filter hides cloud at runtime. After a sync, ensure llm/shared.tsx wires
+# keepLocalProviders(...) and _FORK_PROVIDERS (osaurus) onto upstream's list.
+local_llm = ["osaurus", "ollama", "lmstudio", "custom"]
+local_stt = ["meetspace"]
+
+[deps]
+# apps/desktop/package.json reconciliation after taking upstream's package.json.
+add = ["@orama/highlight"]                                   # fork-added deps to restore
+remove = ["@meetspace/api-client", "@meetspace/pricing", "@meetspace/supabase"]  # commercial pkgs the fork deleted
