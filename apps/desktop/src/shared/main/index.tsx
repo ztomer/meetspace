@@ -73,10 +73,6 @@ export function StandardTabWrapper({
     </MainPanel>
   );
 
-  const currentTab = useTabs((state) => state.currentTab);
-  const hasLeftSurfaceCustomSidebar =
-    hasLeftSurfaceCustomSidebarTab(currentTab);
-
   return (
     <div
       className={cn([

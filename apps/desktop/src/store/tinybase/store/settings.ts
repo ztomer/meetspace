@@ -63,6 +63,11 @@ export const SETTINGS_MAPPING = {
       default: "forever" as string,
       schemaDefault: false,
     },
+    theme: {
+      type: "string",
+      path: ["general", "theme"],
+      default: "system" as string,
+    },
     notification_event: {
       type: "boolean",
       path: ["notification", "event"],
