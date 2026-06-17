@@ -20,7 +20,8 @@ impl<'a, R: tauri::Runtime, M: tauri::Manager<R>> Settings<'a, R, M> {
 
     pub fn settings_base(&self) -> Result<Utf8PathBuf, crate::Error> {
         let path = self.settings_base_path()?;
-        Utf8PathBuf::from_path_buf(path).map_err(|_| meetspace_storage::Error::PathNotValidUtf8.into())
+        Utf8PathBuf::from_path_buf(path)
+            .map_err(|_| meetspace_storage::Error::PathNotValidUtf8.into())
     }
 
     pub fn global_base(&self) -> Result<Utf8PathBuf, crate::Error> {
@@ -116,7 +117,11 @@ impl<'a, R: tauri::Runtime, M: tauri::Manager<R>> Settings<'a, R, M> {
 
     pub async fn set_vault_base(&self, new_path: Utf8PathBuf) -> Result<(), crate::Error> {
         let settings_base = self.settings_base_path()?;
-        meetspace_storage::vault::persist_vault_path(&settings_base, &settings_base, new_path.as_ref())?;
+        meetspace_storage::vault::persist_vault_path(
+            &settings_base,
+            &settings_base,
+            new_path.as_ref(),
+        )?;
         Ok(())
     }
 }

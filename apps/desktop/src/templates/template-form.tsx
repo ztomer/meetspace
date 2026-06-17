@@ -281,7 +281,7 @@ export function TemplateForm({
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleDeleteTemplate(id)}
-                    className="cursor-pointer text-red-600 focus:text-red-600"
+                    className="text-destructive focus:text-destructive cursor-pointer"
                   >
                     Delete
                   </DropdownMenuItem>

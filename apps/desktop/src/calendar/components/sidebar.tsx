@@ -2,7 +2,6 @@ import { platform } from "@tauri-apps/plugin-os";
 import { ChevronDown, PlusIcon } from "lucide-react";
 import { useCallback, useMemo, type MouseEvent } from "react";
 
-import type { ConnectionItem } from "@meetspace/api-client";
 import {
   Accordion,
   AccordionContent,
@@ -20,6 +19,7 @@ import { type CalendarProvider, PROVIDERS } from "./shared";
 import { useAuth } from "~/auth";
 import { useBillingAccess } from "~/auth/billing";
 import { useConnections } from "~/auth/useConnections";
+import type { ConnectionItem } from "~/shared/api-types";
 import { useNativeContextMenu } from "~/shared/hooks/useNativeContextMenu";
 import { usePermission } from "~/shared/hooks/usePermissions";
 import { openIntegrationUrl } from "~/shared/integration";
@@ -76,14 +76,6 @@ function getProviderAccordionKey(
     .join("|");
 }
 
-function ProviderIcon({ provider }: { provider: CalendarProvider }) {
-  return (
-    <span className="flex size-5 shrink-0 items-center justify-center">
-      {provider.icon}
-    </span>
-  );
-}
-
 export function CalendarSidebarContent({
   returnTo = "calendar",
 }: {
@@ -126,7 +118,7 @@ export function CalendarSidebarContent({
             key={provider.id}
             className="border-border flex items-center gap-2 border-b py-3 opacity-50 last:border-none"
           >
-            <ProviderIcon provider={provider} />
+            {provider.icon}
             <span className="text-sm font-medium">{provider.displayName}</span>
             {provider.badge && (
               <span className={getProviderBadgeClassName(provider.badge)}>
@@ -240,7 +232,6 @@ function ProviderAccordionItem({
     ],
   );
   const showProviderMenu = useNativeContextMenu(providerMenuItems);
-  const hasAddAccountButton = canAddAccount && !requiresPro;
 
   return (
     <AccordionItem
@@ -251,12 +242,7 @@ function ProviderAccordionItem({
         onContextMenu={
           providerMenuItems.length > 0 ? showProviderMenu : undefined
         }
-        className={cn([
-          "group/row hover:bg-accent relative grid items-center gap-1 rounded-md",
-          hasAddAccountButton
-            ? "grid-cols-[minmax(0,1fr)_auto_auto]"
-            : "grid-cols-[minmax(0,1fr)_auto]",
-        ])}
+        className="group/row hover:bg-muted relative grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1 rounded-md"
       >
         <AccordionHeader
           className={cn(["min-w-0", requiresPro && "opacity-60"])}
@@ -266,7 +252,7 @@ function ProviderAccordionItem({
             onClick={handleTriggerClick}
           >
             <div className="flex min-w-0 items-center gap-2">
-              <ProviderIcon provider={provider} />
+              {provider.icon}
               <span
                 className={cn([
                   "flex min-w-0 items-center gap-2 transition-opacity duration-150",
@@ -291,12 +277,12 @@ function ProviderAccordionItem({
           <button
             type="button"
             onClick={handleUpgradeToPro}
-            className="border-primary bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring pointer-events-none absolute top-1/2 right-1 z-10 shrink-0 translate-x-1 -translate-y-1/2 rounded-full border-2 px-3 py-1 text-xs font-medium opacity-0 shadow-[0_4px_14px_rgba(87,83,78,0.18)] transition-all duration-150 group-focus-within/row:pointer-events-auto group-focus-within/row:translate-x-0 group-focus-within/row:opacity-100 group-hover/row:pointer-events-auto group-hover/row:translate-x-0 group-hover/row:opacity-100 focus-visible:ring-2 focus-visible:outline-none"
+            className="border-border bg-primary hover:bg-primary text-primary-foreground pointer-events-none absolute top-1/2 right-1 z-10 shrink-0 translate-x-1 -translate-y-1/2 rounded-full border-2 px-3 py-1 text-xs font-medium opacity-0 shadow-[0_4px_14px_rgba(87,83,78,0.18)] transition-all duration-150 group-focus-within/row:pointer-events-auto group-focus-within/row:translate-x-0 group-focus-within/row:opacity-100 group-hover/row:pointer-events-auto group-hover/row:translate-x-0 group-hover/row:opacity-100 focus-visible:ring-2 focus-visible:ring-stone-500 focus-visible:outline-none"
             aria-label={`Upgrade to Pro for ${provider.displayName}`}
           >
             Upgrade to Pro
           </button>
-        ) : hasAddAccountButton ? (
+        ) : canAddAccount ? (
           <button
             type="button"
             onClick={handleAddAccount}

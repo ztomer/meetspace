@@ -40,14 +40,6 @@ function getMessageForStatus(status: LLMConnectionStatus): string {
     return "You need to select a model to summarize this meeting";
   }
 
-  if (status.status === "error" && status.reason === "unauthenticated") {
-    return "You need to sign in to use Meetspace's language model";
-  }
-
-  if (status.status === "error" && status.reason === "not_pro") {
-    return "Your Meetspace plan has expired. Configure another language model or renew your plan";
-  }
-
   if (status.status === "error" && status.reason === "missing_config") {
     const missing = status.missing;
     if (missing.includes("api_key") && missing.includes("base_url")) {

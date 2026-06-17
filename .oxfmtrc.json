@@ -11,7 +11,7 @@
         "builtin",
         "external"
       ],
-      "hypr-internal",
+      "meetspace-internal",
       "app-internal",
       [
         "parent",
@@ -22,9 +22,9 @@
     ],
     "customGroups": [
       {
-        "groupName": "hypr-internal",
+        "groupName": "meetspace-internal",
         "elementNamePattern": [
-          "@hypr/**"
+          "@meetspace/**"
         ]
       },
       {

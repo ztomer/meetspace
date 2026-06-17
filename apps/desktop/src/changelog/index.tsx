@@ -1,18 +1,52 @@
-import { XIcon } from "lucide-react";
+import { CalendarIcon, ExternalLinkIcon, SparklesIcon } from "lucide-react";
+import { useEffect } from "react";
 
 import { ChangelogContent } from "@meetspace/changelog";
 import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@meetspace/ui/components/ui/breadcrumb";
 import { Button } from "@meetspace/ui/components/ui/button";
-import { cn } from "@meetspace/utils";
+import { cn, safeFormat } from "@meetspace/utils";
 
 import { useChangelogContent } from "./data";
 
 import { useShell } from "~/contexts/shell";
-import { useMountEffect } from "~/shared/hooks/useMountEffect";
+import { useConfigValue } from "~/shared/config";
 import { StandardTabWrapper } from "~/shared/main";
-import { type Tab, useTabs } from "~/store/zustand/tabs";
+import { type TabItem, TabItemBase } from "~/shared/tabs";
+import { type Tab } from "~/store/zustand/tabs";
 
 export { getLatestVersion } from "./data";
+
+export const TabItemChangelog: TabItem<Extract<Tab, { type: "changelog" }>> = ({
+  tab,
+  tabIndex,
+  handleCloseThis,
+  handleSelectThis,
+  handleCloseOthers,
+  handleCloseAll,
+  handlePinThis,
+  handleUnpinThis,
+}) => (
+  <TabItemBase
+    icon={<SparklesIcon className="h-4 w-4" />}
+    title="What's New"
+    selected={tab.active}
+    pinned={tab.pinned}
+    tabIndex={tabIndex}
+    handleCloseThis={() => handleCloseThis(tab)}
+    handleSelectThis={() => handleSelectThis(tab)}
+    handleCloseOthers={handleCloseOthers}
+    handleCloseAll={handleCloseAll}
+    handlePinThis={() => handlePinThis(tab)}
+    handleUnpinThis={() => handleUnpinThis(tab)}
+  />
+);
 
 export function TabContentChangelog({
   tab,
@@ -20,34 +54,38 @@ export function TabContentChangelog({
   tab: Extract<Tab, { type: "changelog" }>;
 }) {
   const { current } = tab.state;
-  const { chat, leftsidebar } = useShell();
-  const close = useTabs((state) => state.close);
-  const showSidebarTimelineHeaderGutter = !leftsidebar.expanded;
-  const showExpandedSidebarTimelineHeader = leftsidebar.expanded;
+  const { leftsidebar, chat } = useShell();
+  const sidebarTimelineEnabled = useConfigValue("sidebar_timeline_enabled");
+  const showSidebarTimelineHeaderGutter =
+    sidebarTimelineEnabled && !leftsidebar.expanded;
 
-  useMountEffect(() => {
-    if (chat.mode !== "FloatingClosed") {
+  useEffect(() => {
+    leftsidebar.setExpanded(false);
+    if (chat.mode === "RightPanelOpen") {
       chat.sendEvent({ type: "CLOSE" });
     }
-  });
+  }, []);
 
-  const { content, loading } = useChangelogContent(current);
+  const { content, date, loading } = useChangelogContent(current);
 
   return (
     <StandardTabWrapper>
       <div className="flex h-full flex-col">
-        <div data-tauri-drag-region className="shrink-0 pr-1 pl-3">
+        <div className="shrink-0 pr-1 pl-2">
           <ChangelogHeader
             version={current}
+            date={date}
             showSidebarTimelineHeaderGutter={showSidebarTimelineHeaderGutter}
-            showExpandedSidebarTimelineHeader={
-              showExpandedSidebarTimelineHeader
-            }
-            onClose={() => close(tab)}
           />
         </div>
 
-        <div className="relative mt-2 min-h-0 flex-1 overflow-hidden">
+        <div className="mt-2 shrink-0 px-3">
+          <h1 className="text-foreground text-xl font-semibold">
+            What's new in {current}?
+          </h1>
+        </div>
+
+        <div className="relative mt-4 min-h-0 flex-1 overflow-hidden">
           <div className="scroll-fade-y h-full overflow-y-auto px-3 pb-4">
             <ChangelogBody content={content} loading={loading} />
           </div>
@@ -66,7 +104,7 @@ function ExternalLink({
 }) {
   return (
     <a
-      className="text-blue-600 underline decoration-blue-400/40 underline-offset-2 hover:text-blue-700 dark:text-blue-400 dark:decoration-blue-500/50 dark:hover:text-blue-300"
+      className="text-info-fg hover:text-info-fg underline"
       href={href}
       onClick={(e) => {
         e.preventDefault();
@@ -119,59 +157,60 @@ function ChangelogBody({
 }
 
 function ChangelogHeader({
-  showExpandedSidebarTimelineHeader,
   showSidebarTimelineHeaderGutter,
   version,
-  onClose,
+  date,
 }: {
-  showExpandedSidebarTimelineHeader: boolean;
   showSidebarTimelineHeaderGutter: boolean;
   version: string;
-  onClose: () => void;
+  date: string | null;
 }) {
+  const formattedDate = date ? safeFormat(date, "MMM d, yyyy") : null;
+  const webUrl = `https://meetspace.so/changelog/${version}`;
+
   return (
     <div
-      data-tauri-drag-region
       className={cn([
-        "relative flex h-12 w-full items-center",
+        "w-full pt-1",
         showSidebarTimelineHeaderGutter && "pl-[156px]",
       ])}
     >
-      <div
-        data-tauri-drag-region
-        className={cn([
-          "pointer-events-none absolute inset-y-0 flex items-center",
-          showExpandedSidebarTimelineHeader
-            ? "right-[70px] left-0 justify-start"
-            : showSidebarTimelineHeaderGutter
-              ? "right-[70px] left-[104px] justify-start"
-              : "left-1/2 w-[min(640px,calc(100%_-_160px))] -translate-x-1/2 justify-center",
-        ])}
-      >
-        <h1
-          className={cn([
-            "text-foreground truncate text-xl font-semibold",
-            showExpandedSidebarTimelineHeader || showSidebarTimelineHeaderGutter
-              ? "text-left"
-              : "text-center",
-          ])}
-        >
-          What's new in {version}?
-        </h1>
-      </div>
+      <div className="flex items-center gap-2">
+        <div className="min-w-0 flex-1">
+          <Breadcrumb className="ml-1.5 min-w-0">
+            <BreadcrumbList className="text-foreground flex-nowrap gap-0.5 overflow-hidden text-xs">
+              <BreadcrumbItem className="shrink-0">
+                <span className="text-muted-foreground">Changelog</span>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="shrink-0" />
+              <BreadcrumbItem className="overflow-hidden">
+                <BreadcrumbPage className="truncate">{version}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
 
-      <div className="relative z-10 ml-auto flex shrink-0 items-center gap-0 pr-1">
-        <Button
-          size="icon"
-          variant="ghost"
-          data-tauri-drag-region="false"
-          className="text-muted-foreground hover:text-foreground"
-          aria-label="Close changelog"
-          title="Close"
-          onClick={onClose}
-        >
-          <XIcon size={16} />
-        </Button>
+        <div className="flex shrink-0 items-center">
+          {formattedDate && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="text-muted-foreground pointer-events-none"
+            >
+              <CalendarIcon size={14} className="shrink-0" />
+              <span>{formattedDate}</span>
+            </Button>
+          )}
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-muted-foreground hover:text-foreground gap-1.5"
+            onClick={() => openerCommands.openUrl(webUrl, null)}
+          >
+            <ExternalLinkIcon size={14} />
+            <span>Open in web</span>
+          </Button>
+        </div>
       </div>
     </div>
   );

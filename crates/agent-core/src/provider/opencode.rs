@@ -4,10 +4,11 @@ use crate::{
 };
 
 pub fn health(options: &HealthCheckOptions) -> ProviderHealth {
-    let health = meetspace_opencode::health_check_with_options(&meetspace_opencode::OpencodeOptions {
-        opencode_path_override: options.opencode_path_override.clone(),
-        ..Default::default()
-    });
+    let health =
+        meetspace_opencode::health_check_with_options(&meetspace_opencode::OpencodeOptions {
+            opencode_path_override: options.opencode_path_override.clone(),
+            ..Default::default()
+        });
 
     ProviderHealth {
         provider: ProviderKind::Opencode,

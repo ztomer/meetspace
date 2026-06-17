@@ -1,15 +1,14 @@
 import { platform } from "@tauri-apps/plugin-os";
 import {
-  AudioLinesIcon,
   ArrowUpRightIcon,
   BellIcon,
   BookText,
   CalendarIcon,
   DatabaseIcon,
   LockIcon,
+  PuzzleIcon,
   SmartphoneIcon,
   SparklesIcon,
-  UserIcon,
   UsersIcon,
 } from "lucide-react";
 import { useCallback } from "react";
@@ -32,7 +31,6 @@ type SettingsNavGroup = { label: string; items: SettingsNavItem[] };
 
 function getBaseGroups(): SettingsNavGroup[] {
   const aiItems: SettingsNavItem[] = [
-    { id: "transcription", label: "Transcription", icon: AudioLinesIcon },
     { id: "intelligence", label: "Intelligence", icon: SparklesIcon },
     {
       action: "open-templates",
@@ -47,13 +45,16 @@ function getBaseGroups(): SettingsNavGroup[] {
       items: [
         { id: "app", label: "App", icon: SmartphoneIcon },
         { id: "data", label: "Data", icon: DatabaseIcon },
-        { id: "account", label: "Account", icon: UserIcon },
         { id: "notifications", label: "Notifications", icon: BellIcon },
       ],
     },
     {
       label: "AI",
       items: aiItems,
+    },
+    {
+      label: "Integrations",
+      items: [{ id: "integrations", label: "Integrations", icon: PuzzleIcon }],
     },
   ];
 }

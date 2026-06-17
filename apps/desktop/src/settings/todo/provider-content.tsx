@@ -97,7 +97,7 @@ function OAuthTodoProviderContent({ config }: { config: TodoProvider }) {
   if (isError) {
     return (
       <div className="pt-1 pb-2">
-        <span className="text-xs text-red-600">
+        <span className="text-destructive text-xs">
           Failed to load integration status
         </span>
       </div>
@@ -171,7 +171,7 @@ function ConnectionActions({
               "todo",
             )
           }
-          className="cursor-pointer text-xs text-amber-700 underline transition-colors hover:text-amber-900"
+          className="text-warning-fg hover:text-warning-fg cursor-pointer text-xs underline transition-colors"
         >
           Reconnect required
         </button>
@@ -186,7 +186,7 @@ function ConnectionActions({
               "todo",
             )
           }
-          className="cursor-pointer text-xs text-red-500 underline transition-colors hover:text-red-700"
+          className="text-destructive hover:text-destructive cursor-pointer text-xs underline transition-colors"
         >
           Disconnect
         </button>

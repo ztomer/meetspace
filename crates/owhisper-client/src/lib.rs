@@ -29,8 +29,8 @@ pub use adapter::{StreamingBatchEvent, StreamingBatchStream};
 
 pub use batch::{BatchClient, BatchClientBuilder};
 pub use error::Error;
-pub use meetspace_ws_client;
 pub use live::{DualHandle, FinalizeHandle, ListenClient, ListenClientBuilder, ListenClientDual};
+pub use meetspace_ws_client;
 
 pub fn normalize_listen_params(mut params: ListenParams) -> ListenParams {
     params.languages = adapter::normalize_languages(&params.languages);
