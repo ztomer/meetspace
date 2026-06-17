@@ -24,7 +24,7 @@ fi
 echo "==> Checking for un-rebranded upstream identifiers in code"
 # Code dirs only; translation catalogs and historical changelogs legitimately
 # retain old strings, and the rebrand tooling itself names the patterns.
-leaks=$(git grep -lE '@hypr/|hypr_|hypr-|Hyprnote|HYPRNOTE|com\.hyprnote|[Aa]narlog|ANARLOG' -- \
+leaks=$(git grep -lE '@meetspace/|meetspace_|meetspace-|Meetspace|MEETSPACE|com\.meetspace|[Aa]narlog|MEETSPACE' -- \
   'apps/**' 'crates/**' 'packages/**' 'plugins/**' \
   ':(exclude)**/i18n/locales/**' \
   ':(exclude)packages/changelog/content/**' \

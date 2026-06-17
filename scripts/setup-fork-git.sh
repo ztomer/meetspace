@@ -4,7 +4,7 @@
 #
 #   - rerere: records each conflict resolution and replays it automatically
 #     the next time the same conflict appears (it recurs constantly because
-#     the fork carries a global hypr->meetspace rename).
+#     the fork carries a global meetspace->meetspace rename).
 #   - keep-ours merge driver: backs the `merge=keep-ours` rules in
 #     .gitattributes so generated/lock files resolve without conflicts.
 #   - hooksPath: enables the repo's pre-push guard (.githooks/).
