@@ -15,6 +15,7 @@ import {
   type LocalModel,
 } from "@meetspace/plugin-local-stt";
 import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { commands as listenerCommands } from "@meetspace/plugin-transcription";
 import type { AIProviderStorage } from "@meetspace/store";
 import { Input } from "@meetspace/ui/components/ui/input";
 import {
@@ -24,11 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@meetspace/ui/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@meetspace/ui/components/ui/tooltip";
 import { cn } from "@meetspace/utils";
 
 import { useSttSettings } from "./context";
@@ -36,8 +32,7 @@ import { HealthStatusIndicator, useConnectionHealth } from "./health";
 import { LocalModelBackendBadge, LocalModelLabel } from "./model-icon";
 import { getPreferredProviderModel } from "./selection";
 import {
-  displayModelLabel,
-  displayModelTitle,
+  displayModelId,
   formatModelSize,
   type ProviderId,
   PROVIDERS,
@@ -52,20 +47,13 @@ import {
   requiresEntitlement,
 } from "~/settings/ai/shared/eligibility";
 import { useConfigValues } from "~/shared/config";
-import { useMountEffect } from "~/shared/hooks/useMountEffect";
 import { SettingsAlert } from "~/shared/ui/settings-alert";
-import {
-  showTransientToast,
-  useTransientToast,
-} from "~/sidebar/toast/transient";
 import * as settings from "~/store/tinybase/store/settings";
 import {
   isConfiguredSttModel,
   isMeetspaceLocalSttModel,
   isLiveTranscriptionSupported,
   isRealtimeLocalModel,
-  isSupportedLanguagesBatch,
-  isSupportedLanguagesLive,
   isSupportedLocalSttModel,
 } from "~/stt/capabilities";
 
@@ -92,14 +80,8 @@ export function SelectProviderAndModel() {
   const selectedModels = selectedProvider
     ? (configuredProviders[selectedProvider]?.models ?? [])
     : [];
-  const displayedSttModel =
-    selectedProvider === "custom"
-      ? selectedSttModel
-      : getPreferredProviderModel(selectedSttModel, selectedModels, {
-          keepUnavailableSavedModel: true,
-        });
   const selectedModel = selectedModels.find(
-    (model) => model.id === displayedSttModel,
+    (model) => model.id === selectedSttModel,
   );
 
   const handleSelectProvider = settings.UI.useSetValueCallback(
@@ -226,7 +208,7 @@ export function SelectProviderAndModel() {
         {current_stt_provider === "custom" ? (
           <div className="min-w-0 flex-3">
             <Input
-              value={displayedSttModel || ""}
+              value={selectedSttModel || ""}
               onChange={(event) => handleModelChange(event.target.value)}
               className="text-xs"
               placeholder={t`Enter a model identifier`}
@@ -235,7 +217,7 @@ export function SelectProviderAndModel() {
         ) : (
           <div className="min-w-0 flex-3">
             <Select
-              value={displayedSttModel || ""}
+              value={selectedSttModel || ""}
               onValueChange={handleModelChange}
               disabled={selectedModels.length === 0}
             >
@@ -289,70 +271,24 @@ export function SelectProviderAndModel() {
   );
 }
 
-const TRANSCRIPTION_LANGUAGE_WARNING_TOAST_ID =
-  "transcription-language-warning";
-const dismissedTranscriptionLanguageWarningKeys = new Set<string>();
+export function TranscriptionLanguageWarningBanner() {
+  const hasLanguageWarning = useHasLanguageWarning();
 
-export function TranscriptionLanguageWarningToast() {
-  const warningKey = useTranscriptionLanguageWarningKey();
-
-  if (
-    !warningKey ||
-    dismissedTranscriptionLanguageWarningKeys.has(warningKey)
-  ) {
+  if (!hasLanguageWarning) {
     return null;
   }
 
   return (
-    <TranscriptionLanguageWarningToastLifecycle
-      key={warningKey}
-      warningKey={warningKey}
-    />
+    <div className="-mx-6 -mt-6 mb-6 border-b border-amber-200 bg-amber-50 px-6 py-3">
+      <span className="flex items-center justify-center gap-2 text-center text-sm text-amber-600">
+        <AlertTriangle className="size-4 shrink-0" />
+        Selected model may not support all your spoken languages.
+      </span>
+    </div>
   );
 }
 
-function TranscriptionLanguageWarningToastLifecycle({
-  warningKey,
-}: {
-  warningKey: string;
-}) {
-  useMountEffect(() => {
-    showTransientToast(
-      {
-        id: TRANSCRIPTION_LANGUAGE_WARNING_TOAST_ID,
-        icon: <AlertTriangle className="size-4 shrink-0 text-amber-500" />,
-        description: "Model doesn't support all languages.",
-        anchor: "main-content-panel",
-        actions: [
-          {
-            label: "Dismiss",
-            onClick: () => {
-              dismissedTranscriptionLanguageWarningKeys.add(warningKey);
-              clearTranscriptionLanguageWarningToast();
-            },
-          },
-        ],
-        dismissible: false,
-        variant: "warning",
-      },
-      { durationMs: null },
-    );
-
-    return clearTranscriptionLanguageWarningToast;
-  });
-
-  return null;
-}
-
-function clearTranscriptionLanguageWarningToast() {
-  const { toast, clearToast } = useTransientToast.getState();
-
-  if (toast?.id === TRANSCRIPTION_LANGUAGE_WARNING_TOAST_ID) {
-    clearToast(toast.key);
-  }
-}
-
-function useTranscriptionLanguageWarningKey() {
+function useHasLanguageWarning() {
   const { current_stt_provider, current_stt_model, spoken_languages } =
     useConfigValues([
       "current_stt_provider",
@@ -395,17 +331,18 @@ function useTranscriptionLanguageWarningKey() {
       const useLiveMode = isOnDeviceModel
         ? useLiveOnDeviceModel && liveSupport.data
         : liveSupport.data;
-      return useLiveMode
-        ? await isSupportedLanguagesLive(
+      const result = useLiveMode
+        ? await listenerCommands.isSupportedLanguagesLive(
             current_stt_provider!,
             selectedSttModel ?? null,
             spoken_languages ?? [],
           )
-        : await isSupportedLanguagesBatch(
+        : await listenerCommands.isSupportedLanguagesBatch(
             current_stt_provider!,
             selectedSttModel ?? null,
             spoken_languages ?? [],
           );
+      return result.status === "ok" ? result.data : true;
     },
     enabled:
       isConfigured &&
@@ -413,15 +350,7 @@ function useTranscriptionLanguageWarningKey() {
       !!spoken_languages?.length,
   });
 
-  if (!isConfigured || languageSupport.data !== false || hasError) {
-    return null;
-  }
-
-  return [
-    current_stt_provider,
-    selectedSttModel,
-    ...(spoken_languages ?? []),
-  ].join(":");
+  return isConfigured && languageSupport.data === false && !hasError;
 }
 
 type ModelCategory = "latest" | null;
@@ -478,16 +407,11 @@ function getProviderModelMode(
   }
 
   if (providerId === "soniox") {
-    if (model === "stt-async-v5" || model === "stt-async-v4") {
+    if (model === "stt-async-v5") {
       return "batch";
     }
 
-    if (
-      model === "stt-rt-v5" ||
-      model === "stt-rt-v4" ||
-      model === "stt-v5" ||
-      model === "stt-v4"
-    ) {
+    if (model === "stt-rt-v5" || model === "stt-v4" || model === "stt-rt-v4") {
       return "realtime";
     }
   }
@@ -613,8 +537,7 @@ function ModelSelectItem({
   const downloadInfo = activeDownloads.find((d) => d.model === model.id);
   const isDownloading = !!downloadInfo;
 
-  const label = displayModelLabel(model.id, model.displayName);
-  const title = displayModelTitle(model.id, model.displayName);
+  const label = model.displayName ?? displayModelId(model.id);
   const sizeLabel = formatModelSize(model.sizeBytes);
   const showLocalActions = model.isDownloaded && isLocalModelId(model.id);
   const isDeprecated = model.isDeprecated === true;
@@ -623,7 +546,6 @@ function ModelSelectItem({
       <LocalModelLabel
         model={model.id}
         label={label}
-        title={title}
         className="min-w-0 flex-1"
       />
       <div className="flex shrink-0 items-center gap-2 text-[11px]">
@@ -643,7 +565,6 @@ function ModelSelectItem({
           key={model.id}
           value={model.id}
           className={cn([
-            "group-hover/model-row:bg-accent group-hover/model-row:text-accent-foreground",
             showLocalActions && "pr-20",
             isDeprecated && "text-muted-foreground focus:text-muted-foreground",
           ])}
@@ -674,8 +595,7 @@ function ModelSelectItem({
     <div
       className={cn([
         "relative flex items-center justify-between",
-        "rounded-full py-1.5 text-sm outline-hidden",
-        isCloud ? "pr-1.5 pl-2" : "px-2",
+        "rounded-full px-2 py-1.5 text-sm outline-hidden",
         "cursor-pointer select-none",
         "hover:bg-accent hover:text-accent-foreground",
         "group",
@@ -719,8 +639,7 @@ function ModelSelectedValue({ model }: { model: ModelEntry }) {
     <div className="flex max-w-full min-w-0 items-center gap-2">
       <LocalModelLabel
         model={model.id}
-        label={displayModelLabel(model.id, model.displayName)}
-        title={displayModelTitle(model.id, model.displayName)}
+        label={model.displayName ?? displayModelId(model.id)}
         className={cn(["min-w-0", isDeprecated && "opacity-60"])}
         labelClassName={cn([isDeprecated && "text-muted-foreground"])}
       />
@@ -734,32 +653,17 @@ function ModelModeBadge({ mode }: { mode?: ModelEntry["mode"] }) {
     return null;
   }
 
-  const isRealtime = mode === "realtime";
-
   return (
-    <Tooltip delayDuration={100}>
-      <TooltipTrigger asChild>
-        <span
-          className={cn([
-            "shrink-0 cursor-help rounded-md px-1.5 py-0.5 text-[11px] font-medium",
-            isRealtime
-              ? "bg-sky-50 text-sky-700"
-              : "bg-muted text-muted-foreground",
-          ])}
-        >
-          {isRealtime ? <Trans>Live</Trans> : <Trans>After recording</Trans>}
-        </span>
-      </TooltipTrigger>
-      <TooltipContent side="top" className="max-w-64 text-xs">
-        {isRealtime ? (
-          <Trans>Can transcribe while the meeting is happening.</Trans>
-        ) : (
-          <Trans>
-            Runs after the recording finishes, not during the meeting.
-          </Trans>
-        )}
-      </TooltipContent>
-    </Tooltip>
+    <span
+      className={cn([
+        "shrink-0 rounded-md px-1.5 py-0.5 text-[11px] font-medium",
+        mode === "realtime"
+          ? "bg-sky-50 text-sky-700"
+          : "bg-muted text-muted-foreground",
+      ])}
+    >
+      {mode === "realtime" ? <Trans>Realtime</Trans> : <Trans>Batch</Trans>}
+    </span>
   );
 }
 
@@ -802,6 +706,7 @@ function LocalModelDropdownActions({ model }: { model: LocalModel }) {
     <div
       className={cn([
         "absolute top-0 right-0 bottom-0 z-10 flex items-center justify-end gap-1 rounded-r-full pl-6",
+        "via-accent/95 to-accent bg-linear-to-r from-transparent",
         "pointer-events-none opacity-0 transition-opacity duration-150",
         "group-hover/model-row:pointer-events-auto group-hover/model-row:opacity-100",
         "group-focus-within/model-row:pointer-events-auto group-focus-within/model-row:opacity-100",
