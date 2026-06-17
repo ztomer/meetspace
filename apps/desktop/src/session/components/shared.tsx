@@ -119,7 +119,7 @@ export function useCanShowTranscript(
 }
 
 export function RecordingIcon() {
-  return <div className="size-3 rounded-full bg-red-500" />;
+  return <div className="bg-destructive size-3 rounded-full" />;
 }
 
 export function useListenButtonState(sessionId: string) {

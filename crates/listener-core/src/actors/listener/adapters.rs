@@ -719,7 +719,10 @@ mod tests {
 
     #[test]
     fn format_languages_uses_bcp47_codes() {
-        let languages = vec!["en-US".parse().unwrap(), meetspace_language::ISO639::Fr.into()];
+        let languages = vec![
+            "en-US".parse().unwrap(),
+            meetspace_language::ISO639::Fr.into(),
+        ];
 
         assert_eq!(format_languages(&languages), "en-US, fr");
     }

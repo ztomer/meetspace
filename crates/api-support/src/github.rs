@@ -4,8 +4,8 @@ use crate::state::AppState;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-const GITHUB_OWNER: &str = "fastrepl";
-const GITHUB_REPO: &str = "char";
+const GITHUB_OWNER: &str = "ztomer";
+const GITHUB_REPO: &str = "meetspace";
 const DEFAULT_ISSUE_LABELS: &[&str] = &[
     "area/backend",
     "area/ui",
@@ -50,17 +50,18 @@ pub(crate) async fn submit_bug_report(
 ) -> Result<String> {
     let (description, title) = make_title(input.description, "Bug Report");
 
-    let body = meetspace_template_support::render(meetspace_template_support::SupportTemplate::BugReport(
-        meetspace_template_support::BugReport {
-            description,
-            platform: input.platform.to_string(),
-            arch: input.arch.to_string(),
-            os_version: input.os_version.to_string(),
-            app_version: input.app_version.to_string(),
-            source: input.source.to_string(),
-        },
-    ))
-    .map_err(|e| SupportError::Internal(e.to_string()))?;
+    let body =
+        meetspace_template_support::render(meetspace_template_support::SupportTemplate::BugReport(
+            meetspace_template_support::BugReport {
+                description,
+                platform: input.platform.to_string(),
+                arch: input.arch.to_string(),
+                os_version: input.os_version.to_string(),
+                app_version: input.app_version.to_string(),
+                source: input.source.to_string(),
+            },
+        ))
+        .map_err(|e| SupportError::Internal(e.to_string()))?;
 
     let labels = resolve_issue_labels(
         state,
@@ -87,8 +88,8 @@ pub(crate) async fn submit_feature_request(
 ) -> Result<String> {
     let (description, title) = make_title(input.description, "Feature Request");
 
-    let body =
-        meetspace_template_support::render(meetspace_template_support::SupportTemplate::FeatureRequest(
+    let body = meetspace_template_support::render(
+        meetspace_template_support::SupportTemplate::FeatureRequest(
             meetspace_template_support::FeatureRequest {
                 description,
                 platform: input.platform.to_string(),
@@ -97,8 +98,9 @@ pub(crate) async fn submit_feature_request(
                 app_version: input.app_version.to_string(),
                 source: input.source.to_string(),
             },
-        ))
-        .map_err(|e| SupportError::Internal(e.to_string()))?;
+        ),
+    )
+    .map_err(|e| SupportError::Internal(e.to_string()))?;
 
     let category_id = &state.config.github.github_discussion_category_id;
     if category_id.is_empty() {
@@ -300,10 +302,12 @@ async fn attach_log_analysis(state: &AppState, issue_number: u64, log_text: &str
 
     let tail = logs::safe_tail(&clean_logs, 10000);
     let log_comment = meetspace_template_support::render(
-        meetspace_template_support::SupportTemplate::LogAnalysis(meetspace_template_support::LogAnalysis {
-            summary_section,
-            tail: tail.to_string(),
-        }),
+        meetspace_template_support::SupportTemplate::LogAnalysis(
+            meetspace_template_support::LogAnalysis {
+                summary_section,
+                tail: tail.to_string(),
+            },
+        ),
     )
     .unwrap_or_default();
 
