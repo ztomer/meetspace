@@ -4,6 +4,38 @@
 upstream is `origin/main`. This doc describes how to pull in newer upstream
 releases with the least pain.
 
+## The upstream-track model
+
+The fork is structured as **upstream + a couple of fork commits**, not a long
+sprawl of commits diverging from a far-back base:
+
+- **`upstream-track`** — a *regenerated* branch = a chosen upstream release with
+  the meetspace rebrand applied (`scripts/rebrand_sweep.py`). It shares the
+  fork's naming, so the rename never shows up in diffs against it.
+- **`MIT_BACK`** — `upstream-track` + two fork commits: one that removes
+  commercial/cloud + cactus (deletions), one with the meetspace customizations
+  (local-first AI, integrations, theming, tooling, visual tests).
+
+Why: because `upstream-track` is already rebranded, rebasing the fork commits
+onto a freshly-rebuilt `upstream-track` produces **substantive-only conflicts**
+— the `hypr→meetspace` rename (the bulk of raw churn) never conflicts. Generated
+files are handled by merge drivers; commercial paths by the deletions commit +
+the `REMOVED_*` lists. The fork IS a heavy divergence (~hundreds of modified
+desktop source files), so a sync is still a real merge — but a clean, reviewable
+one in a couple of passes, not 186.
+
+### Syncing to a new release
+
+```bash
+git checkout -b sync/<ver> MIT_BACK     # throwaway working branch
+scripts/sync-upstream.sh desktop_v1.0.45
+```
+
+It rebuilds `upstream-track` at the tag (+ rebrand), rebases the fork commits
+onto it, re-strips commercial, regenerates i18n, and verifies. Resolve any
+substantive conflicts per the resolution rule below, review, then fast-forward
+`MIT_BACK` to the synced branch and push.
+
 ## One-time setup (per clone)
 
 ```bash
