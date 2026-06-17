@@ -15,7 +15,10 @@
     "i18n:compile": "lingui compile",
     "i18n:check": "lingui extract --clean --workers 1 && lingui compile --strict --workers 1 && git diff --exit-code -- src/i18n/locales",
     "tauri:dev": "dotenvx run --ignore MISSING_ENV_FILE --env RELAY_PORT=1424 -f .env -- tauri dev --no-watch --features dev",
-    "tauri:build": "tauri build"
+    "tauri:build": "tauri build",
+    "visual": "playwright test -c visual/playwright.config.ts",
+    "visual:update": "playwright test -c visual/playwright.config.ts --update-snapshots",
+    "visual:install": "playwright install chromium"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^4.0.93",
@@ -174,6 +177,7 @@
   "devDependencies": {
     "@dotenvx/dotenvx": "^1.61.0",
     "@faker-js/faker": "^10.4.0",
+    "@playwright/test": "^1.49.1",
     "@lingui/babel-plugin-lingui-macro": "^6.0.1",
     "@lingui/cli": "^6.0.1",
     "@lingui/vite-plugin": "^6.0.1",

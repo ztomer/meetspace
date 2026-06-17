@@ -25,6 +25,24 @@ TinyBase as the primary data store (schema at `packages/store/src/tinybase.ts`),
 - For `plugins/db` live queries, keep schema creation, migrations, and DB initialization on the Rust side; TypeScript should only consume `execute`/`subscribe` APIs.
 - Branch naming: `fix/`, `chore/`, `refactor/` prefixes.
 
+## Visual change verification
+
+Any change that alters what the user sees (desktop or web UI: layout, color,
+spacing, components, dark mode, copy) is not done until it has been looked at,
+not just typechecked.
+
+Before landing a visual change:
+1. **Run it as a user.** Launch the affected screen and walk the scenario the
+   change touches.
+2. **Capture** screenshots (and video for flows/animations) in **both light and
+   dark mode** — dark-mode contrast regressions are a recurring failure here.
+3. **Judge against intent.** Ask what a user expects to see and whether the
+   result matches; note any contrast, overflow, alignment, or state issues.
+4. **Lock it in.** Add or extend a deterministic visual test so the verified
+   appearance can't silently regress.
+
+See `docs/VISUAL_TESTING.md` for the capture loop and the snapshot harness.
+
 ## Code Style
 
 - Avoid creating types/interfaces unless shared. Inline function props.
