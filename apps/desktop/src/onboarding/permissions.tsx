@@ -68,7 +68,7 @@ function PermissionBlock({
         className={cn([
           "flex size-6 shrink-0 items-center justify-center rounded-md",
           isAuthorized
-            ? "bg-green-50 text-green-600"
+            ? "bg-success-bg text-success-fg"
             : "bg-primary-foreground/10 text-primary-foreground",
         ])}
       >
