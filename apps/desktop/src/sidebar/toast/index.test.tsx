@@ -40,10 +40,10 @@ vi.mock("~/shared/config", () => ({
 
 vi.mock("~/store/zustand/devtools-toast-preview", () => ({
   useDevtoolsToastPreview: (
-    selector: (state: { preview: null; clearPreview: () => void }) => unknown,
+    selector: (state: { preview: any; clearPreview: () => void }) => unknown,
   ) =>
     selector({
-      preview: null,
+      preview: { type: "language-model", key: "test-key" },
       clearPreview: mocks.clearDevtoolsPreview,
     }),
 }));
@@ -113,7 +113,7 @@ describe("ToastArea", () => {
     });
 
     const toastContainer = screen
-      .getByText("Pro features available")
+      .getByText("Language model needed")
       .closest(".fixed") as HTMLElement | null;
 
     expect(toastContainer?.style.left).toBe("calc(50% + 0px)");
@@ -188,7 +188,7 @@ describe("ToastArea", () => {
     });
 
     const toastContainer = screen
-      .getByText("Pro features available")
+      .getByText("Language model needed")
       .closest(".fixed") as HTMLElement | null;
 
     expect(toastContainer?.style.left).toBe("600px");
@@ -274,7 +274,7 @@ describe("ToastArea", () => {
     });
 
     const toastContainer = screen
-      .getByText("Pro features available")
+      .getByText("Language model needed")
       .closest(".fixed") as HTMLElement | null;
 
     expect(toastContainer?.style.top).toBe("56px");
@@ -325,7 +325,7 @@ describe("ToastArea", () => {
     });
 
     const toastContainer = screen
-      .getByText("Pro features available")
+      .getByText("Language model needed")
       .closest(".fixed") as HTMLElement | null;
 
     expect(toastContainer?.style.left).toBe("600px");

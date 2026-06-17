@@ -37,9 +37,7 @@ pub fn init<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R> {
             let posthog_key = {
                 #[cfg(not(debug_assertions))]
                 {
-                    let v = env!("POSTHOG_API_KEY");
-                    assert!(v.starts_with("phc_"));
-                    Some(v)
+                    option_env!("POSTHOG_API_KEY").filter(|v| v.starts_with("phc_"))
                 }
 
                 #[cfg(debug_assertions)]

@@ -54,7 +54,7 @@ export function TodoFilterField({
         <h3 className="mb-1 text-sm font-medium">{label}</h3>
         <p className="text-muted-foreground text-xs">{description}</p>
         {invalidMessage ? (
-          <p className="mt-2 text-xs text-red-600">{invalidMessage}</p>
+          <p className="text-destructive mt-2 text-xs">{invalidMessage}</p>
         ) : null}
       </div>
 

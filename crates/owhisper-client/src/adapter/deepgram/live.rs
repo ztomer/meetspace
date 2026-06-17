@@ -255,8 +255,11 @@ mod tests {
             ..Default::default()
         };
 
-        let url =
-            adapter.build_ws_url("https://api.meetspace.com/stt?provider=deepgram", &params, 1);
+        let url = adapter.build_ws_url(
+            "https://api.meetspace.com/stt?provider=deepgram",
+            &params,
+            1,
+        );
 
         assert!(url.as_str().contains("provider=deepgram"));
     }

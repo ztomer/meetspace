@@ -9,12 +9,9 @@ import {
   openUrlWithInstruction,
 } from "@meetspace/plugin-windows";
 
-import { useBillingAccess } from "~/auth/billing";
-import { TrialEndedDialog } from "~/billing/trial-ended-dialog";
-import { TrialStartedDialog } from "~/billing/trial-started-dialog";
-import { executeTransaction } from "~/db";
-import { useDevtoolsUserId } from "~/devtools-panel/hooks";
-import { createSession, updateSession } from "~/session/queries";
+import { getLatestVersion } from "~/changelog";
+import { useDevtoolsStore, useDevtoolsUserId } from "~/devtools-panel/hooks";
+import { populateRecurringMeetingNotes } from "~/devtools-panel/recurring-notes";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 import {
   type DevtoolsOtaPreviewStatus,
@@ -37,11 +34,14 @@ const canResolveDevtoolsPanel = import.meta.env.MODE !== "test";
 
 type DevtoolsPanelAction =
   | "navigation:onboarding"
+  | "navigation:empty"
+  | "navigation:changelog"
   | "instruction:sign-in"
   | "instruction:billing"
   | "instruction:integration"
   | `toasts:preview:${DevtoolsToastPreview}`
-  | "toasts:clear"
+  | "toasts:preview:clear"
+  | "toasts:reset-dismissed"
   | "ota:available"
   | "ota:downloading"
   | "ota:ready"
@@ -55,12 +55,12 @@ type DevtoolsPanelAction =
   | "notifications:clear"
   | "billing:trial-started"
   | "billing:trial-ended"
+  | "notes:populate-recurring"
+  | "countdown:note-20"
   | "countdown:note-60"
-  | "countdown:note-300"
+  | "countdown:note-290"
+  | "countdown:zoom-20"
   | "countdown:zoom-60"
-  | "countdown:zoom-300"
-  | "panel:opened"
-  | "panel:closed"
   | "error:trigger";
 
 export function DevtoolsFloatingPanelHost() {
@@ -106,6 +106,8 @@ function DevtoolsFloatingPanelSync() {
     let cancelled = false;
     let unlistenAction: (() => void) | undefined;
 
+    void showDevtoolsPanel();
+
     windowsEvents.devtoolsPanelAction
       .listen(({ payload }) => {
         actionHandlerRef.current(payload.action);
@@ -135,8 +137,9 @@ function DevtoolsFloatingPanelSync() {
 
 function useDevtoolsPanelActions() {
   const openNew = useTabs((s) => s.openNew);
+  const store = useDevtoolsStore();
   const user_id = useDevtoolsUserId();
-  const { trialDaysRemaining, upgradeToPro } = useBillingAccess();
+
   const showToastPreview = useDevtoolsToastPreview(
     (state) => state.showPreview,
   );
@@ -145,18 +148,30 @@ function useDevtoolsPanelActions() {
   );
   const showOtaPreview = useDevtoolsOtaPreview((state) => state.showPreview);
   const clearOtaPreview = useDevtoolsOtaPreview((state) => state.clearPreview);
-  const [trialStartedOpen, setTrialStartedOpen] = useState(false);
-  const [trialEndedOpen, setTrialEndedOpen] = useState(false);
   const [shouldThrow, setShouldThrow] = useState(false);
 
   const showMainWindow = useCallback(async () => {
     await windowsCommands.windowShow({ type: "main" });
   }, []);
 
+  const isClassicMain =
+    typeof window !== "undefined" &&
+    (window.location.pathname === "/app/main" ||
+      window.location.pathname.startsWith("/app/main/"));
+
   const showOnboarding = useCallback(async () => {
     await showMainWindow();
     openNew({ type: "onboarding" });
   }, [openNew, showMainWindow]);
+
+  const showEmptyTab = useCallback(async () => {
+    if (!isClassicMain) {
+      return;
+    }
+
+    await showMainWindow();
+    openNew({ type: "empty" });
+  }, [isClassicMain, openNew, showMainWindow]);
 
   const showInstruction = useCallback((type: string) => {
     void openUrlWithInstruction(
@@ -165,6 +180,18 @@ function useDevtoolsPanelActions() {
       async () => ({ status: "ok" as const }),
     );
   }, []);
+
+  const showChangelog = useCallback(() => {
+    const latestVersion = getLatestVersion();
+    if (!latestVersion) {
+      return;
+    }
+
+    openNew({
+      type: "changelog",
+      state: { current: latestVersion, previous: null },
+    });
+  }, [openNew]);
 
   const showToastPreviewInMainWindow = useCallback(
     async (preview: DevtoolsToastPreview) => {
@@ -182,53 +209,45 @@ function useDevtoolsPanelActions() {
     [showMainWindow, showOtaPreview],
   );
 
-  const clearNotifications = useCallback(async () => {
-    try {
-      await notificationCommands.clearNotifications();
-    } catch (error) {
-      console.error("[devtools] failed to clear notifications", error);
+  const populateRecurringNotes = useCallback(async () => {
+    if (!store) {
+      return;
     }
-  }, []);
+
+    const sessionId = populateRecurringMeetingNotes({ store, userId: user_id });
+    await showMainWindow();
+    openNew({ type: "sessions", id: sessionId });
+  }, [openNew, showMainWindow, store, user_id]);
 
   const showCalendarNotification = useCallback(async () => {
     const eventId = `devtool-event-${crypto.randomUUID()}`;
     const startedAt = new Date(Date.now() + 5 * 60 * 1000);
     const endedAt = new Date(startedAt.getTime() + 30 * 60 * 1000);
-    const now = new Date().toISOString();
 
-    await executeTransaction([
-      {
-        sql: `
-          INSERT INTO events (
-            id, tracking_id_event, calendar_id, title, started_at, ended_at,
-            location, meeting_link, description, note, recurrence_series_id,
-            has_recurrence_rules, is_all_day, provider, participants_json,
-            created_at, updated_at, deleted_at
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, '', '', 0, 0, ?, ?, ?, ?, NULL)
-        `,
-        params: [
-          eventId,
-          eventId,
-          "devtool-calendar",
-          "Devtool design sync",
-          startedAt.toISOString(),
-          endedAt.toISOString(),
-          "Conference Room",
-          "https://zoom.us/j/1234567890",
-          "Notification test event",
-          "google",
-          JSON.stringify([
-            {
-              name: "Ada Lovelace",
-              email: "ada@example.com",
-              status: "accepted",
-            },
-          ]),
-          now,
-          now,
-        ],
-      },
-    ]);
+    store?.setRow("events", eventId, {
+      user_id: user_id ?? "",
+      created_at: new Date().toISOString(),
+      tracking_id_event: eventId,
+      calendar_id: "devtool-calendar",
+      title: "Devtool design sync",
+      started_at: startedAt.toISOString(),
+      ended_at: endedAt.toISOString(),
+      location: "Conference Room",
+      meeting_link: "https://zoom.us/j/1234567890",
+      description: "Notification test event",
+      note: "",
+      recurrence_series_id: "",
+      has_recurrence_rules: false,
+      is_all_day: false,
+      provider: "google",
+      participants_json: JSON.stringify([
+        {
+          name: "Ada Lovelace",
+          email: "ada@example.com",
+          status: "accepted",
+        },
+      ]),
+    });
 
     await notificationCommands.showNotification({
       key: `devtool-calendar-${eventId}`,
@@ -255,7 +274,7 @@ function useDevtoolsPanelActions() {
       footer: null,
       icon: null,
     });
-  }, []);
+  }, [store, user_id]);
 
   const showMicDetectedNotification = useCallback(async () => {
     await notificationCommands.showNotification({
@@ -283,21 +302,21 @@ function useDevtoolsPanelActions() {
   const showMicOptionsNotification = useCallback(async () => {
     await notificationCommands.showNotification({
       key: `devtool-mic-options-${crypto.randomUUID()}`,
-      title: "Are you in Design sync right now?",
+      title: "Are you in a meeting?",
       message: "",
       timeout: { secs: 15, nanos: 0 },
       source: {
         type: "mic_detected",
         app_names: ["Zoom", "Google Chrome"],
         app_ids: ["us.zoom.xos", "com.google.Chrome"],
-        event_ids: ["devtool-event-1"],
+        event_ids: [],
       },
       start_time: null,
       participants: null,
       event_details: null,
-      action_label: "Yes",
+      action_label: null,
       action_variant: null,
-      options: null,
+      options: ["Design sync", "Customer call"],
       footer: {
         text: "Ignore Zoom and Chrome?",
         actionLabel: "Yes",
@@ -330,11 +349,12 @@ function useDevtoolsPanelActions() {
   }, []);
 
   const createWithCountdown = useCallback(
-    async (seconds: number, meetingLink?: string) => {
-      if (!user_id) {
+    (seconds: number, meetingLink?: string) => {
+      if (!store) {
         return;
       }
 
+      const sessionId = crypto.randomUUID();
       const started_at = new Date(Date.now() + seconds * 1000).toISOString();
       const event_json = JSON.stringify({
         tracking_id: "devtool-test",
@@ -349,18 +369,16 @@ function useDevtoolsPanelActions() {
         ...(meetingLink ? { meeting_link: meetingLink } : {}),
       });
 
-      const sessionId = await createSession(
-        meetingLink ? "Countdown Test (Zoom)" : "Countdown Test",
-        user_id,
-      );
-      await updateSession(sessionId, {
+      store.setRow("sessions", sessionId, {
+        user_id: user_id ?? "",
         created_at: new Date().toISOString(),
+        title: meetingLink ? "Countdown Test (Zoom)" : "Countdown Test",
         event_json,
       });
 
       openNew({ type: "sessions", id: sessionId });
     },
-    [openNew, user_id],
+    [openNew, store, user_id],
   );
 
   const handleAction = useCallback(
@@ -368,6 +386,12 @@ function useDevtoolsPanelActions() {
       switch (action as DevtoolsPanelAction) {
         case "navigation:onboarding":
           void showOnboarding();
+          return;
+        case "navigation:empty":
+          void showEmptyTab();
+          return;
+        case "navigation:changelog":
+          showChangelog();
           return;
         case "instruction:sign-in":
           showInstruction("sign-in");
@@ -393,8 +417,11 @@ function useDevtoolsPanelActions() {
         case "toasts:preview:pro":
           void showToastPreviewInMainWindow("pro");
           return;
-        case "toasts:clear":
+        case "toasts:preview:clear":
           clearToastPreview();
+          return;
+        case "toasts:reset-dismissed":
+          void commands.setDismissedToasts([]);
           return;
         case "ota:available":
           void showOtaPreviewInMainWindow("available");
@@ -427,28 +454,32 @@ function useDevtoolsPanelActions() {
           void showBatchCompletedNotification("devtool", { force: true });
           return;
         case "notifications:clear":
-          void clearNotifications();
+          void notificationCommands.clearNotifications();
           return;
         case "billing:trial-started":
-          setTrialStartedOpen(true);
           return;
         case "billing:trial-ended":
-          setTrialEndedOpen(true);
+          return;
+        case "notes:populate-recurring":
+          void populateRecurringNotes();
+          return;
+        case "notes:populate-recurring":
+          void populateRecurringNotes();
+          return;
+        case "countdown:note-20":
+          createWithCountdown(20);
           return;
         case "countdown:note-60":
-          void createWithCountdown(60);
+          createWithCountdown(60);
           return;
-        case "countdown:note-300":
-          void createWithCountdown(300);
+        case "countdown:note-290":
+          createWithCountdown(290);
+          return;
+        case "countdown:zoom-20":
+          createWithCountdown(20, "https://zoom.us/j/1234567890");
           return;
         case "countdown:zoom-60":
-          void createWithCountdown(60, "https://zoom.us/j/1234567890");
-          return;
-        case "countdown:zoom-300":
-          void createWithCountdown(300, "https://zoom.us/j/1234567890");
-          return;
-        case "panel:opened":
-        case "panel:closed":
+          createWithCountdown(60, "https://zoom.us/j/1234567890");
           return;
         case "error:trigger":
           setShouldThrow(true);
@@ -459,13 +490,15 @@ function useDevtoolsPanelActions() {
     },
     [
       createWithCountdown,
-      clearNotifications,
       showAutoStopNotification,
       showCalendarNotification,
+      showChangelog,
+      showEmptyTab,
       showInstruction,
       showMicDetectedNotification,
       showMicOptionsNotification,
       showOnboarding,
+      populateRecurringNotes,
       showToastPreviewInMainWindow,
       showOtaPreviewInMainWindow,
       clearToastPreview,
@@ -474,24 +507,17 @@ function useDevtoolsPanelActions() {
   );
 
   return {
-    dialogs: (
-      <>
-        <TrialStartedDialog
-          open={trialStartedOpen}
-          onOpenChange={setTrialStartedOpen}
-          trialDaysRemaining={trialDaysRemaining}
-          hasPaymentMethod={false}
-        />
-        <TrialEndedDialog
-          open={trialEndedOpen}
-          onOpenChange={setTrialEndedOpen}
-          onUpgrade={upgradeToPro}
-        />
-      </>
-    ),
+    dialogs: null,
     handleAction,
     shouldThrow,
   };
+}
+
+async function showDevtoolsPanel() {
+  const result = await windowsCommands.devtoolsPanelShow();
+  if (result.status === "error") {
+    console.error("Failed to show Devtools panel:", result.error);
+  }
 }
 
 async function hideDevtoolsPanel() {

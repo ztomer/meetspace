@@ -1,94 +1,60 @@
 import { Icon } from "@iconify-icon/react";
-import { Trans } from "@lingui/react/macro";
 
 import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 import { commands as openerCommands } from "@meetspace/plugin-opener2";
-import { commands as sfxCommands } from "@meetspace/plugin-sfx";
 
 import { OnboardingButton } from "./shared";
-import {
-  getOrCreateWelcomeSession,
-  setPendingWelcomeSession,
-} from "./welcome-note";
 
-import { flushAutomaticRelaunch } from "~/shared/relaunch";
+import { flushAutomaticRelaunch } from "~/store/tinybase/store/save";
 import { commands } from "~/types/tauri.gen";
 
 const SOCIALS = [
   {
-    label: "Discord",
-    icon: "simple-icons:discord",
-    url: "https://discord.gg/CX8gTH2tj9",
-  },
-  {
     label: "GitHub",
     icon: "simple-icons:github",
-    url: "https://github.com/fastrepl/char",
-  },
-  {
-    label: "X",
-    icon: "simple-icons:x",
-    size: 14,
-    url: "https://x.com/getcharnotes",
+    size: 23,
+    url: "https://github.com/ztomer/meetspace",
   },
 ] as const;
 
-const SOCIAL_ICON_SIZE = 18;
-
-export function FinalDescription() {
+export function FinalSection({ onContinue }: { onContinue: () => void }) {
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-      <span>
-        <Trans>Join our community and stay updated:</Trans>
-      </span>
-      <div className="flex items-center gap-2">
-        {SOCIALS.map((social) => {
-          const iconSize = "size" in social ? social.size : SOCIAL_ICON_SIZE;
-
-          return (
-            <button
-              key={social.label}
-              onClick={() => void openerCommands.openUrl(social.url, null)}
-              className="text-muted-foreground hover:text-muted-foreground inline-flex size-5 items-center justify-center rounded-md transition-colors duration-150"
-              aria-label={social.label}
-            >
-              <Icon icon={social.icon} width={iconSize} height={iconSize} />
-            </button>
-          );
-        })}
+    <div className="flex flex-col gap-6">
+      <div className="items-left text-muted-foreground flex flex-col gap-4 text-sm">
+        <span>Join our community and stay updated:</span>
+        <div className="flex items-center gap-4">
+          {SOCIALS.map(({ label, icon, size, url }) => {
+            return (
+              <button
+                key={label}
+                onClick={() => void openerCommands.openUrl(url, null)}
+                className="text-muted-foreground hover:text-foreground inline-flex size-6 items-center justify-center rounded-md transition-colors duration-150"
+                aria-label={label}
+              >
+                <Icon icon={icon} width={size} height={size} />
+              </button>
+            );
+          })}
+        </div>
       </div>
+
+      <OnboardingButton
+        className="px-10 py-3.5 text-base"
+        onClick={() => void finishOnboarding(onContinue)}
+      >
+        Open Meetspace
+      </OnboardingButton>
     </div>
   );
 }
 
-export function FinalSection({
-  onContinue,
-}: {
-  onContinue: (sessionId: string) => void;
-}) {
-  return (
-    <OnboardingButton
-      className="px-6 py-2 text-sm"
-      onClick={() => void finishOnboarding(onContinue)}
-    >
-      <Trans>Open Meetspace</Trans>
-    </OnboardingButton>
-  );
-}
-
-export async function finishOnboarding(
-  onContinue?: (sessionId: string) => void,
-) {
-  await sfxCommands.stop("BGM").catch(console.error);
-  const welcomeSessionId = await getOrCreateWelcomeSession();
+export async function finishOnboarding(onContinue?: () => void) {
   await new Promise((resolve) => setTimeout(resolve, 100));
   await commands.setOnboardingNeeded(false).catch(console.error);
   await new Promise((resolve) => setTimeout(resolve, 100));
   await analyticsCommands.event({ event: "onboarding_completed" });
-  setPendingWelcomeSession(welcomeSessionId);
   if (await flushAutomaticRelaunch()) {
     return;
   }
-  setPendingWelcomeSession(null);
-  onContinue?.(welcomeSessionId);
+  onContinue?.();
 }

@@ -9,8 +9,8 @@ SQLite is the primary data store (schema and migrations in `crates/db-app/`, des
 - Format: `pnpm exec dprint fmt`
 - Typecheck (TS): `pnpm -r typecheck`
 - Typecheck (Rust): `cargo check`
-- Desktop dev: `pnpm -F @hypr/desktop tauri:dev`
-- Web dev: `pnpm -F @hypr/web dev`
+- Desktop dev: `pnpm -F @meetspace/desktop tauri:dev`
+- Web dev: `pnpm -F @meetspace/web dev`
 - Dev docs: https://char.com/docs/developers
 
 ## Guidelines
@@ -25,11 +25,29 @@ SQLite is the primary data store (schema and migrations in `crates/db-app/`, des
 - For `plugins/db` live queries, keep schema creation, migrations, and DB initialization on the Rust side; TypeScript should only consume `execute`/`subscribe` APIs.
 - Branch naming: `fix/`, `chore/`, `refactor/` prefixes.
 
+## Visual change verification
+
+Any change that alters what the user sees (desktop or web UI: layout, color,
+spacing, components, dark mode, copy) is not done until it has been looked at,
+not just typechecked.
+
+Before landing a visual change:
+1. **Run it as a user.** Launch the affected screen and walk the scenario the
+   change touches.
+2. **Capture** screenshots (and video for flows/animations) in **both light and
+   dark mode** — dark-mode contrast regressions are a recurring failure here.
+3. **Judge against intent.** Ask what a user expects to see and whether the
+   result matches; note any contrast, overflow, alignment, or state issues.
+4. **Lock it in.** Add or extend a deterministic visual test so the verified
+   appearance can't silently regress.
+
+See `docs/VISUAL_TESTING.md` for the capture loop and the snapshot harness.
+
 ## Code Style
 
 - Avoid creating types/interfaces unless shared. Inline function props.
 - Do not write comments unless code is non-obvious. Comments should explain "why", not "what".
-- Use `cn` from `@hypr/utils` for conditional classNames. Always pass an array, split by logical grouping.
+- Use `cn` from `@meetspace/utils` for conditional classNames. Always pass an array, split by logical grouping.
 - Use `motion/react` instead of `framer-motion`.
 
 ## CLI TUI Command Architecture

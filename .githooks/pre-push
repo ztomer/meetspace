@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Blocks pushes that carry conflict markers or un-rebranded upstream names.
+# Enabled via scripts/setup-fork-git.sh (sets core.hooksPath=.githooks).
+# Bypass once with: git push --no-verify
+set -euo pipefail
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+exec "$REPO_ROOT/scripts/check-clean.sh"

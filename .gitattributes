@@ -1,2 +1,13 @@
 * text=auto eol=lf
 apps/desktop/src-tauri/resources/llm.gguf filter=lfs diff=lfs merge=lfs -text
+
+# --- Fork sync hardening -------------------------------------------------
+# Generated/compiled artifacts must never be hand-merged during an upstream
+# rebase. The `keep-ours` driver (registered by scripts/setup-fork-git.sh)
+# resolves them to one side without a conflict; scripts/rebase-on-main.sh
+# then regenerates them from source. Eliminates the bulk of rebase conflicts.
+Cargo.lock                              merge=keep-ours
+pnpm-lock.yaml                          merge=keep-ours
+apps/desktop/src/i18n/locales/**        merge=keep-ours
+**/*.gen.ts                             merge=keep-ours
+**/*.gen.json                           merge=keep-ours
