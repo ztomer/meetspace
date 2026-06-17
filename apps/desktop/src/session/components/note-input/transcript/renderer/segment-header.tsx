@@ -3,11 +3,12 @@ import { useMemo } from "react";
 import { cn } from "@meetspace/utils";
 
 import { SpeakerAssignPopover } from "./speaker-assign";
-import { useSegmentColorVars } from "./utils";
+import { getTimestampRange, useSegmentColor } from "./utils";
 
+import * as main from "~/store/tinybase/store/main";
 import type { Segment } from "~/stt/live-segment";
 import { SegmentKeyUtils, SpeakerLabelManager } from "~/stt/live-segment";
-import { useTranscriptLabelContext } from "~/stt/queries";
+import { defaultRenderLabelContext } from "~/stt/segment/shared";
 
 export function SegmentHeader({
   segment,
@@ -18,38 +19,37 @@ export function SegmentHeader({
   transcriptId: string;
   speakerLabelManager?: SpeakerLabelManager;
 }) {
-  const colorVars = useSegmentColorVars(segment.key);
-  const label = useSpeakerLabel(segment.key, transcriptId, speakerLabelManager);
+  const color = useSegmentColor(segment.key);
+  const label = useSpeakerLabel(segment.key, speakerLabelManager);
+  const timestamp = getTimestampRange(segment);
   const headerClassName = cn([
-    "bg-card sticky top-0 z-20",
+    "bg-muted sticky top-0 z-20",
     "-mx-3 px-3 py-1",
     "text-xs font-light",
-    "flex items-center gap-3",
-    "[--segment-color:var(--segment-color-light)]",
-    "dark:[--segment-color:var(--segment-color-dark)]",
+    "flex items-center justify-between",
   ]);
 
   return (
-    <div className={headerClassName} style={colorVars}>
+    <div className={headerClassName}>
       <SpeakerAssignPopover
         segment={segment}
         transcriptId={transcriptId}
-        color="var(--segment-color)"
+        color={color}
         label={label}
       />
+      <span className="text-muted-foreground font-mono">{timestamp}</span>
     </div>
   );
 }
 
-function useSpeakerLabel(
-  key: Segment["key"],
-  transcriptId: string,
-  manager?: SpeakerLabelManager,
-) {
-  const labelContext = useTranscriptLabelContext(transcriptId);
+function useSpeakerLabel(key: Segment["key"], manager?: SpeakerLabelManager) {
+  const store = main.UI.useStore(main.STORE_ID);
 
-  return useMemo(
-    () => SegmentKeyUtils.renderLabel(key, labelContext, manager),
-    [key, labelContext, manager],
-  );
+  return useMemo(() => {
+    if (!store) {
+      return SegmentKeyUtils.renderLabel(key, undefined, manager);
+    }
+    const ctx = defaultRenderLabelContext(store);
+    return SegmentKeyUtils.renderLabel(key, ctx, manager);
+  }, [key, manager, store]);
 }
