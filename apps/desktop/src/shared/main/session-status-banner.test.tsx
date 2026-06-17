@@ -27,7 +27,24 @@ describe("MainSessionStatusBannerHost", () => {
       </SessionStatusBannerProvider>,
     );
 
-    expect(screen.queryByText("Ask for consent when using Meetspace")).toBeNull();
+    expect(
+      screen.queryByText("Ask for consent when using Meetspace"),
+    ).toBeNull();
+  });
+
+  it("prefers the skip reason and stacks above the undo-delete toast", () => {
+    hasUndoDeleteToast = true;
+
+    render(
+      <SessionStatusBannerProvider>
+        <BannerPublisher skipReason="Microphone access is disabled" />
+        <MainSessionStatusBannerHost />
+      </SessionStatusBannerProvider>,
+    );
+
+    const banner = screen.getByText("Microphone access is disabled");
+    expect(banner.className).toContain("bottom-1");
+    expect(banner.className).toContain("text-destructive");
   });
 
   it("positions skip reasons at the bottom of the main surface", () => {

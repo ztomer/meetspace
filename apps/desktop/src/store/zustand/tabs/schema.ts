@@ -17,12 +17,16 @@ export type {
   TemplatesState,
 };
 
-export type TabInput = Exclude<
-  WindowsTabInput,
-  { type: "extension" } | { type: "extensions" } | { type: "folders" }
->;
+export type TabInput =
+  | Exclude<
+      WindowsTabInput,
+      { type: "extension" } | { type: "extensions" } | { type: "folders" }
+    >
+  | { type: "prep" };
 
-export const isTabInputSupported = (tab: WindowsTabInput): tab is TabInput => {
+export const isTabInputSupported = (
+  tab: WindowsTabInput | { type: "prep" },
+): tab is TabInput => {
   return (
     tab.type !== "extension" &&
     tab.type !== "extensions" &&
@@ -31,7 +35,6 @@ export const isTabInputSupported = (tab: WindowsTabInput): tab is TabInput => {
 };
 
 export type SettingsTab =
-  | "account"
   | "app"
   | "notifications"
   | "developers"
@@ -39,11 +42,11 @@ export type SettingsTab =
   | "personalization"
   | "transcription"
   | "intelligence"
+  | "integrations"
   | "todo";
 
 const isSettingsTab = (tab: string | null | undefined): tab is SettingsTab => {
   switch (tab) {
-    case "account":
     case "app":
     case "notifications":
     case "developers":
@@ -51,6 +54,7 @@ const isSettingsTab = (tab: string | null | undefined): tab is SettingsTab => {
     case "personalization":
     case "transcription":
     case "intelligence":
+    case "integrations":
     case "todo":
       return true;
     default:
@@ -60,7 +64,7 @@ const isSettingsTab = (tab: string | null | undefined): tab is SettingsTab => {
 
 export const normalizeSettingsTab = (
   tab: string | null | undefined,
-): Exclude<SettingsTab, "account"> => {
+): SettingsTab => {
   switch (tab) {
     case "app":
     case "notifications":
@@ -69,9 +73,9 @@ export const normalizeSettingsTab = (
     case "personalization":
     case "transcription":
     case "intelligence":
+    case "integrations":
     case "todo":
       return tab;
-    case "account":
     default:
       return "app";
   }
@@ -136,7 +140,8 @@ export type Tab =
       type: "daily_summary";
       id: string;
       state: DailySummaryState;
-    });
+    })
+  | (BaseTab & { type: "prep" });
 
 export type TaskResource =
   | { type: "github_issue"; owner: string; repo: string; number: number }
@@ -180,6 +185,8 @@ export const getDefaultState = (tab: TabInput): Tab => {
       return { ...base, type: "empty" };
     case "calendar":
       return { ...base, type: "calendar" };
+    case "prep":
+      return { ...base, type: "prep" };
     case "changelog":
       return {
         ...base,
@@ -235,6 +242,8 @@ export const uniqueIdfromTab = (tab: Tab): string => {
       return `task-${tab.id}`;
     case "daily_summary":
       return `daily_summary-${tab.id}`;
+    case "prep":
+      return `prep`;
   }
 };
 

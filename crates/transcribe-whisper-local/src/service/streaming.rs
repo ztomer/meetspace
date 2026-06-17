@@ -525,7 +525,8 @@ impl<S> TranscribeChannelStream<S> {
 
 impl<S> Stream for TranscribeChannelStream<S>
 where
-    S: Stream<Item = Result<meetspace_audio_chunking::AudioChunk, meetspace_audio_chunking::Error>> + Unpin,
+    S: Stream<Item = Result<meetspace_audio_chunking::AudioChunk, meetspace_audio_chunking::Error>>
+        + Unpin,
 {
     type Item = Result<(usize, crate::service::Segment), crate::Error>;
 

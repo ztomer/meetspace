@@ -102,7 +102,8 @@ impl<'a, R: tauri::Runtime, M: tauri::Manager<R>> Screen<'a, R, M> {
         options: WindowContextCaptureOptions,
     ) -> Result<WindowContextCapture, crate::Error> {
         let _ = self.manager;
-        let capture = meetspace_screen_core::capture_frontmost_window_context(map_options(options))?;
+        let capture =
+            meetspace_screen_core::capture_frontmost_window_context(map_options(options))?;
 
         Ok(map_capture(capture))
     }
@@ -234,13 +235,15 @@ mod tests {
             height: 200,
             strategy: meetspace_screen_core::CaptureStrategy::WindowWithContext,
             crop: rect(),
-            subject: meetspace_screen_core::CaptureSubject::Window(meetspace_screen_core::WindowMetadata {
-                id: 7,
-                pid: 42,
-                app_name: "Ghostty".to_string(),
-                title: "cargo run".to_string(),
-                rect: rect(),
-            }),
+            subject: meetspace_screen_core::CaptureSubject::Window(
+                meetspace_screen_core::WindowMetadata {
+                    id: 7,
+                    pid: 42,
+                    app_name: "Ghostty".to_string(),
+                    title: "cargo run".to_string(),
+                    rect: rect(),
+                },
+            ),
         });
 
         assert!(matches!(
@@ -264,12 +267,14 @@ mod tests {
             height: 300,
             strategy: meetspace_screen_core::CaptureStrategy::Display,
             crop: rect(),
-            subject: meetspace_screen_core::CaptureSubject::Display(meetspace_screen_core::DisplayMetadata {
-                id: 3,
-                name: "Built-in Retina Display".to_string(),
-                rect: rect(),
-                is_primary: true,
-            }),
+            subject: meetspace_screen_core::CaptureSubject::Display(
+                meetspace_screen_core::DisplayMetadata {
+                    id: 3,
+                    name: "Built-in Retina Display".to_string(),
+                    rect: rect(),
+                    is_primary: true,
+                },
+            ),
         });
 
         assert!(matches!(capture.strategy, CaptureStrategy::Display));
