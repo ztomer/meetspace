@@ -1,5 +1,5 @@
 import chroma from "chroma-js";
-import { type CSSProperties, useMemo } from "react";
+import { useMemo } from "react";
 
 import type { SegmentKey, SegmentWord } from "~/stt/live-segment";
 
@@ -9,11 +9,6 @@ export type SentenceLine = {
   words: SegmentWord[];
   startMs: number;
   endMs: number;
-};
-
-type SegmentColorVars = CSSProperties & {
-  "--segment-color-light": string;
-  "--segment-color-dark": string;
 };
 
 export function groupWordsIntoLines(words: SegmentWord[]): SentenceLine[] {
@@ -82,10 +77,7 @@ export function getActiveLineIndex(
   return null;
 }
 
-export function getSegmentColor(
-  key: SegmentKey,
-  mode: "light" | "dark" = "light",
-): string {
+export function getSegmentColor(key: SegmentKey): string {
   const speakerIndex = key.speaker_index ?? 0;
 
   const channelPalettes = [
@@ -97,20 +89,9 @@ export function getSegmentColor(
   const hues = channelPalettes[paletteIndex]!;
   const hue = hues[speakerIndex % hues.length]!;
 
-  return chroma.oklch(mode === "dark" ? 0.72 : 0.55, 0.15, hue).hex();
-}
-
-export function getSegmentColorVars(key: SegmentKey): SegmentColorVars {
-  return {
-    "--segment-color-light": getSegmentColor(key),
-    "--segment-color-dark": getSegmentColor(key, "dark"),
-  };
+  return chroma.oklch(0.55, 0.15, hue).hex();
 }
 
 export function useSegmentColor(key: SegmentKey): string {
   return useMemo(() => getSegmentColor(key), [key]);
-}
-
-export function useSegmentColorVars(key: SegmentKey): SegmentColorVars {
-  return useMemo(() => getSegmentColorVars(key), [key]);
 }

@@ -11,139 +11,146 @@ vi.mock("@meetspace/plugin-transcription", () => ({
 }));
 
 import {
-  buildRenderTranscriptRequestFromRows,
-  collectAssignedHumanIdsFromTranscriptRows,
+  buildRenderTranscriptRequestFromStore,
   getRenderTranscriptRequestKey,
   renderTranscriptSegments,
-  type TranscriptRow,
 } from "./render-transcript";
 
-const transcripts = {
-  late: {
-    started_at: 5_000,
-    words: [
-      {
-        id: "late-word",
-        text: " later",
-        start_ms: 100,
-        end_ms: 200,
-        channel: 1,
-      },
-    ],
-    speaker_hints: [
-      {
-        word_id: "late-word",
-        type: "user_speaker_assignment",
-        value: { human_id: "remote" },
-      },
-    ],
-  },
-  early: {
-    started_at: 1_000,
-    words: [
-      {
-        id: "early-word",
-        text: " hello",
-        start_ms: 0,
-        end_ms: 100,
-        channel: 0,
-      },
-    ],
-    speaker_hints: [],
-  },
-  unordered: {
-    started_at: 2_000,
-    words: [
-      {
-        id: "unordered-word",
-        text: " hello",
-        start_ms: 0,
-        end_ms: 100,
-        channel: 1,
-      },
-    ],
-    speaker_hints: [
-      {
-        word_id: "unordered-word",
-        type: "user_speaker_assignment",
-        value: { human_id: "remote" },
-      },
-      {
-        word_id: "unordered-word",
-        type: "provider_speaker_index",
-        value: { channel: 1, speaker_index: 2 },
-      },
-    ],
-  },
-  segmentOnly: {
-    started_at: 2_000,
-    words: [
-      {
-        id: "segment-word-1",
-        text: " hello",
-        start_ms: 0,
-        end_ms: 100,
-        channel: 1,
-      },
-      {
-        id: "segment-word-2",
-        text: " there",
-        start_ms: 100,
-        end_ms: 200,
-        channel: 1,
-      },
-    ],
-    speaker_hints: [
-      {
-        word_id: "segment-word-1",
-        type: "provider_speaker_index",
-        value: { channel: 1, speaker_index: 2 },
-      },
-      {
-        word_id: "segment-word-2",
-        type: "provider_speaker_index",
-        value: { channel: 1, speaker_index: 2 },
-      },
-      {
-        word_id: "segment-word-1",
-        type: "user_speaker_assignment",
-        value: {
-          human_id: "remote",
-          scope: "segment",
-          word_ids: ["segment-word-1", "segment-word-2"],
-        },
-      },
-    ],
-  },
-} as const;
+type FakeStore = {
+  getCell: (tableId: string, rowId: string, cellId: string) => unknown;
+  forEachRow: (
+    tableId: string,
+    callback: (rowId: string, forEachCell: unknown) => void,
+  ) => void;
+  getValue: (valueId: string) => unknown;
+  getRow: (tableId: string, rowId: string) => Record<string, unknown>;
+};
 
-function createRequest(
-  transcriptIds: Array<keyof typeof transcripts> = ["late", "early"],
-  participantIds = ["self", "remote"],
-) {
-  return buildRenderTranscriptRequestFromRows(
-    transcriptIds.map(
-      (transcriptId) => transcripts[transcriptId],
-    ) as unknown as TranscriptRow[],
-    {
-      selfHumanId: "self",
-      humans: [
-        { human_id: "self", name: "Me" },
-        { human_id: "remote", name: "Remote" },
-        { human_id: "third", name: "Third" },
-      ],
+function createStore(participantIds = ["self", "remote"]): FakeStore {
+  const transcripts = {
+    late: {
+      session_id: "session-1",
+      started_at: 5_000,
+      words: JSON.stringify([
+        {
+          id: "late-word",
+          text: " later",
+          start_ms: 100,
+          end_ms: 200,
+          channel: 1,
+        },
+      ]),
+      speaker_hints: JSON.stringify([
+        {
+          word_id: "late-word",
+          type: "user_speaker_assignment",
+          value: JSON.stringify({ human_id: "remote" }),
+        },
+      ]),
     },
-    participantIds,
+    early: {
+      session_id: "session-1",
+      started_at: 1_000,
+      words: JSON.stringify([
+        {
+          id: "early-word",
+          text: " hello",
+          start_ms: 0,
+          end_ms: 100,
+          channel: 0,
+        },
+      ]),
+      speaker_hints: JSON.stringify([]),
+    },
+    unordered: {
+      session_id: "session-1",
+      started_at: 2_000,
+      words: JSON.stringify([
+        {
+          id: "unordered-word",
+          text: " hello",
+          start_ms: 0,
+          end_ms: 100,
+          channel: 1,
+        },
+      ]),
+      speaker_hints: JSON.stringify([
+        {
+          word_id: "unordered-word",
+          type: "user_speaker_assignment",
+          value: JSON.stringify({ human_id: "remote" }),
+        },
+        {
+          word_id: "unordered-word",
+          type: "provider_speaker_index",
+          value: JSON.stringify({ channel: 1, speaker_index: 2 }),
+        },
+      ]),
+    },
+  } as const;
+
+  const humans = {
+    self: { name: "Me" },
+    remote: { name: "Remote" },
+    third: { name: "Third" },
+  } as const;
+
+  const mappings = Object.fromEntries(
+    participantIds.map((humanId, index) => [
+      `mapping-${index}`,
+      {
+        session_id: "session-1",
+        human_id: humanId,
+      },
+    ]),
   );
+
+  return {
+    getCell: (tableId, rowId, cellId) => {
+      if (tableId === "transcripts") {
+        return transcripts[rowId as keyof typeof transcripts]?.[
+          cellId as keyof (typeof transcripts)["late"]
+        ];
+      }
+
+      if (tableId === "mapping_session_participant") {
+        return mappings[rowId as keyof typeof mappings]?.[
+          cellId as keyof (typeof mappings)[string]
+        ];
+      }
+
+      return undefined;
+    },
+    forEachRow: (tableId, callback) => {
+      if (tableId === "humans") {
+        Object.keys(humans).forEach((rowId) => callback(rowId, null));
+      }
+      if (tableId === "mapping_session_participant") {
+        Object.keys(mappings).forEach((rowId) => callback(rowId, null));
+      }
+    },
+    getValue: (valueId) => {
+      return valueId === "user_id" ? "self" : undefined;
+    },
+    getRow: (tableId, rowId) => {
+      if (tableId === "humans") {
+        return humans[rowId as keyof typeof humans] ?? {};
+      }
+      return {};
+    },
+  };
 }
 
-describe("buildRenderTranscriptRequestFromRows", () => {
+describe("buildRenderTranscriptRequestFromStore", () => {
   beforeEach(() => {
     renderTranscriptSegmentsCommand.mockReset();
   });
 
   it("passes raw transcript rows and session participant ids to Rust", () => {
-    const request = createRequest();
+    const request = buildRenderTranscriptRequestFromStore(
+      createStore() as never,
+      ["late", "early"],
+    );
 
     expect(request).not.toBeNull();
     expect(
@@ -166,13 +173,19 @@ describe("buildRenderTranscriptRequestFromRows", () => {
   });
 
   it("passes through all mapped participant ids for Rust-side resolution", () => {
-    const request = createRequest(["early"], ["self", "remote", "third"]);
+    const request = buildRenderTranscriptRequestFromStore(
+      createStore(["self", "remote", "third"]) as never,
+      ["early"],
+    );
 
     expect(request?.participant_human_ids).toEqual(["self", "remote", "third"]);
   });
 
   it("applies provider speaker hints before user assignments regardless of storage order", () => {
-    const request = createRequest(["unordered"]);
+    const request = buildRenderTranscriptRequestFromStore(
+      createStore() as never,
+      ["unordered"],
+    );
 
     expect(request?.transcripts[0]?.words[0]?.speaker_index).toBe(2);
     expect(request?.transcripts[0]?.assignments).toEqual([
@@ -185,46 +198,6 @@ describe("buildRenderTranscriptRequestFromRows", () => {
         },
       },
     ]);
-  });
-
-  it("turns segment speaker assignments into word-scoped render assignments", () => {
-    const request = createRequest(["segmentOnly"]);
-
-    expect(request?.transcripts[0]?.assignments).toEqual([
-      {
-        human_id: "remote",
-        scope: {
-          kind: "words",
-          word_ids: ["segment-word-1", "segment-word-2"],
-        },
-      },
-    ]);
-  });
-
-  it("collects assigned speaker human ids from transcript rows", () => {
-    expect(
-      collectAssignedHumanIdsFromTranscriptRows([
-        {
-          speaker_hints: [
-            {
-              word_id: "word-1",
-              type: "user_speaker_assignment",
-              value: JSON.stringify({ human_id: "remote" }),
-            },
-            {
-              word_id: "word-2",
-              type: "user_speaker_assignment",
-              value: { human_id: "third" },
-            },
-            {
-              word_id: "word-3",
-              type: "provider_speaker_index",
-              value: JSON.stringify({ speaker_index: 1 }),
-            },
-          ],
-        },
-      ]),
-    ).toEqual(["remote", "third"]);
   });
 
   it("rounds fractional millisecond timings before invoking Rust", async () => {
@@ -344,13 +317,19 @@ describe("buildRenderTranscriptRequestFromRows", () => {
 
 describe("getRenderTranscriptRequestKey", () => {
   it("keeps large transcript payloads out of query keys", () => {
-    const request = createRequest();
+    const request = buildRenderTranscriptRequestFromStore(
+      createStore() as never,
+      ["late", "early"],
+    );
 
     expect(getRenderTranscriptRequestKey(request)).toMatch(/^\d+:\d+:\d+:/);
   });
 
   it("changes when rendered transcript inputs change", () => {
-    const request = createRequest();
+    const request = buildRenderTranscriptRequestFromStore(
+      createStore() as never,
+      ["late", "early"],
+    );
     const changedRequest = {
       ...request!,
       transcripts: request!.transcripts.map((transcript, index) =>
@@ -371,7 +350,10 @@ describe("getRenderTranscriptRequestKey", () => {
   });
 
   it("changes when speaker assignments change", () => {
-    const request = createRequest();
+    const request = buildRenderTranscriptRequestFromStore(
+      createStore() as never,
+      ["late", "early"],
+    );
     const changedRequest = {
       ...request!,
       transcripts: request!.transcripts.map((transcript, index) =>

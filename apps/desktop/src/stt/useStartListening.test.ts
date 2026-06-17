@@ -761,7 +761,7 @@ describe("useStartListening", () => {
 
     await waitFor(() => {
       expect(sendMeetingChatMessageMock).toHaveBeenCalledWith(
-        "I'm using Anarlog to record and transcribe this meeting. https://anarlog.so",
+        "I'm using Meetspace to record and transcribe this meeting. https://meetspace.so",
         ["com.tinyspeck.slackmacgap"],
       );
     });
@@ -859,13 +859,13 @@ describe("useStartListening", () => {
 
     expect(listMicUsingApplicationsMock).toHaveBeenCalledTimes(2);
     expect(sendMeetingChatMessageMock).toHaveBeenCalledWith(
-      expect.stringContaining("https://anarlog.so"),
+      expect.stringContaining("https://meetspace.so"),
       ["com.tinyspeck.slackmacgap"],
     );
     expect(sonnerToastWarningMock).not.toHaveBeenCalled();
   });
 
-  test("keeps the Slack scope when Anarlog also appears in the mic-active apps", async () => {
+  test("keeps the Slack scope when Meetspace also appears in the mic-active apps", async () => {
     useConfigValueMock.mockImplementation((key: string) =>
       key === "ai_language"
         ? "en"
@@ -876,7 +876,7 @@ describe("useStartListening", () => {
     listMicUsingApplicationsMock.mockResolvedValue({
       status: "ok",
       data: [
-        { id: "com.hyprnote.dev", name: "Anarlog Dev" },
+        { id: "com.hyprnote.dev", name: "Meetspace Dev" },
         { id: "com.tinyspeck.slackmacgap", name: "Slack" },
       ],
     });
@@ -890,7 +890,7 @@ describe("useStartListening", () => {
 
     await waitFor(() => {
       expect(sendMeetingChatMessageMock).toHaveBeenCalledWith(
-        expect.stringContaining("https://anarlog.so"),
+        expect.stringContaining("https://meetspace.so"),
         ["com.hyprnote.dev", "com.tinyspeck.slackmacgap"],
       );
     });
@@ -919,7 +919,7 @@ describe("useStartListening", () => {
     });
 
     expect(sendMeetingChatMessageMock).toHaveBeenCalledWith(
-      expect.stringContaining("https://anarlog.so"),
+      expect.stringContaining("https://meetspace.so"),
       ["us.zoom.xos", "com.tinyspeck.slackmacgap"],
     );
     expect(warn).toHaveBeenCalledWith(
@@ -927,7 +927,7 @@ describe("useStartListening", () => {
       "expected exactly one recognized meeting app bundle",
     );
     expect(sonnerToastWarningMock).toHaveBeenCalledWith(
-      "Recording started, but Anarlog could not post the meeting chat disclosure.",
+      "Recording started, but Meetspace could not post the meeting chat disclosure.",
       { id: "meeting-disclosure-send-failed" },
     );
     warn.mockRestore();
@@ -1077,7 +1077,7 @@ describe("useStartListening", () => {
       error,
     );
     expect(sonnerToastWarningMock).toHaveBeenCalledWith(
-      "Recording started, but Anarlog could not post the meeting chat disclosure.",
+      "Recording started, but Meetspace could not post the meeting chat disclosure.",
       { id: "meeting-disclosure-send-failed" },
     );
     warn.mockRestore();
@@ -1102,7 +1102,7 @@ describe("useStartListening", () => {
       expect(startMeetingChatCaptureMock).toHaveBeenCalledWith({
         sessionId: "session-1",
         excludedTexts: [
-          "I'm using Anarlog to record and transcribe this meeting. https://anarlog.so",
+          "I'm using Meetspace to record and transcribe this meeting. https://meetspace.so",
         ],
       });
     });
@@ -1140,7 +1140,7 @@ describe("useStartListening", () => {
       expect(startMeetingChatCaptureMock).toHaveBeenCalledWith({
         sessionId: "session-1",
         excludedTexts: [
-          "I'm using Anarlog to record and transcribe this meeting. https://anarlog.so",
+          "I'm using Meetspace to record and transcribe this meeting. https://meetspace.so",
         ],
       });
     });

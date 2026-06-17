@@ -83,11 +83,11 @@ export function AppSettingsView({
             description={
               cloudSync.available ? (
                 <Trans>
-                  End-to-end encrypted across your signed-in devices. Anarlog
+                  End-to-end encrypted across your signed-in devices. Meetspace
                   cannot read your synced notes.
                 </Trans>
               ) : (
-                <Trans>Available with Anarlog Pro.</Trans>
+                <Trans>Available with Meetspace Pro.</Trans>
               )
             }
             checked={cloudSync.available && cloudSync.value}
