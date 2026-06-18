@@ -114,14 +114,19 @@ jobs:
 
           CLEAN_VERSION="${VERSION#v}"
 
-          # Clone the tap repository
           git clone "https://${TAP_TOKEN}@github.com/ztomer/homebrew-tap.git" /tmp/homebrew-tap
+
+          # Sync the cask FROM the in-repo source formula (propagates structural
+          # changes — arch constraints, zap paths, etc. — not just the version),
+          # then pin the version to this release.
+          cp "$GITHUB_WORKSPACE/scripts/brew/meetspace.rb" /tmp/homebrew-tap/Casks/meetspace.rb
+          perl -pi -e "s/version \".*\"/version \"$CLEAN_VERSION\"/" /tmp/homebrew-tap/Casks/meetspace.rb
+
           cd /tmp/homebrew-tap
-
-          # Update the cask file with new version
-          perl -pi -e "s/version \".*\"/version \"$CLEAN_VERSION\"/" Casks/meetspace.rb
-
-          # Commit and push directly to the tap repository
+          if git diff --quiet -- Casks/meetspace.rb; then
+            echo "Cask already up to date; nothing to push."
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add Casks/meetspace.rb
