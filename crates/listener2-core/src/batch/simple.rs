@@ -182,7 +182,8 @@ pub(super) async fn run_soniqo_batch(
             "soniqo_batch_completed"
         );
 
-        let response = meetspace_transcribe_soniqo::batch_response_from_channels(model, transcribed);
+        let response =
+            meetspace_transcribe_soniqo::batch_response_from_channels(model, transcribed);
 
         Ok(BatchRunOutput {
             session_id: params.session_id,
@@ -229,8 +230,8 @@ fn transcribe_soniqo_file(
     }
 
     let resample_started_at = Instant::now();
-    let samples =
-        meetspace_audio_utils::resample_audio(source, TARGET_SAMPLE_RATE).map_err(|e| e.to_string())?;
+    let samples = meetspace_audio_utils::resample_audio(source, TARGET_SAMPLE_RATE)
+        .map_err(|e| e.to_string())?;
     tracing::info!(
         meetspace.stt.provider.name = "soniqo",
         meetspace.stt.model = %model,
@@ -267,8 +268,8 @@ fn transcribe_soniqo_channel(
     language: Option<&str>,
 ) -> std::result::Result<meetspace_transcribe_soniqo::FileTranscript, String> {
     let duration_seconds = channel_duration_sec(samples);
-    let chunks =
-        chunk_channel_audio::<meetspace_audio_chunking::Error>(samples).map_err(|e| e.to_string())?;
+    let chunks = chunk_channel_audio::<meetspace_audio_chunking::Error>(samples)
+        .map_err(|e| e.to_string())?;
     let chunks = split_soniqo_native_chunks(model, chunks);
     tracing::info!(
         meetspace.stt.provider.name = "soniqo",
@@ -360,7 +361,8 @@ fn transcribe_soniqo_samples(
         writer.finalize().map_err(|e| e.to_string())?;
     }
 
-    meetspace_transcribe_soniqo::transcribe_file(model, file.path(), language).map_err(|e| e.to_string())
+    meetspace_transcribe_soniqo::transcribe_file(model, file.path(), language)
+        .map_err(|e| e.to_string())
 }
 
 fn split_soniqo_native_chunks(
@@ -368,7 +370,9 @@ fn split_soniqo_native_chunks(
     chunks: Vec<AudioChunk>,
 ) -> Vec<AudioChunk> {
     let max_samples = match model {
-        meetspace_transcribe_soniqo::SoniqoModel::ParakeetBatch => SONIQO_PARAKEET_MAX_CHUNK_SAMPLES,
+        meetspace_transcribe_soniqo::SoniqoModel::ParakeetBatch => {
+            SONIQO_PARAKEET_MAX_CHUNK_SAMPLES
+        }
         _ => return chunks,
     };
 
