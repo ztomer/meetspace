@@ -60,6 +60,13 @@ echo "==> Enforce fork ownership (restore fork-owned files; apply delete-list)"
 # upstream files slip into deleted dirs — neither shows up as a conflict.
 RESOLVE --enforce "$ORIG_FORK"
 
+echo "==> Restore regenerable keep-ours files from upstream-track (clean)"
+# The .gitattributes keep-ours driver doesn't reliably apply during a scripted
+# rebase, leaving conflict markers in lock/catalog files. They all regenerate
+# below (cargo / pnpm install / i18n), so reset them to the clean upstream-track
+# copy rather than fight the driver.
+git checkout upstream-track -- Cargo.lock pnpm-lock.yaml apps/desktop/src/i18n/locales 2>/dev/null || true
+
 echo "==> Reconcile package.json (preserve fork scripts/deps; add/remove per manifest)"
 FORK_OWNERSHIP_TOML="$SNAP/fork-ownership.toml" python3 "$SNAP/reconcile-package.py" "$ORIG_FORK" "$TAG"
 
