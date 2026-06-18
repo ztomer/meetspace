@@ -17,4 +17,4 @@ jobs:
         with:
           fetch-depth: 0
       - name: Conflict markers + rebrand leaks
-        run: bash scripts/check-clean.sh
+        run: python3 scripts/check-clean.py
