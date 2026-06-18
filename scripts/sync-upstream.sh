@@ -27,6 +27,7 @@ bash scripts/setup-fork-git.sh >/dev/null
 SNAP="$(mktemp -d)"
 cp scripts/resolve-conflicts.py "$SNAP/resolve-conflicts.py"
 cp scripts/reconcile-package.py "$SNAP/reconcile-package.py"
+cp scripts/reconcile-cargo.py "$SNAP/reconcile-cargo.py"
 cp fork-ownership.toml "$SNAP/fork-ownership.toml"
 trap 'rm -rf "$SNAP"' EXIT
 RESOLVE() { FORK_OWNERSHIP_TOML="$SNAP/fork-ownership.toml" python3 "$SNAP/resolve-conflicts.py" "$@"; }
@@ -35,6 +36,15 @@ echo "==> Rebuilding upstream-track at $TAG (+ meetspace rebrand)"
 git fetch --tags --prune origin
 PREV_TRACK="$(git rev-parse --verify -q refs/heads/upstream-track || true)"
 [ -n "$PREV_TRACK" ] || { echo "no upstream-track branch; create it first"; exit 1; }
+# Drift guard: re-running after upstream-track was already advanced to $TAG makes
+# PREV_TRACK the WRONG base (it would replay nothing / the wrong range). Refuse
+# and tell the operator to reset the branch to the PREVIOUS release track.
+if git log -1 --format=%s "$PREV_TRACK" 2>/dev/null | grep -qF "upstream-track: $TAG "; then
+  echo "ERROR: upstream-track is already at $TAG — PREV_TRACK would be wrong."
+  echo "Reset it to the previous release track, then re-run:"
+  echo "  git branch -f upstream-track <previous-track-sha>"
+  exit 1
+fi
 git checkout -B upstream-track "$TAG"
 git checkout "$FORK_BRANCH" -- scripts/rebrand_sweep.py
 python3 scripts/rebrand_sweep.py
@@ -69,6 +79,9 @@ git checkout upstream-track -- Cargo.lock pnpm-lock.yaml apps/desktop/src/i18n/l
 
 echo "==> Reconcile package.json (preserve fork scripts/deps; add/remove per manifest)"
 FORK_OWNERSHIP_TOML="$SNAP/fork-ownership.toml" python3 "$SNAP/reconcile-package.py" "$ORIG_FORK" "$TAG"
+
+echo "==> Reconcile root Cargo.toml (drop deleted members; restore fork plugin deps)"
+FORK_OWNERSHIP_TOML="$SNAP/fork-ownership.toml" python3 "$SNAP/reconcile-cargo.py" "$ORIG_FORK" "$TAG"
 
 echo "==> Rebrand sweep + format + install + regenerate"
 python3 scripts/rebrand_sweep.py
