@@ -34,6 +34,10 @@ fork = [
   # --- Intelligence (local-first STT/diarize/enhance, AI tasks, prep) ---
   "apps/desktop/src/stt/**",
   "apps/desktop/src/settings/ai/stt/**",
+  # UI tightly coupled to the fork's STT/transcript API (upstream's versions call
+  # upstream STT symbols the fork renamed/removed — keep the fork's versions).
+  "apps/desktop/src/session/components/bottom-accessory/during-session.tsx",
+  "apps/desktop/src/devtools-panel/host.tsx",
   "apps/desktop/src/session/components/note-input/transcript/**",
   "apps/desktop/src/services/diarize-on-stop.ts",
   "apps/desktop/src/services/name-resolve-on-stop.ts",
