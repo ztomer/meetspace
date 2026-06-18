@@ -25,11 +25,11 @@ msgstr "Adicionar idioma falado"
 msgid "Additional spoken languages"
 msgstr "Idiomas falados adicionais"
 
-#: src/settings/general/app-settings.tsx:37
+#: src/settings/general/app-settings.tsx:35
 msgid "Always ready without manually launching."
 msgstr "Sempre pronto sem iniciar manualmente."
 
-#: src/settings/general/index.tsx:166
+#: src/settings/general/index.tsx:148
 msgid "App"
 msgstr "Aplicativo"
 
@@ -37,11 +37,11 @@ msgstr "Aplicativo"
 msgid "Appearance"
 msgstr ""
 
-#: src/settings/general/app-settings.tsx:79
+#: src/settings/general/app-settings.tsx:71
 msgid "Automatically start listening when an event-backed note reaches its scheduled start time."
 msgstr "Começar a ouvir automaticamente quando uma nota vinculada a um evento chegar ao horário de início agendado."
 
-#: src/settings/general/app-settings.tsx:90
+#: src/settings/general/app-settings.tsx:82
 msgid "Automatically stop listening when the meeting app releases the microphone."
 msgstr "Parar de ouvir automaticamente quando o aplicativo de reunião liberar o microfone."
 
@@ -53,7 +53,7 @@ msgstr ""
 msgid "Dark"
 msgstr ""
 
-#: src/settings/general/index.tsx:300
+#: src/settings/general/index.tsx:269
 msgid "Data"
 msgstr "Dados"
 
@@ -62,10 +62,10 @@ msgid "First day of the week in the calendar view"
 msgstr ""
 
 #: src/settings/general/app-settings.tsx:63
-msgid "Keep Anarlog available from the menu bar."
-msgstr ""
+#~ msgid "Keep Anarlog available from the menu bar."
+#~ msgstr ""
 
-#: src/settings/general/index.tsx:251
+#: src/settings/general/index.tsx:220
 msgid "Language & Region"
 msgstr "Idioma e região"
 
@@ -81,7 +81,7 @@ msgstr ""
 msgid "Main language"
 msgstr "Idioma principal"
 
-#: src/settings/general/app-settings.tsx:73
+#: src/settings/general/app-settings.tsx:65
 msgid "Meetings"
 msgstr "Reuniões"
 
@@ -98,11 +98,11 @@ msgstr "Nenhum idioma correspondente encontrado"
 msgid "No results found."
 msgstr ""
 
-#: src/settings/general/index.tsx:310
+#: src/settings/general/index.tsx:279
 msgid "Notifications"
 msgstr "Notificações"
 
-#: src/settings/general/index.tsx:319
+#: src/settings/general/index.tsx:288
 msgid "Permissions"
 msgstr ""
 
@@ -131,42 +131,58 @@ msgid "Select..."
 msgstr ""
 
 #: src/settings/general/app-settings.tsx:45
-msgid "Send anonymous usage analytics to help improve Anarlog."
-msgstr "Enviar análises anônimas de uso para ajudar a melhorar o Anarlog."
+#~ msgid "Send anonymous usage analytics to help improve Anarlog."
+#~ msgstr "Enviar análises anônimas de uso para ajudar a melhorar o Anarlog."
 
-#: src/settings/general/app-settings.tsx:43
+#: src/settings/general/app-settings.tsx:53
+msgid "Send anonymous usage analytics to help improve Meetspace."
+msgstr ""
+
+#: src/settings/index.tsx:35
+msgid "Settings"
+msgstr ""
+
+#: src/settings/general/app-settings.tsx:51
 msgid "Share usage data"
 msgstr "Compartilhar dados de uso"
 
 #: src/settings/general/app-settings.tsx:55
-msgid "Show Anarlog in the Dock and app switcher."
-msgstr ""
+#~ msgid "Show Anarlog in the Dock and app switcher."
+#~ msgstr ""
 
 #: src/settings/general/app-settings.tsx:53
-msgid "Show app in Dock"
-msgstr ""
+#~ msgid "Show app in Dock"
+#~ msgstr ""
 
-#: src/settings/general/app-settings.tsx:99
+#: src/settings/general/app-settings.tsx:91
 msgid "Show floating bar"
 msgstr "Mostrar barra flutuante"
 
-#: src/settings/general/app-settings.tsx:101
+#: src/settings/general/app-settings.tsx:93
 msgid "Show the compact floating control while listening."
 msgstr "Mostrar o controle flutuante compacto durante a escuta."
 
-#: src/settings/general/app-settings.tsx:61
-msgid "Show tray icon"
+#: src/settings/general/app-settings.tsx:41
+msgid "Show timeline in sidebar"
 msgstr ""
 
-#: src/settings/general/app-settings.tsx:35
-msgid "Start Anarlog at login"
-msgstr "Iniciar Anarlog ao entrar"
+#: src/settings/general/app-settings.tsx:61
+#~ msgid "Show tray icon"
+#~ msgstr ""
 
-#: src/settings/general/app-settings.tsx:77
+#: src/settings/general/app-settings.tsx:35
+#~ msgid "Start Anarlog at login"
+#~ msgstr "Iniciar Anarlog ao entrar"
+
+#: src/settings/general/app-settings.tsx:33
+msgid "Start Meetspace at login"
+msgstr ""
+
+#: src/settings/general/app-settings.tsx:69
 msgid "Start when meeting begins"
 msgstr "Iniciar quando a reunião começar"
 
-#: src/settings/general/app-settings.tsx:88
+#: src/settings/general/app-settings.tsx:80
 msgid "Stop when meeting ends"
 msgstr "Parar quando a reunião terminar"
 
@@ -181,6 +197,10 @@ msgstr ""
 #: src/settings/general/spoken-languages.tsx:119
 msgid "The main language is always included for transcription"
 msgstr "O idioma principal é sempre incluído para transcrição"
+
+#: src/settings/general/app-settings.tsx:43
+msgid "Use the left sidebar timeline instead of the top timeline."
+msgstr ""
 
 #: src/settings/general/week-start.tsx:55
 msgid "Week starts on"
