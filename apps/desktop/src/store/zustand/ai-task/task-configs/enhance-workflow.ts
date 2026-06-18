@@ -51,8 +51,9 @@ async function* executeWorkflow(params: {
   args: TaskArgsMapTransformed["enhance"];
   onProgress: (step: any) => void;
   signal: AbortSignal;
+  store: Store;
 }) {
-  const { model, args, onProgress, signal } = params;
+  const { model, args, onProgress, signal, store } = params;
 
   const usesTemplate = hasSummaryTemplateToken(args.customInstructions);
   const sections = usesTemplate
@@ -77,7 +78,7 @@ async function* executeWorkflow(params: {
 
   const system = await getSystemPrompt(argsWithTemplate);
   const prompt = withImageContextNote(
-    await getUserPrompt(argsWithTemplate),
+    await getUserPrompt(argsWithTemplate, store),
     argsWithTemplate.imageContext.length,
   );
 
@@ -109,7 +110,10 @@ async function getSystemPrompt(args: TaskArgsMapTransformed["enhance"]) {
   return result.data;
 }
 
-async function getUserPrompt(args: TaskArgsMapTransformed["enhance"]) {
+async function getUserPrompt(
+  args: TaskArgsMapTransformed["enhance"],
+  _store: Store,
+) {
   const {
     session,
     participants,
@@ -151,21 +155,25 @@ async function generateTemplateIfNeeded(params: {
   args: TaskArgsMapTransformed["enhance"];
   onProgress: (step: any) => void;
   signal: AbortSignal;
+  store: Store;
 }): Promise<TemplateSection[] | null> {
-  const { model, args, onProgress, signal } = params;
+  const { model, args, onProgress, signal, store } = params;
 
   if (!args.template) {
     onProgress({ type: "analyzing" });
 
     const schema = z.object({ sections: z.array(templateSectionSchema) });
-    const userPrompt = await getUserPrompt(args);
+    const userPrompt = withImageContextNote(
+      await getUserPrompt(args, store),
+      args.imageContext.length,
+    );
 
     const result = await generateStructuredOutput({
       model,
       schema,
       signal,
       prompt: createTemplatePrompt(userPrompt, schema),
-      imageContext: [],
+      imageContext: args.imageContext,
     });
 
     if (!result) {
@@ -231,7 +239,7 @@ async function generateStructuredOutput<T extends z.ZodTypeAny>(params: {
     }
 
     return result.output as z.infer<T>;
-  } catch {
+  } catch (error) {
     try {
       const fallbackResult = await generateText({
         model,

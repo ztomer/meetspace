@@ -1,7 +1,5 @@
 use crate::{AppExt, embedded_cli::EmbeddedCliStatus};
 
-const STAGING_BUNDLE_ID: &str = "com.meetspace.staging";
-
 #[tauri::command]
 #[specta::specta]
 pub async fn get_onboarding_needed<R: tauri::Runtime>(
@@ -42,15 +40,22 @@ pub async fn get_env<R: tauri::Runtime>(_app: tauri::AppHandle<R>, key: String) 
     std::env::var(&key).unwrap_or_default()
 }
 
-fn should_show_devtool(identifier: &str) -> bool {
-    cfg!(any(debug_assertions, feature = "dev", feature = "devtools"))
-        || identifier == STAGING_BUNDLE_ID
-}
-
 #[tauri::command]
 #[specta::specta]
-pub fn show_devtool<R: tauri::Runtime>(app: tauri::AppHandle<R>) -> bool {
-    should_show_devtool(&app.config().identifier)
+pub fn show_devtool() -> bool {
+    if cfg!(debug_assertions) {
+        return true;
+    }
+
+    #[cfg(feature = "devtools")]
+    {
+        return true;
+    }
+
+    #[cfg(not(feature = "devtools"))]
+    {
+        false
+    }
 }
 
 #[tauri::command]
@@ -100,30 +105,4 @@ pub async fn set_recently_opened_sessions<R: tauri::Runtime>(
     v: String,
 ) -> Result<(), String> {
     app.set_recently_opened_sessions(v)
-}
-
-#[tauri::command]
-#[specta::specta]
-pub async fn check_embedded_cli<R: tauri::Runtime>(
-    app: tauri::AppHandle<R>,
-) -> Result<EmbeddedCliStatus, String> {
-    Ok(crate::embedded_cli::check(&app))
-}
-
-#[tauri::command]
-#[specta::specta]
-pub async fn install_embedded_cli<R: tauri::Runtime>(
-    app: tauri::AppHandle<R>,
-) -> Result<EmbeddedCliStatus, String> {
-    crate::embedded_cli::install(&app)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn shows_devtools_for_staging_bundle() {
-        assert!(should_show_devtool(STAGING_BUNDLE_ID));
-    }
 }
