@@ -262,6 +262,10 @@ pub async fn main() {
 
             search_index::spawn(app_handle, db.clone());
 
+            // Deterministic startup marker for scripts/smoke-launch.sh. Reaching
+            // here means every plugin setup ran (incl. the tray/updater2 event
+            // wiring whose order once panicked at launch) and the app is up.
+            tracing::info!(target: "smoke", "app_setup_complete");
             Ok(())
         })
         .build(context)
