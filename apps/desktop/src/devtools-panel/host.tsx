@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { useCallback, useRef, useState } from "react";
 
 import { commands as notificationCommands } from "@meetspace/plugin-notification";
@@ -24,13 +23,11 @@ import {
 import { showBatchCompletedNotification } from "~/store/zustand/listener/general-batch";
 import { listenerStore } from "~/store/zustand/listener/instance";
 import { useTabs } from "~/store/zustand/tabs";
-import {
-  AUTO_STOP_CONFIRM_TIMEOUT_SECONDS,
-  createAutoStopEndedNotificationKey,
-} from "~/stt/auto-stop-notification";
+import { createAutoStopEndedNotificationKey } from "~/stt/auto-stop-notification";
 import { commands } from "~/types/tauri.gen";
 
-const canResolveDevtoolsPanel = import.meta.env.MODE !== "test";
+const forceDevtoolsPanel =
+  import.meta.env.DEV && import.meta.env.MODE !== "test";
 
 type DevtoolsPanelAction =
   | "navigation:onboarding"
@@ -65,7 +62,7 @@ type DevtoolsPanelAction =
 
 export function DevtoolsFloatingPanelHost() {
   const isMainWindow = getCurrentWebviewWindowLabel() === "main";
-  const shouldShow = useShouldShowDevtoolsPanel(isMainWindow);
+  const shouldShow = isMainWindow && forceDevtoolsPanel;
 
   if (!isMainWindow) {
     return null;
@@ -76,17 +73,6 @@ export function DevtoolsFloatingPanelHost() {
   }
 
   return <DevtoolsFloatingPanelSync />;
-}
-
-function useShouldShowDevtoolsPanel(isMainWindow: boolean) {
-  const enabledQuery = useQuery({
-    queryKey: ["devtools-panel", "enabled"],
-    queryFn: commands.showDevtool,
-    enabled: isMainWindow && canResolveDevtoolsPanel,
-    staleTime: Infinity,
-  });
-
-  return enabledQuery.data ?? false;
 }
 
 function DevtoolsFloatingPanelDisabled() {
@@ -268,7 +254,7 @@ function useDevtoolsPanelActions() {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         location: "Conference Room",
       },
-      action_label: "Open Meetspace",
+      action_label: "Open notes",
       action_variant: null,
       options: null,
       footer: null,
@@ -334,13 +320,14 @@ function useDevtoolsPanelActions() {
     await notificationCommands.showNotification({
       key: createAutoStopEndedNotificationKey(sessionId),
       title: "Did your meeting end?",
-      message: `Meetspace will stop listening in ${AUTO_STOP_CONFIRM_TIMEOUT_SECONDS} seconds.`,
-      timeout: { secs: AUTO_STOP_CONFIRM_TIMEOUT_SECONDS, nanos: 0 },
+      message:
+        "Google Chrome stopped using the microphone before the scheduled end time.",
+      timeout: { secs: 60, nanos: 0 },
       source: null,
       start_time: null,
       participants: null,
       event_details: null,
-      action_label: "Stop",
+      action_label: "Stop meeting",
       action_variant: "destructive",
       options: null,
       footer: null,

@@ -22,9 +22,7 @@ MANIFEST = os.environ.get("FORK_OWNERSHIP_TOML") or "fork-ownership.toml"
 
 
 def show(ref):
-    r = subprocess.run(
-        ["git", "show", f"{ref}:{P}"], capture_output=True, text=True
-    )
+    r = subprocess.run(["git", "show", f"{ref}:{P}"], capture_output=True, text=True)
     return json.loads(r.stdout) if r.returncode == 0 and r.stdout.strip() else {}
 
 

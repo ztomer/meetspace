@@ -150,7 +150,6 @@ describe("getBatchProvider", () => {
       "deepgram",
     );
   });
-
   test("maps local soniqo models to soniqo batch provider", () => {
     expect(getBatchProvider("meetspace", "soniqo-parakeet-batch")).toBe(
       "soniqo",

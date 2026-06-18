@@ -37,13 +37,14 @@ async function* executeWorkflow(params: {
   args: TaskArgsMapTransformed["enhance"];
   onProgress: (step: any) => void;
   signal: AbortSignal;
+  store: Store;
 }) {
-  const { model, args, onProgress, signal } = params;
+  const { model, args, onProgress, signal, store } = params;
 
   const system = await getSystemPrompt(args);
   const prompt = withImageContextNote(
-    await getUserPrompt(args),
-    args.imageContext.length,
+    await getUserPrompt(argsWithTemplate, store),
+    argsWithTemplate.imageContext.length,
   );
 
   yield* generateSummary({
@@ -71,7 +72,10 @@ async function getSystemPrompt(args: TaskArgsMapTransformed["enhance"]) {
   return result.data;
 }
 
-async function getUserPrompt(args: TaskArgsMapTransformed["enhance"]) {
+async function getUserPrompt(
+  args: TaskArgsMapTransformed["enhance"],
+  _store: Store,
+) {
   const {
     session,
     participants,
@@ -106,6 +110,119 @@ async function getUserPrompt(args: TaskArgsMapTransformed["enhance"]) {
   }
 
   return result.data;
+}
+
+async function generateTemplateIfNeeded(params: {
+  model: LanguageModel;
+  args: TaskArgsMapTransformed["enhance"];
+  onProgress: (step: any) => void;
+  signal: AbortSignal;
+  store: Store;
+}): Promise<TemplateSection[] | null> {
+  const { model, args, onProgress, signal, store } = params;
+
+  if (!args.template) {
+    onProgress({ type: "analyzing" });
+
+    const schema = z.object({ sections: z.array(templateSectionSchema) });
+    const userPrompt = withImageContextNote(
+      await getUserPrompt(args, store),
+      args.imageContext.length,
+    );
+
+    const result = await generateStructuredOutput({
+      model,
+      schema,
+      signal,
+      prompt: createTemplatePrompt(userPrompt, schema),
+      imageContext: args.imageContext,
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return result.sections.map((s) => ({
+      title: s.title,
+      description: s.description ?? null,
+    }));
+  } else {
+    return args.template.sections;
+  }
+}
+
+function createTemplatePrompt(
+  userPrompt: string,
+  schema: z.ZodObject<any>,
+): string {
+  return `Analyze this meeting content and suggest appropriate section headings for a comprehensive summary.
+  The sections should cover the main themes and topics discussed.
+  Generate around 5-7 sections based on the content depth.
+  Avoid generic catch-all headings like "Overview", "Meeting Overview", "Introduction", "Summary", or "Participants".
+  Prefer concrete, topic-specific section titles tied to the actual discussion.
+  Do not create a standalone participants section unless the meeting materially focused on stakeholder roles, ownership, or org structure.
+  Give me in bullet points.
+
+  Content:
+  ---
+  ${userPrompt}
+  ---
+
+  Follow this JSON schema for your response. No additional properties.
+  ---
+  ${JSON.stringify(z.toJSONSchema(schema))}
+  ---
+
+  IMPORTANT: Start with '{', NO \`\`\`json. (I will directly parse it with JSON.parse())`;
+}
+
+async function generateStructuredOutput<T extends z.ZodTypeAny>(params: {
+  model: LanguageModel;
+  schema: T;
+  signal: AbortSignal;
+  prompt: string;
+  imageContext: EnhanceImageContext[];
+}): Promise<z.infer<T> | null> {
+  const { model, schema, signal, prompt, imageContext } = params;
+
+  try {
+    const result = await generateText({
+      model,
+      ...deterministicGenerationSettings(model),
+      output: Output.object({ schema }),
+      abortSignal: signal,
+      maxRetries: AI_GENERATION_MAX_RETRIES,
+      maxOutputTokens: TEMPLATE_MAX_OUTPUT_TOKENS,
+      ...createPromptInput(prompt, imageContext),
+    });
+
+    if (!result.output) {
+      return null;
+    }
+
+    return result.output as z.infer<T>;
+  } catch (error) {
+    try {
+      const fallbackResult = await generateText({
+        model,
+        ...deterministicGenerationSettings(model),
+        abortSignal: signal,
+        maxRetries: AI_GENERATION_MAX_RETRIES,
+        maxOutputTokens: TEMPLATE_MAX_OUTPUT_TOKENS,
+        ...createPromptInput(prompt, imageContext),
+      });
+
+      const jsonMatch = fallbackResult.text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        return null;
+      }
+
+      const parsed = JSON.parse(jsonMatch[0]);
+      return schema.parse(parsed);
+    } catch {
+      return null;
+    }
+  }
 }
 
 async function* generateSummary(params: {
