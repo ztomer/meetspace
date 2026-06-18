@@ -16,17 +16,20 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 TAG="${1:?usage: sync-upstream.sh <upstream-ref, e.g. desktop_v1.0.46>}"
 FORK_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+ORIG_FORK="$(git rev-parse "$FORK_BRANCH")"   # pre-rebase fork tip (enforcement source)
 
 bash scripts/setup-fork-git.sh >/dev/null
 
-# Snapshot the resolver + manifest OUTSIDE the tree NOW, while still on the fork
-# branch (upstream-track and the early rebased commits don't contain them). The
-# rebase loop runs the resolver from this snapshot, pointed at the snapshot
-# manifest via env.
+# Snapshot the resolver + reconciler + manifest OUTSIDE the tree NOW, while still
+# on the fork branch (upstream-track and the early rebased commits don't contain
+# them). The rebase loop / enforce / reconcile steps run from this snapshot,
+# pointed at the snapshot manifest via env.
 SNAP="$(mktemp -d)"
 cp scripts/resolve-conflicts.py "$SNAP/resolve-conflicts.py"
+cp scripts/reconcile-package.py "$SNAP/reconcile-package.py"
 cp fork-ownership.toml "$SNAP/fork-ownership.toml"
 trap 'rm -rf "$SNAP"' EXIT
+RESOLVE() { FORK_OWNERSHIP_TOML="$SNAP/fork-ownership.toml" python3 "$SNAP/resolve-conflicts.py" "$@"; }
 
 echo "==> Rebuilding upstream-track at $TAG (+ meetspace rebrand)"
 git fetch --tags --prune origin
@@ -44,7 +47,7 @@ git checkout "$FORK_BRANCH"
 GIT_EDITOR=true git rebase --onto upstream-track "$PREV_TRACK" "$FORK_BRANCH" >/dev/null 2>&1
 for _ in $(seq 1 400); do
   [ -d .git/rebase-merge ] || break
-  FORK_OWNERSHIP_TOML="$SNAP/fork-ownership.toml" python3 "$SNAP/resolve-conflicts.py"
+  RESOLVE
   out="$(GIT_EDITOR=true git rebase --continue 2>&1)"
   if echo "$out" | grep -qiE 'no changes|nothing to commit|patch is empty|meant to go into a new commit'; then
     GIT_EDITOR=true git rebase --skip >/dev/null 2>&1
@@ -52,23 +55,13 @@ for _ in $(seq 1 400); do
 done
 [ -d .git/rebase-merge ] && { echo "rebase still in progress — resolve manually"; exit 1; }
 
-echo "==> Reconcile package.json deps (add fork deps / remove commercial)"
-python3 - <<'PY'
-import json, tomllib
-m = tomllib.load(open("fork-ownership.toml", "rb")).get("deps", {})
-p = "apps/desktop/package.json"
-d = json.load(open(p))
-dep = d.setdefault("dependencies", {})
-for k in m.get("remove", []):
-    dep.pop(k, None)
-    d.get("devDependencies", {}).pop(k, None)
-for k in m.get("add", []):
-    dep.setdefault(k, "*")
-d["dependencies"] = dict(sorted(dep.items()))
-json.dump(d, open(p, "w"), indent=2)
-open(p, "a").write("\n")
-print("deps reconciled")
-PY
+echo "==> Enforce fork ownership (restore fork-owned files; apply delete-list)"
+# git auto-merge can silently drop fork content in fork-owned files, and new
+# upstream files slip into deleted dirs — neither shows up as a conflict.
+RESOLVE --enforce "$ORIG_FORK"
+
+echo "==> Reconcile package.json (preserve fork scripts/deps; add/remove per manifest)"
+FORK_OWNERSHIP_TOML="$SNAP/fork-ownership.toml" python3 "$SNAP/reconcile-package.py" "$ORIG_FORK" "$TAG"
 
 echo "==> Rebrand sweep + format + install + regenerate"
 python3 scripts/rebrand_sweep.py
