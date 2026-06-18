@@ -5,7 +5,8 @@
 @theme {
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
-  --animate-meetspace-dancing-stick: meetspace-dancing-stick 1s ease-in-out infinite;
+  --animate-meetspace-dancing-stick: meetspace-dancing-stick 1s ease-in-out
+    infinite;
   --animate-ios-opacity-spin: ios-opacity-spin 1s linear infinite;
 
   --color-border: hsl(var(--border));
