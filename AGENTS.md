@@ -25,6 +25,23 @@ SQLite is the primary data store (schema and migrations in `crates/db-app/`, des
 - For `plugins/db` live queries, keep schema creation, migrations, and DB initialization on the Rust side; TypeScript should only consume `execute`/`subscribe` APIs.
 - Branch naming: `fix/`, `chore/`, `refactor/` prefixes.
 
+## Launch sanity (required before any release / "round complete")
+
+`pnpm -r typecheck`, `cargo check`, and the visual tests all run against a
+MOCKED Tauri backend, so they CANNOT catch runtime panics in real plugin init
+(e.g. tauri-specta event-registry / plugin-order panics). Before tagging a
+release or declaring a round complete, run the real app and confirm it launches:
+
+```bash
+pnpm smoke        # = scripts/smoke-launch.sh
+```
+
+It builds + runs the actual app, waits for the `app_setup_complete` tracing
+marker (planted at the end of `src-tauri/src/lib.rs` setup), and exits non-zero
+on a startup panic. Exit codes: 0 pass, 1 panic, 2 inconclusive (timeout/no
+display), 3 env (dev server couldn't start). Needs a display (local or GUI CI
+runner).
+
 ## Visual change verification
 
 Any change that alters what the user sees (desktop or web UI: layout, color,
