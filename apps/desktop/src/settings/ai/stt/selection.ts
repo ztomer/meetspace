@@ -1,74 +1,51 @@
-import {
-  getDefaultSttModel,
-  getPreferredProviderModel,
-} from "~/stt/model-selection";
+type ModelEntry = {
+  id: string;
+  isDownloaded?: boolean;
+};
 
-export { getDefaultSttModel, getPreferredProviderModel };
+type PreferredProviderModelOptions = {
+  allowSavedModelWithoutChoices?: boolean;
+};
 
-export async function getLanguageSupportIssue(
-  languages: readonly string[],
-  isSupported: (languages: readonly string[]) => Promise<boolean>,
-) {
-  if (await isSupported(languages)) {
-    return null;
-  }
-
-  const supportByLanguage = await Promise.all(
-    languages.map(async (language) => ({
-      language,
-      supported: await isSupported([language]),
-    })),
-  );
-
-  return {
-    unsupportedLanguages: supportByLanguage
-      .filter(({ supported }) => !supported)
-      .map(({ language }) => language),
-  };
-}
-
-export function getDefaultSttSelection(
-  providerIds: readonly string[],
-  statuses: Record<
-    string,
-    {
-      configured: boolean;
-      models: { id: string; isDownloaded?: boolean }[];
-    }
-  >,
-  currentProvider?: string,
-  currentModel?: string,
-) {
-  for (const provider of providerIds) {
-    const status = statuses[provider];
-    if (!status?.configured) {
-      continue;
+const normalizeSavedModel = (
+  savedModel: string | undefined,
+  models: ModelEntry[],
+) => {
+  if (savedModel === "universal") {
+    if (models.some((model) => model.id === "universal-3-pro")) {
+      return "universal-3-pro";
     }
 
-    const model = getPreferredProviderModel(
-      provider === currentProvider ? currentModel : undefined,
-      status.models,
-      { allowSavedModelWithoutChoices: provider === "custom" },
-    );
-
-    if (model) {
-      return { provider, model };
+    if (models.some((model) => model.id === "u3-rt-pro")) {
+      return "u3-rt-pro";
     }
   }
 
-  return null;
-}
+  return savedModel;
+};
 
-export function resolveLiveLanguageSupportMode({
-  isOnDeviceModel,
-  useLiveOnDeviceModel,
-  liveSupported,
-}: {
-  isOnDeviceModel: boolean;
-  useLiveOnDeviceModel: boolean;
-  liveSupported: boolean | undefined;
-}): boolean | undefined {
-  return isOnDeviceModel
-    ? useLiveOnDeviceModel && liveSupported
-    : liveSupported;
+export function getPreferredProviderModel(
+  savedModel: string | undefined,
+  models: ModelEntry[],
+  options?: PreferredProviderModelOptions,
+) {
+  const normalizedSavedModel = normalizeSavedModel(savedModel, models);
+  const selectableModels = models.filter((model) => model.isDownloaded ?? true);
+
+  if (
+    normalizedSavedModel &&
+    selectableModels.some((model) => model.id === normalizedSavedModel)
+  ) {
+    return normalizedSavedModel;
+  }
+
+  if (selectableModels.length > 0) {
+    return selectableModels[0].id;
+  }
+
+  if (options?.allowSavedModelWithoutChoices) {
+    return normalizedSavedModel ?? "";
+  }
+
+  return "";
 }
