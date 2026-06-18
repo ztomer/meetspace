@@ -1,5 +1,5 @@
 cask "meetspace" do
-  version "1.0.37_meet4"
+  version "1.0.45_meet1"
   sha256 :no_check
 
   on_intel do
