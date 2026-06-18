@@ -56,6 +56,14 @@ a conflict, so the resolver never sees them):
 - **`reconcile-package.py <fork-ref> <tag>`** re-adds fork-only `package.json`
   scripts (`visual:*`) and devDeps (`@playwright/test`) that taking upstream's
   `package.json` drops, then applies `[deps]` add/remove.
+- **`reconcile-cargo.py <fork-ref> <tag>`** does the same for the root
+  `Cargo.toml`: drops delete-listed `[workspace].members` (e.g. `apps/api`) and
+  restores fork-only `[workspace.dependencies]` path deps (e.g. the fork's
+  `tauri-plugin-diarize`/`-oauth`).
+
+`scripts/sync-upstream.sh` also guards against re-runs: if `upstream-track` is
+already at the target tag (a prior/aborted run advanced it), `PREV_TRACK` would
+be wrong, so it refuses and tells you to reset the branch to the previous track.
 
 ## One-time setup (per clone)
 
