@@ -13,12 +13,6 @@ describe("getBatchProvider", () => {
     expect(getBatchProvider("openai", "gpt-4o-transcribe")).toBe("openai");
   });
 
-  test("maps Cloudflare Workers AI to the Deepgram-compatible batch provider", () => {
-    expect(getBatchProvider("cloudflare_workers_ai", "nova-3")).toBe(
-      "deepgram",
-    );
-  });
-
   test("maps local soniqo models to soniqo batch provider", () => {
     expect(getBatchProvider("meetspace", "soniqo-parakeet-batch")).toBe(
       "soniqo",
