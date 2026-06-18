@@ -2,16 +2,13 @@ cask "meetspace" do
   version "1.0.45_meet1"
   sha256 :no_check
 
-  on_intel do
-    url "https://github.com/ztomer/meetspace/releases/download/v#{version}/Meetspace_#{version.sub("_", "-")}_x64.dmg"
-  end
-  on_arm do
-    url "https://github.com/ztomer/meetspace/releases/download/v#{version}/Meetspace_#{version.sub("_", "-")}_aarch64.dmg"
-  end
-
+  url "https://github.com/ztomer/meetspace/releases/download/v#{version}/Meetspace_#{version.sub("_", "-")}_aarch64.dmg"
   name "Meetspace"
   desc "Local-first, privacy-respecting note-taking and meeting assistant"
   homepage "https://github.com/ztomer/meetspace"
+
+  # Apple Silicon only — no Intel builds. Fails cleanly on x86_64 instead of 404.
+  depends_on arch: :arm64
 
   # Installs the app bundle into /Applications
   app "Meetspace.app"
