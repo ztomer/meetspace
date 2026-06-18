@@ -1,7 +1,7 @@
 import { CornerDownLeft } from "lucide-react";
 import { useEffect, useRef } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 type DropdownOption = {
   id: string;

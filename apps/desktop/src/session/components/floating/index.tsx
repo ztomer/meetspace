@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import type { CSSProperties } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { useCaretPosition } from "../caret-position-context";
 import { ListenButton } from "./listen";

@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useMemo } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { useRenderedTranscriptData, useTranscriptOffset } from "./data-hooks";
 import { SegmentRenderer } from "./segment";

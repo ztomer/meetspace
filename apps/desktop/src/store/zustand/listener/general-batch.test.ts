@@ -29,13 +29,13 @@ vi.mock("@tauri-apps/api/window", () => ({
   }),
 }));
 
-vi.mock("@hypr/plugin-notification", () => ({
+vi.mock("@meetspace/plugin-notification", () => ({
   commands: {
     showNotification: showNotificationMock,
   },
 }));
 
-vi.mock("@hypr/plugin-transcription", () => ({
+vi.mock("@meetspace/plugin-transcription", () => ({
   events: {
     transcriptionEvent: {
       listen: listenMock,
@@ -124,7 +124,7 @@ describe("runBatchSession", () => {
       "session-1",
       {
         session_id: "session-1",
-        provider: "hyprnote",
+        provider: "meetspace",
         file_path: "/tmp/session.wav",
         base_url: "",
         api_key: "",
@@ -215,7 +215,7 @@ describe("runBatchSession", () => {
       "session-1",
       {
         session_id: "session-1",
-        provider: "hyprnote",
+        provider: "meetspace",
         file_path: "/tmp/session.wav",
         base_url: "",
         api_key: "",
@@ -227,7 +227,7 @@ describe("runBatchSession", () => {
       expect.objectContaining({
         title: "Transcription complete",
         message: "Your transcript is ready.",
-        action_label: "Open Anarlog",
+        action_label: "Open Meetspace",
         source: { type: "session", session_id: "session-1" },
       }),
     );
@@ -332,7 +332,7 @@ describe("runBatchSession", () => {
       "session-1",
       {
         session_id: "session-1",
-        provider: "hyprnote",
+        provider: "meetspace",
         file_path: "/tmp/session.wav",
         base_url: "",
         api_key: "",
@@ -419,7 +419,7 @@ describe("runBatchSession", () => {
         "session-1",
         {
           session_id: "session-1",
-          provider: "hyprnote",
+          provider: "meetspace",
           file_path: "/tmp/session.wav",
           base_url: "",
           api_key: "",
@@ -493,7 +493,7 @@ describe("runBatchSession", () => {
         "session-1",
         {
           session_id: "session-1",
-          provider: "hyprnote",
+          provider: "meetspace",
           file_path: "/tmp/session.wav",
           base_url: "",
           api_key: "",
@@ -571,7 +571,7 @@ describe("runBatchSession", () => {
         "session-1",
         {
           session_id: "session-1",
-          provider: "hyprnote",
+          provider: "meetspace",
           file_path: "/tmp/session.wav",
           base_url: "",
           api_key: "",

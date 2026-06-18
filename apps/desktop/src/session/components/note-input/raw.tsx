@@ -1,13 +1,13 @@
 import type { EditorView } from "prosemirror-view";
 import { forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
 
-import { parseJsonContent } from "@hypr/editor/markdown";
+import { parseJsonContent } from "@meetspace/editor/markdown";
 import {
   NoteEditor,
   type JSONContent,
   type NoteEditorRef,
-} from "@hypr/editor/note";
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
+} from "@meetspace/editor/note";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 
 import { AppLinkView } from "~/editor-bridge/app-link-view";
 import { useMentionConfig } from "~/editor-bridge/mention-config";

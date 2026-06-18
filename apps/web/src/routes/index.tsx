@@ -4,15 +4,15 @@ import { ArrowRight, ChevronDown, KeyRound, WifiOff } from "lucide-react";
 import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
-import { DancingSticks } from "@hypr/ui/components/ui/dancing-sticks";
-import { cn } from "@hypr/utils";
+import { DancingSticks } from "@meetspace/ui/components/ui/dancing-sticks";
+import { cn } from "@meetspace/utils";
 
 import { SiteFooter } from "@/components/site-footer";
 import { desktopSchemeSchema } from "@/functions/desktop-flow";
 import { getGitHubStats } from "@/functions/github";
 import { useMountEffect } from "@/hooks/useMountEffect";
 import {
-  ANARLOG_SITE_URL,
+  MEETSPACE_SITE_URL,
   ROOT_DESCRIPTION,
   getOrganizationJsonLd,
   getSoftwareApplicationJsonLd,
@@ -24,7 +24,7 @@ const manifestoLetter = [
   "Notetaking matters more than note-takers. A note-taker is passive. A notepad is something you use. You stay present and in control while the room is still alive.",
   "Most AI tools ask you to move your memory into their ecosystem and rules. Meeting notes should move the other way: back to files on your disk and software you can run offline.",
   "Files endure. Interfaces change. Your notes should survive us. Use on-device models or your own keys, not a service you cannot inspect.",
-  "Anarlog is our attempt to build that meeting notepad.",
+  "Meetspace is our attempt to build that meeting notepad.",
   "John Jeong, Yujong Lee",
 ];
 
@@ -70,28 +70,28 @@ const credibilityLogos = [
 
 const testimonials = [
   {
-    quote: "Anarlog is great and local.",
+    quote: "Meetspace is great and local.",
     author: "Tobi Lutke",
     username: "tobi",
     avatar: "/api/assets/blog/testimonials/tobi.jpg/",
     url: "https://x.com/tobi/status/1983892259230699921",
   },
   {
-    quote: "Anarlog is worth a look.",
+    quote: "Meetspace is worth a look.",
     author: "Anand Chowdhary",
     username: "AnandChowdhary",
     avatar: "/api/assets/blog/testimonials/anand.jpg/",
     url: "https://x.com/AnandChowdhary/status/1997980479698723119",
   },
   {
-    quote: "Anarlog is one of my favorite AI secret weapons.",
+    quote: "Meetspace is one of my favorite AI secret weapons.",
     author: "James Koshigoe",
     username: "JamesKoshigoe",
     avatar: "/api/assets/blog/testimonials/james-k.jpg/",
     url: "https://x.com/JamesKoshigoe/status/2024676687980671195",
   },
   {
-    quote: "Really liking Anarlog. Open access to my data and a GPL codebase!",
+    quote: "Really liking Meetspace. Open access to my data and a GPL codebase!",
     author: "James LePage",
     username: "jameswlepage",
     avatar: "/api/assets/blog/testimonials/james-l.jpg/",
@@ -99,7 +99,7 @@ const testimonials = [
   },
   {
     quote:
-      "I love the flexibility that Anarlog gives me to integrate personal notes with AI summaries.",
+      "I love the flexibility that Meetspace gives me to integrate personal notes with AI summaries.",
     author: "Tom Yang",
     username: "tomyang11_",
     avatar: "/api/assets/blog/testimonials/tom.jpg/",
@@ -148,15 +148,15 @@ const desktopTestimonialSidePositions: TestimonialCardPosition[] = [
 
 const testimonialDeckStateVersion = 3;
 const testimonialNameContext =
-  "Name context: Hyprnote became Char, then Anarlog.";
+  "Name context: Meetspace became Char, then Meetspace.";
 
 function formatTestimonialOffset(offset: TestimonialCardPosition["x"]) {
   return typeof offset === "number" ? `${offset}px` : offset;
 }
 
 function renderPullQuote(quote: string) {
-  return quote.split(/(Anarlog)/g).map((part, index) => {
-    if (part !== "Anarlog") return part;
+  return quote.split(/(Meetspace)/g).map((part, index) => {
+    if (part !== "Meetspace") return part;
 
     return (
       <mark
@@ -250,9 +250,9 @@ function TestimonialTweetCard({
 }
 
 const appleSiliconDownloadUrl =
-  "https://cdn.crabnebula.app/download/fastrepl/hyprnote2/latest/platform/dmg-aarch64?channel=stable";
+  "https://cdn.crabnebula.app/download/fastrepl/meetspace2/latest/platform/dmg-aarch64?channel=stable";
 const appleIntelDownloadUrl =
-  "https://cdn.crabnebula.app/download/fastrepl/hyprnote2/latest/platform/dmg-x86_64?channel=stable";
+  "https://cdn.crabnebula.app/download/fastrepl/meetspace2/latest/platform/dmg-x86_64?channel=stable";
 
 const authCallbackSearchSchema = z.object({
   code: z.string().optional(),
@@ -269,7 +269,7 @@ const authCallbackSearchSchema = z.object({
     .optional()
     .catch(undefined),
   flow: z.enum(["desktop", "web"]).optional().catch("desktop"),
-  scheme: desktopSchemeSchema.optional().catch("hyprnote"),
+  scheme: desktopSchemeSchema.optional().catch("meetspace"),
   redirect: z.string().optional(),
   error: z.string().optional(),
   error_description: z.string().optional(),
@@ -286,7 +286,7 @@ export const Route = createFileRoute("/")({
     }
 
     const flow = search.flow ?? "desktop";
-    const scheme = search.scheme ?? "hyprnote";
+    const scheme = search.scheme ?? "meetspace";
 
     throw redirect({
       to: "/auth/",
@@ -307,7 +307,7 @@ export const Route = createFileRoute("/")({
     githubStars: (await getGitHubStats()).stars ?? 8466,
   }),
   head: () => ({
-    links: [{ rel: "canonical", href: ANARLOG_SITE_URL }],
+    links: [{ rel: "canonical", href: MEETSPACE_SITE_URL }],
     scripts: [
       {
         type: "application/ld+json",
@@ -347,7 +347,7 @@ function Component() {
             <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-sm">
               <DownloadButton />
               <a
-                href="https://github.com/fastrepl/anarlog"
+                href="https://github.com/fastrepl/meetspace"
                 className="inline-flex items-center gap-2 rounded-full border border-[#d8d0c5] px-5 py-3 font-medium text-[#181613] transition-colors hover:border-[#b8aea0] hover:bg-[#f7f4ef]"
               >
                 <img
@@ -495,7 +495,7 @@ function TestimonialsSection() {
           What people say
         </h2>
         <p className="text-color-secondary mt-6 text-lg leading-8">
-          See for yourself. Before Anarlog had this name, people kept pointing
+          See for yourself. Before Meetspace had this name, people kept pointing
           at the same things: private meeting notes, no bot in the room, and
           local control by default.
         </p>
@@ -605,7 +605,7 @@ function PrivacySection() {
           What makes it different
         </h2>
         <p className="mt-6 text-lg leading-8 text-[#4f4940]">
-          Anarlog stays out of the participant list, keeps notes on disk, and
+          Meetspace stays out of the participant list, keeps notes on disk, and
           lets you pick the AI path.
         </p>
       </div>
@@ -793,7 +793,7 @@ function HowItWorksSection() {
           How it works
         </h2>
         <p className="mt-6 text-lg leading-8 text-[#4f4940]">
-          Jot notes during the call. Anarlog turns them into an editable
+          Jot notes during the call. Meetspace turns them into an editable
           summary.
         </p>
       </div>
@@ -805,7 +805,7 @@ function HowItWorksSection() {
         <div className="flex flex-col overflow-clip">
           <div className="flex flex-col gap-4 p-8">
             <p className="text-sm leading-6 text-neutral-600">
-              <span className="font-semibold">Take notes.</span> Anarlog records
+              <span className="font-semibold">Take notes.</span> Meetspace records
               from your device. No bot joins.
             </p>
           </div>
@@ -979,7 +979,7 @@ function HowItWorksSection() {
         <div>
           <div className="p-6">
             <p className="mb-4 text-sm leading-6 text-neutral-600">
-              <span className="font-semibold">Take notes.</span> Anarlog records
+              <span className="font-semibold">Take notes.</span> Meetspace records
               from your device. No bot joins.
             </p>
           </div>

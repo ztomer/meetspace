@@ -2,7 +2,7 @@ import { Facehash, stringHash } from "facehash";
 import { ArrowDownUp, Plus, Search, X } from "lucide-react";
 import type { ComponentProps, KeyboardEvent, RefObject } from "react";
 
-import { Button } from "@hypr/ui/components/ui/button";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   AppFloatingPanel,
   DropdownMenu,
@@ -10,8 +10,8 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@hypr/ui/components/ui/dropdown-menu";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/dropdown-menu";
+import { cn } from "@meetspace/utils";
 
 import { CustomSidebarHeader } from "~/sidebar/custom-sidebar-header";
 

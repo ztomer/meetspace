@@ -12,7 +12,7 @@ import {
 import type { ReactNode } from "react";
 
 import { env } from "~/env";
-import { AnarlogProviderIcon } from "~/settings/ai/shared";
+import { MeetspaceProviderIcon } from "~/settings/ai/shared";
 import { type ProviderRequirement } from "~/settings/ai/shared/eligibility";
 import { sortProviders } from "~/settings/ai/shared/sort-providers";
 
@@ -32,10 +32,10 @@ type Provider = {
 
 const _PROVIDERS = [
   {
-    id: "hyprnote",
-    displayName: "Anarlog",
+    id: "meetspace",
+    displayName: "Meetspace",
     badge: "Recommended",
-    icon: <AnarlogProviderIcon />,
+    icon: <MeetspaceProviderIcon />,
     baseUrl: new URL("/llm", env.VITE_API_URL).toString(),
     requirements: [
       { kind: "requires_auth" },

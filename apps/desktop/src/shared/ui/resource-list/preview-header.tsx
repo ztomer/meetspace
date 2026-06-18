@@ -1,7 +1,7 @@
 import { Copy } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { Button, type ButtonProps } from "@hypr/ui/components/ui/button";
+import { Button, type ButtonProps } from "@meetspace/ui/components/ui/button";
 
 import { TemplateCategoryLabel } from "../template-category-label";
 

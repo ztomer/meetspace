@@ -1,9 +1,9 @@
 import { createCustomPersister } from "tinybase/persisters/with-schemas";
 import type { Content } from "tinybase/with-schemas";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import { commands as detectCommands } from "@hypr/plugin-detect";
-import { commands } from "@hypr/plugin-settings";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as detectCommands } from "@meetspace/plugin-detect";
+import { commands } from "@meetspace/plugin-settings";
 
 import {
   type LanguageDefaults,

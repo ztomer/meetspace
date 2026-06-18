@@ -21,29 +21,29 @@ const mocks = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("@hypr/plugin-fs-sync", () => ({
+vi.mock("@meetspace/plugin-fs-sync", () => ({
   commands: {
     sessionDir: vi.fn(() => Promise.resolve({ status: "ok", data: "" })),
   },
 }));
 
-vi.mock("@hypr/plugin-opener2", () => ({
+vi.mock("@meetspace/plugin-opener2", () => ({
   commands: {
     openPath: vi.fn(() => Promise.resolve()),
   },
 }));
 
-vi.mock("@hypr/ui/components/ui/dancing-sticks", () => ({
+vi.mock("@meetspace/ui/components/ui/dancing-sticks", () => ({
   DancingSticks: ({ amplitude }: { amplitude: number }) => (
     <span data-amplitude={amplitude} data-testid="dancing-sticks" />
   ),
 }));
 
-vi.mock("@hypr/ui/components/ui/spinner", () => ({
+vi.mock("@meetspace/ui/components/ui/spinner", () => ({
   Spinner: () => <span data-testid="spinner" />,
 }));
 
-vi.mock("@hypr/ui/components/ui/tooltip", () => ({
+vi.mock("@meetspace/ui/components/ui/tooltip", () => ({
   Tooltip: ({ children }: { children: ReactNode }) => <>{children}</>,
   TooltipContent: ({ children }: { children: ReactNode }) => <>{children}</>,
   TooltipTrigger: ({ children }: { children: ReactNode }) => <>{children}</>,

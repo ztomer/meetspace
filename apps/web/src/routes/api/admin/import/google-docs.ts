@@ -3,7 +3,7 @@ import { generateJSON } from "@tiptap/html";
 import { Markdown, MarkdownManager } from "@tiptap/markdown";
 import type { JSONContent } from "@tiptap/react";
 
-import { ClipNode, getExtensions } from "@hypr/tiptap/shared";
+import { ClipNode, getExtensions } from "@meetspace/tiptap/shared";
 
 import { fetchAdminUser } from "@/functions/admin";
 import { getSupabaseServerClient } from "@/functions/supabase";

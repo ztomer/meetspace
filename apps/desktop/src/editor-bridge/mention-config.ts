@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import type { MentionConfig } from "@hypr/editor/widgets";
+import type { MentionConfig } from "@meetspace/editor/widgets";
 
 import { useSearchEngine } from "~/search/contexts/engine";
 import * as main from "~/store/tinybase/store/main";

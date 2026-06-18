@@ -1,4 +1,4 @@
-import { Button } from "@hypr/ui/components/ui/button";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -6,7 +6,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@hypr/ui/components/ui/dialog";
+} from "@meetspace/ui/components/ui/dialog";
 
 import { TrialDialogIcon } from "./trial-dialog-icon";
 

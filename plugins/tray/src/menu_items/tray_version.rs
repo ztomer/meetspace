@@ -10,12 +10,12 @@ pub struct TrayVersion;
 impl TrayVersion {
     fn get_channel(identifier: &str, app_name: &str) -> &'static str {
         match identifier {
-            "com.hyprnote.stable" | "com.hyprnote.Hyprnote" => "stable",
-            "com.hyprnote.staging" => "staging",
-            "com.hyprnote.dev" => "dev",
+            "com.meetspace.stable" | "com.meetspace.Meetspace" => "stable",
+            "com.meetspace.staging" => "staging",
+            "com.meetspace.dev" => "dev",
             _ => match app_name {
-                "Anarlog" | "Char" | "Hyprnote" => "stable",
-                "Anarlog Staging" | "Char Staging" | "Hyprnote Staging" => "staging",
+                "Meetspace" | "Char" | "Meetspace" => "stable",
+                "Meetspace Staging" | "Char Staging" | "Meetspace Staging" => "staging",
                 _ => "dev",
             },
         }
@@ -23,7 +23,7 @@ impl TrayVersion {
 }
 
 impl MenuItemHandler for TrayVersion {
-    const ID: &'static str = "hypr_tray_version";
+    const ID: &'static str = "meetspace_tray_version";
 
     fn build(app: &AppHandle<tauri::Wry>) -> Result<MenuItemKind<tauri::Wry>> {
         let identifier = &app.config().identifier;
@@ -46,26 +46,26 @@ mod tests {
     #[test]
     fn gets_channel_from_identifier() {
         assert_eq!(
-            TrayVersion::get_channel("com.hyprnote.stable", "Anarlog"),
+            TrayVersion::get_channel("com.meetspace.stable", "Meetspace"),
             "stable"
         );
         assert_eq!(
-            TrayVersion::get_channel("com.hyprnote.staging", "Anarlog Staging"),
+            TrayVersion::get_channel("com.meetspace.staging", "Meetspace Staging"),
             "staging"
         );
         assert_eq!(
-            TrayVersion::get_channel("com.hyprnote.dev", "Anarlog Dev"),
+            TrayVersion::get_channel("com.meetspace.dev", "Meetspace Dev"),
             "dev"
         );
     }
 
     #[test]
     fn falls_back_to_product_name_for_unknown_identifier() {
-        assert_eq!(TrayVersion::get_channel("unknown", "Anarlog"), "stable");
+        assert_eq!(TrayVersion::get_channel("unknown", "Meetspace"), "stable");
         assert_eq!(
-            TrayVersion::get_channel("unknown", "Anarlog Staging"),
+            TrayVersion::get_channel("unknown", "Meetspace Staging"),
             "staging"
         );
-        assert_eq!(TrayVersion::get_channel("unknown", "Anarlog Dev"), "dev");
+        assert_eq!(TrayVersion::get_channel("unknown", "Meetspace Dev"), "dev");
     }
 }

@@ -22,16 +22,16 @@ const mocks = vi.hoisted(() => ({
   useSliceRowIds: vi.fn(() => []),
 }));
 
-vi.mock("@hypr/editor/markdown", () => ({
+vi.mock("@meetspace/editor/markdown", () => ({
   isValidContent: () => false,
   json2md: () => "",
 }));
 
-vi.mock("@hypr/editor/node-views", () => ({
+vi.mock("@meetspace/editor/node-views", () => ({
   parseImageMetadata: () => ({ editorWidth: undefined, title: undefined }),
 }));
 
-vi.mock("@hypr/ui/components/ui/hover-card", () => ({
+vi.mock("@meetspace/ui/components/ui/hover-card", () => ({
   HoverCard: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   HoverCardContent: ({ children }: { children: ReactNode }) =>
     mocks.contentOpen ? (

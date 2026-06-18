@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useRef, useState } from "react";
 
-import { commands as notificationCommands } from "@hypr/plugin-notification";
+import { commands as notificationCommands } from "@meetspace/plugin-notification";
 import {
   commands as windowsCommands,
   events as windowsEvents,
   getCurrentWebviewWindowLabel,
   openUrlWithInstruction,
-} from "@hypr/plugin-windows";
+} from "@meetspace/plugin-windows";
 
 import { useBillingAccess } from "~/auth/billing";
 import { TrialEndedDialog } from "~/billing/trial-ended-dialog";
@@ -273,7 +273,7 @@ function useDevtoolsPanelActions() {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         location: "Conference Room",
       },
-      action_label: "Open Anarlog",
+      action_label: "Open Meetspace",
       action_variant: null,
       options: null,
       footer: null,
@@ -339,7 +339,7 @@ function useDevtoolsPanelActions() {
     await notificationCommands.showNotification({
       key: createAutoStopEndedNotificationKey(sessionId),
       title: "Did your meeting end?",
-      message: `Anarlog will stop listening in ${AUTO_STOP_CONFIRM_TIMEOUT_SECONDS} seconds.`,
+      message: `Meetspace will stop listening in ${AUTO_STOP_CONFIRM_TIMEOUT_SECONDS} seconds.`,
       timeout: { secs: AUTO_STOP_CONFIRM_TIMEOUT_SECONDS, nanos: 0 },
       source: null,
       start_time: null,

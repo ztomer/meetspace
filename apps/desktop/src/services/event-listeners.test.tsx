@@ -36,7 +36,7 @@ const {
   getListenerStateMock: vi.fn(),
 }));
 
-vi.mock("@hypr/plugin-notification", () => ({
+vi.mock("@meetspace/plugin-notification", () => ({
   events: {
     notificationEvent: {
       listen: notificationListenMock,
@@ -44,7 +44,7 @@ vi.mock("@hypr/plugin-notification", () => ({
   },
 }));
 
-vi.mock("@hypr/plugin-updater2", () => ({
+vi.mock("@meetspace/plugin-updater2", () => ({
   commands: {
     maybeEmitUpdated: maybeEmitUpdatedMock,
   },
@@ -55,7 +55,7 @@ vi.mock("@hypr/plugin-updater2", () => ({
   },
 }));
 
-vi.mock("@hypr/plugin-windows", () => ({
+vi.mock("@meetspace/plugin-windows", () => ({
   getCurrentWebviewWindowLabel: getCurrentWebviewWindowLabelMock,
 }));
 

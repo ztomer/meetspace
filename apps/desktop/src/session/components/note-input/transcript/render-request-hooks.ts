@@ -3,7 +3,7 @@ import { useCallback, useMemo, useRef, useSyncExternalStore } from "react";
 import type {
   RenderTranscriptHuman,
   RenderTranscriptRequest,
-} from "@hypr/plugin-transcription";
+} from "@meetspace/plugin-transcription";
 
 import * as main from "~/store/tinybase/store/main";
 import {

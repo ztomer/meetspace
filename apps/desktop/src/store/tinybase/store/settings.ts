@@ -10,21 +10,21 @@ import {
   type ValuesSchema,
 } from "tinybase/with-schemas";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import { commands as detectCommands } from "@hypr/plugin-detect";
-import { commands as localSttCommands } from "@hypr/plugin-local-stt";
-import { commands as trayCommands } from "@hypr/plugin-tray";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as detectCommands } from "@meetspace/plugin-detect";
+import { commands as localSttCommands } from "@meetspace/plugin-local-stt";
+import { commands as trayCommands } from "@meetspace/plugin-tray";
 import {
   commands as windowsCommands,
   getCurrentWebviewWindowLabel,
-} from "@hypr/plugin-windows";
+} from "@meetspace/plugin-windows";
 
 import { registerSaveHandler } from "./save";
 
 import { useSettingsPersister } from "~/store/tinybase/persister/settings";
 import {
   isConfiguredSttModel,
-  isHyprnoteLocalSttModel,
+  isMeetspaceLocalSttModel,
 } from "~/stt/capabilities";
 
 export const STORE_ID = "settings";
@@ -265,7 +265,7 @@ export const StoreComponent = () => {
   }, [store]);
 
   const synchronizer = useCreateSynchronizer(store, async (store) =>
-    createBroadcastChannelSynchronizer(store, "hypr-sync-settings").startSync(),
+    createBroadcastChannelSynchronizer(store, "meetspace-sync-settings").startSync(),
   );
 
   const queries = useCreateQueries(store, (store) =>
@@ -320,7 +320,7 @@ function clearInvalidSttModel(store: Store) {
   const model = store.getValue("current_stt_model") as string | undefined;
 
   if (
-    provider === "hyprnote" &&
+    provider === "meetspace" &&
     model &&
     !isConfiguredSttModel(provider, model)
   ) {
@@ -340,7 +340,7 @@ function syncLocalSttServer(store: Store) {
   const provider = store.getValue("current_stt_provider") as string | undefined;
   const model = store.getValue("current_stt_model") as string | undefined;
 
-  if (isHyprnoteLocalSttModel(provider, model)) {
+  if (isMeetspaceLocalSttModel(provider, model)) {
     localSttCommands.startServer(model).catch(console.error);
   } else {
     localSttCommands.stopServer(null).catch(console.error);

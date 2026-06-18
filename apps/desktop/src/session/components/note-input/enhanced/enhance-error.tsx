@@ -1,6 +1,6 @@
 import { AlertCircleIcon, RefreshCwIcon } from "lucide-react";
 
-import { Button } from "@hypr/ui/components/ui/button";
+import { Button } from "@meetspace/ui/components/ui/button";
 
 import { useAITask } from "~/ai/contexts";
 import { useLanguageModel } from "~/ai/hooks";

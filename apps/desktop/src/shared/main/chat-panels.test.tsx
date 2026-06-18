@@ -11,7 +11,7 @@ const mocks = vi.hoisted(() => ({
   sessionProps: { sessionId: "chat-session-1" },
 }));
 
-vi.mock("@hypr/ui/components/ui/resizable", () => ({
+vi.mock("@meetspace/ui/components/ui/resizable", () => ({
   ResizablePanelGroup: ({
     children,
     direction,

@@ -38,7 +38,7 @@ fn make_specta_builder<R: tauri::Runtime>() -> tauri_specta::Builder<R> {
 }
 
 pub fn init<R: tauri::Runtime>(
-    db: std::sync::Arc<hypr_db_core::Db>,
+    db: std::sync::Arc<meetspace_db_core::Db>,
 ) -> tauri::plugin::TauriPlugin<R> {
     let specta_builder = make_specta_builder();
 
@@ -47,7 +47,7 @@ pub fn init<R: tauri::Runtime>(
         .setup(move |app, _| {
             let pool = db.pool().clone();
             let app_handle = app.app_handle().clone();
-            hypr_tauri_utils::spawn("import legacy tinybase json", async move {
+            meetspace_tauri_utils::spawn("import legacy tinybase json", async move {
                 import::import_legacy_data(&app_handle, &pool).await
             });
             app.manage(std::sync::Arc::new(runtime::PluginDbRuntime::new(db)));
@@ -61,7 +61,7 @@ mod test {
     use std::sync::{Arc, Mutex};
     use std::time::Duration;
 
-    use hypr_db_reactive::QueryEventSink;
+    use meetspace_db_reactive::QueryEventSink;
     use serde_json::json;
     use tauri::ipc::{Channel, InvokeResponseBody};
 
@@ -118,8 +118,8 @@ mod test {
     async fn setup_runtime() -> (tempfile::TempDir, Arc<runtime::PluginDbRuntime>) {
         let dir = tempfile::tempdir().unwrap();
         let db_path = dir.path().join("app.db");
-        let db = hypr_db_core::Db::open(hypr_db_core::DbOpenOptions {
-            storage: hypr_db_core::DbStorage::Local(&db_path),
+        let db = meetspace_db_core::Db::open(meetspace_db_core::DbOpenOptions {
+            storage: meetspace_db_core::DbStorage::Local(&db_path),
             cloudsync_enabled: false,
             journal_mode_wal: true,
             foreign_keys: true,
@@ -127,7 +127,7 @@ mod test {
         })
         .await
         .unwrap();
-        hypr_db_migrate::migrate(&db, hypr_db_app::schema())
+        meetspace_db_migrate::migrate(&db, meetspace_db_app::schema())
             .await
             .unwrap();
 

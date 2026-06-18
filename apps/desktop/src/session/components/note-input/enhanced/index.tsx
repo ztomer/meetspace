@@ -1,8 +1,8 @@
 import type { EditorView } from "prosemirror-view";
 import { forwardRef, useMemo } from "react";
 
-import { md2json } from "@hypr/editor/markdown";
-import type { NoteEditorRef } from "@hypr/editor/note";
+import { md2json } from "@meetspace/editor/markdown";
+import type { NoteEditorRef } from "@meetspace/editor/note";
 
 import { ConfigError } from "./config-error";
 import { EnhancedEditor } from "./editor";

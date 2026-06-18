@@ -32,7 +32,7 @@ vi.mock("@tanstack/react-query", () => ({
   useQuery: useQueryMock,
 }));
 
-vi.mock("@hypr/ui/components/ui/popover", async () => {
+vi.mock("@meetspace/ui/components/ui/popover", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
   const PopoverContext = React.createContext<{
     open: boolean;

@@ -1,4 +1,4 @@
-import type { Schemas } from "@hypr/store";
+import type { Schemas } from "@meetspace/store";
 
 import { getChangedChatGroupIds, parseChatGroupIdFromPath } from "./changes";
 import {

@@ -1,5 +1,5 @@
-import type { AccountInfo } from "@hypr/plugin-auth";
-import type { DeviceInfo } from "@hypr/plugin-misc";
+import type { AccountInfo } from "@meetspace/plugin-auth";
+import type { DeviceInfo } from "@meetspace/plugin-misc";
 
 import type { HyprUIMessage } from "../types";
 

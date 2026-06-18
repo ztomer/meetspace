@@ -22,7 +22,7 @@ const {
   useConfigValueMock: vi.fn(),
 }));
 
-vi.mock("@hypr/ui/components/ui/button", () => ({
+vi.mock("@meetspace/ui/components/ui/button", () => ({
   Button: ({
     children,
     ...props
@@ -31,7 +31,7 @@ vi.mock("@hypr/ui/components/ui/button", () => ({
   ),
 }));
 
-vi.mock("@hypr/ui/components/ui/dropdown-menu", () => ({
+vi.mock("@meetspace/ui/components/ui/dropdown-menu", () => ({
   AppFloatingPanel: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   ),

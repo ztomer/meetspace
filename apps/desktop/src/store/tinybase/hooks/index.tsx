@@ -4,7 +4,7 @@ import type {
   IgnoredEvent,
   IgnoredRecurringSeries,
   SessionEvent,
-} from "@hypr/store";
+} from "@meetspace/store";
 
 import { getSessionEvent } from "~/session/utils";
 import * as main from "~/store/tinybase/store/main";

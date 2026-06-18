@@ -4,7 +4,7 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@hypr/ui/components/ui/resizable";
+} from "@meetspace/ui/components/ui/resizable";
 
 import { ChatPanelFrame, ChatSessionHost } from "~/chat/components/chat-panel";
 import { PersistentChatPanel } from "~/chat/components/persistent-chat";

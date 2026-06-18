@@ -22,7 +22,7 @@ vi.mock("ai", async (importOriginal) => ({
   generateText: hoisted.generateText,
 }));
 
-vi.mock("@hypr/plugin-template", () => ({
+vi.mock("@meetspace/plugin-template", () => ({
   commands: {
     renderCustom: vi.fn(async (template: string) => ({
       status: "ok",
@@ -47,13 +47,13 @@ vi.mock("~/store/tinybase/store/main", () => ({
 import { buildPastSessionNotes, usePastSessionNotes } from "./past-notes";
 import { PostSessionAccessory } from "./post-session";
 
-vi.mock("@hypr/plugin-fs-sync", () => ({
+vi.mock("@meetspace/plugin-fs-sync", () => ({
   commands: {
     audioPath: vi.fn(),
   },
 }));
 
-vi.mock("@hypr/ui/components/ui/button", () => ({
+vi.mock("@meetspace/ui/components/ui/button", () => ({
   Button: ({
     children,
     ...props
@@ -62,11 +62,11 @@ vi.mock("@hypr/ui/components/ui/button", () => ({
   ),
 }));
 
-vi.mock("@hypr/ui/components/ui/spinner", () => ({
+vi.mock("@meetspace/ui/components/ui/spinner", () => ({
   Spinner: () => <div data-testid="spinner" />,
 }));
 
-vi.mock("@hypr/ui/components/ui/tooltip", () => ({
+vi.mock("@meetspace/ui/components/ui/tooltip", () => ({
   Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   TooltipTrigger: ({ children }: { children: React.ReactNode }) => (
     <>{children}</>

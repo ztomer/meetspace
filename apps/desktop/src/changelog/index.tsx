@@ -1,9 +1,9 @@
 import { XIcon } from "lucide-react";
 
-import { ChangelogContent } from "@hypr/changelog";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { Button } from "@hypr/ui/components/ui/button";
-import { cn } from "@hypr/utils";
+import { ChangelogContent } from "@meetspace/changelog";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { cn } from "@meetspace/utils";
 
 import { useChangelogContent } from "./data";
 

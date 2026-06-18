@@ -1,13 +1,13 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import type { StoreApi } from "zustand";
 
-import { commands as notificationCommands } from "@hypr/plugin-notification";
+import { commands as notificationCommands } from "@meetspace/plugin-notification";
 import {
   type BatchErrorCode,
   type TranscriptionParams,
   commands as transcriptionCommands,
   events as transcriptionEvents,
-} from "@hypr/plugin-transcription";
+} from "@meetspace/plugin-transcription";
 
 import {
   EMPTY_BATCH_TRANSCRIPT_ERROR,
@@ -52,7 +52,7 @@ export async function showBatchCompletedNotification(
       start_time: null,
       participants: null,
       event_details: null,
-      action_label: "Open Anarlog",
+      action_label: "Open Meetspace",
       action_variant: null,
       options: null,
       footer: null,
