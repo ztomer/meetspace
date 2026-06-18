@@ -101,4 +101,5 @@ echo
 echo "==> Synced $FORK_BRANCH to $TAG. NEXT (manual):"
 echo "    - confirm llm/shared.tsx wires the local-provider allowlist (hide cloud)"
 echo "    - run the app + 'pnpm -F desktop visual:update' to refresh baselines"
+echo "    - 'pnpm smoke' — launch sanity (catches runtime panics typecheck can't)"
 echo "    - review, then fast-forward MIT_BACK + push"
