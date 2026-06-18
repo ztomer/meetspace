@@ -497,52 +497,6 @@ dependencies = [
 ]
 
 [[package]]
-<<<<<<<
-=======
-name = "api"
-version = "0.1.0"
-dependencies = [
- "analytics",
- "api-auth",
- "api-calendar",
- "api-env",
- "api-mail",
- "api-nango",
- "api-pyannote",
- "api-research",
- "api-subscription",
- "api-support",
- "api-ticket",
- "axum 0.8.9",
- "dotenvy",
- "envy",
- "governor",
- "jsonwebtoken",
- "linear",
- "llm-proxy",
- "observability",
- "opentelemetry",
- "opentelemetry-otlp",
- "opentelemetry_sdk",
- "owhisper-client",
- "reqwest 0.13.2",
- "rustls 0.23.38",
- "sentry",
- "serde",
- "serde_json",
- "tokio",
- "tower 0.5.3",
- "tower-http 0.6.8",
- "tracing",
- "tracing-opentelemetry",
- "tracing-subscriber",
- "transcribe-proxy",
- "url",
- "utoipa",
-]
-
-[[package]]
->>>>>>>
 name = "api-agent"
 version = "0.1.0"
 dependencies = [
@@ -1261,6 +1215,7 @@ dependencies = [
 [[package]]
 name = "async-openai"
 version = "0.27.2"
+source = "git+https://github.com/fastrepl/async-openai?rev=6404d307f3f706e818ad91544dc82fac5c545aee#6404d307f3f706e818ad91544dc82fac5c545aee"
 dependencies = [
  "backoff",
  "base64 0.22.1",
@@ -4761,7 +4716,7 @@ dependencies = [
 
 [[package]]
 name = "desktop"
-version = "1.0.37-meet4"
+version = "1.0.47-meet1"
 dependencies = [
  "audio-actual",
  "audio-mock",
@@ -4805,13 +4760,13 @@ dependencies = [
  "tauri-plugin-git",
  "tauri-plugin-hooks",
  "tauri-plugin-http",
- "tauri-plugin-hypr-tray",
  "tauri-plugin-icon",
  "tauri-plugin-importer",
  "tauri-plugin-js",
  "tauri-plugin-local-llm",
  "tauri-plugin-local-stt",
  "tauri-plugin-mcp",
+ "tauri-plugin-meetspace-tray",
  "tauri-plugin-messenger",
  "tauri-plugin-misc",
  "tauri-plugin-notification",
@@ -6280,6 +6235,7 @@ dependencies = [
 [[package]]
 name = "gbnf-validator"
 version = "0.1.0"
+source = "git+https://github.com/fastrepl/gbnf-validator?rev=3dec055#3dec0551311840ae8c9a0feb10e556dd18ffe291"
 dependencies = [
  "anyhow",
  "tempfile",
@@ -18211,28 +18167,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tauri-plugin-hypr-tray"
-version = "0.1.0"
-dependencies = [
- "host",
- "intercept",
- "open",
- "serde_json",
- "specta",
- "specta-typescript",
- "tauri",
- "tauri-plugin",
- "tauri-plugin-clipboard-manager",
- "tauri-plugin-dialog",
- "tauri-plugin-misc",
- "tauri-plugin-updater2",
- "tauri-plugin-windows",
- "tauri-specta",
- "tokio",
- "tracing",
-]
-
-[[package]]
 name = "tauri-plugin-icon"
 version = "0.1.0"
 dependencies = [
@@ -18375,6 +18309,28 @@ dependencies = [
  "tauri-specta",
  "thiserror 2.0.18",
  "tokio",
+]
+
+[[package]]
+name = "tauri-plugin-meetspace-tray"
+version = "0.1.0"
+dependencies = [
+ "host",
+ "intercept",
+ "open",
+ "serde_json",
+ "specta",
+ "specta-typescript",
+ "tauri",
+ "tauri-plugin",
+ "tauri-plugin-clipboard-manager",
+ "tauri-plugin-dialog",
+ "tauri-plugin-misc",
+ "tauri-plugin-updater2",
+ "tauri-plugin-windows",
+ "tauri-specta",
+ "tokio",
+ "tracing",
 ]
 
 [[package]]
@@ -18910,8 +18866,8 @@ dependencies = [
  "tauri",
  "tauri-plugin",
  "tauri-plugin-hooks",
- "tauri-plugin-hypr-tray",
  "tauri-plugin-local-stt",
+ "tauri-plugin-meetspace-tray",
  "tauri-plugin-settings",
  "tauri-specta",
  "thiserror 2.0.18",

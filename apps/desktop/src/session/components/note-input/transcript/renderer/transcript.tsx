@@ -2,7 +2,10 @@ import { memo, useCallback, useEffect, useMemo } from "react";
 
 import { cn } from "@meetspace/utils";
 
-import { useRenderedTranscriptData, useTranscriptOffset } from "./data-hooks";
+import {
+  useRenderedTranscriptSegments,
+  useTranscriptOffset,
+} from "./data-hooks";
 import { SegmentRenderer } from "./segment";
 import {
   createSegmentKey,
@@ -43,8 +46,7 @@ export function RenderTranscript({
   startPlayback: () => void;
   audioExists: boolean;
 }) {
-  const { maxSpeakerNumber, segments: storedSegments } =
-    useRenderedTranscriptData(transcriptId);
+  const storedSegments = useRenderedTranscriptSegments(transcriptId);
   const mergedSegments = useMemo(
     () => mergeRenderedAndLiveSegments(storedSegments, liveSegments),
     [liveSegments, storedSegments],
@@ -67,7 +69,6 @@ export function RenderTranscript({
       seek={seek}
       startPlayback={startPlayback}
       audioExists={audioExists}
-      maxSpeakerNumber={maxSpeakerNumber}
     />
   );
 }
@@ -83,7 +84,6 @@ const SegmentsList = memo(
     seek,
     startPlayback,
     audioExists,
-    maxSpeakerNumber,
   }: {
     segments: Segment[];
     scrollElement: HTMLDivElement | null;
@@ -94,7 +94,6 @@ const SegmentsList = memo(
     seek: (sec: number) => void;
     startPlayback: () => void;
     audioExists: boolean;
-    maxSpeakerNumber?: number;
   }) => {
     const store = main.UI.useStore(main.STORE_ID);
     const speakerLabelManager = useMemo(() => {
@@ -102,8 +101,8 @@ const SegmentsList = memo(
         return new SpeakerLabelManager();
       }
       const ctx = defaultRenderLabelContext(store);
-      return SpeakerLabelManager.fromSegments(segments, ctx, maxSpeakerNumber);
-    }, [maxSpeakerNumber, segments, store]);
+      return SpeakerLabelManager.fromSegments(segments, ctx);
+    }, [segments, store]);
 
     const seekAndPlay = useCallback(
       (word: SegmentWord) => {
@@ -157,7 +156,6 @@ const SegmentsList = memo(
       prevProps.shouldScrollToEnd === nextProps.shouldScrollToEnd &&
       prevProps.currentMs === nextProps.currentMs &&
       prevProps.audioExists === nextProps.audioExists &&
-      prevProps.maxSpeakerNumber === nextProps.maxSpeakerNumber &&
       prevProps.seek === nextProps.seek &&
       prevProps.startPlayback === nextProps.startPlayback &&
       segmentsShallowEqual(prevProps.segments, nextProps.segments)

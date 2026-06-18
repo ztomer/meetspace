@@ -1,4 +1,3 @@
-import { Trans, useLingui } from "@lingui/react/macro";
 import { AlertCircleIcon, ArrowRightIcon, CheckIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -49,7 +48,6 @@ function PermissionRow({
   onReset: () => void;
   onOpen: () => void;
 }) {
-  const { t } = useLingui();
   const [showActions, setShowActions] = useState(false);
   const isAuthorized = status === "authorized";
   const isDenied = status === "denied";
@@ -83,23 +81,23 @@ function PermissionRow({
                 onClick={() => setShowActions(true)}
                 className="hover:text-foreground underline transition-colors"
               >
-                <Trans>Having trouble?</Trans>
+                Having trouble?
               </button>
             </div>
           ) : (
             <div>
-              <Trans>You can</Trans>{" "}
+              You can{" "}
               <ActionLink onClick={onRequest} disabled={isPending}>
-                <Trans>Request,</Trans>
+                Request,
               </ActionLink>{" "}
               <ActionLink onClick={onReset} disabled={isPending}>
-                <Trans>Reset</Trans>
+                Reset
               </ActionLink>{" "}
-              <Trans>or</Trans>{" "}
+              or{" "}
               <ActionLink onClick={onOpen} disabled={isPending}>
-                <Trans>Open</Trans>
+                Open
               </ActionLink>{" "}
-              <Trans>permission panel.</Trans>
+              permission panel.
             </div>
           )}
         </div>
@@ -115,8 +113,8 @@ function PermissionRow({
         ])}
         aria-label={
           isAuthorized
-            ? t`Open ${title.toLowerCase()} settings`
-            : t`Request ${title.toLowerCase()} permission`
+            ? `Open ${title.toLowerCase()} settings`
+            : `Request ${title.toLowerCase()} permission`
         }
       >
         {isAuthorized ? (
@@ -133,7 +131,7 @@ function PermissionGroup({
   title,
   children,
 }: {
-  title: React.ReactNode;
+  title: string;
   children: React.ReactNode;
 }) {
   return (
@@ -147,7 +145,6 @@ function PermissionGroup({
 }
 
 export function Permissions() {
-  const { t } = useLingui();
   const calendar = usePermission("calendar");
   const mic = usePermission("microphone");
   const systemAudio = usePermission("systemAudio");
@@ -155,10 +152,10 @@ export function Permissions() {
 
   return (
     <div className="flex flex-col gap-8">
-      <PermissionGroup title={<Trans>Audio</Trans>}>
+      <PermissionGroup title="Audio">
         <PermissionRow
-          title={t`Microphone`}
-          description={t`Required to record your voice during meetings and calls`}
+          title="Microphone"
+          description="Required to record your voice during meetings and calls"
           status={mic.status}
           isPending={mic.isPending}
           onRequest={mic.request}
@@ -166,8 +163,8 @@ export function Permissions() {
           onOpen={mic.open}
         />
         <PermissionRow
-          title={t`System audio`}
-          description={t`Required to capture other participants' voices in meetings`}
+          title="System audio"
+          description="Required to capture other participants' voices in meetings"
           status={systemAudio.status}
           isPending={systemAudio.isPending}
           onRequest={systemAudio.request}
@@ -176,20 +173,22 @@ export function Permissions() {
         />
       </PermissionGroup>
 
-      <PermissionRow
-        title={t`Accessibility`}
-        description={t`Required to detect meeting apps and sync mute status`}
-        status={accessibility.status}
-        isPending={accessibility.isPending}
-        onRequest={accessibility.request}
-        onReset={accessibility.reset}
-        onOpen={accessibility.open}
-      />
-
-      <PermissionGroup title={<Trans>Others</Trans>}>
+      <PermissionGroup title="Dailynote">
         <PermissionRow
-          title={t`Calendar`}
-          description={t`Required to sync Apple Calendar events into Meetspace`}
+          title="Accessibility"
+          description="Required to detect meeting apps and sync mute status"
+          status={accessibility.status}
+          isPending={accessibility.isPending}
+          onRequest={accessibility.request}
+          onReset={accessibility.reset}
+          onOpen={accessibility.open}
+        />
+      </PermissionGroup>
+
+      <PermissionGroup title="Others">
+        <PermissionRow
+          title="Calendar"
+          description="Required to sync Apple Calendar events into Meetspace"
           status={calendar.status}
           isPending={calendar.isPending}
           onRequest={calendar.request}
