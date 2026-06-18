@@ -122,8 +122,8 @@ export function ChatBodyEmpty({
               : "text-muted-foreground",
           ])}
         >
-          Hi, I'm Meetspace AI. I can help you pull context from your notes, find
-          key decisions, and draft what comes next.
+          Hi, I'm Meetspace AI. I can help you pull context from your notes,
+          find key decisions, and draft what comes next.
         </p>
         {hasContext && (
           <div className="flex flex-wrap gap-1.5">
