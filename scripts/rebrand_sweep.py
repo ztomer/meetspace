@@ -99,6 +99,43 @@ def should_skip(filepath):
     return False
 
 
+# Root-level files the dir walk would otherwise miss (the workspace manifest
+# uses hypr-* dependency keys that members reference as meetspace-*).
+ROOT_FILES = ["Cargo.toml"]
+
+
+def _rebrand_file(filepath, repo_root):
+    """Apply REPLACEMENTS to one file. Returns occurrences replaced (0 if none)."""
+    if should_skip(filepath):
+        return 0
+    try:
+        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+            content = f.read()
+    except Exception as e:
+        print_wrn(f"Failed to read file {filepath}: {e}")
+        return 0
+
+    new_content = content
+    replaced = 0
+    for old_val, new_val in REPLACEMENTS:
+        if old_val in new_content:
+            replaced += new_content.count(old_val)
+            new_content = new_content.replace(old_val, new_val)
+
+    if replaced:
+        try:
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write(new_content)
+            print_info(
+                f"Rebranded {replaced} occurrences in "
+                f"{os.path.relpath(filepath, repo_root)}"
+            )
+        except Exception as e:
+            print_err(f"Failed to write file {filepath}: {e}")
+            return 0
+    return replaced
+
+
 def main():
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     print_info(f"Starting rebranding sweep in repository root: {repo_root}")
@@ -106,56 +143,26 @@ def main():
     count_files = 0
     count_replacements = 0
 
+    targets = []
     for search_dir in SEARCH_DIRS:
         dir_path = os.path.join(repo_root, search_dir)
         if not os.path.exists(dir_path):
             continue
-
         for root, dirs, files in os.walk(dir_path):
-            # Prune skipped directories in-place to avoid walking down them
             dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
-
             for file in files:
-                ext = os.path.splitext(file)[1].lower()
-                if ext not in EXTENSIONS:
-                    continue
+                if os.path.splitext(file)[1].lower() in EXTENSIONS:
+                    targets.append(os.path.join(root, file))
+    for rf in ROOT_FILES:
+        p = os.path.join(repo_root, rf)
+        if os.path.exists(p):
+            targets.append(p)
 
-                filepath = os.path.join(root, file)
-                if should_skip(filepath):
-                    continue
-
-                try:
-                    with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
-                        content = f.read()
-                except Exception as e:
-                    print_wrn(f"Failed to read file {filepath}: {e}")
-                    continue
-
-                # Check if any replacement pattern matches
-                has_match = False
-                new_content = content
-                file_replaced_count = 0
-
-                for old_val, new_val in REPLACEMENTS:
-                    if old_val in new_content:
-                        occurrences = new_content.count(old_val)
-                        new_content = new_content.replace(old_val, new_val)
-                        file_replaced_count += occurrences
-                        has_match = True
-
-                if has_match:
-                    try:
-                        with open(filepath, "w", encoding="utf-8") as f:
-                            f.write(new_content)
-                        rel_path = os.path.relpath(filepath, repo_root)
-                        print_info(
-                            Relbranded_msg
-                            := f"Rebranded {file_replaced_count} occurrences in {rel_path}"
-                        )
-                        count_files += 1
-                        count_replacements += file_replaced_count
-                    except Exception as e:
-                        print_err(f"Failed to write file {filepath}: {e}")
+    for filepath in targets:
+        n = _rebrand_file(filepath, repo_root)
+        if n:
+            count_files += 1
+            count_replacements += n
 
     print_ok(
         f"Rebranding sweep finished! Updated {count_replacements} occurrences in {count_files} files."
