@@ -145,14 +145,17 @@ async function generateTemplateIfNeeded(params: {
     onProgress({ type: "analyzing" });
 
     const schema = z.object({ sections: z.array(templateSectionSchema) });
-    const userPrompt = await getUserPrompt(args, store);
+    const userPrompt = withImageContextNote(
+      await getUserPrompt(args, store),
+      args.imageContext.length,
+    );
 
     const result = await generateStructuredOutput({
       model,
       schema,
       signal,
       prompt: createTemplatePrompt(userPrompt, schema),
-      imageContext: [],
+      imageContext: args.imageContext,
     });
 
     if (!result) {

@@ -71,14 +71,14 @@ def pathspec(glob):
 def enforce(ref):
     """Post-rebase enforcement that conflict-resolution alone can't guarantee:
 
-      1. Force every fork-owned path to the fork's version (from <ref>, the
-         pre-rebase fork tip). git AUTO-MERGES non-conflicting hunks and can
-         silently drop fork content in fork-owned files (e.g. settings.ts losing
-         its keys) — those never surface as conflicts, so the resolver never
-         sees them. 'fork-owned' means fork wins unconditionally, so we restore.
-      2. Enforce the delete-list. The remove-commercial commit only deletes
-         files that existed at fork time; NEW upstream files under a deleted dir
-         (e.g. apps/api/* added in a later release) slip through the rebase.
+    1. Force every fork-owned path to the fork's version (from <ref>, the
+       pre-rebase fork tip). git AUTO-MERGES non-conflicting hunks and can
+       silently drop fork content in fork-owned files (e.g. settings.ts losing
+       its keys) — those never surface as conflicts, so the resolver never
+       sees them. 'fork-owned' means fork wins unconditionally, so we restore.
+    2. Enforce the delete-list. The remove-commercial commit only deletes
+       files that existed at fork time; NEW upstream files under a deleted dir
+       (e.g. apps/api/* added in a later release) slip through the rebase.
     """
     restored = 0
     for g in FORK:

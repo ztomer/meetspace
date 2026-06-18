@@ -1,22 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 
 import { cn } from "@meetspace/utils";
 
-import { SpeakerAssignPopover } from "../note-input/transcript/renderer/speaker-assign";
-
-import { useSessionTranscriptRenderData } from "~/session/components/note-input/transcript/render-request-hooks";
-import { useSegmentColorVars } from "~/session/components/note-input/transcript/renderer/utils";
+import { getSegmentColor } from "~/session/components/note-input/transcript/renderer/utils";
 import * as main from "~/store/tinybase/store/main";
 import { getLiveCaptureUiMode } from "~/store/zustand/listener/general-shared";
 import { useListener } from "~/stt/contexts";
 import {
-  getMaxSpeakerNumberForParticipants,
   mergeRenderedAndLiveSegments,
   SegmentKeyUtils,
   type Segment,
 } from "~/stt/live-segment";
 import {
+  buildRenderTranscriptRequestFromStore,
   getRenderTranscriptRequestKey,
   renderTranscriptSegments,
 } from "~/stt/render-transcript";
@@ -86,8 +83,7 @@ function LiveTranscriptFooterContent({
   isExpanded?: boolean;
 }) {
   const store = main.UI.useStore(main.STORE_ID);
-  const { maxSpeakerNumber, segments, transcriptIdByWordId } =
-    useLiveTranscriptData(sessionId);
+  const segments = useLiveTranscriptSegments(sessionId);
   const labelContext = useMemo(
     () => (store ? defaultRenderLabelContext(store) : undefined),
     [store],
@@ -98,26 +94,23 @@ function LiveTranscriptFooterContent({
       return new SpeakerLabelManager();
     }
 
-    return SpeakerLabelManager.fromSegments(
-      segments,
-      labelContext,
-      maxSpeakerNumber,
-    );
-  }, [labelContext, maxSpeakerNumber, segments, store]);
+    return SpeakerLabelManager.fromSegments(segments, labelContext);
+  }, [labelContext, segments, store]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const previewText = useMemo(() => getTranscriptPreview(segments), [segments]);
 
   return (
     <div className={cn(["w-full select-none", fillHeight && "h-full min-h-0"])}>
-      <div className={cn(["rounded-xl", fillHeight && "h-full min-h-0"])}>
+      <div
+        className={cn(["bg-muted rounded-xl", fillHeight && "h-full min-h-0"])}
+      >
         <LiveTranscriptContent
           fillHeight={fillHeight}
           isExpanded={isExpanded}
           previewText={previewText}
           scrollRef={scrollRef}
           segments={segments}
-          transcriptIdByWordId={transcriptIdByWordId}
           labelContext={labelContext}
           speakerLabelManager={speakerLabelManager}
         />
@@ -132,7 +125,6 @@ function LiveTranscriptContent({
   previewText,
   scrollRef,
   segments,
-  transcriptIdByWordId,
   labelContext,
   speakerLabelManager,
 }: {
@@ -141,29 +133,11 @@ function LiveTranscriptContent({
   previewText: string | null;
   scrollRef: React.RefObject<HTMLDivElement | null>;
   segments: Segment[];
-  transcriptIdByWordId: Map<string, string>;
   labelContext: ReturnType<typeof defaultRenderLabelContext> | undefined;
   speakerLabelManager: SpeakerLabelManager;
 }) {
   const scrollKey = getLiveTranscriptScrollKey(segments);
   const shouldPinToBottomRef = useRef(true);
-  const [speakerAssignments, setSpeakerAssignments] = useState(
-    () => new Map<string, string>(),
-  );
-
-  const handleSpeakerAssigned = useCallback(
-    (transcriptId: string, segmentKey: Segment["key"], humanId: string) => {
-      setSpeakerAssignments((current) => {
-        const next = new Map(current);
-        next.set(
-          getSpeakerAssignmentStateKey(transcriptId, segmentKey),
-          humanId,
-        );
-        return next;
-      });
-    },
-    [],
-  );
 
   useLayoutEffect(() => {
     if (!isExpanded) {
@@ -202,31 +176,17 @@ function LiveTranscriptContent({
           Transcript will appear here as you speak.
         </span>
       ) : (
-        segments.map((segment, index) => {
-          const transcriptId = getSegmentTranscriptId(
-            segment,
-            transcriptIdByWordId,
-          );
-          const labelKey = getSegmentLabelKey(
-            segment.key,
-            transcriptId,
-            speakerAssignments,
-          );
-
-          return (
-            <TranscriptSegmentRow
-              key={getSegmentIdentity(segment, index)}
-              segment={segment}
-              transcriptId={transcriptId}
-              label={SegmentKeyUtils.renderLabel(
-                labelKey,
-                labelContext,
-                speakerLabelManager,
-              )}
-              onSpeakerAssigned={handleSpeakerAssigned}
-            />
-          );
-        })
+        segments.map((segment, index) => (
+          <TranscriptSegmentRow
+            key={getSegmentIdentity(segment, index)}
+            segment={segment}
+            label={SegmentKeyUtils.renderLabel(
+              segment.key,
+              labelContext,
+              speakerLabelManager,
+            )}
+          />
+        ))
       )}
     </div>
   );
@@ -269,13 +229,37 @@ function CollapsedFooterMessage({ message }: { message: string }) {
   );
 }
 
-function useLiveTranscriptData(sessionId: string): {
-  maxSpeakerNumber?: number;
-  segments: Segment[];
-  transcriptIdByWordId: Map<string, string>;
-} {
-  const { request, transcriptRows } = useSessionTranscriptRenderData(sessionId);
+function useLiveTranscriptSegments(sessionId: string): Segment[] {
+  const store = main.UI.useStore(main.STORE_ID);
+  const transcriptIds =
+    main.UI.useSliceRowIds(
+      main.INDEXES.transcriptBySession,
+      sessionId,
+      main.STORE_ID,
+    ) ?? [];
+  const transcriptsTable = main.UI.useTable("transcripts", main.STORE_ID);
+  const participantMappingsTable = main.UI.useTable(
+    "mapping_session_participant",
+    main.STORE_ID,
+  );
+  const humansTable = main.UI.useTable("humans", main.STORE_ID);
+  const selfHumanId = main.UI.useValue("user_id", main.STORE_ID);
   const liveSegments = useListener((state) => state.liveSegments);
+
+  const request = useMemo(() => {
+    if (!store || transcriptIds.length === 0) {
+      return null;
+    }
+
+    return buildRenderTranscriptRequestFromStore(store, transcriptIds);
+  }, [
+    store,
+    transcriptIds,
+    transcriptsTable,
+    participantMappingsTable,
+    humansTable,
+    selfHumanId,
+  ]);
   const requestKey = useMemo(
     () => getRenderTranscriptRequestKey(request),
     [request],
@@ -295,28 +279,8 @@ function useLiveTranscriptData(sessionId: string): {
   });
 
   return useMemo(() => {
-    const segments = mergeRenderedAndLiveSegments(
-      renderedSegments,
-      liveSegments,
-    );
-    const maxSpeakerNumber = request
-      ? getMaxSpeakerNumberForParticipants(
-          request.participant_human_ids,
-          request.self_human_id,
-        )
-      : undefined;
-    const transcriptIdByWordId = new Map<string, string>();
-
-    for (const { transcriptId, row } of transcriptRows) {
-      for (const word of row.words ?? []) {
-        if (typeof word.id === "string" && word.id) {
-          transcriptIdByWordId.set(word.id, transcriptId);
-        }
-      }
-    }
-
-    return { maxSpeakerNumber, segments, transcriptIdByWordId };
-  }, [liveSegments, renderedSegments, request, transcriptRows]);
+    return mergeRenderedAndLiveSegments(renderedSegments, liveSegments);
+  }, [liveSegments, renderedSegments]);
 }
 
 function getLiveTranscriptScrollKey(segments: Segment[]): string {
@@ -339,17 +303,13 @@ function getLiveTranscriptScrollKey(segments: Segment[]): string {
 
 function getSegmentIdentity(segment: Segment, fallbackIndex: number): string {
   const firstWord = segment.words[0];
-  const serializedKey = SegmentKeyUtils.serialize(segment.key);
+  const lastWord = segment.words[segment.words.length - 1];
 
-  if (firstWord?.id) {
-    return `${serializedKey}:${firstWord.id}`;
+  if (firstWord?.id && lastWord?.id) {
+    return `${firstWord.id}:${lastWord.id}`;
   }
 
-  if (firstWord) {
-    return `${serializedKey}:${firstWord.start_ms}`;
-  }
-
-  return `${serializedKey}:${segment.id ?? fallbackIndex}`;
+  return `${segment.key.channel}:${segment.key.speaker_index ?? "unknown"}:${firstWord?.start_ms ?? fallbackIndex}:${lastWord?.end_ms ?? fallbackIndex}`;
 }
 
 function getSegmentText(segment: Segment): string {
@@ -381,89 +341,28 @@ function getTranscriptPreview(segments: Segment[]): string | null {
 
 function TranscriptSegmentRow({
   segment,
-  transcriptId,
   label,
-  onSpeakerAssigned,
 }: {
   segment: Segment;
-  transcriptId: string | undefined;
   label: string;
-  onSpeakerAssigned: (
-    transcriptId: string,
-    segmentKey: Segment["key"],
-    humanId: string,
-  ) => void;
 }) {
-  const colorVars = useSegmentColorVars(segment.key);
+  const color = getSegmentColor(segment.key);
 
   return (
     <div className="grid min-w-0 grid-cols-[92px_minmax(0,1fr)] items-start gap-x-3">
       <span
-        className="sticky top-2.5 z-10 mt-0.5 flex min-h-5 max-w-full min-w-0 items-center justify-start rounded-full px-2 text-[11px] font-medium [--segment-color:var(--segment-color-light)] dark:[--segment-color:var(--segment-color-dark)]"
+        className="sticky top-2.5 z-10 mt-0.5 flex min-h-5 max-w-full min-w-0 items-center justify-start rounded-full px-2 text-[11px] font-medium"
         title={label}
         style={{
-          ...colorVars,
-          backgroundColor:
-            "color-mix(in srgb, var(--segment-color) 10%, transparent)",
-          color: "var(--segment-color)",
+          backgroundColor: `${color}1A`,
+          color,
         }}
       >
-        {transcriptId ? (
-          <SpeakerAssignPopover
-            segment={segment}
-            transcriptId={transcriptId}
-            color="var(--segment-color)"
-            label={label}
-            className="max-w-full min-w-0 truncate text-left"
-            onAssigned={(humanId) =>
-              onSpeakerAssigned(transcriptId, segment.key, humanId)
-            }
-          />
-        ) : (
-          <span className="min-w-0 truncate">{label}</span>
-        )}
+        <span className="min-w-0 truncate">{label}</span>
       </span>
       <span className="text-muted-foreground min-w-0 text-xs leading-5">
         {getSegmentText(segment)}
       </span>
     </div>
   );
-}
-
-function getSegmentTranscriptId(
-  segment: Segment,
-  transcriptIdByWordId: Map<string, string>,
-): string | undefined {
-  for (const word of segment.words) {
-    if (word.id) {
-      const transcriptId = transcriptIdByWordId.get(word.id);
-      if (transcriptId) {
-        return transcriptId;
-      }
-    }
-  }
-
-  return undefined;
-}
-
-function getSegmentLabelKey(
-  segmentKey: Segment["key"],
-  transcriptId: string | undefined,
-  speakerAssignments: Map<string, string>,
-): Segment["key"] {
-  if (!transcriptId) {
-    return segmentKey;
-  }
-
-  const humanId = speakerAssignments.get(
-    getSpeakerAssignmentStateKey(transcriptId, segmentKey),
-  );
-  return humanId ? { ...segmentKey, speaker_human_id: humanId } : segmentKey;
-}
-
-function getSpeakerAssignmentStateKey(
-  transcriptId: string,
-  segmentKey: Segment["key"],
-): string {
-  return `${transcriptId}:${SegmentKeyUtils.serialize(segmentKey)}`;
 }

@@ -43,7 +43,19 @@ pub async fn get_env<R: tauri::Runtime>(_app: tauri::AppHandle<R>, key: String) 
 #[tauri::command]
 #[specta::specta]
 pub fn show_devtool() -> bool {
-    cfg!(any(debug_assertions, feature = "dev", feature = "devtools"))
+    if cfg!(debug_assertions) {
+        return true;
+    }
+
+    #[cfg(feature = "devtools")]
+    {
+        return true;
+    }
+
+    #[cfg(not(feature = "devtools"))]
+    {
+        false
+    }
 }
 
 #[tauri::command]
