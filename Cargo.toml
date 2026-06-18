@@ -10,7 +10,6 @@ debug = false
 [workspace]
 resolver = "2"
 members = [
-  "apps/api",
   "apps/desktop/src-tauri",
   "crates/*",
   "legacy/*",
@@ -23,6 +22,9 @@ exclude = [
 ]
 
 [workspace.dependencies]
+legacy-db-core = { path = "legacy/db-core", package = "legacy-db-core" }
+legacy-db-parser = { path = "legacy/db-parser", package = "db-parser" }
+legacy-db-user = { path = "legacy/db-user", package = "db-user" }
 meetspace-aec = { path = "crates/aec", package = "aec" }
 meetspace-afconvert = { path = "crates/afconvert", package = "afconvert" }
 meetspace-agc = { path = "crates/agc", package = "agc" }
@@ -182,11 +184,10 @@ meetspace-whisper-local = { path = "crates/whisper-local", package = "whisper-lo
 meetspace-whisper-local-model = { path = "crates/whisper-local-model", package = "whisper-local-model" }
 meetspace-ws-client = { path = "crates/ws-client", package = "ws-client" }
 meetspace-ws-utils = { path = "crates/ws-utils", package = "ws-utils" }
-legacy-db-core = { path = "legacy/db-core", package = "legacy-db-core" }
-legacy-db-parser = { path = "legacy/db-parser", package = "db-parser" }
-legacy-db-user = { path = "legacy/db-user", package = "db-user" }
 posthog-rs = "0.5"
 progenitor-client = "0.13"
+tauri-plugin-diarize = { path = "plugins/diarize" }
+tauri-plugin-oauth = { path = "plugins/oauth" }
 
 openai-transcription = { path = "crates/openai-transcription", package = "openai-transcription" }
 owhisper-client = { path = "crates/owhisper-client", package = "owhisper-client" }

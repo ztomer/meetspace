@@ -1,14 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const { isSupportedLanguagesBatchMock, isSupportedLanguagesLiveMock } =
-  vi.hoisted(() => ({
-    isSupportedLanguagesBatchMock: vi.fn(),
-    isSupportedLanguagesLiveMock: vi.fn(),
-  }));
+const { isSupportedLanguagesLiveMock } = vi.hoisted(() => ({
+  isSupportedLanguagesLiveMock: vi.fn(),
+}));
 
 vi.mock("@meetspace/plugin-transcription", () => ({
   commands: {
-    isSupportedLanguagesBatch: isSupportedLanguagesBatchMock,
     isSupportedLanguagesLive: isSupportedLanguagesLiveMock,
   },
 }));
@@ -19,18 +16,12 @@ import {
   getOnDeviceTranscriptionMode,
   getTranscriptionLanguages,
   isConfiguredSttModel,
-  isSupportedLanguagesBatch,
-  isSupportedLanguagesLive,
   isSupportedLocalSttModel,
 } from "./capabilities";
 
 beforeEach(() => {
   vi.clearAllMocks();
   isSupportedLanguagesLiveMock.mockResolvedValue({
-    status: "ok",
-    data: true,
-  });
-  isSupportedLanguagesBatchMock.mockResolvedValue({
     status: "ok",
     data: true,
   });
@@ -169,36 +160,6 @@ describe("getLiveTranscriptionConfig", () => {
     });
 
     expect(isSupportedLanguagesLiveMock.mock.calls[0]?.[0]).toBe("deepgram");
-  });
-
-  test("checks Cloudflare Workers AI as Deepgram-compatible for language fallback", async () => {
-    await getLiveTranscriptionConfig({
-      provider: "cloudflare_workers_ai",
-      model: "nova-3",
-      languages: ["en", "ko"],
-    });
-
-    expect(isSupportedLanguagesLiveMock.mock.calls[0]?.[0]).toBe("deepgram");
-  });
-
-  test("checks Cloudflare Workers AI as Deepgram-compatible for live language support", async () => {
-    await isSupportedLanguagesLive("cloudflare_workers_ai", "nova-3", ["en"]);
-
-    expect(isSupportedLanguagesLiveMock.mock.calls[0]).toEqual([
-      "deepgram",
-      "nova-3",
-      ["en"],
-    ]);
-  });
-
-  test("checks Cloudflare Workers AI as Deepgram-compatible for batch language support", async () => {
-    await isSupportedLanguagesBatch("cloudflare_workers_ai", "nova-3", ["en"]);
-
-    expect(isSupportedLanguagesBatchMock.mock.calls[0]).toEqual([
-      "deepgram",
-      "nova-3",
-      ["en"],
-    ]);
   });
 });
 
