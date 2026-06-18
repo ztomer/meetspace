@@ -3,6 +3,7 @@
     "fmt:check": "echo 'TODO'",
     "fmt": "dprint fmt",
     "lint": "oxlint --type-aware || eslint",
+    "smoke": "bash scripts/smoke-launch.sh",
     "plugin:hello-world:install": "pnpm --dir examples/plugins/hello-world install:dev"
   },
   "devDependencies": {
