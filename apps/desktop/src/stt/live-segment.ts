@@ -41,7 +41,6 @@ export type RuntimeSpeakerHint = {
 export type RenderLabelContext = {
   getSelfHumanId: () => string | undefined;
   getHumanName: (id: string) => string | undefined;
-  getParticipantHumanIds?: () => string[];
 };
 
 export type SegmentKey = BoundSegmentKey;
@@ -63,8 +62,6 @@ export class SpeakerLabelManager {
   private unknownSpeakerMap: Map<string, number> = new Map();
   private nextIndex = 1;
 
-  constructor(private readonly maxUnknownSpeakerNumber?: number) {}
-
   getUnknownSpeakerNumber(key: SegmentKey): number {
     const serialized = SegmentKeyUtils.serialize(key);
     const existing = this.unknownSpeakerMap.get(serialized);
@@ -72,10 +69,7 @@ export class SpeakerLabelManager {
       return existing;
     }
 
-    const newIndex =
-      this.maxUnknownSpeakerNumber && this.maxUnknownSpeakerNumber > 0
-        ? Math.min(this.nextIndex, this.maxUnknownSpeakerNumber)
-        : this.nextIndex;
+    const newIndex = this.nextIndex;
     this.unknownSpeakerMap.set(serialized, newIndex);
     this.nextIndex += 1;
     return newIndex;
@@ -84,9 +78,8 @@ export class SpeakerLabelManager {
   static fromSegments(
     segments: Segment[],
     ctx?: RenderLabelContext,
-    maxUnknownSpeakerNumber?: number,
   ): SpeakerLabelManager {
-    const manager = new SpeakerLabelManager(maxUnknownSpeakerNumber);
+    const manager = new SpeakerLabelManager();
     for (const segment of segments) {
       if (!SegmentKeyUtils.isKnownSpeaker(segment.key, ctx)) {
         manager.getUnknownSpeakerNumber(segment.key);
@@ -110,12 +103,8 @@ export const SegmentKeyUtils = {
       return true;
     }
 
-    if (ctx && key.channel === "DirectMic") {
+    if (ctx && key.channel === "DirectMic" && key.speaker_index == null) {
       return Boolean(ctx.getSelfHumanId());
-    }
-
-    if (ctx && key.channel === "RemoteParty") {
-      return Boolean(getUniqueRemoteParticipantHumanId(ctx));
     }
 
     return false;
@@ -126,27 +115,18 @@ export const SegmentKeyUtils = {
     ctx?: RenderLabelContext,
     manager?: SpeakerLabelManager,
   ): string => {
-    const assignedHumanId = key.speaker_human_id;
-
-    if (ctx && assignedHumanId != null) {
-      const human = ctx.getHumanName(assignedHumanId);
+    if (ctx && key.speaker_human_id) {
+      const human = ctx.getHumanName(key.speaker_human_id);
       if (human) {
         return human;
       }
     }
 
-    if (ctx && key.channel === "DirectMic" && assignedHumanId == null) {
+    if (ctx && key.channel === "DirectMic" && key.speaker_index == null) {
       const selfHumanId = ctx.getSelfHumanId();
       if (selfHumanId) {
         const selfHuman = ctx.getHumanName(selfHumanId);
         return selfHuman || "You";
-      }
-    }
-
-    if (ctx && key.channel === "RemoteParty" && assignedHumanId == null) {
-      const remoteHumanId = getUniqueRemoteParticipantHumanId(ctx);
-      if (remoteHumanId) {
-        return ctx.getHumanName(remoteHumanId) || remoteHumanId;
       }
     }
 
@@ -167,34 +147,6 @@ export const SegmentKeyUtils = {
       : `Speaker ${channelLabel}`;
   },
 };
-
-function getUniqueRemoteParticipantHumanId(
-  ctx: RenderLabelContext,
-): string | undefined {
-  const selfHumanId = ctx.getSelfHumanId();
-  const participantHumanIds = ctx.getParticipantHumanIds?.() ?? [];
-  const remoteHumanIds = [
-    ...new Set(
-      participantHumanIds.filter(
-        (humanId) => humanId && humanId !== selfHumanId,
-      ),
-    ),
-  ];
-
-  return remoteHumanIds.length === 1 ? remoteHumanIds[0] : undefined;
-}
-
-export function getMaxSpeakerNumberForParticipants(
-  participantHumanIds: readonly string[],
-  selfHumanId?: string | null,
-): number | undefined {
-  const ids = new Set(participantHumanIds.filter(Boolean));
-  if (selfHumanId) {
-    ids.add(selfHumanId);
-  }
-
-  return ids.size > 1 ? ids.size : undefined;
-}
 
 export function mergeRenderedAndLiveSegments(
   renderedSegments: Segment[],

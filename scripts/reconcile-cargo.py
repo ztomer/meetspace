@@ -27,9 +27,7 @@ MANIFEST = os.environ.get("FORK_OWNERSHIP_TOML") or "fork-ownership.toml"
 
 
 def toml_at(ref):
-    r = subprocess.run(
-        ["git", "show", f"{ref}:{P}"], capture_output=True, text=True
-    )
+    r = subprocess.run(["git", "show", f"{ref}:{P}"], capture_output=True, text=True)
     return tomllib.loads(r.stdout) if r.returncode == 0 and r.stdout.strip() else {}
 
 
@@ -45,7 +43,9 @@ def main():
     text = open(P).read()
 
     cur = tomllib.loads(text)
-    fork_deps = fork_ref and toml_at(fork_ref).get("workspace", {}).get("dependencies", {})
+    fork_deps = fork_ref and toml_at(fork_ref).get("workspace", {}).get(
+        "dependencies", {}
+    )
     up_deps = toml_at(tag).get("workspace", {}).get("dependencies", {})
     cur_deps = cur.get("workspace", {}).get("dependencies", {})
 
@@ -75,7 +75,11 @@ def main():
     for m in cur.get("workspace", {}).get("members", []):
         if any(matches(m, g) for g in delete):
             text2 = re.sub(
-                r'^[ \t]*"' + re.escape(m) + r'",?[ \t]*\n', "", text, count=1, flags=re.M
+                r'^[ \t]*"' + re.escape(m) + r'",?[ \t]*\n',
+                "",
+                text,
+                count=1,
+                flags=re.M,
             )
             if text2 != text:
                 text, _ = text2, removed.append(m)
