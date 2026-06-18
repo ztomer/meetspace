@@ -8,7 +8,6 @@ import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 import { extractReasoningMiddleware, wrapLanguageModel } from "ai";
 import { useMemo, useRef } from "react";
 
-import type { CharTask } from "~/shared/api-types";
 import type { AIProviderStorage } from "@meetspace/store";
 
 import { createAuthFetch } from "../auth-fetch";
@@ -23,6 +22,7 @@ import {
   getProviderSelectionBlockers,
   type ProviderEligibilityContext,
 } from "~/settings/ai/shared/eligibility";
+import type { CharTask } from "~/shared/api-types";
 import * as settings from "~/store/tinybase/store/settings";
 
 type LanguageModelV3 = Parameters<typeof wrapLanguageModel>[0]["model"];

@@ -74,13 +74,15 @@ async fn web_search(
             exclude_text: None,
             moderation: Some(true),
             contents: Some(meetspace_exa::ContentsRequest {
-                text: Some(meetspace_exa::TextRequest::Options(meetspace_exa::TextOptions {
-                    max_characters: Some(1200),
-                    include_html_tags: Some(false),
-                    verbosity: Some(meetspace_exa::TextVerbosity::Compact),
-                    include_sections: None,
-                    exclude_sections: None,
-                })),
+                text: Some(meetspace_exa::TextRequest::Options(
+                    meetspace_exa::TextOptions {
+                        max_characters: Some(1200),
+                        include_html_tags: Some(false),
+                        verbosity: Some(meetspace_exa::TextVerbosity::Compact),
+                        include_sections: None,
+                        exclude_sections: None,
+                    },
+                )),
                 highlights: Some(meetspace_exa::HighlightsRequest::Options(
                     meetspace_exa::HighlightsOptions {
                         max_characters: Some(400),
