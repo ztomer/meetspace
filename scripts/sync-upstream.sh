@@ -67,6 +67,9 @@ echo "==> Rebrand sweep + format + install + regenerate"
 python3 scripts/rebrand_sweep.py
 pnpm exec dprint fmt >/dev/null 2>&1 || true
 pnpm install
+# extract BEFORE compile: taking upstream's catalogs drops fork-added message
+# IDs, so without a re-extract the fork's strings render as raw lingui hashes.
+pnpm -F desktop i18n:extract || echo "(i18n:extract failed — run manually)"
 pnpm -F desktop i18n:compile || echo "(run i18n:compile manually)"
 pnpm -F @meetspace/ui build || true
 
