@@ -46,6 +46,17 @@ you add or move a fork-owned area, update the manifest — that's what keeps the
 next sync deterministic. `[providers]` and `[deps]` in the manifest mirror the
 provider allowlist and the package.json reconciliation described below.
 
+After the rebase, the driver runs two enforcement passes that conflict
+resolution alone can't guarantee (both are things `git` does *without* flagging
+a conflict, so the resolver never sees them):
+- **`resolve-conflicts.py --enforce <fork-ref>`** restores every fork-owned path
+  to the fork's version (git auto-merges non-conflicting hunks and can silently
+  drop fork content — e.g. `settings.ts` losing its keys) and applies the
+  delete-list to *new* upstream files that landed under a deleted dir.
+- **`reconcile-package.py <fork-ref> <tag>`** re-adds fork-only `package.json`
+  scripts (`visual:*`) and devDeps (`@playwright/test`) that taking upstream's
+  `package.json` drops, then applies `[deps]` add/remove.
+
 ## One-time setup (per clone)
 
 ```bash

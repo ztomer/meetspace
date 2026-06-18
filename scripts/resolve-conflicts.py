@@ -63,6 +63,46 @@ def conflicts():
             yield st, path
 
 
+def pathspec(glob):
+    """fork-ownership glob -> a git pathspec (dir for /**, literal otherwise)."""
+    return glob[:-3] if glob.endswith("/**") else glob
+
+
+def enforce(ref):
+    """Post-rebase enforcement that conflict-resolution alone can't guarantee:
+
+      1. Force every fork-owned path to the fork's version (from <ref>, the
+         pre-rebase fork tip). git AUTO-MERGES non-conflicting hunks and can
+         silently drop fork content in fork-owned files (e.g. settings.ts losing
+         its keys) — those never surface as conflicts, so the resolver never
+         sees them. 'fork-owned' means fork wins unconditionally, so we restore.
+      2. Enforce the delete-list. The remove-commercial commit only deletes
+         files that existed at fork time; NEW upstream files under a deleted dir
+         (e.g. apps/api/* added in a later release) slip through the rebase.
+    """
+    restored = 0
+    for g in FORK:
+        ps = pathspec(g)
+        diff = subprocess.run(
+            ["git", "diff", "--name-only", ref, "--", ps],
+            capture_output=True,
+            text=True,
+        ).stdout.split()
+        if diff:
+            git("checkout", ref, "--", ps)
+            restored += len(diff)
+    deleted = 0
+    for g in DELETE:
+        ps = pathspec(g)
+        files = subprocess.run(
+            ["git", "ls-files", "--", ps], capture_output=True, text=True
+        ).stdout.split()
+        if files:
+            git("rm", "-rfq", "--", ps)
+            deleted += len(files)
+    print(f"enforced: fork-restored={restored} deleted={deleted}")
+
+
 def main():
     counts = {"fork": 0, "upstream": 0, "delete": 0}
     for st, path in conflicts():
@@ -99,4 +139,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) >= 3 and sys.argv[1] == "--enforce":
+        enforce(sys.argv[2])
+    else:
+        main()
