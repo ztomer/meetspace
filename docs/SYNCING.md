@@ -36,6 +36,27 @@ onto it, re-strips commercial, regenerates i18n, and verifies. Resolve any
 substantive conflicts per the resolution rule below, review, then fast-forward
 `MIT_BACK` to the synced branch and push.
 
+**`fork-ownership.toml` + `scripts/resolve-conflicts.py` do the mechanical
+routing.** The manifest is the single source of truth for "which side wins":
+`[paths] delete` (commercial/cloud → `git rm`), `[paths] fork` (fork-owned →
+keep the fork's version), everything else → upstream. The resolver reads it and
+auto-resolves every conflicted path by longest-matching glob, so a sync is
+mostly: run the script, eyeball the few genuinely ambiguous files, verify. When
+you add or move a fork-owned area, update the manifest — that's what keeps the
+next sync deterministic. `[providers]` and `[deps]` in the manifest mirror the
+provider allowlist and the package.json reconciliation described below.
+
+After the rebase, the driver runs two enforcement passes that conflict
+resolution alone can't guarantee (both are things `git` does *without* flagging
+a conflict, so the resolver never sees them):
+- **`resolve-conflicts.py --enforce <fork-ref>`** restores every fork-owned path
+  to the fork's version (git auto-merges non-conflicting hunks and can silently
+  drop fork content — e.g. `settings.ts` losing its keys) and applies the
+  delete-list to *new* upstream files that landed under a deleted dir.
+- **`reconcile-package.py <fork-ref> <tag>`** re-adds fork-only `package.json`
+  scripts (`visual:*`) and devDeps (`@playwright/test`) that taking upstream's
+  `package.json` drops, then applies `[deps]` add/remove.
+
 ## One-time setup (per clone)
 
 ```bash
@@ -55,7 +76,7 @@ scripts/rebase-on-main.sh --on-main  # bleeding edge (origin/main)
 
 The script: enables rerere → rebases → re-removes deleted upstream paths →
 runs `rebrand_sweep.py` → regenerates i18n → formats → builds UI → typecheck →
-`cargo check` → `check-clean.sh`. It never pushes.
+`cargo check` → `check-clean.py`. It never pushes.
 
 When the rebase stops on a conflict, resolve it, `git add`, `git rebase
 --continue`. rerere remembers each resolution, so the *same* conflict
@@ -107,9 +128,12 @@ hosted provider becomes visible. Adding a local provider = add it to
 
 ### Guard
 
-`scripts/check-clean.sh` fails on leftover conflict markers or un-rebranded
+`scripts/check-clean.py` fails on leftover conflict markers or un-rebranded
 identifiers in `apps/crates/packages/plugins`. It runs in the rebase script,
 on `git push` (pre-push hook), and in CI (`.github/workflows/fork-guard.yml`).
+It's a python port of the old shell guard — `git grep` got mangled by the local
+RTK shell hook into false positives, so the guard enumerates files with
+`git ls-files` and scans them in-process instead.
 
 ## Why syncs are expensive — and the long-term fix
 
