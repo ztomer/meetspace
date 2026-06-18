@@ -143,6 +143,51 @@ It's a python port of the old shell guard — `git grep` got mangled by the loca
 RTK shell hook into false positives, so the guard enumerates files with
 `git ls-files` and scans them in-process instead.
 
+## Verifying & cutting a release
+
+**A green build is necessary but NOT sufficient.** `pnpm -r typecheck`,
+`cargo check`, and the visual tests all run against a **mocked** Tauri backend
+(Playwright fakes the IPC), so they cannot catch runtime panics in real plugin
+init. `1.0.47_meet1` passed all three and still panicked on launch. So the gate
+order is: typecheck + cargo + `check-clean.py` → **`pnpm smoke`** (real launch)
+→ visual:update → release.
+
+```bash
+pnpm smoke   # launches the real app; PASS on the app_setup_complete marker,
+             # FAIL on a startup panic. Required before every release.
+```
+
+### Runtime/build gotchas the rebase can't see
+
+All of these share one root cause: **fork-owned files (`src-tauri/src/lib.rs`,
+`capabilities/*.json`, i18n catalogs, `package.json`, root `Cargo.toml`) are
+restored to the fork's version on sync, so they silently miss upstream changes.**
+When a sync touches plugins or strings, check for:
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| Launch panic `Event X not found in registry` | upstream reordered/added a plugin whose setup `listen`s an event; fork's `lib.rs` registers plugins in the old order (listener before the emitter mounts) | match upstream's plugin-registration order in `lib.rs` (e.g. `updater2` **before** `tray`) |
+| Build error `Permission X:default not found` | upstream renamed a plugin package (`tauri-plugin-tray` → `hypr-tray` → `meetspace-tray`), changing its permission prefix; fork capability still names the old prefix | update `apps/desktop/src-tauri/capabilities/default.json` to the new prefix |
+| UI shows lingui hashes (`saL1iI`, `XDmqQW`) | taking upstream's catalogs dropped fork strings; only `i18n:compile` ran | run `i18n:extract` **then** `compile` (sync-upstream.sh does this) |
+| Workspace won't load / missing dep | upstream `Cargo.toml`/`package.json` re-added deleted members or dropped fork deps | `reconcile-cargo.py` / `reconcile-package.py` (sync-upstream.sh runs both) |
+
+Diff `lib.rs` and `capabilities/` against the upstream tag after a sync — those
+are the fork-owned files most likely to need a manual reconcile.
+
+### Cutting the release
+
+1. Bump the version in `apps/desktop/src-tauri/Cargo.toml`, `Cargo.lock`
+   (`cargo update -p desktop --precise <ver>`), and `scripts/brew/meetspace.rb`
+   (scheme: `1.0.47-meet1` cargo/dmg, `1.0.47_meet1` tag/cask). Commit, push.
+2. `gh release create v1.0.47_meet1 --target MIT_BACK …` → the
+   `Build & Release Artifacts` workflow builds the **aarch64** DMG (Apple Silicon
+   only — `depends_on arch: :arm64`; there is no Intel build), attaches it, and —
+   given the `HOMEBREW_TAP_TOKEN` secret — **auto-updates `ztomer/homebrew-tap`**
+   from `scripts/brew/meetspace.rb`. No manual tap push.
+3. A release created from a commit that *predates* a workflow change runs the old
+   workflow, and a secret added mid-run isn't seen by that run — so verify the
+   tap actually moved; push it by hand only if the auto-step skipped.
+
 ## Why syncs are expensive — and the long-term fix
 
 The fork carries a global `hypr → meetspace` rename **in source**, and upstream
