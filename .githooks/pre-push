@@ -4,4 +4,4 @@
 # Bypass once with: git push --no-verify
 set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-exec "$REPO_ROOT/scripts/check-clean.sh"
+exec python3 "$REPO_ROOT/scripts/check-clean.py"

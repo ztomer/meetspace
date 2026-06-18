@@ -1,0 +1,103 @@
+# Fork ownership manifest — the single source of truth for "which side wins"
+# during an upstream sync. scripts/resolve-conflicts.py reads this to resolve
+# rebase conflicts deterministically (no per-file guessing). The longest-matching
+# glob decides; anything unlisted defaults to UPSTREAM.
+#
+# Polarity note (rebase of fork commits ONTO upstream-track):
+#   fork     -> keep the fork's version   (git checkout --theirs)
+#   upstream -> take upstream's version    (git checkout --ours)
+#   delete   -> keep deleted               (git rm)
+#
+# Principle: UI/features/behavior track upstream; the fork only (1) strips
+# commercial/cloud, (2) keeps its local-first + integration features, (3) hides
+# cloud providers via an allowlist (see [providers]), (4) rebrands (applied last).
+
+[paths]
+# Commercial/cloud the fork removes entirely.
+delete = [
+  "apps/api/**",
+  "apps/web/**",
+  "apps/stripe/**",
+  "supabase/**",
+  "packages/supabase/**",
+  "packages/pricing/**",
+  "apps/desktop/src/billing/**",
+  "apps/desktop/src/onboarding/account/**",
+]
+
+# Fork-owned: keep the fork's version on conflict. The fork's ONLY axes are
+# (1) local intelligence, (2) integrations, (3) commercial-gate removal, plus
+# rebrand (automatic) + infra. UI/UX/theming is NOT an axis — it tracks upstream
+# (incl. upstream's native dark mode, added in 1.0.45+). Keep this list tight:
+# anything not here defaults to upstream.
+fork = [
+  # --- Intelligence (local-first STT/diarize/enhance, AI tasks, prep) ---
+  "apps/desktop/src/stt/**",
+  "apps/desktop/src/settings/ai/stt/**",
+  "apps/desktop/src/session/components/note-input/transcript/**",
+  "apps/desktop/src/services/diarize-on-stop.ts",
+  "apps/desktop/src/services/name-resolve-on-stop.ts",
+  "apps/desktop/src/store/zustand/ai-task/**",
+  "apps/desktop/src/chat/tools/**",
+  "apps/desktop/src/devtools-panel/recurring-notes.ts",
+  "apps/desktop/src/calendar/components/prep-card.tsx",
+  "apps/desktop/src/session/components/analytics/**",
+  # Provider allowlist module (the hide-cloud delta)
+  "apps/desktop/src/settings/ai/shared/local-providers.ts",
+  "apps/desktop/src/settings/ai/shared/local-providers.test.ts",
+  # --- Integrations (Notion / Linear / Obsidian / calendar / OAuth) ---
+  "apps/desktop/src/integrations/**",
+  "apps/desktop/src/settings/integrations/**",
+  "apps/desktop/src/services/calendar/**",
+  "apps/desktop/src/calendar/components/oauth/**",
+  "apps/desktop/src/session/components/outer-header/overflow/linear.tsx",
+  "apps/desktop/src/session/components/outer-header/overflow/notion.tsx",
+  "apps/desktop/src/session/components/outer-header/overflow/obsidian.tsx",
+  "apps/desktop/src/session/components/outer-header/overflow/export-pdf.tsx",
+  "plugins/oauth/**",
+  "plugins/diarize/**",
+  "plugins/windows/**",
+  # --- Commercial-gate removal (local auth stubs, account-free onboarding) ---
+  "apps/desktop/src/auth/**",
+  "apps/desktop/src/sidebar/profile/**",
+  "apps/desktop/src/shared/api-types.ts",
+  "apps/desktop/src/onboarding/**",
+  "apps/desktop/src/settings/general/**",
+  "apps/desktop/src/shared/config/**",
+  "apps/desktop/src/store/tinybase/store/settings.ts",
+  # --- Native shell + fork infrastructure ---
+  "apps/desktop/src-tauri/**",
+  "apps/desktop/visual/**",
+  "scripts/**",
+  "docs/**",
+  ".githooks/**",
+  ".gitattributes",
+  "AGENTS.md",
+  "CLAUDE.md",
+  "eslint-plugin-meetspace.mjs",
+  "fork-ownership.toml",
+]
+
+# UI/UX/theming explicitly tracks UPSTREAM (documented here; NOT in `fork`, so
+# the resolver already takes upstream — do not add them). The fork's bespoke
+# dark mode (built on light-only 1.0.37) is retired for upstream's native dark
+# mode; these were fork redesigns we roll back:
+#   styles/**  sidebar/timeline/**  sidebar/toast/**  search/components/**
+#   shared/tabs.tsx  main/tab-chrome.tsx  main/update-banner.tsx  sidebar/update.tsx
+# Everything else -> upstream too (enhance, ai/hooks, settings/ai/llm, most UI,
+# packages, crates). Mixed feature+restyle files (session/components/*,
+# chat/components/*, calendar/components/*) get per-file review at sync time.
+
+[providers]
+# Only these provider ids reach the UI; all others (cloud) are hidden by the
+# allowlist (settings/ai/shared/local-providers.ts). Keep upstream's full provider
+# LISTS/TYPES intact (wide type keeps enhance/connection code compiling); the
+# filter hides cloud at runtime. After a sync, ensure llm/shared.tsx wires
+# keepLocalProviders(...) and _FORK_PROVIDERS (osaurus) onto upstream's list.
+local_llm = ["osaurus", "ollama", "lmstudio", "custom"]
+local_stt = ["meetspace"]
+
+[deps]
+# apps/desktop/package.json reconciliation after taking upstream's package.json.
+add = ["@orama/highlight"] # fork-added deps to restore
+remove = ["@meetspace/api-client", "@meetspace/pricing", "@meetspace/supabase"] # commercial pkgs the fork deleted
