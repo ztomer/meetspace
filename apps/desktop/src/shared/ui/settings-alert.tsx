@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 export function SettingsAlert({
   children,

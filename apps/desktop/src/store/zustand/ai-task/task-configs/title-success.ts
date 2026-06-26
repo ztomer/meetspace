@@ -1,4 +1,4 @@
-import { parseJsonContent } from "@hypr/editor/markdown";
+import { parseJsonContent } from "@meetspace/editor/markdown";
 
 import type { TaskConfig } from ".";
 

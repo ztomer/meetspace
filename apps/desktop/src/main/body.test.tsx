@@ -23,7 +23,7 @@ const mocks = vi.hoisted(() => ({
   tabContentRenderCount: 0,
 }));
 
-vi.mock("@hypr/ui/components/ui/resizable", () => ({
+vi.mock("@meetspace/ui/components/ui/resizable", () => ({
   ResizablePanelGroup: ({
     autoSaveId,
     children,

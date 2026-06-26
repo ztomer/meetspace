@@ -1,7 +1,7 @@
 import { Icon } from "@iconify-icon/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { Image } from "@/components/image";
 import { useAnalytics } from "@/hooks/use-posthog";
@@ -10,23 +10,23 @@ export const Route = createFileRoute("/_view/download/")({
   component: Component,
   head: () => ({
     meta: [
-      { title: "Download Anarlog - Private Meeting Notes for macOS" },
+      { title: "Download Meetspace - Private Meeting Notes for macOS" },
       {
         name: "description",
         content:
-          "Download Anarlog for macOS to take private, bot-free meeting notes with local transcription, BYOK AI, and optional cloud features. Apple Silicon and Intel builds available.",
+          "Download Meetspace for macOS to take private, bot-free meeting notes with local transcription, BYOK AI, and optional cloud features. Apple Silicon and Intel builds available.",
       },
       {
         property: "og:title",
-        content: "Download Anarlog - Private Meeting Notes for macOS",
+        content: "Download Meetspace - Private Meeting Notes for macOS",
       },
       {
         property: "og:description",
         content:
-          "Get Anarlog on macOS and start with local meeting notes, on-device transcription, and optional cloud upgrades when you need them.",
+          "Get Meetspace on macOS and start with local meeting notes, on-device transcription, and optional cloud upgrades when you need them.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://anarlog.so/download" },
+      { property: "og:url", content: "https://meetspace.so/download" },
     ],
   }),
 });
@@ -54,10 +54,10 @@ function Component() {
           <section className="px-4 py-16">
             <div className="mx-auto mb-16 flex max-w-2xl flex-col gap-6 text-left">
               <h1 className="text-color font-mono text-4xl tracking-tight sm:text-5xl">
-                Download Anarlog
+                Download Meetspace
               </h1>
               <p className="text-fg-muted text-lg sm:text-xl">
-                Choose your platform to get started with Anarlog
+                Choose your platform to get started with Meetspace
               </p>
             </div>
 
@@ -196,7 +196,7 @@ function CTASection() {
         <div className="mb-4 flex size-40 items-center justify-center rounded-[48px] border border-neutral-100 bg-transparent shadow-2xl">
           <Image
             src="/logo.svg"
-            alt="Anarlog"
+            alt="Meetspace"
             width={144}
             height={144}
             className="mx-auto size-36 rounded-[40px] border border-neutral-100"

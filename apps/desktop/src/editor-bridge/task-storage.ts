@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 
-import type { JSONContent } from "@hypr/editor/note";
-import type { TaskStorage } from "@hypr/editor/task-storage";
+import type { JSONContent } from "@meetspace/editor/note";
+import type { TaskStorage } from "@meetspace/editor/task-storage";
 import {
   createTaskSourceKey,
   isSameTask,
   type TaskRecord,
   type TaskSource,
-} from "@hypr/editor/tasks";
+} from "@meetspace/editor/tasks";
 
 import { DEFAULT_USER_ID } from "~/shared/utils";
 import * as main from "~/store/tinybase/store/main";

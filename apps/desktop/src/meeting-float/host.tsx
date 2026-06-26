@@ -2,8 +2,8 @@ import {
   commands as windowsCommands,
   events as windowsEvents,
   type FloatingBarSettingsChange,
-} from "@hypr/plugin-windows";
-import type { GeneralStorage } from "@hypr/store";
+} from "@meetspace/plugin-windows";
+import type { GeneralStorage } from "@meetspace/store";
 
 import { useConfigValue } from "~/shared/config";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";

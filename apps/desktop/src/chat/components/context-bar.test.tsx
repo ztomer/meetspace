@@ -6,7 +6,7 @@ const { openNewMock } = vi.hoisted(() => ({
   openNewMock: vi.fn(),
 }));
 
-vi.mock("@hypr/ui/components/ui/tooltip", () => ({
+vi.mock("@meetspace/ui/components/ui/tooltip", () => ({
   Tooltip: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   TooltipContent: ({ children }: { children: ReactNode }) => (
     <div>{children}</div>

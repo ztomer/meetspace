@@ -1,4 +1,4 @@
-import type { ChatMessageStatus, ChatMessageStorage } from "@hypr/store";
+import type { ChatMessageStatus, ChatMessageStorage } from "@meetspace/store";
 
 import { hasRenderableContent } from "~/chat/message-content";
 import type { HyprUIMessage } from "~/chat/types";

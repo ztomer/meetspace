@@ -3,18 +3,18 @@ import { useForm } from "@tanstack/react-form";
 import { HeartIcon, MoreHorizontalIcon, Plus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import { Badge } from "@hypr/ui/components/ui/badge";
-import { Button } from "@hypr/ui/components/ui/button";
+import { Badge } from "@meetspace/ui/components/ui/badge";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   AppFloatingPanel,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@hypr/ui/components/ui/dropdown-menu";
-import { Input } from "@hypr/ui/components/ui/input";
-import { Textarea } from "@hypr/ui/components/ui/textarea";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/dropdown-menu";
+import { Input } from "@meetspace/ui/components/ui/input";
+import { Textarea } from "@meetspace/ui/components/ui/textarea";
+import { cn } from "@meetspace/utils";
 
 import {
   type UserTemplate,

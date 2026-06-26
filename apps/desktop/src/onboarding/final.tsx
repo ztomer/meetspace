@@ -1,9 +1,9 @@
 import { Icon } from "@iconify-icon/react";
 import { Trans } from "@lingui/react/macro";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { commands as sfxCommands } from "@hypr/plugin-sfx";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { commands as sfxCommands } from "@meetspace/plugin-sfx";
 
 import { OnboardingButton } from "./shared";
 
@@ -63,7 +63,7 @@ export function FinalSection({ onContinue }: { onContinue: () => void }) {
       className="px-6 py-2 text-sm"
       onClick={() => void finishOnboarding(onContinue)}
     >
-      <Trans>Open Anarlog</Trans>
+      <Trans>Open Meetspace</Trans>
     </OnboardingButton>
   );
 }

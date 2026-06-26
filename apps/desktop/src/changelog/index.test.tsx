@@ -12,11 +12,11 @@ const mocks = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("@hypr/changelog", () => ({
+vi.mock("@meetspace/changelog", () => ({
   ChangelogContent: ({ content }: { content: string }) => <div>{content}</div>,
 }));
 
-vi.mock("@hypr/plugin-opener2", () => ({
+vi.mock("@meetspace/plugin-opener2", () => ({
   commands: {
     openUrl: vi.fn(),
   },

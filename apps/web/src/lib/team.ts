@@ -48,14 +48,14 @@ export const AUTHORS = Object.values(TEAM_MEMBERS).map((m) => ({
 }));
 
 export const ADMIN_EMAILS = [
-  "yujonglee@hyprnote.com",
+  "yujonglee@meetspace.com",
   "yujonglee.dev@gmail.com",
-  "john@hyprnote.com",
-  "marketing@hyprnote.com",
+  "john@meetspace.com",
+  "marketing@meetspace.com",
   "harshika.alagh@gmail.com",
   "yunhyungjo@yonsei.ac.kr",
   "goranmoomin@daum.net",
-  "artem@hyprnote.com",
+  "artem@meetspace.com",
   "stua@fastmail.com",
   "thestua@gmail.com",
 ];

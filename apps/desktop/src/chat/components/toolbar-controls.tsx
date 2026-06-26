@@ -10,14 +10,14 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-import { Button } from "@hypr/ui/components/ui/button";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   AppFloatingPanel,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@hypr/ui/components/ui/dropdown-menu";
-import { cn, formatDistanceToNow } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/dropdown-menu";
+import { cn, formatDistanceToNow } from "@meetspace/utils";
 
 import * as main from "~/store/tinybase/store/main";
 

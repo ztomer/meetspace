@@ -6,7 +6,7 @@ const { resizeMock } = vi.hoisted(() => ({
   resizeMock: vi.fn(),
 }));
 
-vi.mock("@hypr/ui/components/ui/resizable", async () => {
+vi.mock("@meetspace/ui/components/ui/resizable", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
   return {
     ResizablePanelGroup: ({

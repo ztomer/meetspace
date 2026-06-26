@@ -15,8 +15,8 @@ import {
   AccordionHeader,
   AccordionItem,
   AccordionTriggerPrimitive,
-} from "@hypr/ui/components/ui/accordion";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/accordion";
+import { cn } from "@meetspace/utils";
 
 import {
   type MenuItemDef,

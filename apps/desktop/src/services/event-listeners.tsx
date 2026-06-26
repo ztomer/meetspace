@@ -1,12 +1,12 @@
 import { type UnlistenFn } from "@tauri-apps/api/event";
 import { useEffect, useRef } from "react";
 
-import { events as notificationEvents } from "@hypr/plugin-notification";
+import { events as notificationEvents } from "@meetspace/plugin-notification";
 import {
   commands as updaterCommands,
   events as updaterEvents,
-} from "@hypr/plugin-updater2";
-import { getCurrentWebviewWindowLabel } from "@hypr/plugin-windows";
+} from "@meetspace/plugin-updater2";
+import { getCurrentWebviewWindowLabel } from "@meetspace/plugin-windows";
 
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 import * as main from "~/store/tinybase/store/main";

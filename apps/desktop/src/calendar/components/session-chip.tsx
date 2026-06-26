@@ -1,16 +1,16 @@
 import { format } from "date-fns";
 import { useCallback, useMemo } from "react";
 
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { Button } from "@hypr/ui/components/ui/button";
+import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   AppFloatingPanel,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@hypr/ui/components/ui/popover";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/popover";
+import { cn } from "@meetspace/utils";
 
 import { toTz, useTimezone } from "~/calendar/hooks";
 import { useDeleteSession } from "~/session/hooks/useDeleteSession";

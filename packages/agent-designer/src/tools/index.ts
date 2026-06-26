@@ -2,7 +2,7 @@ import {
   createToolRegistry,
   readUrlTool,
   toolsRequiringApproval,
-} from "@hypr/agent-core";
+} from "@meetspace/agent-core";
 
 import { magicPatternsTool } from "./magic-patterns";
 

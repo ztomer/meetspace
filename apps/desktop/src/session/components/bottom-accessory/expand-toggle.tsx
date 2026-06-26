@@ -1,7 +1,7 @@
 import { useLingui } from "@lingui/react/macro";
 import { X } from "lucide-react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 export function ExpandToggle({
   isExpanded,

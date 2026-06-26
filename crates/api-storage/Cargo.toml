@@ -4,10 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-hypr-api-error = { workspace = true }
-hypr-api-nango = { workspace = true }
-hypr-google-drive = { workspace = true }
-hypr-nango = { workspace = true }
+meetspace-api-error = { workspace = true }
+meetspace-api-nango = { workspace = true }
+meetspace-google-drive = { workspace = true }
+meetspace-nango = { workspace = true }
 
 utoipa = { workspace = true }
 

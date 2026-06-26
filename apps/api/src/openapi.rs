@@ -28,15 +28,15 @@ pub struct ApiDoc;
 pub fn openapi() -> utoipa::openapi::OpenApi {
     let mut doc = ApiDoc::openapi();
 
-    let stt_doc = hypr_transcribe_proxy::openapi();
-    let llm_doc = hypr_llm_proxy::openapi();
-    let pyannote_doc = with_path_prefix(hypr_api_pyannote::openapi(), "/pyannote");
-    let calendar_doc = with_path_prefix(hypr_api_calendar::openapi(), "/calendar");
-    let mail_doc = with_path_prefix(hypr_api_mail::openapi(), "/mail");
-    let ticket_doc = with_path_prefix(hypr_api_ticket::openapi(), "/ticket");
-    let nango_doc = with_path_prefix(hypr_api_nango::openapi(), "/nango");
-    let subscription_doc = with_path_prefix(hypr_api_subscription::openapi(), "/subscription");
-    let support_doc = hypr_api_support::openapi();
+    let stt_doc = meetspace_transcribe_proxy::openapi();
+    let llm_doc = meetspace_llm_proxy::openapi();
+    let pyannote_doc = with_path_prefix(meetspace_api_pyannote::openapi(), "/pyannote");
+    let calendar_doc = with_path_prefix(meetspace_api_calendar::openapi(), "/calendar");
+    let mail_doc = with_path_prefix(meetspace_api_mail::openapi(), "/mail");
+    let ticket_doc = with_path_prefix(meetspace_api_ticket::openapi(), "/ticket");
+    let nango_doc = with_path_prefix(meetspace_api_nango::openapi(), "/nango");
+    let subscription_doc = with_path_prefix(meetspace_api_subscription::openapi(), "/subscription");
+    let support_doc = meetspace_api_support::openapi();
 
     doc.merge(stt_doc);
     doc.merge(llm_doc);

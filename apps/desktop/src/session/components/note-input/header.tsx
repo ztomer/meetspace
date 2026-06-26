@@ -12,17 +12,17 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { json2md, parseJsonContent } from "@hypr/editor/markdown";
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
+import { json2md, parseJsonContent } from "@meetspace/editor/markdown";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 import {
   AppFloatingPanel,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@hypr/ui/components/ui/popover";
-import { Spinner } from "@hypr/ui/components/ui/spinner";
-import { sonnerToast } from "@hypr/ui/components/ui/toast";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/popover";
+import { Spinner } from "@meetspace/ui/components/ui/spinner";
+import { sonnerToast } from "@meetspace/ui/components/ui/toast";
+import { cn } from "@meetspace/utils";
 
 import { useAITaskTask } from "~/ai/hooks";
 import { useLanguageModel, useLLMConnectionStatus } from "~/ai/hooks";

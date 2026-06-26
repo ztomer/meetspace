@@ -8,7 +8,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@hypr/ui/components/ui/select";
+} from "@meetspace/ui/components/ui/select";
 
 import { useLlmSettings } from "./context";
 import { HealthStatusIndicator, useConnectionHealth } from "./health";
@@ -121,7 +121,7 @@ export function SelectProviderAndModel() {
   };
 
   const handleProviderChange = (provider: string) => {
-    if (provider === "hyprnote" && !billing.isPaid) {
+    if (provider === "meetspace" && !billing.isPaid) {
       billing.upgradeToPro();
       return;
     }
@@ -176,7 +176,7 @@ export function SelectProviderAndModel() {
         <SettingsAlert>
           <Trans>
             <strong className="font-medium">Language model</strong> is needed to
-            make Anarlog summarize and chat about your conversations.
+            make Meetspace summarize and chat about your conversations.
           </Trans>
         </SettingsAlert>
       )}
@@ -284,7 +284,7 @@ function useConfiguredMapping(): Record<string, ProviderStatus> {
           return [provider.id, { listModels: undefined }];
         }
 
-        if (provider.id === "hyprnote") {
+        if (provider.id === "meetspace") {
           const result: ListModelsResult = {
             models: ["Auto"],
             ignored: [],

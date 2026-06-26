@@ -10,16 +10,16 @@ import {
   useState,
 } from "react";
 
-import { canStartTrial as canStartTrialApi } from "@hypr/api-client";
-import { createClient } from "@hypr/api-client/client";
-import { commands as authCommands } from "@hypr/plugin-auth";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { openUrlWithInstruction } from "@hypr/plugin-windows";
+import { canStartTrial as canStartTrialApi } from "@meetspace/api-client";
+import { createClient } from "@meetspace/api-client/client";
+import { commands as authCommands } from "@meetspace/plugin-auth";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { openUrlWithInstruction } from "@meetspace/plugin-windows";
 import {
   type BillingInfo,
   deriveBillingInfo,
   type SupabaseJwtPayload,
-} from "@hypr/supabase";
+} from "@meetspace/supabase";
 
 import { TrialEndedDialog } from "../billing/trial-ended-dialog";
 import { TrialStartedDialog } from "../billing/trial-started-dialog";
@@ -56,8 +56,8 @@ export type BillingAccess = BillingContextValue;
 
 const BillingContext = createContext<BillingContextValue | null>(null);
 
-const TRIAL_STARTED_SEEN_PREFIX = "anarlog:trial_started_seen:";
-const TRIAL_ENDED_SEEN_PREFIX = "anarlog:trial_ended_seen:";
+const TRIAL_STARTED_SEEN_PREFIX = "meetspace:trial_started_seen:";
+const TRIAL_ENDED_SEEN_PREFIX = "meetspace:trial_ended_seen:";
 
 function readSeen(key: string): boolean {
   try {
@@ -126,7 +126,7 @@ export function BillingProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    if (current_llm_provider !== "hyprnote") {
+    if (current_llm_provider !== "meetspace") {
       return;
     }
 

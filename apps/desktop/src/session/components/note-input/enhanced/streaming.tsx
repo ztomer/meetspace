@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/react/macro";
 import { Streamdown } from "streamdown";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { streamdownComponents } from "../../streamdown";
 
@@ -38,7 +38,7 @@ export function StreamingView({ enhancedNoteId }: { enhancedNoteId: string }) {
             className="border-muted-foreground/60 mt-[5px] h-2 w-2 shrink-0 rounded-bl-[2px] border-b border-l"
           />
           <span>
-            <Trans>Tip: The Anarlog team loves our users!</Trans>
+            <Trans>Tip: The Meetspace team loves our users!</Trans>
           </span>
         </p>
       </div>

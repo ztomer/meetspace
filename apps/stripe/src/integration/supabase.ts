@@ -1,4 +1,4 @@
-import { createClient } from "@hypr/supabase";
+import { createClient } from "@meetspace/supabase";
 
 import { env } from "../env";
 

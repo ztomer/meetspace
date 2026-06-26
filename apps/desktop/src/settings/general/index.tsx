@@ -2,10 +2,10 @@ import { Trans } from "@lingui/react/macro";
 import { useForm } from "@tanstack/react-form";
 import { disable, enable } from "@tauri-apps/plugin-autostart";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import { commands as trayCommands } from "@hypr/plugin-tray";
-import { commands as windowsCommands } from "@hypr/plugin-windows";
-import type { General, GeneralStorage } from "@hypr/store";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as trayCommands } from "@meetspace/plugin-tray";
+import { commands as windowsCommands } from "@meetspace/plugin-windows";
+import type { General, GeneralStorage } from "@meetspace/store";
 
 export { SettingsAccount } from "./account";
 import { AppSettingsView } from "./app-settings";

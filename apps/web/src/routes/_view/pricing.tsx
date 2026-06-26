@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 
-import { MARKETING_PLAN_TIERS, type MarketingPlanData } from "@hypr/pricing";
-import { PlanFeatureList } from "@hypr/pricing/ui";
-import { cn } from "@hypr/utils";
+import { MARKETING_PLAN_TIERS, type MarketingPlanData } from "@meetspace/pricing";
+import { PlanFeatureList } from "@meetspace/pricing/ui";
+import { cn } from "@meetspace/utils";
 
 import {
-  ANARLOG_SITE_URL,
+  MEETSPACE_SITE_URL,
   getBreadcrumbListJsonLd,
   getSoftwareApplicationJsonLd,
   getStructuredDataGraph,
@@ -16,7 +16,7 @@ const PRICING_FAQS = [
   {
     question: "What does on-device transcription mean?",
     answer:
-      "The Free plan includes on-device transcription. Lite and Pro can also use Anarlog-hosted cloud transcription when you want managed services instead.",
+      "The Free plan includes on-device transcription. Lite and Pro can also use Meetspace-hosted cloud transcription when you want managed services instead.",
   },
   {
     question: "What is local-first data architecture?",
@@ -31,7 +31,7 @@ const PRICING_FAQS = [
   {
     question: "What value does an account unlock?",
     answer:
-      "A paid plan unlocks Anarlog's cloud layer. Lite gives you hosted transcription, speaker identification, and language models, while Pro adds custom instructions, integrations, sync across devices, and shareable links.",
+      "A paid plan unlocks Meetspace's cloud layer. Lite gives you hosted transcription, speaker identification, and language models, while Pro adds custom instructions, integrations, sync across devices, and shareable links.",
   },
   {
     question: "What's included in shareable links?",
@@ -46,7 +46,7 @@ const PRICING_FAQS = [
   {
     question: "What are custom instructions?",
     answer:
-      "Custom instructions let you override Anarlog's default system prompt by configuring template variables and the overall instructions given to the AI.",
+      "Custom instructions let you override Meetspace's default system prompt by configuring template variables and the overall instructions given to the AI.",
   },
   {
     question: "What are shortcuts?",
@@ -63,7 +63,7 @@ const PRICING_FAQS = [
 export const Route = createFileRoute("/_view/pricing")({
   component: Component,
   head: () => {
-    const url = `${ANARLOG_SITE_URL}/pricing`;
+    const url = `${MEETSPACE_SITE_URL}/pricing`;
     const description =
       "Start free with local transcription, BYOK AI, templates, shortcuts, and chat. Upgrade to Lite or Pro when you want hosted AI, speaker ID, sync, and team features.";
 
@@ -95,7 +95,7 @@ export const Route = createFileRoute("/_view/pricing")({
                 })),
               },
               getBreadcrumbListJsonLd([
-                { name: "Home", item: ANARLOG_SITE_URL },
+                { name: "Home", item: MEETSPACE_SITE_URL },
                 { name: "Pricing", item: url },
               ]),
             ]),
@@ -103,16 +103,16 @@ export const Route = createFileRoute("/_view/pricing")({
         },
       ],
       meta: [
-        { title: "Pricing - Anarlog" },
+        { title: "Pricing - Meetspace" },
         {
           name: "description",
           content: description,
         },
-        { property: "og:title", content: "Pricing - Anarlog" },
+        { property: "og:title", content: "Pricing - Meetspace" },
         {
           property: "og:description",
           content:
-            "Compare Anarlog Free, Lite, and Pro. Use local workflows for free, then upgrade when you want managed cloud AI and collaboration features.",
+            "Compare Meetspace Free, Lite, and Pro. Use local workflows for free, then upgrade when you want managed cloud AI and collaboration features.",
         },
         { property: "og:type", content: "website" },
         { property: "og:url", content: url },

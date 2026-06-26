@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-import { commands as localSttCommands } from "@hypr/plugin-local-stt";
-import type { AIProviderStorage } from "@hypr/store";
+import { commands as localSttCommands } from "@meetspace/plugin-local-stt";
+import type { AIProviderStorage } from "@meetspace/store";
 
 import { useAuth } from "~/auth";
 import { useBillingAccess } from "~/auth/billing";
@@ -11,8 +11,8 @@ import { providerRowId } from "~/settings/ai/shared";
 import { type ProviderId } from "~/settings/ai/stt/shared";
 import * as settings from "~/store/tinybase/store/settings";
 import {
-  isHyprnoteCloudSttModel,
-  isHyprnoteLocalSttModel,
+  isMeetspaceCloudSttModel,
+  isMeetspaceLocalSttModel,
 } from "~/stt/capabilities";
 
 export const useSTTConnection = () => {
@@ -31,7 +31,7 @@ export const useSTTConnection = () => {
     settings.STORE_ID,
   ) as AIProviderStorage | undefined;
 
-  const localModel = isHyprnoteLocalSttModel(
+  const localModel = isMeetspaceLocalSttModel(
     current_stt_provider,
     current_stt_model,
   )
@@ -39,13 +39,13 @@ export const useSTTConnection = () => {
     : null;
   const isLocalModel = !!localModel;
 
-  const isCloudModel = isHyprnoteCloudSttModel(
+  const isCloudModel = isMeetspaceCloudSttModel(
     current_stt_provider,
     current_stt_model,
   );
 
   const local = useQuery({
-    enabled: current_stt_provider === "hyprnote",
+    enabled: current_stt_provider === "meetspace",
     queryKey: ["stt-connection", localModel],
     refetchInterval: 1000,
     queryFn: async () => {

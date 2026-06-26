@@ -8,14 +8,14 @@ import {
   UsersIcon,
 } from "lucide-react";
 
-import { type ImportStats } from "@hypr/plugin-importer";
-import { Button } from "@hypr/ui/components/ui/button";
+import { type ImportStats } from "@meetspace/plugin-importer";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
+} from "@meetspace/ui/components/ui/tooltip";
 
 export function ImportPreview({
   stats,

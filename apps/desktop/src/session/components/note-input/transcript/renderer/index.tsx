@@ -7,7 +7,7 @@ import {
 } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { SelectionMenu } from "./selection-menu";
 import { TranscriptSeparator } from "./separator";
