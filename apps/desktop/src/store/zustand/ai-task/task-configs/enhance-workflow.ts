@@ -226,7 +226,7 @@ async function generateStructuredOutput<T extends z.ZodTypeAny>(params: {
   try {
     const result = await generateText({
       model,
-      ...deterministicGenerationSettings(model),
+      temperature: 0,
       output: Output.object({ schema }),
       abortSignal: signal,
       maxRetries: AI_GENERATION_MAX_RETRIES,
@@ -243,7 +243,7 @@ async function generateStructuredOutput<T extends z.ZodTypeAny>(params: {
     try {
       const fallbackResult = await generateText({
         model,
-        ...deterministicGenerationSettings(model),
+        temperature: 0,
         abortSignal: signal,
         maxRetries: AI_GENERATION_MAX_RETRIES,
         maxOutputTokens: TEMPLATE_MAX_OUTPUT_TOKENS,

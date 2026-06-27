@@ -1,4 +1,3 @@
-import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import {
   type RefObject,
   useCallback,
@@ -21,10 +20,7 @@ import {
 
 import { useAudioPlayer } from "~/audio-player";
 import { useAudioTime } from "~/audio-player/provider";
-import { useShell } from "~/contexts/shell";
 import type { Segment } from "~/stt/live-segment";
-
-const LIVE_TRANSCRIPT_PLACEHOLDER_ID = "__live-transcript__";
 
 export function TranscriptViewer({
   transcriptIds,
@@ -37,7 +33,6 @@ export function TranscriptViewer({
   currentActive: boolean;
   scrollRef: RefObject<HTMLDivElement | null>;
 }) {
-  const { chat } = useShell();
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollElement, setScrollElement] = useState<HTMLDivElement | null>(
     null,
@@ -51,14 +46,8 @@ export function TranscriptViewer({
     [scrollRef],
   );
 
-  const {
-    isAtTop,
-    isAtBottom,
-    autoScrollEnabled,
-    scrollTarget,
-    scrollToTop,
-    scrollToBottom,
-  } = useScrollDetection(containerRef, currentActive);
+  const { isAtBottom, autoScrollEnabled, scrollToBottom } =
+    useScrollDetection(containerRef);
 
   const {
     state: playerState,
@@ -95,32 +84,8 @@ export function TranscriptViewer({
     [transcriptIds, liveSegments, shouldAutoScroll],
     shouldAutoScroll,
   );
-  const visibleTranscriptIds =
-    transcriptIds.length > 0
-      ? transcriptIds
-      : liveSegments.length > 0
-        ? [LIVE_TRANSCRIPT_PLACEHOLDER_ID]
-        : [];
 
-  const canShowScrollChip = !currentActive && (!isAtTop || !isAtBottom);
-  const scrollChip =
-    chat.mode === "FloatingOpen" || !canShowScrollChip
-      ? null
-      : scrollTarget === "bottom" && !isAtBottom
-        ? {
-            icon: ArrowDownIcon,
-            label: "Go to bottom",
-            onClick: scrollToBottom,
-          }
-        : scrollTarget === "top" && !isAtTop
-          ? {
-              icon: ArrowUpIcon,
-              label: "Go to top",
-              onClick: scrollToTop,
-            }
-          : null;
-  const ScrollChipIcon = scrollChip?.icon;
-  const isBottomScrollChip = scrollTarget === "bottom";
+  const shouldShowButton = !isAtBottom && currentActive;
 
   const handleSelectionAction = (action: string, selectedText: string) => {
     if (action === "copy") {
@@ -135,20 +100,18 @@ export function TranscriptViewer({
         data-transcript-container
         className={cn([
           "flex h-full flex-col gap-8 overflow-x-hidden overflow-y-auto",
-          "scrollbar-hide",
-          "scroll-pb-[calc(8rem+env(safe-area-inset-bottom))]",
-          "pb-[calc(4rem+env(safe-area-inset-bottom))]",
+          "scrollbar-hide scroll-pb-32 pb-16",
         ])}
       >
-        {visibleTranscriptIds.map((transcriptId, index) => (
+        {transcriptIds.map((transcriptId, index) => (
           <div key={transcriptId} className="flex flex-col gap-8">
             <RenderTranscript
               scrollElement={scrollElement}
-              isLastTranscript={index === visibleTranscriptIds.length - 1}
+              isLastTranscript={index === transcriptIds.length - 1}
               shouldScrollToEnd={shouldScrollLastTranscriptToEnd}
               transcriptId={transcriptId}
               liveSegments={
-                index === visibleTranscriptIds.length - 1 && currentActive
+                index === transcriptIds.length - 1 && currentActive
                   ? liveSegments
                   : []
               }
@@ -157,7 +120,7 @@ export function TranscriptViewer({
               startPlayback={start}
               audioExists={audioExists}
             />
-            {index < visibleTranscriptIds.length - 1 && <TranscriptSeparator />}
+            {index < transcriptIds.length - 1 && <TranscriptSeparator />}
           </div>
         ))}
 
@@ -167,33 +130,20 @@ export function TranscriptViewer({
         />
       </div>
 
-      {scrollChip && (
-        <button
-          data-transcript-scroll-chip
-          onClick={scrollChip.onClick}
-          style={{
-            [isBottomScrollChip ? "bottom" : "top"]: isBottomScrollChip
-              ? "var(--transcript-scroll-chip-bottom, calc(1.5rem + env(safe-area-inset-bottom)))"
-              : "var(--transcript-scroll-chip-top, calc(1.5rem + env(safe-area-inset-top)))",
-          }}
-          className={cn([
-            "absolute left-1/2 z-30 inline-flex -translate-x-1/2 items-center gap-1.5",
-            "border-border bg-muted text-foreground rounded-full border px-3 py-1.5",
-            "hover:bg-muted active:bg-muted",
-            "text-xs font-light",
-            "transition-[top,bottom,background-color,border-color] duration-150",
-          ])}
-        >
-          {ScrollChipIcon && (
-            <ScrollChipIcon
-              aria-hidden="true"
-              className="size-3"
-              strokeWidth={2.25}
-            />
-          )}
-          {scrollChip.label}
-        </button>
-      )}
+      <button
+        onClick={scrollToBottom}
+        className={cn([
+          "absolute bottom-3 left-1/2 z-30 -translate-x-1/2",
+          "rounded-full px-4 py-2",
+          "from-muted to-accent text-foreground bg-linear-to-t",
+          "shadow-xs hover:scale-[102%] hover:shadow-md active:scale-[98%]",
+          "text-xs font-light",
+          "transition-opacity duration-150",
+          shouldShowButton ? "opacity-100" : "pointer-events-none opacity-0",
+        ])}
+      >
+        Go to bottom
+      </button>
     </div>
   );
 }
