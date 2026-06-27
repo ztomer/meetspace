@@ -10,7 +10,8 @@ import {
   type TaskType,
 } from "./task-configs";
 
-import { getStoredSettingValues } from "~/settings/queries";
+import type { Store as MainStore } from "~/store/tinybase/store/main";
+import type { Store as SettingsStore } from "~/store/tinybase/store/settings";
 
 export type TasksState = {
   tasks: Record<string, TaskState>;
@@ -82,6 +83,7 @@ const initialState: TasksState = {
 export const createTasksSlice = <T extends TasksState & TasksActions>(
   set: StoreApi<T>["setState"],
   get: StoreApi<T>["getState"],
+  deps: { persistedStore: MainStore; settingsStore: SettingsStore },
 ): TasksState & TasksActions => ({
   ...initialState,
   getState: <Task extends TaskType>(
@@ -195,10 +197,10 @@ export const createTasksSlice = <T extends TasksState & TasksActions>(
         }),
       );
 
-      const { values: settingsValues } = await getStoredSettingValues();
       const enrichedArgs = await taskConfig.transformArgs(
         config.args,
-        settingsValues,
+        deps.persistedStore,
+        deps.settingsStore,
       );
       let fullText = "";
 
@@ -226,6 +228,7 @@ export const createTasksSlice = <T extends TasksState & TasksActions>(
         args: enrichedArgs,
         onProgress,
         signal: abortController.signal,
+        store: deps.persistedStore,
       });
 
       const transforms = taskConfig.transforms ?? [];
@@ -252,20 +255,6 @@ export const createTasksSlice = <T extends TasksState & TasksActions>(
         }
       }
 
-      await taskConfig.onSuccess?.({
-        taskId,
-        text: fullText,
-        model: config.model,
-        args: config.args,
-        transformedArgs: enrichedArgs,
-        signal: abortController.signal,
-        startTask: (nextTaskId, nextConfig) =>
-          get().generate(nextTaskId, nextConfig),
-        getTaskState: (nextTaskId) => getTaskState(get().tasks, nextTaskId),
-      });
-
-      checkAbort();
-
       set((state) =>
         mutate(state, (draft) => {
           draft.tasks[taskId] = {
@@ -278,6 +267,23 @@ export const createTasksSlice = <T extends TasksState & TasksActions>(
           };
         }),
       );
+
+      try {
+        await taskConfig.onSuccess?.({
+          taskId,
+          text: fullText,
+          model: config.model,
+          args: config.args,
+          transformedArgs: enrichedArgs,
+          store: deps.persistedStore,
+          settingsStore: deps.settingsStore,
+          startTask: (nextTaskId, nextConfig) =>
+            get().generate(nextTaskId, nextConfig),
+          getTaskState: (nextTaskId) => getTaskState(get().tasks, nextTaskId),
+        });
+      } catch (error) {
+        console.error("Task post-success hook failed:", error);
+      }
 
       try {
         config.onComplete?.(fullText);

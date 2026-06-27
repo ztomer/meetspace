@@ -4,7 +4,7 @@ import { commands as templateCommands } from "@meetspace/plugin-template";
 
 import type { TaskArgsMapTransformed, TaskConfig } from ".";
 
-import { deterministicGenerationSettings } from "~/ai/model-settings";
+import type { Store } from "~/store/tinybase/store/main";
 
 const AI_GENERATION_MAX_RETRIES = 4;
 const TITLE_MAX_OUTPUT_TOKENS = 128;
@@ -22,18 +22,19 @@ async function* executeWorkflow(params: {
   args: TaskArgsMapTransformed["title"];
   onProgress: (step: any) => void;
   signal: AbortSignal;
+  store: Store;
 }) {
-  const { model, args, onProgress, signal } = params;
+  const { model, args, onProgress, signal, store } = params;
 
   const system = await getSystemPrompt(args);
-  const prompt = await getUserPrompt(args);
+  const prompt = await getUserPrompt(args, store);
 
   onProgress({ type: "generating" });
 
   const id = generateId();
   const result = streamText({
     model,
-    ...deterministicGenerationSettings(model),
+    temperature: 0,
     system,
     prompt,
     abortSignal: signal,
@@ -64,7 +65,10 @@ async function getSystemPrompt(args: TaskArgsMapTransformed["title"]) {
   return result.data;
 }
 
-async function getUserPrompt(args: TaskArgsMapTransformed["title"]) {
+async function getUserPrompt(
+  args: TaskArgsMapTransformed["title"],
+  _store: Store,
+) {
   const { enhancedNote } = args;
 
   const result = await templateCommands.render({
