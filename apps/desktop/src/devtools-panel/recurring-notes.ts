@@ -1,5 +1,4 @@
 import type {
-  EnhancedNoteStorage,
   HumanStorage,
   MappingSessionParticipantStorage,
   SessionEvent,
@@ -7,7 +6,7 @@ import type {
   SessionStorage,
 } from "@meetspace/store";
 
-import { buildPastSessionNotes } from "~/session/insights/past-notes";
+import { buildPastSessionNotes } from "~/session/components/bottom-accessory/past-notes";
 import { DEFAULT_USER_ID } from "~/shared/utils";
 import type * as main from "~/store/tinybase/store/main";
 
@@ -46,7 +45,7 @@ const PAST_NOTES = [
     daysAgo: 7,
     rawMd: [
       "# Product sync",
-      "- Shipped the condensed transcript panel and agreed to keep Insights below three visible lines per fact.",
+      "- Shipped the condensed transcript panel and agreed to keep Past Notes below three visible lines per fact.",
       "- Alex owns the launch checklist and will confirm analytics events before the next review.",
       "- Maya wants another pass on empty states after the first beta feedback lands.",
     ].join("\n"),
@@ -61,12 +60,12 @@ const PAST_NOTES = [
     daysAgo: 14,
     rawMd: [
       "# Product sync",
-      "- The team decided Insights should match by recurring calendar series before falling back to participants.",
+      "- The team decided Past Notes should match by recurring calendar series before falling back to participants.",
       "- Jordan called out that cached key facts should avoid requiring a model just to inspect the UI.",
       "- Follow-up: compare date labels against the meeting start time instead of the note creation time.",
     ].join("\n"),
     facts: [
-      "Insights should prefer recurring series matches before participant fallback.",
+      "Past Notes should prefer recurring series matches before participant fallback.",
       "Cached key facts should make the UI inspectable without a model.",
       "Date labels should come from meeting start time.",
     ],
@@ -76,14 +75,14 @@ const PAST_NOTES = [
     daysAgo: 21,
     rawMd: [
       "# Product sync",
-      "- We agreed the insights tab should stay hidden until there is useful post-session content.",
-      "- The first version of Insights will stay read-only and focus on short reusable facts.",
+      "- We agreed the bottom accessory should stay hidden until there is useful post-session content.",
+      "- The first version of Past Notes will stay read-only and focus on short reusable facts.",
       "- Alex and Jordan will validate that future sessions are excluded from the timeline.",
     ].join("\n"),
     facts: [
-      "The insights tab should stay hidden without useful post-session content.",
-      "Insights will start as a read-only timeline of reusable facts.",
-      "Future sessions should be excluded from the Insights timeline.",
+      "The bottom accessory should stay hidden without useful post-session content.",
+      "Past Notes will start as a read-only timeline of reusable facts.",
+      "Future sessions should be excluded from the Past Notes timeline.",
     ],
   },
 ] as const;
@@ -122,7 +121,7 @@ export function populateRecurringMeetingNotes({
       sessionId: CURRENT_SESSION_ID,
       startedAt: now,
       rawMd:
-        "Use the Insights tab to inspect cached facts from previous occurrences.",
+        "Use the Past notes tab to inspect the cached timeline from previous occurrences.",
     });
 
     for (const note of PAST_NOTES) {
@@ -189,7 +188,7 @@ function upsertSession({
     is_all_day: false,
     has_recurrence_rules: true,
     meeting_link: "https://zoom.us/j/1234567890",
-    description: "Seeded from devtools to exercise the Insights tab.",
+    description: "Seeded from devtools to exercise the Past Notes tab.",
     recurrence_series_id: SERIES_ID,
   };
 
@@ -200,15 +199,6 @@ function upsertSession({
     title: MEETING_TITLE,
     raw_md: rawMd,
   } satisfies SessionStorage);
-
-  store.setRow("enhanced_notes", `${sessionId}:summary`, {
-    user_id: ownerUserId,
-    session_id: sessionId,
-    content: rawMd,
-    template_id: "",
-    position: 0,
-    title: "Summary",
-  } satisfies EnhancedNoteStorage);
 
   for (const participant of PARTICIPANTS) {
     store.setRow(

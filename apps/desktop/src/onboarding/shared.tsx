@@ -1,4 +1,3 @@
-import { Trans, useLingui } from "@lingui/react/macro";
 import {
   CheckCircle2Icon,
   CheckIcon,
@@ -27,7 +26,7 @@ export function OnboardingSection({
   skippable = true,
   children,
 }: {
-  title: ReactNode;
+  title: string;
   completedTitle?: ReactNode;
   description?: ReactNode;
   status: SectionStatus | null;
@@ -37,7 +36,6 @@ export function OnboardingSection({
   skippable?: boolean;
   children: ReactNode;
 }) {
-  const { t } = useLingui();
   const sectionRef = useRef<HTMLElement>(null);
 
   const isActive = status === "active";
@@ -87,7 +85,7 @@ export function OnboardingSection({
                 {import.meta.env.DEV && onBack && (
                   <button
                     onClick={onBack}
-                    aria-label={t`Go to previous section`}
+                    aria-label="Go to previous section"
                     className="text-muted-foreground hover:text-muted-foreground rounded p-0.5 transition-colors"
                   >
                     <ChevronLeftIcon className="size-3" />
@@ -102,13 +100,13 @@ export function OnboardingSection({
                       }}
                       className="text-muted-foreground hover:text-muted-foreground flex items-center gap-1 text-sm transition-colors"
                     >
-                      <Trans>Skip</Trans>
+                      Skip
                       <ChevronRightIcon className="size-3" />
                     </button>
                   ) : import.meta.env.DEV ? (
                     <button
                       onClick={onNext}
-                      aria-label={t`Go to next section`}
+                      aria-label="Go to next section"
                       className="text-muted-foreground hover:text-muted-foreground rounded p-0.5 transition-colors"
                     >
                       <ChevronRightIcon className="size-3" />
@@ -181,7 +179,7 @@ export function StepRow({
   label,
 }: {
   status: "done" | "active" | "failed";
-  label: ReactNode;
+  label: string;
 }) {
   return (
     <div className="flex items-center gap-2 text-sm">
