@@ -1,14 +1,170 @@
+import { useCallback } from "react";
+import {
+  PictureInPicture2Icon,
+  SparklesIcon,
+  StickyNoteIcon,
+  UserIcon,
+} from "lucide-react";
+
 import { TabItemCalendar } from "~/calendar";
-import { TabItemChangelog } from "~/changelog";
 import { TabItemContact } from "~/contacts";
-import { TabItemHuman } from "~/contacts/humans";
 import { TabItemEdit } from "~/edit";
 import { TabItemOnboarding } from "~/onboarding";
-import { TabItemNote } from "~/session";
 import { TabItemSettings } from "~/settings";
 import { type Tab } from "~/store/zustand/tabs";
 import { TabItemTask } from "~/task";
 import { TabItemTemplate } from "~/templates";
+
+import { type TabItem, TabItemBase } from "~/shared/tabs";
+import * as main from "~/store/tinybase/store/main";
+import { useSessionTitle } from "~/store/zustand/live-title";
+import { useListener } from "~/stt/contexts";
+import { useConfigValue } from "~/shared/config";
+import { useIsSessionEnhancing } from "~/session/hooks/useEnhancedNotes";
+import { getSessionTabStatus } from "~/session/tab-visual-state";
+import { openFloatingMeetingPanel } from "~/meeting-float/host";
+
+export const TabItemChangelog: TabItem<Extract<Tab, { type: "changelog" }>> = ({
+  tab,
+  tabIndex,
+  handleCloseThis,
+  handleSelectThis,
+  handleCloseOthers,
+  handleCloseAll,
+  handlePinThis,
+  handleUnpinThis,
+}) => (
+  <TabItemBase
+    icon={<SparklesIcon className="h-4 w-4" />}
+    title="What's New"
+    selected={tab.active}
+    pinned={tab.pinned}
+    tabIndex={tabIndex}
+    handleCloseThis={() => handleCloseThis(tab)}
+    handleSelectThis={() => handleSelectThis(tab)}
+    handleCloseOthers={handleCloseOthers}
+    handleCloseAll={handleCloseAll}
+    handlePinThis={() => handlePinThis(tab)}
+    handleUnpinThis={() => handleUnpinThis(tab)}
+  />
+);
+
+export const TabItemHuman: TabItem<Extract<Tab, { type: "humans" }>> = ({
+  tab,
+  tabIndex,
+  handleCloseThis,
+  handleSelectThis,
+  handleCloseOthers,
+  handleCloseAll,
+  handlePinThis,
+  handleUnpinThis,
+}) => {
+  const title = main.UI.useCell("humans", tab.id, "name", main.STORE_ID);
+
+  return (
+    <TabItemBase
+      icon={<UserIcon className="h-4 w-4" />}
+      title={title ?? "Human"}
+      selected={tab.active}
+      pinned={tab.pinned}
+      tabIndex={tabIndex}
+      handleCloseThis={() => handleCloseThis(tab)}
+      handleSelectThis={() => handleSelectThis(tab)}
+      handleCloseOthers={handleCloseOthers}
+      handleCloseAll={handleCloseAll}
+      handlePinThis={() => handlePinThis(tab)}
+      handleUnpinThis={() => handleUnpinThis(tab)}
+    />
+  );
+};
+
+export const TabItemNote: TabItem<Extract<Tab, { type: "sessions" }>> = ({
+  tab,
+  tabIndex,
+  handleCloseThis,
+  handleSelectThis,
+  handleCloseOthers,
+  handleCloseAll,
+  handlePinThis,
+  handleUnpinThis,
+  pendingCloseConfirmationTab,
+  setPendingCloseConfirmationTab,
+}) => {
+  const storeTitle = main.UI.useCell(
+    "sessions",
+    tab.id,
+    "title",
+    main.STORE_ID,
+  );
+  const title = useSessionTitle(tab.id, storeTitle as string | undefined);
+  const sessionMode = useListener((state) => state.getSessionMode(tab.id));
+  const stop = useListener((state) => state.stop);
+  const degraded = useListener((state) => state.live.degraded);
+  const floatingBarEnabled = useConfigValue("floating_bar_enabled");
+  const isEnhancing = useIsSessionEnhancing(tab.id);
+  const status = getSessionTabStatus(
+    sessionMode,
+    isEnhancing,
+    !!degraded,
+    tab.active,
+  );
+  const isActive =
+    status === "listening" ||
+    status === "listening-degraded" ||
+    status === "finalizing";
+
+  const showCloseConfirmation =
+    pendingCloseConfirmationTab?.type === "sessions" &&
+    pendingCloseConfirmationTab?.id === tab.id;
+
+  const handleCloseConfirmationChange = (show: boolean) => {
+    if (!show) {
+      setPendingCloseConfirmationTab?.(null);
+    }
+  };
+
+  const handleCloseWithStop = useCallback(() => {
+    if (isActive) {
+      stop();
+    }
+    handleCloseThis(tab);
+  }, [isActive, stop, tab, handleCloseThis]);
+
+  const handleOpenFloatingPanel = useCallback(() => {
+    void openFloatingMeetingPanel({
+      sessionId: tab.id,
+      enabled: floatingBarEnabled,
+    });
+  }, [floatingBarEnabled, tab.id]);
+
+  return (
+    <TabItemBase
+      icon={<StickyNoteIcon className="h-4 w-4" />}
+      title={title || "Untitled"}
+      selected={tab.active}
+      status={status}
+      pinned={tab.pinned}
+      tabIndex={tabIndex}
+      hoverAction={
+        isActive && floatingBarEnabled
+          ? {
+              icon: <PictureInPicture2Icon size={14} />,
+              label: "Open floating panel",
+              onClick: handleOpenFloatingPanel,
+            }
+          : undefined
+      }
+      showCloseConfirmation={showCloseConfirmation}
+      onCloseConfirmationChange={handleCloseConfirmationChange}
+      handleCloseThis={handleCloseWithStop}
+      handleSelectThis={() => handleSelectThis(tab)}
+      handleCloseOthers={handleCloseOthers}
+      handleCloseAll={handleCloseAll}
+      handlePinThis={() => handlePinThis(tab)}
+      handleUnpinThis={() => handleUnpinThis(tab)}
+    />
+  );
+};
 
 export function MainTabItem({
   tab,
