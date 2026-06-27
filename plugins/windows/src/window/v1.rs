@@ -99,10 +99,7 @@ impl AppWindow {
                 .visible(false)
                 .decorations(true)
                 .hidden_title(true)
-                // Pass None so Tauri/WKWebView follows the OS theme. Forcing
-                // Light here pinned prefers-color-scheme to "light" forever
-                // and broke the in-app system-theme option.
-                .theme(None)
+                .theme(Some(tauri::Theme::Light))
                 .traffic_light_position(tauri::LogicalPosition::new(12.0, traffic_light_y))
                 .title_bar_style(tauri::TitleBarStyle::Overlay);
         }

@@ -1,5 +1,3 @@
-import { Trans } from "@lingui/react/macro";
-
 import { Accordion } from "@meetspace/ui/components/ui/accordion";
 
 import { useSttSettings } from "./context";
@@ -12,7 +10,8 @@ export function ConfigureProviders() {
 
   return (
     <div className="flex flex-col gap-3">
-            <Accordion
+      <h3 className="text-md font-sans font-semibold">Configure Providers</h3>
+      <Accordion
         type="single"
         collapsible
         className="flex flex-col gap-3"

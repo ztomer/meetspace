@@ -2,65 +2,30 @@ import type { LanguageModel } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { TaskConfig } from ".";
-import { persistGeneratedTitle, titleSuccess } from "./title-success";
+import { titleSuccess } from "./title-success";
 
 import { useLiveTitle } from "~/store/zustand/live-title";
-
-const mocks = vi.hoisted(() => ({
-  loadSessionContentSnapshot: vi.fn(),
-  applyGeneratedSessionTitle: vi.fn().mockResolvedValue(undefined),
-}));
-
-vi.mock("~/session/content-queries", () => ({
-  loadSessionContentSnapshot: mocks.loadSessionContentSnapshot,
-}));
-
-vi.mock("~/session/content-mutations", () => ({
-  applyGeneratedSessionTitle: mocks.applyGeneratedSessionTitle,
-}));
 
 type TitleSuccessParams = Parameters<
   NonNullable<TaskConfig<"title">["onSuccess"]>
 >[0];
 
-function createSnapshot(title = "") {
-  return {
-    sessionId: "session-1",
-    ownerUserId: "user-1",
-    title,
-    createdAt: "2026-07-10T00:00:00.000Z",
-    event: null,
-    eventId: null,
-    rawNoteId: "session-1",
-    rawContent: "Raw note",
-    rawContentFormat: "markdown",
-    rawMarkdown: "Raw note",
-    enhancedNotes: [
-      {
-        id: "note-1",
-        title: "",
-        markdown: "# Summary section",
-        content: "# Summary section",
-        contentFormat: "markdown",
-        templateId: "",
-        position: 0,
-      },
-    ],
-    transcripts: [],
-    participants: [],
-  };
-}
-
 function createParams(
   overrides: Partial<TitleSuccessParams> = {},
 ): TitleSuccessParams {
+  const store = {
+    setPartialRow: vi.fn(),
+    getCell: vi.fn().mockReturnValue(""),
+  } as unknown as TitleSuccessParams["store"];
+
   return {
     taskId: "session-1-title",
     text: "Meeting title",
     model: {} as LanguageModel,
     args: { sessionId: "session-1" },
     transformedArgs: {} as TitleSuccessParams["transformedArgs"],
-    signal: new AbortController().signal,
+    store,
+    settingsStore: {} as TitleSuccessParams["settingsStore"],
     startTask: vi.fn().mockResolvedValue(undefined),
     getTaskState: vi.fn().mockReturnValue(undefined),
     ...overrides,
@@ -69,82 +34,58 @@ function createParams(
 
 describe("titleSuccess.onSuccess", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     useLiveTitle.setState({ titles: {} });
-    mocks.loadSessionContentSnapshot.mockResolvedValue(createSnapshot());
-    mocks.applyGeneratedSessionTitle.mockResolvedValue(undefined);
   });
 
-  it("persists a trimmed title and all titled documents atomically", async () => {
-    await titleSuccess.onSuccess?.(createParams({ text: "  Weekly sync  " }));
+  it("persists trimmed title text", () => {
+    const params = createParams({ text: "  Weekly sync  " });
 
-    expect(mocks.applyGeneratedSessionTitle).toHaveBeenCalledWith({
-      sessionId: "session-1",
-      currentTitle: "",
-      nextTitle: "Weekly sync",
-      documents: [
-        expect.objectContaining({
-          id: "session-1",
-          currentContent: "Raw note",
-          currentContentFormat: "markdown",
-          nextContent: expect.stringContaining("Weekly sync"),
-        }),
-        expect.objectContaining({
-          id: "note-1",
-          currentContent: "# Summary section",
-          currentContentFormat: "markdown",
-          nextContent: expect.stringContaining("Weekly sync"),
-        }),
-      ],
-    });
-  });
+    titleSuccess.onSuccess?.(params);
 
-  it("does not overwrite an existing session title", async () => {
-    mocks.loadSessionContentSnapshot.mockResolvedValue(
-      createSnapshot("Custom title"),
+    expect(params.store.setPartialRow).toHaveBeenCalledWith(
+      "sessions",
+      "session-1",
+      { title: "Weekly sync" },
     );
-
-    await expect(
-      persistGeneratedTitle({
-        text: "Generated title",
-        args: { sessionId: "session-1" },
-      }),
-    ).resolves.toBe(false);
-    expect(mocks.applyGeneratedSessionTitle).not.toHaveBeenCalled();
   });
 
-  it("does not overwrite an active title edit, including a blank draft", async () => {
+  it("does not overwrite an existing session title", () => {
+    const store = {
+      setPartialRow: vi.fn(),
+      getCell: vi.fn().mockReturnValue("Custom title"),
+    } as unknown as TitleSuccessParams["store"];
+    const params = createParams({ store });
+
+    titleSuccess.onSuccess?.(params);
+
+    expect(store.setPartialRow).not.toHaveBeenCalled();
+  });
+
+  it("does not overwrite an active title edit", () => {
+    useLiveTitle.getState().setTitle("session-1", "Custom title");
+    const params = createParams();
+
+    titleSuccess.onSuccess?.(params);
+
+    expect(params.store.setPartialRow).not.toHaveBeenCalled();
+  });
+
+  it("does not write a generated title while an active edit is blank", () => {
     useLiveTitle.getState().setTitle("session-1", "");
+    const params = createParams();
 
-    await titleSuccess.onSuccess?.(createParams());
+    titleSuccess.onSuccess?.(params);
 
-    expect(mocks.loadSessionContentSnapshot).not.toHaveBeenCalled();
-    expect(mocks.applyGeneratedSessionTitle).not.toHaveBeenCalled();
+    expect(params.store.setPartialRow).not.toHaveBeenCalled();
   });
 
-  it("ignores empty and placeholder title outputs", async () => {
-    await titleSuccess.onSuccess?.(createParams({ text: "   " }));
-    await titleSuccess.onSuccess?.(createParams({ text: "<EMPTY>" }));
+  it("ignores empty or placeholder title outputs", () => {
+    const emptyParams = createParams({ text: "   " });
+    titleSuccess.onSuccess?.(emptyParams);
+    expect(emptyParams.store.setPartialRow).not.toHaveBeenCalled();
 
-    expect(mocks.loadSessionContentSnapshot).not.toHaveBeenCalled();
-    expect(mocks.applyGeneratedSessionTitle).not.toHaveBeenCalled();
-  });
-
-  it("does not persist a title task marked skipPersist", async () => {
-    await titleSuccess.onSuccess?.(
-      createParams({ args: { sessionId: "session-1", skipPersist: true } }),
-    );
-
-    expect(mocks.loadSessionContentSnapshot).not.toHaveBeenCalled();
-  });
-
-  it("propagates a stale transaction failure", async () => {
-    mocks.applyGeneratedSessionTitle.mockRejectedValueOnce(
-      new Error("unexpected rows affected"),
-    );
-
-    await expect(titleSuccess.onSuccess?.(createParams())).rejects.toThrow(
-      "unexpected rows affected",
-    );
+    const placeholderParams = createParams({ text: "<EMPTY>" });
+    titleSuccess.onSuccess?.(placeholderParams);
+    expect(placeholderParams.store.setPartialRow).not.toHaveBeenCalled();
   });
 });
