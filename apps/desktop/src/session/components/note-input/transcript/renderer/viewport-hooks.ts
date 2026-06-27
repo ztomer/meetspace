@@ -11,12 +11,8 @@ export function useScrollDetection(
   containerRef: RefObject<HTMLDivElement | null>,
   active = true,
 ) {
-  const [isAtTop, setIsAtTop] = useState(true);
   const [isAtBottom, setIsAtBottom] = useState(true);
   const [autoScrollEnabled, setAutoScrollEnabled] = useState(true);
-  const [scrollTarget, setScrollTarget] = useState<"top" | "bottom" | null>(
-    null,
-  );
   const lastScrollTopRef = useRef(0);
   const userScrolledAwayRef = useRef(false);
   const wasActiveRef = useRef(active);
@@ -30,13 +26,10 @@ export function useScrollDetection(
     lastScrollTopRef.current = element.scrollTop;
 
     const handleScroll = () => {
-      const topThreshold = 40;
-      const bottomThreshold = 100;
+      const threshold = 100;
       const distanceToBottom =
         element.scrollHeight - element.scrollTop - element.clientHeight;
-      const isNearTop = element.scrollTop < topThreshold;
-      const isNearBottom = distanceToBottom < bottomThreshold;
-      setIsAtTop(isNearTop);
+      const isNearBottom = distanceToBottom < threshold;
       setIsAtBottom(isNearBottom);
 
       const currentTop = element.scrollTop;
@@ -44,15 +37,9 @@ export function useScrollDetection(
       lastScrollTopRef.current = currentTop;
 
       const scrolledUp = currentTop < prevTop - 2;
-      const scrolledDown = currentTop > prevTop + 2;
       if (scrolledUp) {
         userScrolledAwayRef.current = true;
         setAutoScrollEnabled(false);
-        setScrollTarget("bottom");
-      }
-
-      if (scrolledDown) {
-        setScrollTarget("top");
       }
 
       if (isNearBottom && !userScrolledAwayRef.current) {
@@ -81,27 +68,10 @@ export function useScrollDetection(
     }
     userScrolledAwayRef.current = false;
     setAutoScrollEnabled(true);
-    setScrollTarget(null);
     element.scrollTo({ top: element.scrollHeight, behavior: "smooth" });
   };
 
-  const scrollToTop = () => {
-    const element = containerRef.current;
-    if (!element) {
-      return;
-    }
-    setScrollTarget(null);
-    element.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  return {
-    isAtTop,
-    isAtBottom,
-    autoScrollEnabled,
-    scrollTarget,
-    scrollToTop,
-    scrollToBottom,
-  };
+  return { isAtBottom, autoScrollEnabled, scrollToBottom };
 }
 
 export function useAutoScroll(
