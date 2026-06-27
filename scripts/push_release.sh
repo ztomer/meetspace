@@ -38,7 +38,7 @@ env GITHUB_TOKEN="" git push meetspace "$TAG"
 echo "Creating GitHub Release $TAG..."
 # If release already exists, delete it first to be clean
 RELEASE_ID=$(env GITHUB_TOKEN="" gh api repos/ztomer/meetspace/releases/tags/"$TAG" --jq '.id' 2>/dev/null || true)
-if [ -n "$RELEASE_ID" ]; then
+if [ -n "$RELEASE_ID" ] && [ "$RELEASE_ID" != "null" ] && [[ "$RELEASE_ID" =~ ^[0-9]+$ ]]; then
   echo "Deleting existing release $TAG (ID: $RELEASE_ID)..."
   env GITHUB_TOKEN="" gh api -X DELETE repos/ztomer/meetspace/releases/"$RELEASE_ID" >/dev/null || true
 fi
@@ -53,7 +53,7 @@ env GITHUB_TOKEN="" gh api repos/ztomer/meetspace/releases \
 echo "Waiting for GitHub Actions 'Build & Release Artifacts' workflow to start..."
 RUN_ID=""
 for i in {1..30}; do
-  RUN_ID=$(env GITHUB_TOKEN="" gh run list --workflow="Build & Release Artifacts" --branch "$TAG" --limit 1 --json databaseId --jq '.[0].databaseId' || true)
+  RUN_ID=$(env GITHUB_TOKEN="" gh run list -R ztomer/meetspace --workflow="Build & Release Artifacts" --branch "$TAG" --limit 1 --json databaseId --jq '.[0].databaseId' || true)
   if [ -n "$RUN_ID" ] && [ "$RUN_ID" != "null" ]; then
     echo "Workflow run detected! Run ID: $RUN_ID"
     break
@@ -68,7 +68,7 @@ fi
 
 # Watch workflow run
 echo "Watching GitHub Actions run $RUN_ID..."
-env GITHUB_TOKEN="" gh run watch "$RUN_ID" --exit-status
+env GITHUB_TOKEN="" gh run watch -R ztomer/meetspace "$RUN_ID" --exit-status
 
 echo "GitHub Actions build completed successfully!"
 
