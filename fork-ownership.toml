@@ -60,7 +60,6 @@ fork = [
   "apps/desktop/src/session/components/outer-header/overflow/export-pdf.tsx",
   "plugins/oauth/**",
   "plugins/diarize/**",
-  "plugins/windows/**",
   # --- Commercial-gate removal (local auth stubs, account-free onboarding) ---
   "apps/desktop/src/auth/**",
   "apps/desktop/src/sidebar/profile/**",

@@ -13,7 +13,11 @@ import {
 import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 import { commands as detectCommands } from "@meetspace/plugin-detect";
 import { commands as localSttCommands } from "@meetspace/plugin-local-stt";
-import { getCurrentWebviewWindowLabel } from "@meetspace/plugin-windows";
+import { commands as trayCommands } from "@meetspace/plugin-tray";
+import {
+  commands as windowsCommands,
+  getCurrentWebviewWindowLabel,
+} from "@meetspace/plugin-windows";
 
 import { registerSaveHandler } from "./save";
 
@@ -45,6 +49,51 @@ export const SETTINGS_MAPPING = {
     floating_bar_enabled: {
       type: "boolean",
       path: ["general", "floating_bar_enabled"],
+      default: true as boolean,
+    },
+    floating_bar_opacity: {
+      type: "number",
+      path: ["general", "floating_bar_opacity"],
+      default: 0.78 as number,
+    },
+    live_caption_opacity: {
+      type: "number",
+      path: ["general", "live_caption_opacity"],
+      default: 0.3 as number,
+    },
+    live_caption_width: {
+      type: "number",
+      path: ["general", "live_caption_width"],
+      default: 440 as number,
+    },
+    live_caption_line_count: {
+      type: "number",
+      path: ["general", "live_caption_line_count"],
+      default: 1 as number,
+    },
+    live_caption_position: {
+      type: "string",
+      path: ["general", "live_caption_position"],
+      default: "topCenter" as string,
+    },
+    live_caption_minimized: {
+      type: "boolean",
+      path: ["general", "live_caption_minimized"],
+      default: false as boolean,
+    },
+    live_caption_enabled: {
+      type: "boolean",
+      path: ["general", "live_caption_enabled"],
+      default: true as boolean,
+    },
+    show_app_in_dock: {
+      type: "boolean",
+      path: ["general", "show_app_in_dock"],
+      default: true as boolean,
+    },
+    show_tray_icon: {
+      type: "boolean",
+      path: ["general", "show_tray_icon"],
       default: true as boolean,
     },
     sidebar_timeline_enabled: {
@@ -443,6 +492,12 @@ const SETTINGS_LISTENERS: SettingsListeners = {
   current_stt_model: (store) => syncLocalSttServer(store),
   telemetry_consent: (_store, newValue) => {
     analyticsCommands.setDisabled(!newValue).catch(console.error);
+  },
+  show_app_in_dock: (_store, newValue) => {
+    windowsCommands.setShowAppInDock(newValue).catch(console.error);
+  },
+  show_tray_icon: (_store, newValue) => {
+    trayCommands.setTrayIconVisible(newValue).catch(console.error);
   },
 };
 

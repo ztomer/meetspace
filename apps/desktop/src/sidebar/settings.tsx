@@ -10,7 +10,6 @@ import {
   LockIcon,
   SmartphoneIcon,
   SparklesIcon,
-  UserIcon,
   UsersIcon,
 } from "lucide-react";
 import { useCallback } from "react";
@@ -69,7 +68,6 @@ export function SettingsNav() {
       items: [
         { id: "app", label: t`App`, icon: SmartphoneIcon },
         { id: "data", label: t`Data`, icon: DatabaseIcon },
-        { id: "account", label: t`Account`, icon: UserIcon },
         { id: "notifications", label: t`Notifications`, icon: BellIcon },
       ],
     },

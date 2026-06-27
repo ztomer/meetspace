@@ -24,11 +24,7 @@ export type TaskType = "enhance" | "title";
 
 export interface TaskArgsMap {
   enhance: { sessionId: string; enhancedNoteId: string; templateId?: string };
-  title: {
-    sessionId: string;
-    enhancedNote?: string;
-    skipPersist?: boolean;
-  };
+  title: { sessionId: string };
 }
 
 export interface TaskArgsMapTransformed {
@@ -70,7 +66,6 @@ export interface TaskConfig<T extends TaskType = TaskType> {
     transformedArgs: TaskArgsMapTransformed[T];
     store: MainStore;
     settingsStore: SettingsStore;
-    signal: AbortSignal;
     startTask: <K extends TaskType>(
       taskId: TaskId<K>,
       config: {

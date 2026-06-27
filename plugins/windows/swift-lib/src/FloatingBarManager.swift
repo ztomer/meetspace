@@ -95,6 +95,7 @@ final class FloatingBarManager {
     panel.isOpaque = false
     panel.backgroundColor = .clear
     panel.hasShadow = false
+    panel.sharingType = .none
     panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
     panel.isMovableByWindowBackground = true
     panel.delegate = placement
@@ -110,7 +111,7 @@ final class FloatingBarManager {
     ) { screen, size in
       let frame = screen.visibleFrame
       let x = frame.maxX - size.width - FloatingBarLayout.screenMargin
-      let y = frame.midY - size.height / 2
+      let y = frame.midY - size.height / 2 - FloatingBarLayout.visualCenterOffset
       return NSPoint(x: x, y: y)
     }
   }

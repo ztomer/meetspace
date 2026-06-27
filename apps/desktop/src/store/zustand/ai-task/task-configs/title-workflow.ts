@@ -4,7 +4,6 @@ import { commands as templateCommands } from "@meetspace/plugin-template";
 
 import type { TaskArgsMapTransformed, TaskConfig } from ".";
 
-import { deterministicGenerationSettings } from "~/ai/model-settings";
 import type { Store } from "~/store/tinybase/store/main";
 
 const AI_GENERATION_MAX_RETRIES = 4;
@@ -35,7 +34,7 @@ async function* executeWorkflow(params: {
   const id = generateId();
   const result = streamText({
     model,
-    ...deterministicGenerationSettings(model),
+    temperature: 0,
     system,
     prompt,
     abortSignal: signal,

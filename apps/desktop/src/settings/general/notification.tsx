@@ -1,4 +1,3 @@
-import { Trans, useLingui } from "@lingui/react/macro";
 import { useForm } from "@tanstack/react-form";
 import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
@@ -46,7 +45,6 @@ import { useConfigValues } from "~/shared/config";
 import * as settings from "~/store/tinybase/store/settings";
 
 export function NotificationSettingsView() {
-  const { t } = useLingui();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -209,13 +207,9 @@ export function NotificationSettingsView() {
         {(field) => (
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-              <h3 className="mb-1 text-sm font-medium">
-                <Trans>Event notifications</Trans>
-              </h3>
+              <h3 className="mb-1 text-sm font-medium">Event notifications</h3>
               <p className="text-muted-foreground text-xs">
-                <Trans>
-                  Get notified 5 minutes before calendar events start
-                </Trans>
+                Get notified 5 minutes before calendar events start
               </p>
             </div>
             <Switch
@@ -232,13 +226,11 @@ export function NotificationSettingsView() {
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 <h3 className="mb-1 text-sm font-medium">
-                  <Trans>Microphone detection</Trans>
+                  Microphone detection
                 </h3>
                 <p className="text-muted-foreground text-xs">
-                  <Trans>
-                    Automatically detect when a meeting starts based on
-                    microphone activity.
-                  </Trans>
+                  Automatically detect when a meeting starts based on microphone
+                  activity.
                 </p>
               </div>
               <Switch
@@ -253,13 +245,9 @@ export function NotificationSettingsView() {
                   {(thresholdField) => (
                     <div className="mb-4 flex items-center justify-between gap-4">
                       <div className="flex-1">
-                        <h4 className="text-sm font-medium">
-                          <Trans>Detection delay</Trans>
-                        </h4>
+                        <h4 className="text-sm font-medium">Detection delay</h4>
                         <p className="text-muted-foreground text-xs">
-                          <Trans>
-                            How long the mic must be active before triggering
-                          </Trans>
+                          How long the mic must be active before triggering
                         </p>
                       </div>
                       <Select
@@ -286,13 +274,11 @@ export function NotificationSettingsView() {
 
                 <div className="mb-3 flex flex-col gap-1">
                   <h4 className="text-sm font-medium">
-                    <Trans>Exclude apps from detection</Trans>
+                    Exclude apps from detection
                   </h4>
                   <p className="text-muted-foreground text-xs">
-                    <Trans>
-                      Search installed apps to exclude them. Click an excluded
-                      app to include it again.
-                    </Trans>
+                    Search installed apps to exclude them. Click an excluded app
+                    to include it again.
                   </p>
                 </div>
                 <div className="flex flex-col gap-3">
@@ -330,7 +316,7 @@ export function NotificationSettingsView() {
                               {bundleIdToName(bundleId)}
                               {isDefault && (
                                 <span className="text-[10px] opacity-70">
-                                  <Trans>(default)</Trans>
+                                  (default)
                                 </span>
                               )}
                               <Button
@@ -349,7 +335,7 @@ export function NotificationSettingsView() {
                           );
                         })}
                         <span className="text-muted-foreground text-sm">
-                          <Trans>Search installed apps...</Trans>
+                          Search installed apps...
                         </span>
                       </div>
                     </PopoverTrigger>
@@ -361,13 +347,13 @@ export function NotificationSettingsView() {
                       <AppFloatingPanel className="overflow-hidden">
                         <Command className="rounded-[inherit] border-0 bg-transparent">
                           <CommandInput
-                            placeholder={t`Search installed apps...`}
+                            placeholder="Search installed apps..."
                             value={searchQuery}
                             onValueChange={setSearchQuery}
                           />
                           <CommandEmpty>
                             <div className="text-muted-foreground px-2 py-1.5 text-sm">
-                              <Trans>No apps found.</Trans>
+                              No apps found.
                             </div>
                           </CommandEmpty>
                           <CommandList>
@@ -406,7 +392,7 @@ export function NotificationSettingsView() {
         <div className="flex items-center gap-4 pt-4 pb-2">
           <div className="border-muted min-w-0 flex-1 border-t" />
           <span className="text-muted-foreground shrink-0 text-xs font-medium">
-            <Trans>For enabled notifications</Trans>
+            For enabled notifications
           </span>
           <div className="border-muted min-w-0 flex-1 border-t" />
         </div>
@@ -416,13 +402,11 @@ export function NotificationSettingsView() {
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 <h3 className="mb-1 text-sm font-medium">
-                  <Trans>Respect Do-Not-Disturb mode</Trans>
+                  Respect Do-Not-Disturb mode
                 </h3>
                 <p className="text-muted-foreground text-xs">
-                  <Trans>
-                    Don't show notifications when Do-Not-Disturb is enabled on
-                    your system
-                  </Trans>
+                  Don't show notifications when Do-Not-Disturb is enabled on
+                  your system
                 </p>
               </div>
               <Switch
