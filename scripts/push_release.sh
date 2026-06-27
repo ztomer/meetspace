@@ -37,11 +37,17 @@ env GITHUB_TOKEN="" git push meetspace "$TAG"
 # 5. Create GitHub Release
 echo "Creating GitHub Release $TAG..."
 # If release already exists, delete it first to be clean
-env GITHUB_TOKEN="" gh release delete "$TAG" -y 2>/dev/null || true
-env GITHUB_TOKEN="" gh release create "$TAG" \
-  --target MIT_BACK \
-  --title "$TAG" \
-  --notes "Release $TAG"
+RELEASE_ID=$(env GITHUB_TOKEN="" gh api repos/ztomer/meetspace/releases/tags/"$TAG" --jq '.id' 2>/dev/null || true)
+if [ -n "$RELEASE_ID" ]; then
+  echo "Deleting existing release $TAG (ID: $RELEASE_ID)..."
+  env GITHUB_TOKEN="" gh api -X DELETE repos/ztomer/meetspace/releases/"$RELEASE_ID" >/dev/null || true
+fi
+
+env GITHUB_TOKEN="" gh api repos/ztomer/meetspace/releases \
+  -f tag_name="$TAG" \
+  -f target_commitish="MIT_BACK" \
+  -f name="$TAG" \
+  -f body="Release $TAG" >/dev/null
 
 # 6. Wait for GitHub Actions workflow to trigger
 echo "Waiting for GitHub Actions 'Build & Release Artifacts' workflow to start..."
