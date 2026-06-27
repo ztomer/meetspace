@@ -86,7 +86,7 @@ final class DevtoolsPanelManager {
     panel.hidesOnDeactivate = false
     panel.isOpaque = false
     panel.backgroundColor = .clear
-    panel.hasShadow = true
+    panel.hasShadow = false
     panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
     panel.isMovableByWindowBackground = true
     panel.delegate = placement

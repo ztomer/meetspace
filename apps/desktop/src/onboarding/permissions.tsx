@@ -1,4 +1,3 @@
-import { useLingui } from "@lingui/react/macro";
 import {
   ArrowRightIcon,
   CheckIcon,
@@ -34,16 +33,15 @@ function PermissionBlock({
   isPending: boolean;
   onAction: () => void;
 }) {
-  const { t } = useLingui();
   const isAuthorized = status === "authorized";
   const opensSettings = isAuthorized || status === "denied";
   const title = isAuthorized ? enabledLabel : enableLabel;
   const body = isAuthorized ? enabledBody : enableBody;
   const ctaLabel = isAuthorized
-    ? t`Manage`
+    ? "Manage"
     : opensSettings
-      ? t`Open settings`
-      : t`Allow access`;
+      ? "Open settings"
+      : "Allow access";
 
   return (
     <button
@@ -60,8 +58,8 @@ function PermissionBlock({
       ])}
       aria-label={
         opensSettings
-          ? t`Open ${permissionName.toLowerCase()} settings`
-          : t`Enable ${permissionName.toLowerCase()}`
+          ? `Open ${permissionName.toLowerCase()} settings`
+          : `Enable ${permissionName.toLowerCase()}`
       }
     >
       <div
@@ -113,7 +111,6 @@ export function PermissionsSection({
 }: {
   onContinue?: () => void;
 }) {
-  const { t } = useLingui();
   const mic = usePermission("microphone");
   const systemAudio = usePermission("systemAudio");
   const hasContinuedRef = useRef(false);
@@ -138,24 +135,24 @@ export function PermissionsSection({
   return (
     <div className="@container flex items-stretch gap-3">
       <PermissionBlock
-        enabledLabel={t`Meetspace can hear your voice`}
-        enableLabel={t`Allow microphone access`}
-        enabledBody={t`Microphone access turned on`}
-        enableBody={t`Help Meetspace listen to you`}
+        enabledLabel="Meetspace can hear your voice"
+        enableLabel="Allow microphone access"
+        enabledBody="Microphone access turned on"
+        enableBody="Help Meetspace listen to you"
         Icon={MicIcon}
-        permissionName={t`Microphone`}
+        permissionName="Microphone"
         status={mic.status}
         isPending={mic.isPending}
         onAction={() => handleAction(mic)}
       />
 
       <PermissionBlock
-        enabledLabel={t`Meetspace can hear others`}
-        enableLabel={t`Allow system audio access`}
-        enabledBody={t`System audio enabled`}
-        enableBody={t`Help Meetspace listen to others`}
+        enabledLabel="Meetspace can hear others"
+        enableLabel="Allow system audio access"
+        enabledBody="System audio enabled"
+        enableBody="Help Meetspace listen to others"
         Icon={Volume2Icon}
-        permissionName={t`System audio`}
+        permissionName="System audio"
         status={systemAudio.status}
         isPending={systemAudio.isPending}
         onAction={() => handleAction(systemAudio)}

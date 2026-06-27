@@ -13,8 +13,7 @@ async function transformArgs(
   store: MainStore,
   settingsStore: SettingsStore,
 ): Promise<TaskArgsMapTransformed["title"]> {
-  const enhancedNote =
-    args.enhancedNote ?? collectEnhancedNotesContent(store, args.sessionId);
+  const enhancedNote = collectEnhancedNotesContent(store, args.sessionId);
   const language = getLanguage(settingsStore);
   return { language, enhancedNote };
 }

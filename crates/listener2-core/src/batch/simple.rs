@@ -198,7 +198,8 @@ pub(super) async fn run_soniqo_batch(
             "soniqo_batch_completed"
         );
 
-        let response = meetspace_transcribe_soniqo::batch_response_from_channels(model, transcribed);
+        let response =
+            meetspace_transcribe_soniqo::batch_response_from_channels(model, transcribed);
 
         Ok(BatchRunOutput {
             session_id: params.session_id,
@@ -254,8 +255,8 @@ fn transcribe_soniqo_file(
     }
 
     let resample_started_at = Instant::now();
-    let samples =
-        meetspace_audio_utils::resample_audio(source, TARGET_SAMPLE_RATE).map_err(|e| e.to_string())?;
+    let samples = meetspace_audio_utils::resample_audio(source, TARGET_SAMPLE_RATE)
+        .map_err(|e| e.to_string())?;
     tracing::info!(
         meetspace.stt.provider.name = "soniqo",
         meetspace.stt.model = %model,
@@ -335,7 +336,10 @@ fn soniqo_language_hint(language: Option<&str>) -> Option<String> {
 }
 
 fn uses_resilient_soniqo_chunking(model: meetspace_transcribe_soniqo::SoniqoModel) -> bool {
-    matches!(model, meetspace_transcribe_soniqo::SoniqoModel::ParakeetBatch)
+    matches!(
+        model,
+        meetspace_transcribe_soniqo::SoniqoModel::ParakeetBatch
+    )
 }
 
 fn soniqo_batch_progress(completed_chunks: usize, total_chunks: usize) -> f64 {
@@ -351,7 +355,9 @@ fn collect_soniqo_channel_transcripts<I>(
     transcripts: I,
 ) -> std::result::Result<Vec<meetspace_transcribe_soniqo::FileTranscript>, String>
 where
-    I: IntoIterator<Item = std::result::Result<meetspace_transcribe_soniqo::FileTranscript, String>>,
+    I: IntoIterator<
+        Item = std::result::Result<meetspace_transcribe_soniqo::FileTranscript, String>,
+    >,
 {
     let mut output = Vec::new();
     let mut successful_channels = 0usize;
@@ -538,7 +544,8 @@ fn transcribe_soniqo_samples(
         writer.finalize().map_err(|e| e.to_string())?;
     }
 
-    meetspace_transcribe_soniqo::transcribe_file(model, file.path(), language).map_err(|e| e.to_string())
+    meetspace_transcribe_soniqo::transcribe_file(model, file.path(), language)
+        .map_err(|e| e.to_string())
 }
 
 fn soniqo_channel_chunks(
@@ -622,9 +629,11 @@ mod tests {
     fn parakeet_batch_uses_fixed_audio_windows() {
         let samples =
             vec![0.0; SONIQO_PARAKEET_MAX_CHUNK_SAMPLES * 2 + TARGET_SAMPLE_RATE as usize];
-        let chunks =
-            soniqo_channel_chunks(meetspace_transcribe_soniqo::SoniqoModel::ParakeetBatch, &samples)
-                .unwrap();
+        let chunks = soniqo_channel_chunks(
+            meetspace_transcribe_soniqo::SoniqoModel::ParakeetBatch,
+            &samples,
+        )
+        .unwrap();
 
         assert_eq!(chunks.len(), 3);
         assert_eq!(chunks[0].sample_start, 0);
