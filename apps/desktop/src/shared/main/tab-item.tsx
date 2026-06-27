@@ -1,28 +1,27 @@
-import { useCallback } from "react";
 import {
   PictureInPicture2Icon,
   SparklesIcon,
   StickyNoteIcon,
   UserIcon,
 } from "lucide-react";
+import { useCallback } from "react";
 
 import { TabItemCalendar } from "~/calendar";
 import { TabItemContact } from "~/contacts";
 import { TabItemEdit } from "~/edit";
+import { openFloatingMeetingPanel } from "~/meeting-float/host";
 import { TabItemOnboarding } from "~/onboarding";
+import { useIsSessionEnhancing } from "~/session/hooks/useEnhancedNotes";
+import { getSessionTabStatus } from "~/session/tab-visual-state";
 import { TabItemSettings } from "~/settings";
-import { type Tab } from "~/store/zustand/tabs";
-import { TabItemTask } from "~/task";
-import { TabItemTemplate } from "~/templates";
-
+import { useConfigValue } from "~/shared/config";
 import { type TabItem, TabItemBase } from "~/shared/tabs";
 import * as main from "~/store/tinybase/store/main";
 import { useSessionTitle } from "~/store/zustand/live-title";
+import { type Tab } from "~/store/zustand/tabs";
 import { useListener } from "~/stt/contexts";
-import { useConfigValue } from "~/shared/config";
-import { useIsSessionEnhancing } from "~/session/hooks/useEnhancedNotes";
-import { getSessionTabStatus } from "~/session/tab-visual-state";
-import { openFloatingMeetingPanel } from "~/meeting-float/host";
+import { TabItemTask } from "~/task";
+import { TabItemTemplate } from "~/templates";
 
 export const TabItemChangelog: TabItem<Extract<Tab, { type: "changelog" }>> = ({
   tab,
