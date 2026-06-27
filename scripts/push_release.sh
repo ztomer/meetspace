@@ -25,7 +25,7 @@ echo "Starting release workflow for version: $VERSION (tag: $TAG)"
 
 # 3. Push MIT_BACK branch
 echo "Pushing MIT_BACK branch to remote meetspace..."
-env GITHUB_TOKEN="" git push meetspace MIT_BACK
+env GITHUB_TOKEN="" git push --force meetspace MIT_BACK
 
 # 4. Handle Tag (re-create if exists)
 echo "Re-creating tag $TAG locally and on remote..."
