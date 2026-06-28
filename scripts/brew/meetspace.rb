@@ -1,5 +1,5 @@
 cask "meetspace" do
-  version "1.1.3_meet1"
+  version "1.1.3_meet2"
   sha256 :no_check
 
   url "https://github.com/ztomer/meetspace/releases/download/v#{version}/Meetspace_#{version.sub("_", "-")}_aarch64.dmg"
