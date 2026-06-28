@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import re
 import sys
 
 
@@ -121,6 +122,18 @@ def _rebrand_file(filepath, repo_root):
         if old_val in new_content:
             replaced += new_content.count(old_val)
             new_content = new_content.replace(old_val, new_val)
+
+    # Detect empty headers and remove them. Configure Providers is the only one.
+    normalized_path = filepath.replace("\\", "/")
+    if "settings/ai/stt/configure.tsx" in normalized_path:
+        pattern = r"<h3[^>]*>\s*(?:<Trans[^>]*>\s*)?Configure Providers\s*(?:</Trans>\s*)?</h3>\n?"
+        new_content, count = re.subn(pattern, "", new_content, flags=re.IGNORECASE)
+        if count > 0:
+            replaced += count
+            print_info(
+                f"Removed {count} empty header(s) from "
+                f"{os.path.relpath(filepath, repo_root)}"
+            )
 
     if replaced:
         try:
