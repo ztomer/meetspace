@@ -2,14 +2,14 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { useForm } from "@tanstack/react-form";
 import { CircleMinusIcon, PlusIcon } from "lucide-react";
 
-import { Button } from "@hypr/ui/components/ui/button";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from "@hypr/ui/components/ui/input-group";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/input-group";
+import { cn } from "@meetspace/utils";
 
 import { SettingsPageTitle } from "~/settings/page-title";
 import { useConfigValue } from "~/shared/config";

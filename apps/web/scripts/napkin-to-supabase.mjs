@@ -51,7 +51,7 @@ function usage() {
     --slug meeting-minutes-software \\
     --filename meeting-minutes-workflow.png \\
     --content-file /tmp/figure-prompt.txt \\
-    --context "Anarlog blog figure for private, bot-free meeting notes"
+    --context "Meetspace blog figure for private, bot-free meeting notes"
 
 Required:
   --slug           Blog article slug. Uploads to articles/<slug>/<filename>.

@@ -11,7 +11,7 @@ const hoisted = vi.hoisted(() => ({
   selectedTemplateId: "template-1" as string | undefined,
   llmStatus: {
     status: "success",
-    providerId: "hyprnote",
+    providerId: "meetspace",
     isHosted: true,
   } as LLMConnectionStatus,
   service: {
@@ -80,7 +80,7 @@ describe("useEnsureDefaultSummary", () => {
     hoisted.selectedTemplateId = "template-1";
     hoisted.llmStatus = {
       status: "success",
-      providerId: "hyprnote",
+      providerId: "meetspace",
       isHosted: true,
     };
     hoisted.service.ensureNote.mockClear();
@@ -189,7 +189,7 @@ describe("useEnsureDefaultSummary", () => {
     hoisted.llmStatus = {
       status: "error",
       reason: "not_pro",
-      providerId: "hyprnote",
+      providerId: "meetspace",
     };
 
     renderHook(() => useEnsureDefaultSummary("session-1"));
@@ -230,7 +230,7 @@ describe("useEnsureDefaultSummary", () => {
     hoisted.llmStatus = {
       status: "pending",
       reason: "missing_model",
-      providerId: "hyprnote",
+      providerId: "meetspace",
     };
 
     renderHook(() => useEnsureDefaultSummary("session-1"));

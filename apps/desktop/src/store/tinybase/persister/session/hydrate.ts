@@ -1,7 +1,7 @@
 import type { Store } from "tinybase/with-schemas";
 
-import type { Schemas } from "@hypr/store";
-import { asTablesChanges } from "@hypr/tinybase-utils";
+import type { Schemas } from "@meetspace/store";
+import { asTablesChanges } from "@meetspace/tinybase-utils";
 
 import { loadSingleSession } from "./load";
 import type { LoadedSessionData } from "./load";

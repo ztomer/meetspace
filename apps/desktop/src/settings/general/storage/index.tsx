@@ -5,10 +5,10 @@ import { FolderIcon, type LucideIcon, Settings2Icon } from "lucide-react";
 import { type ReactNode } from "react";
 import { useState } from "react";
 
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { commands as settingsCommands } from "@hypr/plugin-settings";
-import { Button } from "@hypr/ui/components/ui/button";
-import { Checkbox } from "@hypr/ui/components/ui/checkbox";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { commands as settingsCommands } from "@meetspace/plugin-settings";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { Checkbox } from "@meetspace/ui/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -16,20 +16,20 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@hypr/ui/components/ui/dialog";
+} from "@meetspace/ui/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@hypr/ui/components/ui/select";
+} from "@meetspace/ui/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/tooltip";
+import { cn } from "@meetspace/utils";
 
 import { displayPath } from "./path-utils";
 import { useChangeContentPathWizard } from "./use-storage-wizard";
@@ -292,7 +292,7 @@ function ChangeContentPathDialog({
           </DialogTitle>
           <DialogDescription>
             <Trans>
-              Choose where Anarlog should store data. (notes, settings, etc)
+              Choose where Meetspace should store data. (notes, settings, etc)
             </Trans>
           </DialogDescription>
         </DialogHeader>

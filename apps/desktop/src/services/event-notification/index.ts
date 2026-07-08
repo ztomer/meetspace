@@ -1,4 +1,4 @@
-import { commands as notificationCommands } from "@hypr/plugin-notification";
+import { commands as notificationCommands } from "@meetspace/plugin-notification";
 
 import type * as main from "~/store/tinybase/store/main";
 import type * as settings from "~/store/tinybase/store/settings";
@@ -90,7 +90,7 @@ export function checkEventNotifications(
         start_time: Math.floor(startTime.getTime() / 1000),
         participants: null,
         event_details: null,
-        action_label: "Open Anarlog",
+        action_label: "Open Meetspace",
         action_variant: null,
         options: null,
         footer: null,

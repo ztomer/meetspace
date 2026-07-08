@@ -9,11 +9,11 @@ import type { MergeableStore, OptionalSchemas } from "tinybase/with-schemas";
 import {
   commands as fsSyncCommands,
   type JsonValue,
-} from "@hypr/plugin-fs-sync";
-import { commands as fs2Commands } from "@hypr/plugin-fs2";
-import { events as notifyEvents } from "@hypr/plugin-notify";
-import { commands as settingsCommands } from "@hypr/plugin-settings";
-import { asTablesChanges, extractChangedTables } from "@hypr/tinybase-utils";
+} from "@meetspace/plugin-fs-sync";
+import { commands as fs2Commands } from "@meetspace/plugin-fs2";
+import { events as notifyEvents } from "@meetspace/plugin-notify";
+import { commands as settingsCommands } from "@meetspace/plugin-settings";
+import { asTablesChanges, extractChangedTables } from "@meetspace/tinybase-utils";
 
 import { isFileNotFoundError } from "~/store/tinybase/persister/shared/fs";
 import type { ChangedTables } from "~/store/tinybase/persister/shared/types";

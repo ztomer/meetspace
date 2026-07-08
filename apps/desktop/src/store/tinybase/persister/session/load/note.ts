@@ -1,5 +1,5 @@
-import { md2json } from "@hypr/editor/markdown";
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
+import { md2json } from "@meetspace/editor/markdown";
+import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
 
 import type { LoadedSessionData } from "./types";
 

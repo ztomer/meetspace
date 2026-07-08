@@ -1,4 +1,4 @@
-import type { TranscriptJson, TranscriptWithData } from "@hypr/plugin-fs-sync";
+import type { TranscriptJson, TranscriptWithData } from "@meetspace/plugin-fs-sync";
 
 import type { LoadedSessionData } from "./types";
 

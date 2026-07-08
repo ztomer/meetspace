@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import type {
   RenderTranscriptHuman,
   RenderTranscriptRequest,
-} from "@hypr/plugin-transcription";
+} from "@meetspace/plugin-transcription";
 
 import { getUniqueRowIds, useStoreRowsRevision } from "~/store/tinybase/hooks";
 import * as main from "~/store/tinybase/store/main";

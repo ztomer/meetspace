@@ -6,7 +6,7 @@ const { isSupportedLanguagesBatchMock, isSupportedLanguagesLiveMock } =
     isSupportedLanguagesLiveMock: vi.fn(),
   }));
 
-vi.mock("@hypr/plugin-transcription", () => ({
+vi.mock("@meetspace/plugin-transcription", () => ({
   commands: {
     isSupportedLanguagesBatch: isSupportedLanguagesBatchMock,
     isSupportedLanguagesLive: isSupportedLanguagesLiveMock,
@@ -75,10 +75,10 @@ describe("isSupportedLocalSttModel", () => {
 });
 
 describe("isConfiguredSttModel", () => {
-  test("requires known model ids for Anarlog STT", () => {
-    expect(isConfiguredSttModel("hyprnote", "cloud")).toBe(true);
-    expect(isConfiguredSttModel("hyprnote", "soniqo-qwen3-small")).toBe(true);
-    expect(isConfiguredSttModel("hyprnote", "removed-local-model")).toBe(false);
+  test("requires known model ids for Meetspace STT", () => {
+    expect(isConfiguredSttModel("meetspace", "cloud")).toBe(true);
+    expect(isConfiguredSttModel("meetspace", "soniqo-qwen3-small")).toBe(true);
+    expect(isConfiguredSttModel("meetspace", "removed-local-model")).toBe(false);
   });
 
   test("allows custom model ids for external providers", () => {

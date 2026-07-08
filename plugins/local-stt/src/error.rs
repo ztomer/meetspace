@@ -5,15 +5,15 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error(transparent)]
-    AmError(#[from] hypr_am::Error),
+    AmError(#[from] meetspace_am::Error),
     #[error(transparent)]
-    HyprFileError(#[from] hypr_file::Error),
+    HyprFileError(#[from] meetspace_file::Error),
     #[error(transparent)]
     ShellError(#[from] tauri_plugin_shell::Error),
     #[error(transparent)]
     Sidecar2Error(#[from] tauri_plugin_sidecar2::Error),
     #[error(transparent)]
-    ModelDownloaderError(#[from] hypr_model_downloader::Error),
+    ModelDownloaderError(#[from] meetspace_model_downloader::Error),
     #[error("Model not downloaded")]
     ModelNotDownloaded,
     #[error("Server start failed {0}")]

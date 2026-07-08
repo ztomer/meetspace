@@ -3,8 +3,8 @@ import { AnimatePresence, motion } from "motion/react";
 import type { CSSProperties } from "react";
 import { useCallback } from "react";
 
-import { Spinner } from "@hypr/ui/components/ui/spinner";
-import { cn } from "@hypr/utils";
+import { Spinner } from "@meetspace/ui/components/ui/spinner";
+import { cn } from "@meetspace/utils";
 
 import { useCaretPosition } from "../caret-position-context";
 import { ListenButton } from "./listen";

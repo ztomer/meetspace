@@ -18,12 +18,12 @@ Run through Infisical so the script can read `NAPKIN_API_TOKEN`,
 infisical run --silent \
   --env=prod \
   --projectId=87dad7b5-72a6-4791-9228-b3b86b169db1 \
-  --path=/anarlog/web \
+  --path=/meetspace/web \
   -- pnpm --dir apps/web exec node scripts/napkin-to-supabase.mjs \
     --slug meeting-minutes-software \
     --filename meeting-minutes-workflow.png \
     --content-file /tmp/meeting-minutes-workflow.txt \
-    --context "Anarlog blog figure for private, bot-free meeting notes" \
+    --context "Meetspace blog figure for private, bot-free meeting notes" \
     --visual-query flowchart \
     --orientation horizontal \
     --width 1200
@@ -64,7 +64,7 @@ Published meeting minutes
 Good context example:
 
 ```text
-Create a clean horizontal workflow diagram for an Anarlog blog post. The figure
+Create a clean horizontal workflow diagram for an Meetspace blog post. The figure
 should explain a private, bot-free meeting minutes workflow for teams evaluating
 meeting minutes software.
 ```

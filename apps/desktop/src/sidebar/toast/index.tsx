@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { Toast } from "./component";
 import {
@@ -22,7 +22,7 @@ import { useTabs } from "~/store/zustand/tabs";
 import { useToastAction } from "~/store/zustand/toast-action";
 import {
   isConfiguredSttModel,
-  isHyprnoteCloudSttModel,
+  isMeetspaceCloudSttModel,
 } from "~/stt/capabilities";
 import { useListener } from "~/stt/contexts";
 
@@ -80,11 +80,11 @@ export function ToastArea({
     current_stt_provider,
     current_stt_model,
   );
-  const hasProSttConfigured = isHyprnoteCloudSttModel(
+  const hasProSttConfigured = isMeetspaceCloudSttModel(
     current_stt_provider,
     current_stt_model,
   );
-  const hasProLlmConfigured = current_llm_provider === "hyprnote";
+  const hasProLlmConfigured = current_llm_provider === "meetspace";
 
   const currentTab = useTabs((state) => state.currentTab);
   const devtoolsPreview = useDevtoolsToastPreview((state) => state.preview);

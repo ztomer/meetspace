@@ -21,7 +21,7 @@ const hoisted = vi.hoisted(() => ({
   templateId: undefined as string | undefined,
   llmStatus: {
     status: "success",
-    providerId: "hyprnote",
+    providerId: "meetspace",
     isHosted: true,
   } as LLMConnectionStatus,
   isCaretNearBottom: false,
@@ -38,7 +38,7 @@ const hoisted = vi.hoisted(() => ({
   updateSessionTabState: vi.fn(),
 }));
 
-vi.mock("@hypr/ui/components/ui/spinner", () => ({
+vi.mock("@meetspace/ui/components/ui/spinner", () => ({
   Spinner: () => <span data-testid="spinner" />,
 }));
 
@@ -49,7 +49,7 @@ vi.mock("./listen", () => ({
 vi.mock("~/shared/chat-cta", () => ({
   ChatCTA: () => (
     <button type="button" onClick={() => hoisted.sendEvent({ type: "OPEN" })}>
-      Ask Anarlog anything
+      Ask Meetspace anything
     </button>
   ),
 }));
@@ -175,7 +175,7 @@ describe("FloatingActionButton", () => {
     hoisted.templateId = undefined;
     hoisted.llmStatus = {
       status: "success",
-      providerId: "hyprnote",
+      providerId: "meetspace",
       isHosted: true,
     };
     hoisted.isCaretNearBottom = false;
@@ -200,7 +200,7 @@ describe("FloatingActionButton", () => {
     renderFloatingActionButton();
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).not.toBeNull();
   });
 
@@ -210,7 +210,7 @@ describe("FloatingActionButton", () => {
     renderFloatingActionButton();
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).not.toBeNull();
     expect(
       screen.queryByRole("button", { name: "Regenerate summary" }),
@@ -229,7 +229,7 @@ describe("FloatingActionButton", () => {
     renderFloatingActionButton();
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).toBeNull();
 
     fireEvent.click(screen.getByRole("button", { name: "Generate summary" }));
@@ -251,7 +251,7 @@ describe("FloatingActionButton", () => {
     renderFloatingActionButton();
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).toBeNull();
     expect(
       screen.getByRole("button", { name: "Generate summary" }),
@@ -265,7 +265,7 @@ describe("FloatingActionButton", () => {
     renderFloatingActionButton();
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).toBeNull();
   });
 
@@ -278,7 +278,7 @@ describe("FloatingActionButton", () => {
     renderFloatingActionButton();
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).toBeNull();
   });
 
@@ -291,7 +291,7 @@ describe("FloatingActionButton", () => {
     renderFloatingActionButton();
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).toBeNull();
     expect(screen.queryByRole("button", { name: "Stop summary" })).toBeNull();
   });
@@ -301,7 +301,7 @@ describe("FloatingActionButton", () => {
 
     renderFloatingActionButton();
 
-    const wrapper = screen.getByText("Ask Anarlog anything").parentElement;
+    const wrapper = screen.getByText("Ask Meetspace anything").parentElement;
     const hoverZone = wrapper?.parentElement;
 
     expect(hoverZone?.className).toContain("pointer-events-none");
@@ -323,7 +323,7 @@ describe("FloatingActionButton", () => {
 
     renderFloatingActionButton();
 
-    const wrapper = screen.getByText("Ask Anarlog anything").parentElement;
+    const wrapper = screen.getByText("Ask Meetspace anything").parentElement;
     const hoverZone = wrapper?.parentElement;
 
     expect(hoverZone?.className).toContain("pointer-events-none");
@@ -347,7 +347,7 @@ describe("FloatingActionButton", () => {
 
     renderFloatingActionButton();
 
-    const wrapper = screen.getByText("Ask Anarlog anything").parentElement;
+    const wrapper = screen.getByText("Ask Meetspace anything").parentElement;
 
     expect(
       screen.queryByRole("button", { name: "Start listening" }),
@@ -364,7 +364,7 @@ describe("FloatingActionButton", () => {
     renderFloatingActionButton();
 
     fireEvent.click(
-      screen.getByRole("button", { name: "Ask Anarlog anything" }),
+      screen.getByRole("button", { name: "Ask Meetspace anything" }),
     );
 
     expect(hoisted.sendEvent).toHaveBeenCalledWith({ type: "OPEN" });
@@ -382,7 +382,7 @@ describe("FloatingActionButton", () => {
     expect(button.hasAttribute("disabled")).toBe(true);
     expect(screen.getByTestId("spinner")).not.toBeNull();
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).toBeNull();
   });
 
@@ -417,7 +417,7 @@ describe("FloatingActionButton", () => {
     renderFloatingActionButton({ audioExists: true });
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).toBeNull();
 
     fireEvent.click(
@@ -434,7 +434,7 @@ describe("FloatingActionButton", () => {
     renderFloatingActionButton({ audioExists: true });
 
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).toBeNull();
 
     fireEvent.click(
@@ -505,7 +505,7 @@ describe("FloatingActionButton", () => {
     expect(status.className).toContain("text-red-400");
     expect(status.parentElement?.className).toContain("pb-4");
     expect(
-      screen.queryByRole("button", { name: "Ask Anarlog anything" }),
+      screen.queryByRole("button", { name: "Ask Meetspace anything" }),
     ).toBeNull();
   });
 

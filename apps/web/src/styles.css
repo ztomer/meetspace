@@ -22,7 +22,7 @@
 
   /* ── Animations ──────────────────────────────── */
   --animate-ios-opacity-spin: ios-opacity-spin 1s linear infinite;
-  --animate-hypr-dancing-stick: hypr-dancing-stick 1s ease-in-out infinite;
+  --animate-meetspace-dancing-stick: meetspace-dancing-stick 1s ease-in-out infinite;
 
   /* ── Colors: greys ────────────────────────────── */
   --grey-900: oklch(0.3 0.0197 81.53);
@@ -58,7 +58,7 @@
 }
 
 @theme inline {
-  @keyframes hypr-dancing-stick {
+  @keyframes meetspace-dancing-stick {
     0%,
     100% {
       transform: scaleY(0.2);

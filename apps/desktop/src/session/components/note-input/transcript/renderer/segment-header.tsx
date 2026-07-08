@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { SpeakerAssignPopover } from "./speaker-assign";
 import { useSpeakerLabelContextVersion } from "./speaker-label-context";

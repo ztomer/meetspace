@@ -2,8 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { canStartTrial as canStartTrialApi } from "@hypr/api-client";
-import { commands as authCommands } from "@hypr/plugin-auth";
+import { canStartTrial as canStartTrialApi } from "@meetspace/api-client";
+import { commands as authCommands } from "@meetspace/plugin-auth";
 
 import { BillingProvider } from "./billing";
 
@@ -21,27 +21,27 @@ vi.mock("./context", () => ({
   }),
 }));
 
-vi.mock("@hypr/api-client", () => ({
+vi.mock("@meetspace/api-client", () => ({
   canStartTrial: vi.fn(),
 }));
 
-vi.mock("@hypr/api-client/client", () => ({
+vi.mock("@meetspace/api-client/client", () => ({
   createClient: vi.fn(() => ({})),
 }));
 
-vi.mock("@hypr/plugin-auth", () => ({
+vi.mock("@meetspace/plugin-auth", () => ({
   commands: {
     decodeClaims: vi.fn(),
   },
 }));
 
-vi.mock("@hypr/plugin-opener2", () => ({
+vi.mock("@meetspace/plugin-opener2", () => ({
   commands: {
     openUrl: vi.fn(),
   },
 }));
 
-vi.mock("@hypr/plugin-windows", () => ({
+vi.mock("@meetspace/plugin-windows", () => ({
   openUrlWithInstruction: vi.fn(),
 }));
 

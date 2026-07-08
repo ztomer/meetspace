@@ -1,8 +1,8 @@
-import { commands as settingsCommands } from "@hypr/plugin-settings";
+import { commands as settingsCommands } from "@meetspace/plugin-settings";
 
 import { resolveIsDarkMode, type ThemePreference } from "./resolve";
 
-const THEME_STORAGE_KEY = "hypr-theme";
+const THEME_STORAGE_KEY = "meetspace-theme";
 const THEME_BOOTSTRAP_TIMEOUT_MS = 150;
 
 /** Keep `public/theme-boot.js` aligned with normalizeThemePreference + resolveIsDarkMode. */

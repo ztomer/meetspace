@@ -1,4 +1,4 @@
-import { SCHEMA } from "@hypr/store";
+import { SCHEMA } from "@meetspace/store";
 
 import type { TablesContent } from "~/store/tinybase/persister/shared";
 

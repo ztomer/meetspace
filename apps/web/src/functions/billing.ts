@@ -6,8 +6,8 @@ import {
   canStartTrial as canStartTrialApi,
   deleteAccount as deleteAccountApi,
   startTrial as startTrialApi,
-} from "@hypr/api-client";
-import { createClient } from "@hypr/api-client/client";
+} from "@meetspace/api-client";
+import { createClient } from "@meetspace/api-client/client";
 
 import { env, requireEnv } from "@/env";
 import { getRequestAppOrigin } from "@/functions/app-origin";

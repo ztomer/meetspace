@@ -37,7 +37,7 @@ const {
   useValueMock: vi.fn(),
 }));
 
-vi.mock("@hypr/ui/components/ui/popover", async () => {
+vi.mock("@meetspace/ui/components/ui/popover", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
   const PopoverContext = React.createContext<{
     open: boolean;
@@ -100,7 +100,7 @@ vi.mock("@hypr/ui/components/ui/popover", async () => {
   };
 });
 
-vi.mock("@hypr/ui/components/ui/checkbox", () => ({
+vi.mock("@meetspace/ui/components/ui/checkbox", () => ({
   Checkbox: ({
     checked,
     onCheckedChange,

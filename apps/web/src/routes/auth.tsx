@@ -6,9 +6,9 @@ import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
-import { AnarlogLogo } from "@/components/anarlog-logo";
+import { MeetspaceLogo } from "@/components/meetspace-logo";
 import {
   createDesktopSession,
   doAuth,
@@ -54,7 +54,7 @@ export const Route = createFileRoute("/auth")({
             to: "/callback/auth/",
             search: {
               flow: "desktop",
-              scheme: search.scheme ?? "hyprnote",
+              scheme: search.scheme ?? "meetspace",
               access_token: result.access_token,
               refresh_token: result.refresh_token,
             },
@@ -80,7 +80,7 @@ function Component() {
         <Header />
         <DesktopReauthView
           email={existingUser.email}
-          scheme={scheme ?? "hyprnote"}
+          scheme={scheme ?? "meetspace"}
         />
       </Container>
     );
@@ -211,8 +211,8 @@ function Header() {
           "border-color-brand border-b",
         ])}
       >
-        <AnarlogLogo compact className="text-fg h-10 w-auto" />
-        <h1 className="text-fg py-4 font-mono text-xl">Welcome to Anarlog</h1>
+        <MeetspaceLogo compact className="text-fg h-10 w-auto" />
+        <h1 className="text-fg py-4 font-mono text-xl">Welcome to Meetspace</h1>
       </div>
     </div>
   );
@@ -276,14 +276,14 @@ function LegalText() {
     <p className="mt-4 px-8 pb-8 text-center text-xs text-neutral-500">
       By signing up, you agree to our{" "}
       <a
-        href="https://anarlog.so/terms"
+        href="https://meetspace.so/terms"
         className="underline hover:text-neutral-700"
       >
         Terms of Service
       </a>{" "}
       and{" "}
       <a
-        href="https://anarlog.so/privacy"
+        href="https://meetspace.so/privacy"
         className="underline hover:text-neutral-700"
       >
         Privacy Policy

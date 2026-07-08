@@ -48,7 +48,7 @@ vi.mock("./overflow", () => ({
   },
 }));
 
-vi.mock("@hypr/plugin-opener2", () => ({
+vi.mock("@meetspace/plugin-opener2", () => ({
   commands: {
     openUrl: mocks.openUrl,
   },
