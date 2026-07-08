@@ -2,16 +2,19 @@ import { memo, useCallback, useEffect, useMemo } from "react";
 
 import { cn } from "@meetspace/utils";
 
+import { useSearch } from "../../search/context";
+import { useRenderedTranscriptData, useTranscriptOffset } from "./data-hooks";
 import {
-  useRenderedTranscriptSegments,
-  useTranscriptOffset,
-} from "./data-hooks";
-import { SegmentRenderer } from "./segment";
+  EMPTY_TRANSCRIPT_SEARCH,
+  SegmentRenderer,
+  type TranscriptSearchRenderState,
+} from "./segment";
 import {
   createSegmentKey,
   segmentsShallowEqual,
   useStableSegments,
 } from "./segment-hooks";
+import { useSpeakerLabelContextVersion } from "./speaker-label-context";
 
 import * as main from "~/store/tinybase/store/main";
 import {
@@ -46,7 +49,8 @@ export function RenderTranscript({
   startPlayback: () => void;
   audioExists: boolean;
 }) {
-  const storedSegments = useRenderedTranscriptSegments(transcriptId);
+  const { maxSpeakerNumber, segments: storedSegments } =
+    useRenderedTranscriptData(transcriptId);
   const mergedSegments = useMemo(
     () => mergeRenderedAndLiveSegments(storedSegments, liveSegments),
     [liveSegments, storedSegments],
@@ -69,6 +73,7 @@ export function RenderTranscript({
       seek={seek}
       startPlayback={startPlayback}
       audioExists={audioExists}
+      maxSpeakerNumber={maxSpeakerNumber}
     />
   );
 }
@@ -84,6 +89,7 @@ const SegmentsList = memo(
     seek,
     startPlayback,
     audioExists,
+    maxSpeakerNumber,
   }: {
     segments: Segment[];
     scrollElement: HTMLDivElement | null;
@@ -94,15 +100,43 @@ const SegmentsList = memo(
     seek: (sec: number) => void;
     startPlayback: () => void;
     audioExists: boolean;
+    maxSpeakerNumber?: number;
   }) => {
     const store = main.UI.useStore(main.STORE_ID);
+    const sessionId = store?.getCell("transcripts", transcriptId, "session_id");
+    const contextVersion = useSpeakerLabelContextVersion(
+      typeof sessionId === "string" ? sessionId : null,
+    );
+    const search = useSearch();
     const speakerLabelManager = useMemo(() => {
       if (!store) {
         return new SpeakerLabelManager();
       }
-      const ctx = defaultRenderLabelContext(store);
-      return SpeakerLabelManager.fromSegments(segments, ctx);
-    }, [segments, store]);
+      const ctx = defaultRenderLabelContext(
+        store,
+        typeof sessionId === "string" ? sessionId : null,
+      );
+      return SpeakerLabelManager.fromSegments(segments, ctx, maxSpeakerNumber);
+    }, [contextVersion, maxSpeakerNumber, segments, sessionId, store]);
+    const transcriptSearch = useMemo<TranscriptSearchRenderState>(() => {
+      const query = search?.query.trim() ?? "";
+      if (!search?.isVisible || !query) {
+        return EMPTY_TRANSCRIPT_SEARCH;
+      }
+
+      return {
+        query,
+        activeMatchId: search.activeMatchId,
+        caseSensitive: search.caseSensitive,
+        wholeWord: search.wholeWord,
+      };
+    }, [
+      search?.activeMatchId,
+      search?.caseSensitive,
+      search?.isVisible,
+      search?.query,
+      search?.wholeWord,
+    ]);
 
     const seekAndPlay = useCallback(
       (word: SegmentWord) => {
@@ -142,6 +176,7 @@ const SegmentsList = memo(
               currentMs={currentMs}
               seekAndPlay={seekAndPlay}
               audioExists={audioExists}
+              search={transcriptSearch}
             />
           </div>
         ))}
@@ -156,6 +191,7 @@ const SegmentsList = memo(
       prevProps.shouldScrollToEnd === nextProps.shouldScrollToEnd &&
       prevProps.currentMs === nextProps.currentMs &&
       prevProps.audioExists === nextProps.audioExists &&
+      prevProps.maxSpeakerNumber === nextProps.maxSpeakerNumber &&
       prevProps.seek === nextProps.seek &&
       prevProps.startPlayback === nextProps.startPlayback &&
       segmentsShallowEqual(prevProps.segments, nextProps.segments)

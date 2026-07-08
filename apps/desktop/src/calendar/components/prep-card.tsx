@@ -21,17 +21,17 @@ import { cn, format, safeParseDate } from "@meetspace/utils";
 
 import { useLanguageModel, useLLMConnectionStatus } from "~/ai/hooks";
 import { useNow } from "~/calendar/hooks";
-import { StandardTabWrapper } from "~/shared/main";
+import { StandardContentWrapper } from "~/shared/main";
 import * as main from "~/store/tinybase/store/main";
 import { useTabs } from "~/store/zustand/tabs";
 
 export function TabContentPrep() {
   return (
-    <StandardTabWrapper>
+    <StandardContentWrapper>
       <div className="bg-background/5 flex h-full flex-col overflow-hidden p-6">
         <ProactivePrepView />
       </div>
-    </StandardTabWrapper>
+    </StandardContentWrapper>
   );
 }
 
