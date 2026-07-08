@@ -41,6 +41,7 @@ export type RuntimeSpeakerHint = {
 export type RenderLabelContext = {
   getSelfHumanId: () => string | undefined;
   getHumanName: (id: string) => string | undefined;
+  getParticipantHumanIds?: () => string[];
 };
 
 export type SegmentKey = BoundSegmentKey;
@@ -109,8 +110,12 @@ export const SegmentKeyUtils = {
       return true;
     }
 
-    if (ctx && key.channel === "DirectMic" && key.speaker_index == null) {
+    if (ctx && key.channel === "DirectMic") {
       return Boolean(ctx.getSelfHumanId());
+    }
+
+    if (ctx && key.channel === "RemoteParty") {
+      return Boolean(getUniqueRemoteParticipantHumanId(ctx));
     }
 
     return false;
@@ -121,18 +126,27 @@ export const SegmentKeyUtils = {
     ctx?: RenderLabelContext,
     manager?: SpeakerLabelManager,
   ): string => {
-    if (ctx && key.speaker_human_id) {
-      const human = ctx.getHumanName(key.speaker_human_id);
+    const assignedHumanId = key.speaker_human_id;
+
+    if (ctx && assignedHumanId != null) {
+      const human = ctx.getHumanName(assignedHumanId);
       if (human) {
         return human;
       }
     }
 
-    if (ctx && key.channel === "DirectMic" && key.speaker_index == null) {
+    if (ctx && key.channel === "DirectMic" && assignedHumanId == null) {
       const selfHumanId = ctx.getSelfHumanId();
       if (selfHumanId) {
         const selfHuman = ctx.getHumanName(selfHumanId);
         return selfHuman || "You";
+      }
+    }
+
+    if (ctx && key.channel === "RemoteParty" && assignedHumanId == null) {
+      const remoteHumanId = getUniqueRemoteParticipantHumanId(ctx);
+      if (remoteHumanId) {
+        return ctx.getHumanName(remoteHumanId) || remoteHumanId;
       }
     }
 
@@ -153,6 +167,22 @@ export const SegmentKeyUtils = {
       : `Speaker ${channelLabel}`;
   },
 };
+
+function getUniqueRemoteParticipantHumanId(
+  ctx: RenderLabelContext,
+): string | undefined {
+  const selfHumanId = ctx.getSelfHumanId();
+  const participantHumanIds = ctx.getParticipantHumanIds?.() ?? [];
+  const remoteHumanIds = [
+    ...new Set(
+      participantHumanIds.filter(
+        (humanId) => humanId && humanId !== selfHumanId,
+      ),
+    ),
+  ];
+
+  return remoteHumanIds.length === 1 ? remoteHumanIds[0] : undefined;
+}
 
 export function getMaxSpeakerNumberForParticipants(
   participantHumanIds: readonly string[],

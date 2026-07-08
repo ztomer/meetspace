@@ -277,15 +277,15 @@ describe("Basic Tab Actions", () => {
     ]);
   });
 
-  test("openNew preserves account settings tab requests", () => {
-    useTabs.getState().openNew({ type: "settings", state: { tab: "account" } });
+  test("openNew preserves todo settings tab requests", () => {
+    useTabs.getState().openNew({ type: "settings", state: { tab: "todo" } });
 
     expect(useTabs.getState()).toHaveCurrentTab({
       type: "settings",
-      state: { tab: "account" },
+      state: { tab: "todo" },
     });
     expect(useTabs.getState()).toMatchTabsInOrder([
-      { type: "settings", active: true, state: { tab: "account" } },
+      { type: "settings", active: true, state: { tab: "todo" } },
     ]);
   });
 
