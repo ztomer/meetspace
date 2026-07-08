@@ -6,7 +6,6 @@ import { useCallback, useState } from "react";
 import { Kbd } from "@meetspace/ui/components/ui/kbd";
 import { cn } from "@meetspace/utils";
 
-import { AuthSection } from "./auth";
 import { MenuItem, ProfileFacehash } from "./shared";
 
 import { useAuth } from "~/auth";
@@ -17,9 +16,6 @@ import { useTabs } from "~/store/zustand/tabs";
 export function ProfileMenu() {
   const [isExpanded, setIsExpanded] = useState(false);
   const openNew = useTabs((state) => state.openNew);
-  const auth = useAuth();
-
-  const isAuthenticated = !!auth?.session;
 
   const closeMenu = useCallback(() => {
     setIsExpanded(false);
@@ -101,11 +97,6 @@ export function ProfileMenu() {
                 {menuItems.map((item) => (
                   <MenuItem key={item.label} {...item} />
                 ))}
-
-                <AuthSection
-                  isAuthenticated={isAuthenticated}
-                  onClose={closeMenu}
-                />
               </div>
             </div>
           </motion.div>

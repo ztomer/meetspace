@@ -26,7 +26,7 @@ async function getLanguageDefaults(): Promise<{
   spoken_languages?: string[];
 }> {
   const result = await detectCommands.getPreferredLanguages();
-  if (result.status !== "ok" || result.data.length === 0) {
+  if (result.status !== "ok" || !result.data || result.data.length === 0) {
     return {};
   }
   return {

@@ -6,7 +6,7 @@ import type {
   SessionStorage,
 } from "@meetspace/store";
 
-import { buildPastSessionNotes } from "~/session/components/bottom-accessory/past-notes";
+import { buildPastSessionNotes } from "~/session/insights/past-notes";
 import { DEFAULT_USER_ID } from "~/shared/utils";
 import type * as main from "~/store/tinybase/store/main";
 

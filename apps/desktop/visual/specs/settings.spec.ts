@@ -6,14 +6,14 @@ import { expect, test } from "../support/fixtures";
 // needs seeded data to render, give it its own handler in tauri-mock.ts.
 const SECTIONS = [
   "App",
-  "Data",
   "Notifications",
   "Permissions",
   "Calendar",
   "Contacts",
   "Intelligence",
   "Templates",
-  "Integrations",
+  "Transcription",
+  "Personalization",
 ];
 
 for (const section of SECTIONS) {

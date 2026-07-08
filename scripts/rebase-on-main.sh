@@ -205,7 +205,7 @@ bold "==> cargo check"
 cargo check
 
 bold "==> Fork hygiene guard (conflict markers + un-rebranded names)"
-python3 scripts/check-clean.py
+bash scripts/check-clean.sh
 
 green "==> Rebase verified against $TARGET."
 yellow "Inspect with: git log --oneline $TARGET..HEAD"
