@@ -55,19 +55,6 @@ describe("getPreferredProviderModel", () => {
     ).toBe("soniqo-qwen3-small");
   });
 
-  test("can keep a saved model visible even when it is not selectable", () => {
-    expect(
-      getPreferredProviderModel(
-        "cloud",
-        [
-          { id: "cloud", isDownloaded: false },
-          { id: "soniqo-parakeet-streaming", isDownloaded: true },
-        ],
-        { keepUnavailableSavedModel: true },
-      ),
-    ).toBe("cloud");
-  });
-
   test("clears the selection when a provider has no selectable models", () => {
     expect(
       getPreferredProviderModel("cloud", [

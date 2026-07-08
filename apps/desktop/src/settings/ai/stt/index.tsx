@@ -2,7 +2,7 @@ import { ConfigureProviders } from "./configure";
 import { SttSettingsProvider } from "./context";
 import {
   SelectProviderAndModel,
-  TranscriptionLanguageWarningToast,
+  TranscriptionLanguageWarningBanner,
 } from "./select";
 
 import { SettingsPageTitle } from "~/settings/page-title";
@@ -10,7 +10,7 @@ import { SettingsPageTitle } from "~/settings/page-title";
 export function STT() {
   return (
     <SttSettingsProvider>
-      <TranscriptionLanguageWarningToast />
+      <TranscriptionLanguageWarningBanner />
       <div className="flex flex-col gap-6">
         <SettingsPageTitle title="Transcription" />
         <SelectProviderAndModel />

@@ -17,7 +17,7 @@ import { FolderLocationSection } from "./folder-location";
 import { PermissionsSection } from "./permissions";
 import { OnboardingSection } from "./shared";
 
-import { StandardTabWrapper } from "~/shared/main";
+import { StandardContentWrapper } from "~/shared/main";
 import { type TabItem, TabItemBase } from "~/shared/tabs";
 import { StandaloneWindowShell } from "~/shared/window-shell";
 import { type Tab, useTabs } from "~/store/zustand/tabs";
@@ -139,7 +139,7 @@ function OnboardingScreenContent({
   }, [onFinish, queryClient]);
 
   return (
-    <StandardTabWrapper noBorder>
+    <StandardContentWrapper noBorder>
       <div className="relative flex h-full flex-col">
         <div
           data-tauri-drag-region={headerDragRegion || undefined}
@@ -201,6 +201,6 @@ function OnboardingScreenContent({
           </div>
         </div>
       </div>
-    </StandardTabWrapper>
+    </StandardContentWrapper>
   );
 }

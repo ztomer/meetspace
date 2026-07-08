@@ -2,22 +2,29 @@ import { useCallback } from "react";
 
 import type { TranscriptionParams } from "@meetspace/plugin-transcription";
 import type { TranscriptStorage } from "@meetspace/store";
+import { sonnerToast } from "@meetspace/ui/components/ui/toast";
 
 import { useListener } from "./contexts";
-import { useKeywords } from "./useKeywords";
+import { getSessionKeywords } from "./useKeywords";
 import { useSTTConnection } from "./useSTTConnection";
 
+import { useAuth } from "~/auth";
+import { useBillingAccess } from "~/auth/billing";
+import { env } from "~/env";
+import { deleteProcessedAudioForRetention } from "~/services/audio-retention";
 import { useConfigValue } from "~/shared/config";
 import { id } from "~/shared/utils";
 import * as main from "~/store/tinybase/store/main";
+import * as settings from "~/store/tinybase/store/settings";
 import type { BatchPersistCallback } from "~/store/zustand/listener/transcript";
-import { getTranscriptionLanguages } from "~/stt/capabilities";
+import {
+  getTranscriptionLanguages,
+  isSupportedLanguagesBatch,
+} from "~/stt/capabilities";
 import type { SpeakerHintWithId, WordWithId } from "~/stt/types";
 import {
-  parseTranscriptHints,
-  parseTranscriptWords,
-  updateTranscriptHints,
-  updateTranscriptWords,
+  createTranscriptAccumulator,
+  type TranscriptAccumulator,
 } from "~/stt/utils";
 
 type RunOptions = {
@@ -33,9 +40,17 @@ type RunOptions = {
 };
 
 type Store = NonNullable<ReturnType<typeof main.UI.useStore>>;
+type BatchTarget = {
+  provider: TranscriptionParams["provider"];
+  model: string;
+  baseUrl: string;
+  apiKey: string;
+  label: string;
+};
 
 const DIRECT_BATCH_PROVIDERS: Set<TranscriptionParams["provider"]> = new Set([
   "deepgram",
+  "cartesia",
   "soniox",
   "assemblyai",
   "openai",
@@ -48,11 +63,22 @@ const DIRECT_BATCH_PROVIDERS: Set<TranscriptionParams["provider"]> = new Set([
 ]);
 
 export const STOPPED_TRANSCRIPTION_ERROR_MESSAGE = "Transcription stopped.";
+const LOCAL_SONIQO_BATCH_TARGET = {
+  provider: "soniqo",
+  model: "soniqo-parakeet-batch",
+  baseUrl: "soniqo://local",
+  apiKey: "",
+  label: "Soniqo batch transcription",
+} satisfies BatchTarget;
 
 export function getBatchProvider(
   provider: string,
   model: string,
 ): TranscriptionParams["provider"] | null {
+  if (provider === "cloudflare_workers_ai") {
+    return "deepgram";
+  }
+
   if (provider === "meetspace") {
     if (model.startsWith("soniqo-")) return "soniqo";
     if (model.startsWith("am-")) return "am";
@@ -65,14 +91,58 @@ export function getBatchProvider(
 }
 
 export function canRunBatchTranscription(
+  _conn: { provider: string; model: string } | null,
+  _modelOverride?: string,
+) {
+  return true;
+}
+
+export function getBatchFallbackTarget({
+  isPaid,
+  accessToken,
+  apiBaseUrl,
+}: {
+  isPaid: boolean;
+  accessToken?: string | null;
+  apiBaseUrl: string;
+}): BatchTarget {
+  if (isPaid && accessToken) {
+    return {
+      provider: "meetspace",
+      model: "cloud",
+      baseUrl: new URL("/stt", apiBaseUrl).toString(),
+      apiKey: accessToken,
+      label: "Pro cloud transcription",
+    };
+  }
+
+  return LOCAL_SONIQO_BATCH_TARGET;
+}
+
+async function canUseBatchTarget(
+  provider: TranscriptionParams["provider"],
+  model: string,
+  languages: readonly string[],
+) {
+  return isSupportedLanguagesBatch(provider, model, languages);
+}
+
+function selectedProviderLabel(
   conn: { provider: string; model: string } | null,
   modelOverride?: string,
 ) {
   if (!conn) {
-    return false;
+    return "the selected speech-to-text provider";
   }
 
-  return getBatchProvider(conn.provider, modelOverride ?? conn.model) != null;
+  return modelOverride ?? conn.model ?? conn.provider;
+}
+
+function sameBatchTarget(
+  a: Pick<BatchTarget, "provider" | "model"> | null,
+  b: Pick<BatchTarget, "provider" | "model">,
+) {
+  return a?.provider === b.provider && a.model === b.model;
 }
 
 export function isStoppedTranscriptionError(error: unknown) {
@@ -114,38 +184,93 @@ export function getSessionSpeakerCount(
   return humanIds.size > 1 ? humanIds.size : undefined;
 }
 
+async function saveCompletedBatchTranscript(): Promise<void> {
+  try {
+    const { save } = await import("~/store/tinybase/store/save");
+    await save();
+  } catch (error) {
+    console.error("[runBatch] failed to save completed transcript", error);
+  }
+}
+
 export const useRunBatch = (sessionId: string) => {
   const store = main.UI.useStore(main.STORE_ID);
   const indexes = main.UI.useIndexes(main.STORE_ID);
   const { user_id } = main.UI.useValues(main.STORE_ID);
+  const settingsStore = settings.UI.useStore(settings.STORE_ID);
 
   const startTranscription = useListener((state) => state.startTranscription);
   const { conn } = useSTTConnection();
-  const keywords = useKeywords(sessionId);
+  const auth = useAuth();
+  const billing = useBillingAccess();
   const aiLanguage = useConfigValue("ai_language");
   const spokenLanguages = useConfigValue("spoken_languages");
+  const dictionaryTerms = useConfigValue("personalization_dictionary_terms");
 
   return useCallback(
     async (filePath: string, options?: RunOptions) => {
-      if (!store || !conn || !startTranscription) {
+      if (!store || !startTranscription) {
         throw new Error(
           "STT connection is not available. Please configure your speech-to-text provider.",
         );
       }
 
-      const provider = getBatchProvider(
-        conn.provider,
-        options?.model ?? conn.model,
-      );
+      const languages =
+        options?.languages ??
+        getTranscriptionLanguages(aiLanguage, spokenLanguages);
+      const selectedModel = options?.model ?? conn?.model;
+      const selectedProvider =
+        conn && selectedModel
+          ? getBatchProvider(conn.provider, selectedModel)
+          : null;
+      const selectedTarget =
+        conn && selectedModel && selectedProvider
+          ? {
+              provider: selectedProvider,
+              model: selectedModel,
+              baseUrl: options?.baseUrl ?? conn.baseUrl,
+              apiKey: options?.apiKey ?? conn.apiKey,
+              label: selectedModel,
+            }
+          : null;
+      const selectedTargetSupported = selectedTarget
+        ? await canUseBatchTarget(
+            selectedTarget.provider,
+            selectedTarget.model,
+            languages,
+          )
+        : false;
+      const fallbackTarget = getBatchFallbackTarget({
+        isPaid: billing.isPaid,
+        accessToken: auth?.session?.access_token,
+        apiBaseUrl: env.VITE_API_URL,
+      });
+      const shouldUseSelectedTarget =
+        selectedTargetSupported ||
+        sameBatchTarget(selectedTarget, fallbackTarget);
+      const target = shouldUseSelectedTarget
+        ? (selectedTarget ?? fallbackTarget)
+        : fallbackTarget;
 
-      if (!provider) {
-        throw new Error(
-          `Batch transcription is not supported for provider: ${conn.provider}`,
-        );
+      if (!shouldUseSelectedTarget) {
+        sonnerToast.message("Using a batch transcription provider", {
+          description: `${
+            selectedTarget
+              ? selectedProviderLabel(conn, selectedModel)
+              : selectedProviderLabel(conn)
+          } is not available for batch transcription. Using ${target.label} instead.`,
+        });
       }
 
       const createdAt = new Date().toISOString();
       const memoMd = store.getCell("sessions", sessionId, "raw_md");
+      const keywords =
+        options?.keywords ??
+        getSessionKeywords({
+          store,
+          sessionId,
+          dictionaryTerms,
+        });
       let transcriptId: string | null = null;
       const inferredNumSpeakers =
         options?.numSpeakers === undefined &&
@@ -156,6 +281,10 @@ export const useRunBatch = (sessionId: string) => {
 
       const handlePersist: BatchPersistCallback | undefined =
         options?.handlePersist;
+      let wroteDefaultTranscript = false;
+      const transcriptAccumulatorRef: {
+        current: TranscriptAccumulator | null;
+      } = { current: null };
 
       const persist =
         handlePersist ??
@@ -191,6 +320,12 @@ export const useRunBatch = (sessionId: string) => {
 
               store.setRow("transcripts", currentTranscriptId, transcriptRow);
             });
+
+            transcriptAccumulatorRef.current = createTranscriptAccumulator(
+              store,
+              currentTranscriptId,
+              { words: [], hints: [] },
+            );
           }
 
           const currentTranscriptId = transcriptId;
@@ -198,13 +333,10 @@ export const useRunBatch = (sessionId: string) => {
             return;
           }
 
-          const shouldReplace = persistOptions?.mode === "replace";
-          const existingWords = shouldReplace
-            ? []
-            : parseTranscriptWords(store, currentTranscriptId);
-          const existingHints = shouldReplace
-            ? []
-            : parseTranscriptHints(store, currentTranscriptId);
+          transcriptAccumulatorRef.current ??= createTranscriptAccumulator(
+            store,
+            currentTranscriptId,
+          );
 
           const newWords: WordWithId[] = [];
           const newWordIds: string[] = [];
@@ -245,7 +377,7 @@ export const useRunBatch = (sessionId: string) => {
               word_id: wordId,
               type: "provider_speaker_index",
               value: JSON.stringify({
-                provider: hint.data.provider ?? conn.provider,
+                provider: hint.data.provider ?? target.provider,
                 channel: hint.data.channel ?? word.channel,
                 speaker_index: hint.data.speaker_index,
               }),
@@ -253,52 +385,60 @@ export const useRunBatch = (sessionId: string) => {
           });
 
           store.transaction(() => {
-            updateTranscriptWords(store, currentTranscriptId, [
-              ...existingWords,
-              ...newWords,
-            ]);
-            updateTranscriptHints(store, currentTranscriptId, [
-              ...existingHints,
-              ...newHints,
-            ]);
+            transcriptAccumulatorRef.current?.appendWordsAndHints(
+              newWords,
+              newHints,
+              persistOptions,
+            );
           });
 
-          void import("~/store/tinybase/store/save")
-            .then(({ save }) => save())
-            .catch((error) => {
-              console.error(
-                "[runBatch] failed to save streamed transcript",
-                error,
-              );
-            });
+          wroteDefaultTranscript = true;
         });
 
       const params: TranscriptionParams = {
         session_id: sessionId,
-        provider,
+        provider: target.provider,
         file_path: filePath,
-        model: options?.model ?? conn.model,
-        base_url: options?.baseUrl ?? conn.baseUrl,
-        api_key: options?.apiKey ?? conn.apiKey,
-        keywords: options?.keywords ?? keywords ?? [],
-        languages:
-          options?.languages ??
-          getTranscriptionLanguages(aiLanguage, spokenLanguages),
+        model: target.model,
+        base_url: target.baseUrl,
+        api_key: target.apiKey,
+        keywords,
+        languages,
         num_speakers: options?.numSpeakers ?? inferredNumSpeakers,
         min_speakers: options?.minSpeakers,
         max_speakers: options?.maxSpeakers,
       };
 
-      await startTranscription(params, { handlePersist: persist });
+      try {
+        await startTranscription(params, { handlePersist: persist });
+      } finally {
+        if (!handlePersist && wroteDefaultTranscript) {
+          await saveCompletedBatchTranscript();
+        }
+
+        transcriptAccumulatorRef.current?.dispose();
+        transcriptAccumulatorRef.current = null;
+      }
+
+      if (settingsStore) {
+        await deleteProcessedAudioForRetention(
+          store as main.Store,
+          settingsStore as settings.Store,
+          sessionId,
+        );
+      }
     },
     [
       conn,
+      auth?.session?.access_token,
       aiLanguage,
+      billing.isPaid,
+      dictionaryTerms,
       indexes,
-      keywords,
       spokenLanguages,
       startTranscription,
       sessionId,
+      settingsStore,
       store,
       user_id,
     ],
