@@ -114,7 +114,7 @@ export const SegmentRenderer = memo(
                 data-line-current={isCurrentLine ? "true" : undefined}
                 className={cn([
                   "-mx-0.5 rounded-xs px-0.5",
-                  isCurrentLine && "bg-warning-bg/50",
+                  isCurrentLine && "bg-yellow-100/50 dark:bg-yellow-900/30",
                 ])}
               >
                 {lineIdx > 0 ? " " : null}

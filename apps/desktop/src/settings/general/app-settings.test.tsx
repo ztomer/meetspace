@@ -17,8 +17,7 @@ function renderAppSettings({ floatingBar = true } = {}) {
       autoStartScheduledMeetings={setting()}
       autoStopMeetings={setting()}
       floatingBar={setting(floatingBar)}
-      showAppInDock={setting()}
-      showTrayIcon={setting()}
+      sidebarTimeline={setting()}
       telemetryConsent={setting()}
     />,
   );

@@ -295,10 +295,9 @@ describe("dictionary term helpers", () => {
   });
 
   it("normalizes duplicate terms while preserving first spelling", () => {
-    expect(normalizeKeywordList(["Meetspace", " meetspace ", "Parakeet"])).toEqual([
-      "Meetspace",
-      "Parakeet",
-    ]);
+    expect(
+      normalizeKeywordList(["Meetspace", " meetspace ", "Parakeet"]),
+    ).toEqual(["Meetspace", "Parakeet"]);
   });
 
   it("formats stored terms one per line", () => {
