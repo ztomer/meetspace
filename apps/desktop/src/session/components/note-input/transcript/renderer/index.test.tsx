@@ -16,7 +16,6 @@ const mocks = vi.hoisted(() => ({
     scrollTarget: null as "top" | "bottom" | null,
   },
 }));
-
 vi.mock("react-hotkeys-hook", () => ({
   useHotkeys: vi.fn(),
 }));
@@ -34,6 +33,14 @@ vi.mock("~/audio-player", () => ({
 
 vi.mock("~/audio-player/provider", () => ({
   useAudioTime: () => ({ current: 0 }),
+}));
+
+vi.mock("~/contexts/shell", () => ({
+  useShell: () => ({
+    chat: {
+      mode: mocks.chatMode,
+    },
+  }),
 }));
 
 vi.mock("./selection-menu", () => ({
@@ -115,7 +122,6 @@ describe("TranscriptViewer", () => {
         .getAttribute("data-should-scroll-to-end"),
     ).toBe("true");
   });
-
   it("keeps active transcript sessions pinned near the exact bottom edge", () => {
     mocks.scrollDetection.isAtBottom = false;
     mocks.scrollDetection.isNearBottom = true;

@@ -23,6 +23,7 @@ import { PermissionsSection } from "./permissions";
 import { OnboardingSection } from "./shared";
 
 import { useAuth } from "~/auth";
+import { StandardContentWrapper } from "~/shared/main";
 import { StandaloneWindowShell } from "~/shared/window-shell";
 import { type Tab, useTabs } from "~/store/zustand/tabs";
 
@@ -142,13 +143,14 @@ function OnboardingScreenContent({
   );
 
   return (
-    <div className="bg-card relative flex h-full min-h-0 flex-col overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute inset-0"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 2, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
+    <StandardContentWrapper noBorder>
+      <div className="bg-card relative flex h-full min-h-0 flex-col overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <motion.div
+            className="absolute inset-0"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 2, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
         >
           <video
             ref={onboardingVideoRef}
@@ -309,5 +311,6 @@ function OnboardingScreenContent({
         </div>
       </div>
     </div>
+  </StandardContentWrapper>
   );
 }

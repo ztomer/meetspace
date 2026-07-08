@@ -415,7 +415,6 @@ function SettingsAppContent({
           </form.Field>
         </div>
       </div>
-
       <StorageSettingsView />
       {auth.session?.user.id && (
         <E2eeSetupDialog
