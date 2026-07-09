@@ -13,9 +13,9 @@ import type {
 import {
   commands as fsSyncCommands,
   type ParsedDocument,
-} from "@hypr/plugin-fs-sync";
-import { commands as fs2Commands } from "@hypr/plugin-fs2";
-import { extractChangedTables } from "@hypr/tinybase-utils";
+} from "@meetspace/plugin-fs-sync";
+import { commands as fs2Commands } from "@meetspace/plugin-fs2";
+import { extractChangedTables } from "@meetspace/tinybase-utils";
 
 import {
   createFileListener,

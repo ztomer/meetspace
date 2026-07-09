@@ -5,12 +5,12 @@ edition = "2024"
 
 [features]
 default = ["onnx"]
-onnx = ["dep:hypr-onnx", "dep:knf-rs"]
-coreml = ["onnx", "hypr-onnx/coreml"]
-directml = ["onnx", "hypr-onnx/directml"]
+onnx = ["dep:meetspace-onnx", "dep:knf-rs"]
+coreml = ["onnx", "meetspace-onnx/coreml"]
+directml = ["onnx", "meetspace-onnx/directml"]
 
 [dependencies]
-hypr-onnx = { workspace = true, optional = true }
+meetspace-onnx = { workspace = true, optional = true }
 knf-rs = { git = "https://github.com/thewh1teagle/pyannote-rs", rev = "e23bd29", package = "knf-rs", optional = true }
 
 serde = { workspace = true }
@@ -18,6 +18,6 @@ thiserror = { workspace = true }
 
 [dev-dependencies]
 approx = { workspace = true }
-hypr-data = { workspace = true }
+meetspace-data = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }

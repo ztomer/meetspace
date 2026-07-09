@@ -5,10 +5,10 @@ import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
-import { deriveBillingInfo, type SupabaseJwtPayload } from "@hypr/supabase";
-import { cn } from "@hypr/utils";
+import { deriveBillingInfo, type SupabaseJwtPayload } from "@meetspace/supabase";
+import { cn } from "@meetspace/utils";
 
-import { AnarlogLogo } from "@/components/anarlog-logo";
+import { MeetspaceLogo } from "@/components/meetspace-logo";
 import { exchangeOAuthCode, exchangeOtpToken } from "@/functions/auth";
 import { desktopSchemeSchema } from "@/functions/desktop-flow";
 import { useAnalytics } from "@/hooks/use-posthog";
@@ -27,7 +27,7 @@ const validateSearch = z.object({
     ])
     .optional(),
   flow: z.enum(["desktop", "web"]).default("desktop"),
-  scheme: desktopSchemeSchema.catch("hyprnote"),
+  scheme: desktopSchemeSchema.catch("meetspace"),
   redirect: z.string().optional(),
   access_token: z.string().optional(),
   refresh_token: z.string().optional(),
@@ -176,7 +176,7 @@ function Header({ title }: { title: string }) {
           "border-color-brand border-b",
         ])}
       >
-        <AnarlogLogo compact className="text-fg h-10 w-auto" />
+        <MeetspaceLogo compact className="text-fg h-10 w-auto" />
         <h1 className="text-fg py-4 font-mono text-xl">{title}</h1>
       </div>
     </div>
@@ -304,7 +304,7 @@ function Component() {
                   "flex items-center justify-center",
                 ])}
               >
-                Open Anarlog
+                Open Meetspace
               </button>
 
               <button

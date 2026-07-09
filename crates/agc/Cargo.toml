@@ -5,11 +5,11 @@ edition = "2024"
 
 [dev-dependencies]
 hound = { workspace = true }
-hypr-data = { workspace = true }
+meetspace-data = { workspace = true }
 rodio = { workspace = true }
 
 [dependencies]
-hypr-audio-utils = { workspace = true }
-hypr-vad-masking = { workspace = true }
+meetspace-audio-utils = { workspace = true }
+meetspace-vad-masking = { workspace = true }
 
 dagc = "0.1.1"

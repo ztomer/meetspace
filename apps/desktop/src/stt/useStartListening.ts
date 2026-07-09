@@ -1,7 +1,7 @@
 import { useCallback, useRef } from "react";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import type { TranscriptStorage } from "@hypr/store";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import type { TranscriptStorage } from "@meetspace/store";
 
 import { useListener } from "./contexts";
 import { getSessionKeywords } from "./useKeywords";

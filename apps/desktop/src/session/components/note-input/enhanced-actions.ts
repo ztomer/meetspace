@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 
 import { useAITaskTask } from "~/ai/hooks";
 import { useLanguageModel, useLLMConnectionStatus } from "~/ai/hooks";

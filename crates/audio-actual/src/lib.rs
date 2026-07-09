@@ -13,10 +13,10 @@ pub use cpal;
 use cpal::traits::{DeviceTrait, HostTrait};
 
 use futures_util::Stream;
-pub use hypr_audio::{AudioProvider, CaptureConfig, CaptureFrame, CaptureStream, Error};
-pub use hypr_audio_interface::AsyncSource;
+pub use meetspace_audio::{AudioProvider, CaptureConfig, CaptureFrame, CaptureStream, Error};
+pub use meetspace_audio_interface::AsyncSource;
 
-pub const TAP_DEVICE_NAME: &str = "hypr-audio-tap";
+pub const TAP_DEVICE_NAME: &str = "meetspace-audio-tap";
 
 pub struct AudioOutput {}
 

@@ -1,6 +1,6 @@
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
-import type { SessionContentData } from "@hypr/plugin-fs-sync";
-import type { SessionContext, Transcript } from "@hypr/plugin-template";
+import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
+import type { SessionContentData } from "@meetspace/plugin-fs-sync";
+import type { SessionContext, Transcript } from "@meetspace/plugin-template";
 
 import type * as main from "~/store/tinybase/store/main";
 import {

@@ -5,33 +5,33 @@ edition = "2024"
 
 [features]
 default = []
-coreml = ["hypr-whisper-local/coreml"]
-directml = ["hypr-pyannote-local/directml"]
-cuda = ["hypr-whisper-local/cuda"]
-hipblas = ["hypr-whisper-local/hipblas"]
-openblas = ["hypr-whisper-local/openblas"]
-metal = ["hypr-whisper-local/metal"]
-vulkan = ["hypr-whisper-local/vulkan"]
-openmp = ["hypr-whisper-local/openmp"]
+coreml = ["meetspace-whisper-local/coreml"]
+directml = ["meetspace-pyannote-local/directml"]
+cuda = ["meetspace-whisper-local/cuda"]
+hipblas = ["meetspace-whisper-local/hipblas"]
+openblas = ["meetspace-whisper-local/openblas"]
+metal = ["meetspace-whisper-local/metal"]
+vulkan = ["meetspace-whisper-local/vulkan"]
+openmp = ["meetspace-whisper-local/openmp"]
 [dev-dependencies]
 bytes = { workspace = true }
 dirs = { workspace = true }
 futures-util = { workspace = true }
-hypr-data = { workspace = true }
+meetspace-data = { workspace = true }
 owhisper-client = { workspace = true }
 reqwest = { workspace = true, features = ["json", "stream"] }
 tokio-tungstenite = { workspace = true }
 
 [dependencies]
-hypr-audio-chunking = { workspace = true }
-hypr-audio-interface = { workspace = true }
-hypr-audio-utils = { workspace = true }
-hypr-model-manager = { workspace = true, features = ["whisper-local"] }
-hypr-pyannote-local = { workspace = true }
-hypr-transcribe-core = { workspace = true }
-hypr-whisper = { workspace = true }
-hypr-whisper-local = { workspace = true }
-hypr-ws-utils = { workspace = true }
+meetspace-audio-chunking = { workspace = true }
+meetspace-audio-interface = { workspace = true }
+meetspace-audio-utils = { workspace = true }
+meetspace-model-manager = { workspace = true, features = ["whisper-local"] }
+meetspace-pyannote-local = { workspace = true }
+meetspace-transcribe-core = { workspace = true }
+meetspace-whisper = { workspace = true }
+meetspace-whisper-local = { workspace = true }
+meetspace-ws-utils = { workspace = true }
 owhisper-interface = { workspace = true }
 
 bytes = { workspace = true }

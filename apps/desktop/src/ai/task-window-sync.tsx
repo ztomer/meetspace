@@ -1,7 +1,7 @@
 import { emit, emitTo, listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { useEffect } from "react";
 
-import { getCurrentWebviewWindowLabel } from "@hypr/plugin-windows";
+import { getCurrentWebviewWindowLabel } from "@meetspace/plugin-windows";
 
 import { getEnhancerService } from "~/services/enhancer";
 import type { AITaskStore } from "~/store/zustand/ai-task";

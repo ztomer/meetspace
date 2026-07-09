@@ -10,7 +10,7 @@ import {
 const settingsMocks = vi.hoisted(() => ({
   vaultBase: vi
     .fn()
-    .mockResolvedValue({ status: "ok", data: "/mock/data/dir/hyprnote" }),
+    .mockResolvedValue({ status: "ok", data: "/mock/data/dir/meetspace" }),
 }));
 
 const fs2Mocks = vi.hoisted(() => ({
@@ -28,10 +28,10 @@ const notifyMocks = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("@hypr/plugin-settings", () => ({ commands: settingsMocks }));
-vi.mock("@hypr/plugin-fs2", () => ({ commands: fs2Mocks }));
-vi.mock("@hypr/plugin-fs-sync", () => ({ commands: fsSyncMocks }));
-vi.mock("@hypr/plugin-notify", () => ({ events: notifyMocks }));
+vi.mock("@meetspace/plugin-settings", () => ({ commands: settingsMocks }));
+vi.mock("@meetspace/plugin-fs2", () => ({ commands: fs2Mocks }));
+vi.mock("@meetspace/plugin-fs-sync", () => ({ commands: fsSyncMocks }));
+vi.mock("@meetspace/plugin-notify", () => ({ events: notifyMocks }));
 
 describe("createJsonFilePersister", () => {
   let store: ReturnType<typeof createTestMainStore>;

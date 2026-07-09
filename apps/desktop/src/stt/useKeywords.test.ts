@@ -162,9 +162,9 @@ describe("getSessionKeywords", () => {
       getSessionKeywords({
         store: store as unknown as KeywordStore,
         sessionId: "session-1",
-        dictionaryTerms: ["Anarlog"],
+        dictionaryTerms: ["Meetspace"],
       }),
-    ).toEqual(expect.arrayContaining(["Anarlog", "Launch"]));
+    ).toEqual(expect.arrayContaining(["Meetspace", "Launch"]));
   });
 
   it("prioritizes mapped participants and attached event attendees", () => {
@@ -251,10 +251,10 @@ describe("getSessionKeywords", () => {
     const result = getSessionKeywords({
       store: store as unknown as KeywordStore,
       sessionId: "session-1",
-      dictionaryTerms: ["Anarlog"],
+      dictionaryTerms: ["Meetspace"],
     });
 
-    expect(result.slice(0, 3)).toEqual(["Alice Kim", "Mina Park", "Anarlog"]);
+    expect(result.slice(0, 3)).toEqual(["Alice Kim", "Mina Park", "Meetspace"]);
     expect(result).toEqual(expect.arrayContaining(["Launch"]));
     expect(result).not.toContain("Bob Stone");
     expect(result).not.toContain("Hidden Person");
@@ -290,20 +290,20 @@ describe("buildKeywords", () => {
 describe("dictionary term helpers", () => {
   it("parses newline and comma separated terms", () => {
     expect(
-      parseDictionaryTermsText("Anarlog\nFastConformer, Parakeet TDT"),
-    ).toEqual(["Anarlog", "FastConformer", "Parakeet TDT"]);
+      parseDictionaryTermsText("Meetspace\nFastConformer, Parakeet TDT"),
+    ).toEqual(["Meetspace", "FastConformer", "Parakeet TDT"]);
   });
 
   it("normalizes duplicate terms while preserving first spelling", () => {
-    expect(normalizeKeywordList(["Anarlog", " anarlog ", "Parakeet"])).toEqual([
-      "Anarlog",
+    expect(normalizeKeywordList(["Meetspace", " meetspace ", "Parakeet"])).toEqual([
+      "Meetspace",
       "Parakeet",
     ]);
   });
 
   it("formats stored terms one per line", () => {
-    expect(formatDictionaryTerms(["Anarlog", "Parakeet TDT"])).toBe(
-      "Anarlog\nParakeet TDT",
+    expect(formatDictionaryTerms(["Meetspace", "Parakeet TDT"])).toBe(
+      "Meetspace\nParakeet TDT",
     );
   });
 });

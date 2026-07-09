@@ -7,10 +7,10 @@ edition = "2024"
 specta = ["dep:specta"]
 
 [dependencies]
-hypr-file = { workspace = true }
-hypr-gguf = { workspace = true }
-hypr-lmstudio = { workspace = true }
-hypr-local-model = { workspace = true }
+meetspace-file = { workspace = true }
+meetspace-gguf = { workspace = true }
+meetspace-lmstudio = { workspace = true }
+meetspace-local-model = { workspace = true }
 
 dirs = { workspace = true }
 serde = { workspace = true }

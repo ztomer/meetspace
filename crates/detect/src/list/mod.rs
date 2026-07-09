@@ -16,31 +16,31 @@ pub fn list_installed_apps() -> Vec<InstalledApp> {
 }
 
 const SELF_BUNDLE_IDS: &[&str] = &[
-    "com.hyprnote.dev",
-    "com.hyprnote.stable",
-    "com.hyprnote.staging",
-    "com.hyprnote.nightly",
+    "com.meetspace.dev",
+    "com.meetspace.stable",
+    "com.meetspace.staging",
+    "com.meetspace.nightly",
 ];
 
 const SELF_APP_NAMES: &[&str] = &[
-    "anarlog",
-    "anarlog staging",
-    "anarlog nightly",
-    "hyprnote",
-    "hyprnote staging",
-    "hyprnote nightly",
+    "meetspace",
+    "meetspace staging",
+    "meetspace nightly",
+    "meetspace",
+    "meetspace staging",
+    "meetspace nightly",
     "char",
     "char staging",
     "char nightly",
 ];
 
 const SELF_APP_PATH_SEGMENTS: &[&str] = &[
-    "/anarlog.app/",
-    "/anarlog staging.app/",
-    "/anarlog nightly.app/",
-    "/hyprnote.app/",
-    "/hyprnote staging.app/",
-    "/hyprnote nightly.app/",
+    "/meetspace.app/",
+    "/meetspace staging.app/",
+    "/meetspace nightly.app/",
+    "/meetspace.app/",
+    "/meetspace staging.app/",
+    "/meetspace nightly.app/",
     "/char.app/",
     "/char staging.app/",
     "/char nightly.app/",
@@ -96,25 +96,25 @@ mod tests {
 
     #[test]
     fn test_is_self_app_matches_known_bundle_ids() {
-        assert!(is_self_app(&app("com.hyprnote.stable", "Anarlog")));
-        assert!(is_self_app(&app("com.hyprnote.Hyprnote", "Hyprnote")));
+        assert!(is_self_app(&app("com.meetspace.stable", "Meetspace")));
+        assert!(is_self_app(&app("com.meetspace.Meetspace", "Meetspace")));
     }
 
     #[test]
     fn test_is_self_app_matches_renamed_app_names() {
-        assert!(is_self_app(&app("pid:42", "Anarlog")));
+        assert!(is_self_app(&app("pid:42", "Meetspace")));
         assert!(is_self_app(&app("pid:43", "Char Nightly")));
-        assert!(is_self_app(&app("pid:44", "Hyprnote Staging")));
+        assert!(is_self_app(&app("pid:44", "Meetspace Staging")));
     }
 
     #[test]
     fn test_is_self_app_matches_path_fallbacks() {
         assert!(is_self_app(&app(
-            "/Applications/Anarlog.app/Contents/MacOS/anarlog",
+            "/Applications/Meetspace.app/Contents/MacOS/meetspace",
             "Unknown",
         )));
         assert!(is_self_app(&app(
-            "/Applications/Hyprnote Nightly.app/Contents/MacOS/Hyprnote Nightly",
+            "/Applications/Meetspace Nightly.app/Contents/MacOS/Meetspace Nightly",
             "Unknown",
         )));
     }

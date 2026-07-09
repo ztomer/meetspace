@@ -29,23 +29,23 @@ fn main() {
             },
             Participant {
                 name: Some("John Jeong".to_string()),
-                email: "john@hyprnote.com".to_string(),
+                email: "john@meetspace.com".to_string(),
                 status: ParticipantStatus::Accepted,
             },
             Participant {
                 name: Some("Yujong Lee".to_string()),
-                email: "yujonglee@hyprnote.com".to_string(),
+                email: "yujonglee@meetspace.com".to_string(),
                 status: ParticipantStatus::Maybe,
             },
             Participant {
                 name: Some("Tony Stark".to_string()),
-                email: "tony@hyprnote.com".to_string(),
+                email: "tony@meetspace.com".to_string(),
                 status: ParticipantStatus::Declined,
             },
         ];
 
         let event_details = EventDetails {
-            what: "Discovery call - Apple <> Hyprnote".to_string(),
+            what: "Discovery call - Apple <> Meetspace".to_string(),
             timezone: Some("America/Cupertino".to_string()),
             location: Some("https://zoom.us/j/123456789".to_string()),
         };
@@ -65,7 +65,7 @@ fn main() {
             })
             .participants(participants)
             .event_details(event_details)
-            .action_label("Open Anarlog")
+            .action_label("Open Meetspace")
             .start_time(start_time)
             .build();
 

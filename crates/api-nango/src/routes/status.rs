@@ -1,5 +1,5 @@
 use axum::{Extension, Json, extract::State};
-use hypr_api_auth::AuthContext;
+use meetspace_api_auth::AuthContext;
 use serde::Serialize;
 use utoipa::ToSchema;
 
