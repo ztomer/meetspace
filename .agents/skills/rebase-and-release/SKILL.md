@@ -32,10 +32,33 @@ This skill automates the process of rebasing the local-first `meetspace` fork on
      ```bash
      ./scripts/rebase-push-release.sh --no-push
      ```
-   - **Custom Branch**: Specify a target branch to push/package if not the current branch:
-     ```bash
-     ./scripts/rebase-push-release.sh my-feature-branch
-     ```
+    - **Custom Branch**: Specify a target branch to push/package if not the current branch:
+      ```bash
+      ./scripts/rebase-push-release.sh my-feature-branch
+      ```
+
+### Cutting a Full Release (auto-updates Homebrew)
+
+To rebase, push, and publish a GitHub release in one command, use `--release`.
+Instead of building a local dev DMG, this cuts the tag + GitHub release, which
+triggers the `Build & Release Artifacts` workflow. That workflow builds the
+stable DMG **and auto-updates the `ztomer/homebrew-tap` cask** from
+`scripts/brew/meetspace.rb` (with a manual-push fallback if CI times out).
+
+```bash
+# Bump to a specific meet version, then release (Homebrew updates automatically):
+./scripts/rebase-push-release.sh --release --version 1.1.16-meet1
+
+# Or let the version be derived from the latest upstream stable tag in HEAD:
+./scripts/rebase-push-release.sh --release
+```
+
+`--version` accepts either form (`1.1.16-meet1` == `1.1.16_meet1`) and bumps
+`apps/desktop/src-tauri/Cargo.toml`, `Cargo.lock`, and
+`scripts/brew/meetspace.rb`, committing the bump before the release. Under the
+hood `--release` delegates to `scripts/push_release.sh`, which pushes `MIT_BACK`,
+recreates the tag, creates the GitHub release, watches the CI build, and polls
+the Homebrew tap to confirm the cask moved.
 
 ### Troubleshooting Rebase Conflicts
 
