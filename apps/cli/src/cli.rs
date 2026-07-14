@@ -5,7 +5,11 @@ use clap::{Parser, Subcommand, ValueEnum};
 use meetspace_agent_access::{DEFAULT_TRANSCRIPT_LIMIT, MAX_TRANSCRIPT_LIMIT};
 
 #[derive(Debug, Parser)]
-#[command(name = "meetspace", version, about = "Query local Meetspace meeting data")]
+#[command(
+    name = "meetspace",
+    version,
+    about = "Query local Meetspace meeting data"
+)]
 pub struct Args {
     #[arg(
         long,
@@ -117,7 +121,14 @@ mod tests {
     #[test]
     fn parses_meeting_list_filters() {
         let args = Args::parse_from([
-            "meetspace", "--json", "meetings", "list", "--query", "planning", "--limit", "10",
+            "meetspace",
+            "--json",
+            "meetings",
+            "list",
+            "--query",
+            "planning",
+            "--limit",
+            "10",
         ]);
 
         assert!(args.json);

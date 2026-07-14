@@ -8,7 +8,9 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
+
 import { syncGoogleCalendar } from "./google-sync";
+
 import { useConfigValues } from "~/shared/config";
 
 const SYNC_INTERVAL_MS = 5 * 60 * 1000;

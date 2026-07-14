@@ -133,10 +133,13 @@ function OnboardingScreenContent({
     });
   }, [currentPlatform, currentStep]);
 
-  const handleFinish = useCallback((sessionId?: string) => {
-    void queryClient.invalidateQueries({ queryKey: ["onboarding-needed"] });
-    onFinish(sessionId);
-  }, [onFinish, queryClient]);
+  const handleFinish = useCallback(
+    (sessionId?: string) => {
+      void queryClient.invalidateQueries({ queryKey: ["onboarding-needed"] });
+      onFinish(sessionId);
+    },
+    [onFinish, queryClient],
+  );
 
   return (
     <StandardContentWrapper noBorder>

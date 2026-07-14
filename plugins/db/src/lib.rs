@@ -170,23 +170,10 @@ pub fn init_with_cloudsync<R: tauri::Runtime>(
         .invoke_handler(specta_builder.invoke_handler())
         .setup(move |app, _| {
             meetspace_tauri_utils::block_on(meetspace_db_app::prepare_schema(db.as_ref()))?;
-            meetspace_tauri_utils::block_on(import::import_legacy_data(app.app_handle(), db.pool()))?;
-            if let Some(config) = startup_config.clone() {
-                if let Err(error) = meetspace_tauri_utils::block_on(db.cloudsync_configure(config)) {
-                    tracing::warn!(%error, "failed to configure startup cloudsync");
-                } else {
-                    let sync_db = std::sync::Arc::clone(&db);
-                    tauri::async_runtime::spawn(async move {
-                        if let Err(error) = sync_db.cloudsync_start().await {
-                            tracing::warn!(%error, "failed to start cloudsync");
-                            return;
-                        }
-                        if let Err(error) = sync_db.cloudsync_trigger_sync().await {
-                            tracing::warn!(%error, "initial cloudsync failed");
-                        }
-                    });
-                }
-            }
+            meetspace_tauri_utils::block_on(import::import_legacy_data(
+                app.app_handle(),
+                db.pool(),
+            ))?;
             app.manage(std::sync::Arc::new(runtime::PluginDbRuntime::new(db)));
             Ok(())
         })

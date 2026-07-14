@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import { useCallback } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import type { ContextRef } from "~/chat/context/entities";
 import { useChatAppearance } from "~/chat/hooks/use-chat-appearance";
@@ -70,7 +70,7 @@ export function ChatBodyEmpty({
                   : "text-foreground",
               ])}
             >
-              Anarlog AI
+              Meetspace AI
             </span>
             <BetaChip isDarkAppearance={isDarkAppearance} />
           </div>
@@ -82,7 +82,7 @@ export function ChatBodyEmpty({
                 : "text-muted-foreground",
             ])}
           >
-            Hi, I'm Anarlog AI. Set up a language model and I'll be ready to
+            Hi, I'm Meetspace AI. Set up a language model and I'll be ready to
             help.
           </p>
           <button

@@ -129,7 +129,9 @@ mod tests {
     async fn reports_current_schema_as_ready_over_read_only_connection() {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("app.db");
-        let db = meetspace_db_core::Db::connect_local_plain(&path).await.unwrap();
+        let db = meetspace_db_core::Db::connect_local_plain(&path)
+            .await
+            .unwrap();
         meetspace_db_app::prepare_schema(&db).await.unwrap();
         db.pool().close().await;
 

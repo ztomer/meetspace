@@ -12,7 +12,10 @@ pub async fn open_desktop_db(identifier: &str) -> Arc<Db> {
         dir.join(DB_FILENAME)
     });
 
-    println!("[ ==> ] open_desktop_db: identifier={}, db_path={:?}", identifier, db_path);
+    println!(
+        "[ ==> ] open_desktop_db: identifier={}, db_path={:?}",
+        identifier, db_path
+    );
 
     let db = tauri_plugin_db::open_app_db(db_path.as_deref())
         .await
