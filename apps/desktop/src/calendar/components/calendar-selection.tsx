@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { type MouseEvent } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import {
   type MenuItemDef,

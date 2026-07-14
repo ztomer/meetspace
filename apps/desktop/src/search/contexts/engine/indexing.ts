@@ -1,4 +1,4 @@
-import { type SearchDocument, commands as tantivy } from "@hypr/plugin-tantivy";
+import { type SearchDocument, commands as tantivy } from "@meetspace/plugin-tantivy";
 
 import {
   createHumanSearchableContent,

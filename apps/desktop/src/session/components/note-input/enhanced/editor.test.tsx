@@ -33,11 +33,11 @@ vi.mock("@tauri-apps/api/window", () => ({
   }),
 }));
 
-vi.mock("@hypr/editor/markdown", () => ({
+vi.mock("@meetspace/editor/markdown", () => ({
   parseJsonContent: (value: string) => JSON.parse(value),
 }));
 
-vi.mock("@hypr/editor/note", () => ({
+vi.mock("@meetspace/editor/note", () => ({
   NoteEditor: (props: Record<string, unknown>) => {
     hoisted.noteEditorProps.push(props);
 

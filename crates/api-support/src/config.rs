@@ -1,4 +1,4 @@
-use hypr_api_auth::AuthState;
+use meetspace_api_auth::AuthState;
 
 use crate::env::{
     ChatwootEnv, GitHubAppEnv, OpenRouterEnv, StripeEnv, SupabaseEnv, SupportDatabaseEnv,

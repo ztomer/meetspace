@@ -1,14 +1,14 @@
 import { format } from "date-fns";
 import { useCallback, useMemo } from "react";
 
-import { Button } from "@hypr/ui/components/ui/button";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   AppFloatingPanel,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@hypr/ui/components/ui/popover";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/popover";
+import { cn } from "@meetspace/utils";
 
 import { toTz, useTimezone } from "~/calendar/hooks";
 import { useIgnoredEvents } from "~/calendar/ignored-events";

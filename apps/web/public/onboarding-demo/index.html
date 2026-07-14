@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Anarlog demo meeting</title>
+    <title>Meetspace demo meeting</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL@24,400,0&amp;icon_names=auto_awesome,back_hand,call_end,chat,closed_caption,group,info,lock_person,mic,mic_off,mood,more_horiz,more_vert,present_to_all,videocam&amp;display=block"
       rel="stylesheet"
@@ -380,7 +380,7 @@
         <div class="meeting-meta">
           <time class="current-time">6:13 PM</time>
           <span class="divider" aria-hidden="true"></span>
-          <span class="meeting-code">anarlog-demo</span>
+          <span class="meeting-code">meetspace-demo</span>
           <span
             class="material-symbols-rounded info-icon"
             aria-label="Meeting details"
@@ -393,7 +393,7 @@
               <span class="avatar-initials">J</span>
               <img
                 class="avatar-photo"
-                src="https://anarlog.so/api/assets/team/john.png"
+                src="https://meetspace.so/api/assets/team/john.png"
                 alt=""
                 decoding="async"
               />
@@ -432,7 +432,7 @@
           <div class="ended-layer" hidden>
             <div class="dialog">
               <h1>You left the meeting</h1>
-              <p>You can return to Anarlog to review the transcript and notes.</p>
+              <p>You can return to Meetspace to review the transcript and notes.</p>
               <button class="primary-button replay-button" type="button">
                 Rejoin
               </button>
@@ -570,10 +570,10 @@
           video.metadata = {
             video_id: playbackId,
             video_title: manifest.title,
-            player_name: "Anarlog onboarding demo",
+            player_name: "Meetspace onboarding demo",
           };
           participantName.textContent = manifest.speaker;
-          meetingCode.textContent = manifest.meeting_code ?? "anarlog-demo";
+          meetingCode.textContent = manifest.meeting_code ?? "meetspace-demo";
           document.querySelector(".avatar-initials").textContent = manifest.speaker
             .split(/\s+/)
             .map((part) => part[0])

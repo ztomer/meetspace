@@ -8,8 +8,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-import { cleanupLegacyFiles, getLegacyCleanupStatus } from "@hypr/plugin-db";
-import { Button } from "@hypr/ui/components/ui/button";
+import { cleanupLegacyFiles, getLegacyCleanupStatus } from "@meetspace/plugin-db";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +17,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@hypr/ui/components/ui/dialog";
+} from "@meetspace/ui/components/ui/dialog";
 
 const QUERY_KEY = ["legacy-migration-cleanup"] as const;
 
@@ -51,7 +51,7 @@ export function LegacyMigrationCleanupRow() {
       return {
         state: "warning" as const,
         label: t`Migration status unavailable`,
-        description: t`Anarlog could not verify the migration status`,
+        description: t`Meetspace could not verify the migration status`,
       };
     }
 

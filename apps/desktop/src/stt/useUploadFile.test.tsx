@@ -51,7 +51,7 @@ vi.mock("@tauri-apps/plugin-dialog", () => ({
   open: vi.fn(),
 }));
 
-vi.mock("@hypr/plugin-fs-sync", () => ({
+vi.mock("@meetspace/plugin-fs-sync", () => ({
   commands: {
     audioImport: audioImportMock,
     audioImportData: audioImportDataMock,
@@ -64,7 +64,7 @@ vi.mock("@hypr/plugin-fs-sync", () => ({
   },
 }));
 
-vi.mock("@hypr/plugin-transcription", () => ({
+vi.mock("@meetspace/plugin-transcription", () => ({
   commands: { parseSubtitle: parseSubtitleMock },
 }));
 

@@ -52,7 +52,7 @@ vi.mock("~/db", () => ({
   liveQueryClient: { subscribe: mocks.subscribe },
 }));
 
-vi.mock("@hypr/plugin-tantivy", () => ({
+vi.mock("@meetspace/plugin-tantivy", () => ({
   commands: {
     reindex: mocks.reindex,
     updateDocuments: mocks.updateDocuments,

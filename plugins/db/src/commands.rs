@@ -6,9 +6,9 @@ use crate::{ExecuteProxyResult, ManagedState, QueryEvent, TransactionStatement};
 #[specta::specta]
 pub(crate) async fn list_meetings(
     state: tauri::State<'_, ManagedState>,
-    input: hypr_agent_access::ListMeetingsInput,
-) -> Result<hypr_agent_access::MeetingPage, String> {
-    hypr_agent_access::list_meetings(state.pool(), input)
+    input: meetspace_agent_access::ListMeetingsInput,
+) -> Result<meetspace_agent_access::MeetingPage, String> {
+    meetspace_agent_access::list_meetings(state.pool(), input)
         .await
         .map_err(|error| error.to_string())
 }
@@ -17,9 +17,9 @@ pub(crate) async fn list_meetings(
 #[specta::specta]
 pub(crate) async fn get_meeting(
     state: tauri::State<'_, ManagedState>,
-    input: hypr_agent_access::GetMeetingInput,
-) -> Result<hypr_agent_access::Meeting, String> {
-    hypr_agent_access::get_meeting(state.pool(), input)
+    input: meetspace_agent_access::GetMeetingInput,
+) -> Result<meetspace_agent_access::Meeting, String> {
+    meetspace_agent_access::get_meeting(state.pool(), input)
         .await
         .map_err(|error| error.to_string())
 }
@@ -28,9 +28,9 @@ pub(crate) async fn get_meeting(
 #[specta::specta]
 pub(crate) async fn get_meeting_transcript(
     state: tauri::State<'_, ManagedState>,
-    input: hypr_agent_access::GetMeetingTranscriptInput,
-) -> Result<hypr_agent_access::TranscriptPage, String> {
-    hypr_agent_access::get_meeting_transcript(state.pool(), input)
+    input: meetspace_agent_access::GetMeetingTranscriptInput,
+) -> Result<meetspace_agent_access::TranscriptPage, String> {
+    meetspace_agent_access::get_meeting_transcript(state.pool(), input)
         .await
         .map_err(|error| error.to_string())
 }
@@ -39,9 +39,9 @@ pub(crate) async fn get_meeting_transcript(
 #[specta::specta]
 pub(crate) async fn get_recurring_meeting_history(
     state: tauri::State<'_, ManagedState>,
-    input: hypr_agent_access::GetRecurringMeetingHistoryInput,
-) -> Result<hypr_agent_access::MeetingPage, String> {
-    hypr_agent_access::get_recurring_meeting_history(state.pool(), input)
+    input: meetspace_agent_access::GetRecurringMeetingHistoryInput,
+) -> Result<meetspace_agent_access::MeetingPage, String> {
+    meetspace_agent_access::get_recurring_meeting_history(state.pool(), input)
         .await
         .map_err(|error| error.to_string())
 }
@@ -80,7 +80,7 @@ pub(crate) async fn execute_proxy(
     method: String,
 ) -> Result<ExecuteProxyResult, String> {
     let method = method
-        .parse::<hypr_db_execute::ProxyQueryMethod>()
+        .parse::<meetspace_db_execute::ProxyQueryMethod>()
         .map_err(|error| error.to_string())?;
     state
         .execute_proxy(sql, params, method)
@@ -137,7 +137,7 @@ pub(crate) async fn subscribe(
     sql: String,
     params: Vec<serde_json::Value>,
     on_event: Channel<QueryEvent>,
-) -> Result<hypr_db_reactive::SubscriptionRegistration, String> {
+) -> Result<meetspace_db_reactive::SubscriptionRegistration, String> {
     state
         .subscribe(
             sql,

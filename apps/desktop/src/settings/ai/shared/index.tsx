@@ -5,24 +5,24 @@ import { ExternalLink } from "lucide-react";
 import type { ReactNode } from "react";
 import { Streamdown } from "streamdown";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import type { AIProvider } from "@hypr/store";
-import { aiProviderSchema } from "@hypr/store";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import type { AIProvider } from "@meetspace/store";
+import { aiProviderSchema } from "@meetspace/store";
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@hypr/ui/components/ui/accordion";
+} from "@meetspace/ui/components/ui/accordion";
 import {
   InputGroup,
   InputGroupInput,
-} from "@hypr/ui/components/ui/input-group";
+} from "@meetspace/ui/components/ui/input-group";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/tooltip";
+import { cn } from "@meetspace/utils";
 
 import {
   getProviderSelectionBlockers,
@@ -38,7 +38,7 @@ import {
   useSetAiProvider,
 } from "~/settings/providers";
 
-export * from "./hypr-cloud-button";
+export * from "./meetspace-cloud-button";
 export * from "./model-combobox";
 
 type ProviderType = "stt" | "llm";
@@ -58,13 +58,13 @@ type ProviderConfig = {
   };
 };
 
-const ANARLOG_ICON_SRC = "/assets/anarlog-icon.png";
+const MEETSPACE_ICON_SRC = "/assets/meetspace-icon.png";
 
-export function AnarlogProviderIcon() {
+export function MeetspaceProviderIcon() {
   return (
     <img
-      src={ANARLOG_ICON_SRC}
-      alt="Anarlog"
+      src={MEETSPACE_ICON_SRC}
+      alt="Meetspace"
       data-slot="provider-logo"
       className="size-4 object-contain object-center [clip-path:inset(6%_round_18%)]"
     />

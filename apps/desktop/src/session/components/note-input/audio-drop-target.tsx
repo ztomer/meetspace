@@ -1,7 +1,7 @@
 import { AudioLinesIcon } from "lucide-react";
 import type { HTMLAttributes, ReactNode } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { AUDIO_EXTENSIONS } from "~/stt/useUploadFile";
 

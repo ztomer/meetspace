@@ -1,5 +1,5 @@
 {
-  "name": "@hypr/plugin-sdk",
+  "name": "@meetspace/plugin-sdk",
   "private": true,
   "type": "module",
   "exports": {

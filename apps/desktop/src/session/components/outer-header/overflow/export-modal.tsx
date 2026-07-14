@@ -4,16 +4,16 @@ import { downloadDir, join } from "@tauri-apps/api/path";
 import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { json2md } from "@hypr/editor/markdown";
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
+import { json2md } from "@meetspace/editor/markdown";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 import {
   commands as exportCommands,
   type ExportMetadata,
   type TranscriptItem,
-} from "@hypr/plugin-export";
-import { commands as fs2Commands } from "@hypr/plugin-fs2";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { cn } from "@hypr/utils";
+} from "@meetspace/plugin-export";
+import { commands as fs2Commands } from "@meetspace/plugin-fs2";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { cn } from "@meetspace/utils";
 
 import { formatDate, formatDuration } from "./export-utils";
 

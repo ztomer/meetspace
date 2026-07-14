@@ -2,7 +2,7 @@ import { emitTo, listen } from "@tauri-apps/api/event";
 import { getAllWebviewWindows } from "@tauri-apps/api/webviewWindow";
 import { useCallback, useEffect } from "react";
 
-import { getCurrentWebviewWindowLabel } from "@hypr/plugin-windows";
+import { getCurrentWebviewWindowLabel } from "@meetspace/plugin-windows";
 
 import { useIgnoredEvents } from "~/calendar/ignored-events";
 import { finalizeSessionDeletion, softDeleteSession } from "~/session/queries";

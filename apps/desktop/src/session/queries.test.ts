@@ -9,11 +9,11 @@ const mocks = vi.hoisted(() => ({
   ),
 }));
 
-vi.mock("@hypr/plugin-analytics", () => ({
+vi.mock("@meetspace/plugin-analytics", () => ({
   commands: { event: mocks.analyticsEvent },
 }));
 
-vi.mock("@hypr/plugin-fs-sync", () => ({
+vi.mock("@meetspace/plugin-fs-sync", () => ({
   commands: {
     deleteSessionFolder: vi.fn(() =>
       Promise.resolve({ status: "ok", data: null }),

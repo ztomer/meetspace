@@ -13,23 +13,23 @@ import { useRef } from "react";
 import {
   commands as localSttCommands,
   type LocalModel,
-} from "@hypr/plugin-local-stt";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import type { AIProviderStorage } from "@hypr/store";
-import { Input } from "@hypr/ui/components/ui/input";
+} from "@meetspace/plugin-local-stt";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import type { AIProviderStorage } from "@meetspace/store";
+import { Input } from "@meetspace/ui/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@hypr/ui/components/ui/select";
+} from "@meetspace/ui/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/tooltip";
+import { cn } from "@meetspace/utils";
 
 import { useSttSettings } from "./context";
 import { HealthStatusIndicator, useConnectionHealth } from "./health";
@@ -62,7 +62,7 @@ import {
 } from "~/sidebar/toast/transient";
 import {
   isConfiguredSttModel,
-  isHyprnoteLocalSttModel,
+  isMeetspaceLocalSttModel,
   isLiveTranscriptionSupported,
   isRealtimeLocalModel,
   isSupportedLanguagesBatch,
@@ -156,7 +156,7 @@ export function SelectProviderAndModel() {
         <SettingsAlert>
           <Trans>
             <strong className="font-medium">Transcription model</strong> is
-            needed to make Anarlog listen to your conversations.
+            needed to make Meetspace listen to your conversations.
           </Trans>
         </SettingsAlert>
       )}
@@ -366,7 +366,7 @@ function useTranscriptionLanguageWarningKey() {
     ? current_stt_model
     : undefined;
   const isConfigured = !!(current_stt_provider && selectedSttModel);
-  const isOnDeviceModel = isHyprnoteLocalSttModel(
+  const isOnDeviceModel = isMeetspaceLocalSttModel(
     current_stt_provider,
     selectedSttModel,
   );
@@ -546,7 +546,7 @@ function useConfiguredMapping(): Record<
         return [provider.id, { configured: false, models: [] }];
       }
 
-      if (provider.id === "hyprnote") {
+      if (provider.id === "meetspace") {
         const models: ModelEntry[] = [
           { id: "cloud", isDownloaded: billing.isPaid, category: "latest" },
         ];

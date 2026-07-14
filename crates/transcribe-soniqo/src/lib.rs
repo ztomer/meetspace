@@ -164,16 +164,16 @@ impl SoniqoModel {
         }
     }
 
-    pub fn supports_language(self, language: &hypr_language::Language) -> bool {
+    pub fn supports_language(self, language: &meetspace_language::Language) -> bool {
         match self {
             Self::ParakeetStreaming | Self::ParakeetBatch => {
-                hypr_language::is_parakeet_tdt_v3_language(language)
+                meetspace_language::is_parakeet_tdt_v3_language(language)
             }
             Self::Omnilingual | Self::Qwen3Small | Self::Qwen3Large => true,
         }
     }
 
-    pub fn supports_languages(self, languages: &[hypr_language::Language]) -> bool {
+    pub fn supports_languages(self, languages: &[meetspace_language::Language]) -> bool {
         languages
             .iter()
             .all(|language| self.supports_language(language))
@@ -396,9 +396,9 @@ pub fn transcribe_file(
     let started_at = Instant::now();
 
     tracing::info!(
-        hyprnote.stt.provider.name = "soniqo",
-        hyprnote.stt.model = %model,
-        hyprnote.stt.language = %language_label,
+        meetspace.stt.provider.name = "soniqo",
+        meetspace.stt.model = %model,
+        meetspace.stt.language = %language_label,
         file.extension = %file_extension,
         "soniqo_native_file_transcription_start"
     );
@@ -409,8 +409,8 @@ pub fn transcribe_file(
     match &result {
         Ok(transcript) => {
             tracing::info!(
-                hyprnote.stt.provider.name = "soniqo",
-                hyprnote.stt.model = %model,
+                meetspace.stt.provider.name = "soniqo",
+                meetspace.stt.model = %model,
                 elapsed_ms,
                 transcript.duration_seconds = transcript.duration_seconds,
                 transcript.text_chars = transcript.text.chars().count(),
@@ -419,8 +419,8 @@ pub fn transcribe_file(
         }
         Err(error) => {
             tracing::error!(
-                hyprnote.stt.provider.name = "soniqo",
-                hyprnote.stt.model = %model,
+                meetspace.stt.provider.name = "soniqo",
+                meetspace.stt.model = %model,
                 elapsed_ms,
                 error = %error,
                 "soniqo_native_file_transcription_failed"

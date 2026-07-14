@@ -40,7 +40,7 @@ vi.mock("@tauri-apps/api/webviewWindow", () => ({
   getAllWebviewWindows: mocks.getAllWebviewWindows,
 }));
 
-vi.mock("@hypr/plugin-windows", () => ({
+vi.mock("@meetspace/plugin-windows", () => ({
   getCurrentWebviewWindowLabel: mocks.getCurrentWebviewWindowLabel,
 }));
 

@@ -111,22 +111,22 @@ vi.mock("@lingui/react", () => ({
   }),
 }));
 
-vi.mock("@hypr/editor/markdown", () => ({
+vi.mock("@meetspace/editor/markdown", () => ({
   json2md: () => "",
   parseJsonContent: () => ({}),
 }));
 
-vi.mock("@hypr/plugin-analytics", () => ({
+vi.mock("@meetspace/plugin-analytics", () => ({
   commands: {
     event: vi.fn(),
   },
 }));
 
-vi.mock("@hypr/ui/components/ui/spinner", () => ({
+vi.mock("@meetspace/ui/components/ui/spinner", () => ({
   Spinner: () => <span data-testid="view-spinner" />,
 }));
 
-vi.mock("@hypr/ui/components/ui/dancing-sticks", () => ({
+vi.mock("@meetspace/ui/components/ui/dancing-sticks", () => ({
   DancingSticks: () => <span data-testid="dancing-sticks" />,
 }));
 

@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
-import type { TranscriptionParams } from "@hypr/plugin-transcription";
-import { sonnerToast } from "@hypr/ui/components/ui/toast";
+import type { TranscriptionParams } from "@meetspace/plugin-transcription";
+import { sonnerToast } from "@meetspace/ui/components/ui/toast";
 
 import { useListener } from "./contexts";
 import { getSessionKeywords } from "./useKeywords";
@@ -76,10 +76,10 @@ export function getBatchProvider(
     return "deepgram";
   }
 
-  if (provider === "hyprnote") {
+  if (provider === "meetspace") {
     if (model.startsWith("soniqo-")) return "soniqo";
     if (model.startsWith("am-")) return "am";
-    return "hyprnote";
+    return "meetspace";
   }
   if (DIRECT_BATCH_PROVIDERS.has(provider as TranscriptionParams["provider"])) {
     return provider as TranscriptionParams["provider"];
@@ -105,7 +105,7 @@ export function getBatchFallbackTarget({
 }): BatchTarget {
   if (isPaid && accessToken) {
     return {
-      provider: "hyprnote",
+      provider: "meetspace",
       model: "cloud",
       baseUrl: new URL("/stt", apiBaseUrl).toString(),
       apiKey: accessToken,

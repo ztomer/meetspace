@@ -14,7 +14,7 @@ const mocks = vi.hoisted(() => ({
   ),
 }));
 
-vi.mock("@hypr/plugin-store2", () => ({
+vi.mock("@meetspace/plugin-store2", () => ({
   commands: {
     getSecret: mocks.getSecret,
     setSecret: mocks.setSecret,

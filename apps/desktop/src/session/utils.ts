@@ -1,4 +1,4 @@
-import type { SessionEvent } from "@hypr/store";
+import type { SessionEvent } from "@meetspace/store";
 
 export function getSessionEvent(session: {
   event_json?: string | null;

@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useState } from "react";
 
-import { commands as tantivy } from "@hypr/plugin-tantivy";
+import { commands as tantivy } from "@meetspace/plugin-tantivy";
 
 import { buildTantivyFilters } from "./filters";
 import { createSearchIndexSync } from "./indexing";

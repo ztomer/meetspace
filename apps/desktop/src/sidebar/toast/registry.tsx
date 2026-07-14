@@ -1,10 +1,10 @@
-import type { ServerStatus } from "@hypr/plugin-local-stt";
+import type { ServerStatus } from "@meetspace/plugin-local-stt";
 
 import type { DownloadProgress, ToastCondition, ToastType } from "./types";
 
 import type { DevtoolsToastPreview } from "~/store/zustand/devtools-toast-preview";
 
-const ANARLOG_ICON_SRC = "/assets/anarlog-icon.png";
+const MEETSPACE_ICON_SRC = "/assets/meetspace-icon.png";
 
 type ToastRegistryEntry = {
   toast: ToastType;
@@ -136,8 +136,8 @@ export function createToastRegistry({
         id: "pro-requires-login",
         icon: (
           <img
-            src={ANARLOG_ICON_SRC}
-            alt="Anarlog Pro"
+            src={MEETSPACE_ICON_SRC}
+            alt="Meetspace Pro"
             className="size-5 object-contain object-center"
           />
         ),

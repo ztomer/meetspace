@@ -1,7 +1,7 @@
 use axum::{Extension, Json};
-use hypr_api_auth::AuthContext;
-use hypr_api_nango::{GoogleCalendar, NangoConnectionState, NangoIntegrationId};
-use hypr_google_calendar::{
+use meetspace_api_auth::AuthContext;
+use meetspace_api_nango::{GoogleCalendar, NangoConnectionState, NangoIntegrationId};
+use meetspace_google_calendar::{
     EventOrderBy, EventType, GoogleCalendarClient, ListCalendarsResponse, ListEventsResponse,
 };
 use serde::Deserialize;
@@ -128,7 +128,7 @@ pub async fn list_events(
         })
         .transpose()?;
 
-    let google_req = hypr_google_calendar::ListEventsRequest {
+    let google_req = meetspace_google_calendar::ListEventsRequest {
         calendar_id: req.calendar_id,
         time_min,
         time_max,

@@ -1,5 +1,5 @@
 use db_migrate::{DbSchema, MigrateError, MigrationScope, MigrationStep, migrate};
-use hypr_db_core::Db;
+use meetspace_db_core::Db;
 
 const CREATE_WIDGETS_SQL: &str = r#"
 CREATE TABLE widgets (

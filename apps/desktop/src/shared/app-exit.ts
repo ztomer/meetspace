@@ -1,6 +1,6 @@
 import { listen } from "@tauri-apps/api/event";
 
-import { commands as store2Commands } from "@hypr/plugin-store2";
+import { commands as store2Commands } from "@meetspace/plugin-store2";
 
 import { flushDatabaseWrites } from "~/db/write-queue";
 import { commands } from "~/types/tauri.gen";
