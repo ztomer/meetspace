@@ -78,7 +78,9 @@ describe("isConfiguredSttModel", () => {
   test("requires known model ids for Meetspace STT", () => {
     expect(isConfiguredSttModel("meetspace", "cloud")).toBe(true);
     expect(isConfiguredSttModel("meetspace", "soniqo-qwen3-small")).toBe(true);
-    expect(isConfiguredSttModel("meetspace", "removed-local-model")).toBe(false);
+    expect(isConfiguredSttModel("meetspace", "removed-local-model")).toBe(
+      false,
+    );
   });
 
   test("allows custom model ids for external providers", () => {

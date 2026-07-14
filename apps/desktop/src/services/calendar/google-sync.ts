@@ -16,16 +16,17 @@
 
 import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 import { eq, and, inArray } from "drizzle-orm";
-import { db } from "~/db";
-import { calendars, events } from "@meetspace/db";
-import { getStoredSettingValues, setSettingValues } from "~/settings/queries";
-import type { SettingValues } from "~/settings/schema";
 
+import { calendars, events } from "@meetspace/db";
+
+import { db } from "~/db";
 import {
   isExpired,
   refresh as refreshToken,
   type StoredTokens,
 } from "~/integrations/oauth-providers";
+import { getStoredSettingValues, setSettingValues } from "~/settings/queries";
+import type { SettingValues } from "~/settings/schema";
 
 /** Single logical "connection" — we support one Google account per device. */
 const GOOGLE_CONNECTION_ID = "google-default";
@@ -63,10 +64,18 @@ export async function syncGoogleCalendar(): Promise<
   { ok: true; calendars: number; events: number } | { ok: false; error: string }
 > {
   const storedSettings = await getStoredSettingValues();
-  const clientId = (storedSettings.values.google_client_id as string | undefined)?.trim();
-  const accessToken = storedSettings.values.google_access_token as string | undefined;
-  const refreshTok = storedSettings.values.google_refresh_token as string | undefined;
-  const expiresAt = storedSettings.values.google_token_expires_at as number | undefined;
+  const clientId = (
+    storedSettings.values.google_client_id as string | undefined
+  )?.trim();
+  const accessToken = storedSettings.values.google_access_token as
+    | string
+    | undefined;
+  const refreshTok = storedSettings.values.google_refresh_token as
+    | string
+    | undefined;
+  const expiresAt = storedSettings.values.google_token_expires_at as
+    | number
+    | undefined;
 
   if (!clientId || !accessToken || !refreshTok) {
     return { ok: false, error: "google calendar not signed in" };
@@ -143,7 +152,10 @@ export async function syncGoogleCalendar(): Promise<
   const trackingIdToRowId = new Map<string, string>();
   const enabledRowIds = new Set<string>();
 
-  const existingCals = await db.select().from(calendars).where(eq(calendars.provider, PROVIDER));
+  const existingCals = await db
+    .select()
+    .from(calendars)
+    .where(eq(calendars.provider, PROVIDER));
 
   for (const cal of googleCalendars) {
     seenCalendarTrackingIds.add(cal.id);
@@ -182,7 +194,9 @@ export async function syncGoogleCalendar(): Promise<
     }
   }
 
-  const calendarsToDelete = existingCals.filter((c) => !seenCalendarTrackingIds.has(c.trackingIdCalendar));
+  const calendarsToDelete = existingCals.filter(
+    (c) => !seenCalendarTrackingIds.has(c.trackingIdCalendar),
+  );
   for (const cal of calendarsToDelete) {
     await db.delete(events).where(eq(events.calendarId, cal.id));
     await db.delete(calendars).where(eq(calendars.id, cal.id));
@@ -194,9 +208,13 @@ export async function syncGoogleCalendar(): Promise<
   const upstreamEventKey = new Set<string>();
 
   const enabledCalendarIdsArray = Array.from(enabledRowIds);
-  const existingEvents = enabledCalendarIdsArray.length > 0
-    ? await db.select().from(events).where(inArray(events.calendarId, enabledCalendarIdsArray))
-    : [];
+  const existingEvents =
+    enabledCalendarIdsArray.length > 0
+      ? await db
+          .select()
+          .from(events)
+          .where(inArray(events.calendarId, enabledCalendarIdsArray))
+      : [];
 
   for (const [trackingId, calendarRowId] of trackingIdToRowId.entries()) {
     if (!enabledRowIds.has(calendarRowId)) continue;
@@ -217,7 +235,9 @@ export async function syncGoogleCalendar(): Promise<
         continue;
       }
       const json = (await res.json()) as { items?: GoogleEvent[] };
-      const googleEvents = (json.items ?? []).filter((e) => e.status !== "cancelled");
+      const googleEvents = (json.items ?? []).filter(
+        (e) => e.status !== "cancelled",
+      );
 
       for (const ev of googleEvents) {
         const started = ev.start?.dateTime ?? ev.start?.date ?? null;
@@ -225,7 +245,9 @@ export async function syncGoogleCalendar(): Promise<
         if (!started || !ended) continue;
 
         upstreamEventKey.add(`${calendarRowId}:${ev.id}`);
-        const existing = existingEvents.find((e) => e.calendarId === calendarRowId && e.trackingIdEvent === ev.id);
+        const existing = existingEvents.find(
+          (e) => e.calendarId === calendarRowId && e.trackingIdEvent === ev.id,
+        );
         const rowId = existing?.id ?? crypto.randomUUID();
 
         const row = {
@@ -245,10 +267,7 @@ export async function syncGoogleCalendar(): Promise<
         };
 
         if (existing) {
-          await db
-            .update(events)
-            .set(row)
-            .where(eq(events.id, rowId));
+          await db.update(events).set(row).where(eq(events.id, rowId));
         } else {
           await db.insert(events).values({
             id: rowId,
@@ -268,7 +287,12 @@ export async function syncGoogleCalendar(): Promise<
     const allEventsForEnabled = await db
       .select()
       .from(events)
-      .where(and(eq(events.provider, PROVIDER), inArray(events.calendarId, enabledCalendarIdsArray)));
+      .where(
+        and(
+          eq(events.provider, PROVIDER),
+          inArray(events.calendarId, enabledCalendarIdsArray),
+        ),
+      );
 
     for (const ev of allEventsForEnabled) {
       if (!upstreamEventKey.has(`${ev.calendarId}:${ev.trackingIdEvent}`)) {

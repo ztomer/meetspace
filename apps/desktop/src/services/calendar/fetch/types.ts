@@ -1,4 +1,4 @@
-import type { EventParticipant } from "@hypr/store";
+import type { EventParticipant } from "@meetspace/store";
 
 export type { EventParticipant };
 

@@ -15,10 +15,14 @@ import { DropdownMenuItem } from "@meetspace/ui/components/ui/dropdown-menu";
 
 import { formatDate, formatDuration } from "./export-utils";
 
-import { useSession, useSessionParticipants, useEnhancedNote } from "~/session/queries";
-import { useSessionTranscripts } from "~/stt/queries";
+import {
+  useSession,
+  useSessionParticipants,
+  useEnhancedNote,
+} from "~/session/queries";
 import { getSessionEvent } from "~/session/utils";
 import type { EditorView } from "~/store/zustand/tabs/schema";
+import { useSessionTranscripts } from "~/stt/queries";
 
 export function ExportPDF({
   sessionId,

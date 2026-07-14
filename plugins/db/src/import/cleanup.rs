@@ -136,7 +136,8 @@ async fn build_plan(pool: &SqlitePool) -> crate::Result<CleanupPlan> {
         ));
     }
 
-    if !state.parity_verified || state.importer_version != meetspace_db_app::LEGACY_IMPORTER_VERSION {
+    if !state.parity_verified || state.importer_version != meetspace_db_app::LEGACY_IMPORTER_VERSION
+    {
         return Ok(blocked_plan(
             "SQLite migration has not passed current parity verification",
             state.latest_run_id,

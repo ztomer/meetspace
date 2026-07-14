@@ -2,8 +2,8 @@ import { MoonIcon, MonitorIcon, SunIcon } from "lucide-react";
 
 import { cn } from "@meetspace/utils";
 
-import { useConfigValue } from "~/shared/config";
 import { useSetSettingValue } from "~/settings/queries";
+import { useConfigValue } from "~/shared/config";
 import type { ThemeChoice } from "~/shared/theme";
 
 const OPTIONS: Array<{
