@@ -15,15 +15,15 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { useState, useMemo, useCallback } from "react";
 
+import { events, humans, sessionParticipants, sessions } from "@meetspace/db";
 import { isValidContent, json2md } from "@meetspace/editor/markdown";
 import { Button } from "@meetspace/ui/components/ui/button";
 import { cn, format, safeParseDate } from "@meetspace/utils";
 
 import { useLanguageModel, useLLMConnectionStatus } from "~/ai/hooks";
 import { useNow } from "~/calendar/hooks";
-import { StandardContentWrapper } from "~/shared/main";
 import { db, useDrizzleLiveQuery } from "~/db";
-import { events, humans, sessionParticipants, sessions } from "@meetspace/db";
+import { StandardContentWrapper } from "~/shared/main";
 import { useTabs } from "~/store/zustand/tabs";
 
 export function TabContentPrep() {
@@ -40,10 +40,18 @@ function ProactivePrepView() {
   const now = useNow();
   const openNew = useTabs((state) => state.openNew);
 
-  const { data: allEvents = [] } = useDrizzleLiveQuery(db.select().from(events)) as { data: any[] };
-  const { data: allHumans = [] } = useDrizzleLiveQuery(db.select().from(humans)) as { data: any[] };
-  const { data: allParticipants = [] } = useDrizzleLiveQuery(db.select().from(sessionParticipants)) as { data: any[] };
-  const { data: allSessions = [] } = useDrizzleLiveQuery(db.select().from(sessions)) as { data: any[] };
+  const { data: allEvents = [] } = useDrizzleLiveQuery(
+    db.select().from(events),
+  ) as { data: any[] };
+  const { data: allHumans = [] } = useDrizzleLiveQuery(
+    db.select().from(humans),
+  ) as { data: any[] };
+  const { data: allParticipants = [] } = useDrizzleLiveQuery(
+    db.select().from(sessionParticipants),
+  ) as { data: any[] };
+  const { data: allSessions = [] } = useDrizzleLiveQuery(
+    db.select().from(sessions),
+  ) as { data: any[] };
 
   const eventsTable = useMemo(() => {
     const map: Record<string, any> = {};
@@ -52,7 +60,9 @@ function ProactivePrepView() {
         title: e.title,
         started_at: e.startedAt,
         ended_at: e.endedAt,
-        participants_json: e.participantsJson ? JSON.stringify(e.participantsJson) : null,
+        participants_json: e.participantsJson
+          ? JSON.stringify(e.participantsJson)
+          : null,
       };
     }
     return map;

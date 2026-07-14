@@ -1,4 +1,4 @@
-import type { SessionEvent } from "@hypr/store";
+import type { SessionEvent } from "@meetspace/store";
 
 import type { Ctx } from "../../ctx";
 import type { IncomingEvent } from "../../fetch/types";
