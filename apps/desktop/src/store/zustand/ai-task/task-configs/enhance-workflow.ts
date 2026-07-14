@@ -1,22 +1,31 @@
 import {
+  generateText,
   type ImagePart,
   type LanguageModel,
+  Output,
   smoothStream,
   streamText,
   type TextPart,
 } from "ai";
+import { z } from "zod";
 
-import { commands as templateCommands } from "@hypr/plugin-template";
+import {
+  commands as templateCommands,
+  type TemplateSection,
+} from "@meetspace/plugin-template";
+import { templateSectionSchema } from "@meetspace/store";
 
 import type { TaskArgsMapTransformed, TaskConfig } from ".";
 import type { EnhanceImageContext } from "./enhance-images";
 import { createEnhanceValidator } from "./enhance-validator";
 
+import { deterministicGenerationSettings } from "~/ai/model-settings";
 import { normalizeBulletPoints } from "~/store/zustand/ai-task/shared/transform_impl";
 import { withEarlyValidationRetry } from "~/store/zustand/ai-task/shared/validate";
 import { assertCanonicalTemplateSections } from "~/templates/codec";
 
 const AI_GENERATION_MAX_RETRIES = 4;
+const TEMPLATE_MAX_OUTPUT_TOKENS = 2048;
 const SUMMARY_MAX_OUTPUT_TOKENS = 8192;
 const IMAGE_CONTEXT_NOTE =
   "Attached note images are included as visual context. Use visible text, diagrams, screenshots, and other image content when it materially improves the summary.";
@@ -37,19 +46,56 @@ async function* executeWorkflow(params: {
   args: TaskArgsMapTransformed["enhance"];
   onProgress: (step: any) => void;
   signal: AbortSignal;
-  store: Store;
 }) {
-  const { model, args, onProgress, signal, store } = params;
+  const { model, args, onProgress, signal } = params;
 
-  const system = await getSystemPrompt(args);
+<<<<<<< HEAD
+  const usesTemplate = hasSummaryTemplateToken(args.customInstructions);
+  const sections = usesTemplate
+    ? await generateTemplateIfNeeded({
+        model,
+        args,
+        onProgress,
+        signal,
+      })
+    : null;
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+  const sections = await generateTemplateIfNeeded({
+    model,
+    args,
+    onProgress,
+    signal,
+    store,
+  });
+=======
+  const sections = await generateTemplateIfNeeded({
+    model,
+    args,
+    onProgress,
+    signal,
+  });
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
+  const argsWithTemplate: TaskArgsMapTransformed["enhance"] = {
+    ...args,
+    template:
+      usesTemplate && sections
+        ? {
+            title: args.template?.title ?? "",
+            description: args.template?.description ?? null,
+            sections,
+          }
+        : null,
+  };
+
+  const system = await getSystemPrompt(argsWithTemplate);
   const prompt = withImageContextNote(
-    await getUserPrompt(argsWithTemplate, store),
+    await getUserPrompt(argsWithTemplate),
     argsWithTemplate.imageContext.length,
   );
 
   yield* generateSummary({
     model,
-    args,
+    args: argsWithTemplate,
     system,
     prompt,
     onProgress,
@@ -61,7 +107,10 @@ async function getSystemPrompt(args: TaskArgsMapTransformed["enhance"]) {
   const result = await templateCommands.render({
     enhanceSystem: {
       language: args.language,
-      promptOverride: args.promptOverride,
+      customInstructions: renderSummaryPrompt(
+        args.customInstructions,
+        args.template,
+      ),
     },
   });
 
@@ -72,10 +121,7 @@ async function getSystemPrompt(args: TaskArgsMapTransformed["enhance"]) {
   return result.data;
 }
 
-async function getUserPrompt(
-  args: TaskArgsMapTransformed["enhance"],
-  _store: Store,
-) {
+async function getUserPrompt(args: TaskArgsMapTransformed["enhance"]) {
   const {
     session,
     participants,
@@ -117,25 +163,21 @@ async function generateTemplateIfNeeded(params: {
   args: TaskArgsMapTransformed["enhance"];
   onProgress: (step: any) => void;
   signal: AbortSignal;
-  store: Store;
 }): Promise<TemplateSection[] | null> {
-  const { model, args, onProgress, signal, store } = params;
+  const { model, args, onProgress, signal } = params;
 
   if (!args.template) {
     onProgress({ type: "analyzing" });
 
     const schema = z.object({ sections: z.array(templateSectionSchema) });
-    const userPrompt = withImageContextNote(
-      await getUserPrompt(args, store),
-      args.imageContext.length,
-    );
+    const userPrompt = await getUserPrompt(args);
 
     const result = await generateStructuredOutput({
       model,
       schema,
       signal,
       prompt: createTemplatePrompt(userPrompt, schema),
-      imageContext: args.imageContext,
+      imageContext: [],
     });
 
     if (!result) {
@@ -188,7 +230,7 @@ async function generateStructuredOutput<T extends z.ZodTypeAny>(params: {
   try {
     const result = await generateText({
       model,
-      temperature: 0,
+      ...deterministicGenerationSettings(model),
       output: Output.object({ schema }),
       abortSignal: signal,
       maxRetries: AI_GENERATION_MAX_RETRIES,
@@ -201,11 +243,11 @@ async function generateStructuredOutput<T extends z.ZodTypeAny>(params: {
     }
 
     return result.output as z.infer<T>;
-  } catch (error) {
+  } catch {
     try {
       const fallbackResult = await generateText({
         model,
-        temperature: 0,
+        ...deterministicGenerationSettings(model),
         abortSignal: signal,
         maxRetries: AI_GENERATION_MAX_RETRIES,
         maxOutputTokens: TEMPLATE_MAX_OUTPUT_TOKENS,
@@ -238,7 +280,9 @@ async function* generateSummary(params: {
   onProgress({ type: "generating" });
 
   const validator = createEnhanceValidator(args.template, {
-    overrideTemplateFormatting: Boolean(args.promptOverride.trim()),
+    overrideTemplateFormatting: !isDefaultSummaryPrompt(
+      args.customInstructions,
+    ),
   });
 
   yield* withEarlyValidationRetry(

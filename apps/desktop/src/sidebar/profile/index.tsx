@@ -10,8 +10,9 @@ import { AuthSection } from "./auth";
 import { MenuItem, ProfileFacehash } from "./shared";
 
 import { useAuth } from "~/auth";
+import { useLiveQuery } from "~/db";
 import { useAutoCloser } from "~/shared/hooks/useAutoCloser";
-import * as main from "~/store/tinybase/store/main";
+import { useOwnerUserId } from "~/shared/owner-user";
 import { useTabs } from "~/store/zustand/tabs";
 
 export function ProfileMenu() {
@@ -184,7 +185,11 @@ function ProfileButton({
 }
 
 function useMyName(email?: string) {
-  const userId = main.UI.useValue("user_id", main.STORE_ID);
-  const name = main.UI.useCell("humans", userId ?? "", "name", main.STORE_ID);
+  const userId = useOwnerUserId();
+  const { data: name } = useLiveQuery<{ name: string }, string>({
+    sql: `SELECT name FROM humans WHERE id = ? LIMIT 1`,
+    params: [userId ?? ""],
+    mapRows: (rows) => rows[0]?.name || "",
+  });
   return name || email || "Unknown";
 }

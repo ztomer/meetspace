@@ -1,17 +1,11 @@
 import { Input } from "@meetspace/ui/components/ui/input";
 
+import { useSetSettingValue } from "~/settings/queries";
 import { useConfigValues } from "~/shared/config";
-import * as settings from "~/store/tinybase/store/settings";
 
 export function LinearIntegration() {
   const { linear_api_key } = useConfigValues(["linear_api_key"] as const);
-
-  const setKey = settings.UI.useSetValueCallback(
-    "linear_api_key",
-    (v: string) => v,
-    [],
-    settings.STORE_ID,
-  );
+  const setKey = useSetSettingValue("linear_api_key");
 
   return (
     <section className="border-border rounded-lg border p-5">

@@ -6,8 +6,8 @@ import { Button } from "@meetspace/ui/components/ui/button";
 import { Input } from "@meetspace/ui/components/ui/input";
 import { Switch } from "@meetspace/ui/components/ui/switch";
 
+import { useSetSettingValue } from "~/settings/queries";
 import { useConfigValues } from "~/shared/config";
-import * as settings from "~/store/tinybase/store/settings";
 
 export function ObsidianIntegration() {
   const { obsidian_vault_path, obsidian_subfolder, obsidian_auto_export } =
@@ -17,24 +17,9 @@ export function ObsidianIntegration() {
       "obsidian_auto_export",
     ] as const);
 
-  const setVaultPath = settings.UI.useSetValueCallback(
-    "obsidian_vault_path",
-    (v: string) => v,
-    [],
-    settings.STORE_ID,
-  );
-  const setSubfolder = settings.UI.useSetValueCallback(
-    "obsidian_subfolder",
-    (v: string) => v,
-    [],
-    settings.STORE_ID,
-  );
-  const setAutoExport = settings.UI.useSetValueCallback(
-    "obsidian_auto_export",
-    (v: boolean) => v,
-    [],
-    settings.STORE_ID,
-  );
+  const setVaultPath = useSetSettingValue("obsidian_vault_path");
+  const setSubfolder = useSetSettingValue("obsidian_subfolder");
+  const setAutoExport = useSetSettingValue("obsidian_auto_export");
 
   const chooseVault = useCallback(async () => {
     const selected = await selectFolder({

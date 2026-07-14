@@ -10,11 +10,6 @@ import {
   persistGeneratedTitle,
 } from "./title-success";
 
-import {
-  constrainSummaryLength,
-  countNormalizedCharacters,
-  getSummaryLengthPolicy,
-} from "~/services/enhancer/summary-length";
 import { persistGeneratedEnhancedNote } from "~/session/content-mutations";
 import { loadSessionContentSnapshot } from "~/session/content-queries";
 import { ensureMarkdownFirstLineTitle } from "~/session/title-content";
@@ -29,14 +24,12 @@ const onSuccess: NonNullable<TaskConfig<"enhance">["onSuccess"]> = async ({
   getTaskState,
   signal,
 }) => {
-  const lengthPolicy = getSummaryLengthPolicy(transformedArgs.transcripts);
-  const constrainedText = constrainSummaryLength(text, lengthPolicy);
-  if (!constrainedText) {
+  if (!text) {
     return;
   }
 
-  const tagNames = extractEnhanceTagNames(constrainedText, transformedArgs);
-  const textWithTags = appendTagLineToMarkdown(constrainedText, tagNames);
+  const tagNames = extractEnhanceTagNames(text, transformedArgs);
+  const textWithTags = appendTagLineToMarkdown(text, tagNames);
   const initialSnapshot = await loadSessionContentSnapshot(args.sessionId);
   if (!initialSnapshot) {
     throw new Error(`Session ${args.sessionId} no longer exists`);
@@ -93,28 +86,7 @@ const onSuccess: NonNullable<TaskConfig<"enhance">["onSuccess"]> = async ({
     shouldPersistGeneratedTitle = true;
   }
 
-  const titledText = ensureMarkdownFirstLineTitle(
-    constrainedText,
-    trimmedTitle,
-  );
-  const tagLine = appendTagLineToMarkdown("", tagNames);
-  const reservedTagCharacters = tagLine
-    ? countNormalizedCharacters(tagLine) + 1
-    : 0;
-  const persistableBody = constrainSummaryLength(
-    titledText,
-    lengthPolicy
-      ? {
-          ...lengthPolicy,
-          maxCharacters: Math.max(
-            0,
-            lengthPolicy.maxCharacters - reservedTagCharacters,
-          ),
-          maxSections: null,
-        }
-      : null,
-  );
-  const persistableText = appendTagLineToMarkdown(persistableBody, tagNames);
+  const titledText = ensureMarkdownFirstLineTitle(textWithTags, trimmedTitle);
   await persistGeneratedEnhancedNote({
     sessionId: args.sessionId,
     ownerUserId: snapshot.ownerUserId,
@@ -122,7 +94,7 @@ const onSuccess: NonNullable<TaskConfig<"enhance">["onSuccess"]> = async ({
       id: note.id,
       currentContent: note.content,
       currentContentFormat: note.contentFormat,
-      nextContent: JSON.stringify(md2json(persistableText)),
+      nextContent: JSON.stringify(md2json(titledText)),
     },
     tagNames,
   });

@@ -1,10 +1,15 @@
+/**
+ * Periodic Outlook Calendar sync driver. Mount once at the app root. Polls
+ * every 5 minutes while the user is signed into Outlook, fires immediately on
+ * mount, and re-runs when tokens change.
+ *
+ * Returns `{ refresh, isSyncing, lastSync, error }` so the settings UI can
+ * surface a manual refresh button and "Last synced …" status.
+ */
+
 import { useCallback, useEffect, useState } from "react";
-
 import { syncOutlookCalendar } from "./outlook-sync";
-
 import { useConfigValues } from "~/shared/config";
-import * as main from "~/store/tinybase/store/main";
-import * as settings from "~/store/tinybase/store/settings";
 
 const SYNC_INTERVAL_MS = 5 * 60 * 1000;
 
@@ -16,10 +21,6 @@ export type OutlookSyncState = {
 };
 
 export function useOutlookCalendarSync(): OutlookSyncState {
-  const mainStore = main.UI.useStore(main.STORE_ID);
-  const settingsStore = settings.UI.useStore(settings.STORE_ID);
-  const { user_id } = main.UI.useValues(main.STORE_ID);
-
   const { outlook_refresh_token } = useConfigValues([
     "outlook_refresh_token",
   ] as const);
@@ -30,15 +31,10 @@ export function useOutlookCalendarSync(): OutlookSyncState {
   const [lastError, setLastError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
-    if (!mainStore || !settingsStore || !user_id) return;
     if (!signedIn) return;
     setIsSyncing(true);
     try {
-      const result = await syncOutlookCalendar({
-        mainStore,
-        settingsStore,
-        userId: user_id,
-      });
+      const result = await syncOutlookCalendar();
       if (result.ok) {
         setLastSync(Date.now());
         setLastError(null);
@@ -50,7 +46,7 @@ export function useOutlookCalendarSync(): OutlookSyncState {
     } finally {
       setIsSyncing(false);
     }
-  }, [mainStore, settingsStore, user_id, signedIn]);
+  }, [signedIn]);
 
   useEffect(() => {
     if (!signedIn) return;

@@ -16,8 +16,8 @@ import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { cn } from "@meetspace/utils";
 
 import { parsePrecedence } from "~/services/calendar/dedup";
+import { useSetSettingValue } from "~/settings/queries";
 import { useConfigValues } from "~/shared/config";
-import * as settings from "~/store/tinybase/store/settings";
 
 const PROVIDER_LABELS: Record<string, string> = {
   apple: "Apple Calendar",
@@ -31,12 +31,7 @@ export function CalendarPrecedenceSetting() {
   const { calendar_provider_precedence } = useConfigValues([
     "calendar_provider_precedence",
   ] as const);
-  const setPrecedence = settings.UI.useSetValueCallback(
-    "calendar_provider_precedence",
-    (next: string[]) => JSON.stringify(next),
-    [],
-    settings.STORE_ID,
-  );
+  const setPrecedence = useSetSettingValue("calendar_provider_precedence");
 
   // Merge stored order with any provider we don't know about yet so the list
   // always shows the full set in some order.
@@ -51,7 +46,7 @@ export function CalendarPrecedenceSetting() {
     const swap = idx + delta;
     if (swap < 0 || swap >= next.length) return;
     [next[idx], next[swap]] = [next[swap], next[idx]];
-    setPrecedence(next);
+    setPrecedence(JSON.stringify(next));
   };
 
   return (

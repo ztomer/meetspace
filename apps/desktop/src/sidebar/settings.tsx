@@ -4,15 +4,21 @@ import {
   AudioLinesIcon,
   ArrowUpRightIcon,
   BellIcon,
-  BookOpenIcon,
   BookText,
   CalendarIcon,
   Code2Icon,
   CogIcon,
   LockIcon,
+<<<<<<< HEAD
+  SmileIcon,
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+  SlidersHorizontalIcon,
+=======
+  PlugIcon,
+  SlidersHorizontalIcon,
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
   SparklesIcon,
   type LucideIcon,
-  UserIcon,
   UsersIcon,
 } from "lucide-react";
 import { useCallback } from "react";
@@ -22,7 +28,6 @@ import { cn } from "@meetspace/utils";
 import { CustomSidebarHeader } from "./custom-sidebar-header";
 
 import { type SettingsTab, useTabs } from "~/store/zustand/tabs";
-import { AUTO_TEMPLATE_ID, useOpenTemplatesTab } from "~/templates";
 
 type SettingsNavItem =
   | { id: SettingsTab; label: string; icon: LucideIcon }
@@ -41,7 +46,6 @@ export function SettingsNav() {
   const updateSettingsTabState = useTabs(
     (state) => state.updateSettingsTabState,
   );
-  const openTemplatesTab = useOpenTemplatesTab();
 
   const activeTab =
     currentTab?.type === "settings" ? (currentTab.state.tab ?? "app") : "app";
@@ -56,13 +60,8 @@ export function SettingsNav() {
   );
 
   const handleOpenTemplates = useCallback(() => {
-    openTemplatesTab({
-      showHomepage: false,
-      isWebMode: false,
-      selectedMineId: AUTO_TEMPLATE_ID,
-      selectedWebIndex: null,
-    });
-  }, [openTemplatesTab]);
+    openNew({ type: "templates" });
+  }, [openNew]);
 
   const handleOpenCalendar = useCallback(() => {
     openNew({ type: "calendar" });
@@ -77,9 +76,13 @@ export function SettingsNav() {
       label: t`General`,
       items: [
         { id: "app", label: t`App`, icon: CogIcon },
-        { id: "account", label: t`Account`, icon: UserIcon },
         { id: "notifications", label: t`Notifications`, icon: BellIcon },
+<<<<<<< HEAD
         { id: "developers", label: t`Developers`, icon: Code2Icon },
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+=======
+        { id: "integrations", label: t`Integrations`, icon: PlugIcon },
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
       ],
     },
     {
@@ -95,6 +98,11 @@ export function SettingsNav() {
           label: t`Contacts`,
           icon: UsersIcon,
         },
+        {
+          action: "open-templates",
+          label: t`Templates`,
+          icon: BookText,
+        },
       ],
     },
     {
@@ -103,14 +111,9 @@ export function SettingsNav() {
         { id: "transcription", label: t`Transcription`, icon: AudioLinesIcon },
         { id: "intelligence", label: t`Intelligence`, icon: SparklesIcon },
         {
-          id: "dictionary",
-          label: t`Dictionary`,
-          icon: BookOpenIcon,
-        },
-        {
-          action: "open-templates",
-          label: t`Templates`,
-          icon: BookText,
+          id: "personalization",
+          label: t`Personalization`,
+          icon: SmileIcon,
         },
       ],
     },

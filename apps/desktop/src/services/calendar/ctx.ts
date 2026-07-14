@@ -1,9 +1,9 @@
-import { commands as calendarCommands } from "@meetspace/plugin-calendar";
+import { commands as calendarCommands } from "@hypr/plugin-calendar";
 import type {
   CalendarListItem,
   CalendarProviderType,
   ProviderConnectionIds,
-} from "@meetspace/plugin-calendar";
+} from "@hypr/plugin-calendar";
 
 import { applyCalendarInventory, loadEnabledCalendars } from "./storage";
 

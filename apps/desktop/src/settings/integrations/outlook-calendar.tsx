@@ -12,8 +12,8 @@ import { Input } from "@meetspace/ui/components/ui/input";
 
 import { listOutlookCalendars } from "~/integrations/calendar-api";
 import { OAUTH_PROVIDERS, signIn } from "~/integrations/oauth-providers";
+import { useSetSettingValue } from "~/settings/queries";
 import { useConfigValues } from "~/shared/config";
-import * as settings from "~/store/tinybase/store/settings";
 
 export function OutlookCalendarIntegration() {
   const cfg = OAUTH_PROVIDERS.outlook;
@@ -29,30 +29,10 @@ export function OutlookCalendarIntegration() {
     "outlook_token_expires_at",
   ] as const);
 
-  const setClientId = settings.UI.useSetValueCallback(
-    "outlook_client_id",
-    (v: string) => v,
-    [],
-    settings.STORE_ID,
-  );
-  const setRefreshToken = settings.UI.useSetValueCallback(
-    "outlook_refresh_token",
-    (v: string) => v,
-    [],
-    settings.STORE_ID,
-  );
-  const setAccessToken = settings.UI.useSetValueCallback(
-    "outlook_access_token",
-    (v: string) => v,
-    [],
-    settings.STORE_ID,
-  );
-  const setExpiresAt = settings.UI.useSetValueCallback(
-    "outlook_token_expires_at",
-    (v: number) => v,
-    [],
-    settings.STORE_ID,
-  );
+  const setClientId = useSetSettingValue("outlook_client_id");
+  const setRefreshToken = useSetSettingValue("outlook_refresh_token");
+  const setAccessToken = useSetSettingValue("outlook_access_token");
+  const setExpiresAt = useSetSettingValue("outlook_token_expires_at");
 
   const connected = !!outlook_refresh_token;
   const clientId = (outlook_client_id ?? "").trim();

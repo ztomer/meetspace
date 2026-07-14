@@ -9,7 +9,7 @@ const storage = vi.hoisted(() => ({
   loadEnabledCalendars: vi.fn(),
 }));
 
-vi.mock("@meetspace/plugin-calendar", () => ({
+vi.mock("@hypr/plugin-calendar", () => ({
   commands: {
     listCalendars: pluginCalendar.listCalendars,
   },
