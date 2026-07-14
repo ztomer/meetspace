@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use meetspace_db_core::Db;
 
+const DEV_BUNDLE_ID: &str = "com.meetspace.dev";
 const DB_FILENAME: &str = "app.db";
 
 pub async fn open_desktop_db(identifier: &str) -> Arc<Db> {
@@ -9,6 +10,8 @@ pub async fn open_desktop_db(identifier: &str) -> Arc<Db> {
         std::fs::create_dir_all(&dir).expect("failed to create app data dir");
         dir.join(DB_FILENAME)
     });
+
+    println!("[ ==> ] open_desktop_db: identifier={}, db_path={:?}", identifier, db_path);
 
     let db = tauri_plugin_db::open_app_db(db_path.as_deref())
         .await
@@ -18,6 +21,10 @@ pub async fn open_desktop_db(identifier: &str) -> Arc<Db> {
 }
 
 fn desktop_db_dir(identifier: &str) -> Option<std::path::PathBuf> {
+    if identifier == DEV_BUNDLE_ID {
+        return None;
+    }
+
     let data_dir = dirs::data_dir().expect("data_dir must be available");
     let default_dir = meetspace_storage::global::compute_default_base(identifier)
         .expect("data_dir must be available");
@@ -27,17 +34,5 @@ fn desktop_db_dir(identifier: &str) -> Option<std::path::PathBuf> {
         Some(identifier_dir)
     } else {
         Some(default_dir)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn dev_uses_an_isolated_persistent_database() {
-        let db_dir = desktop_db_dir("com.meetspace.dev").unwrap();
-
-        assert!(db_dir.ends_with("com.meetspace.dev"));
     }
 }

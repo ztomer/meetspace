@@ -8,6 +8,7 @@ import {
   CalendarIcon,
   CogIcon,
   LockIcon,
+  PlugIcon,
   SlidersHorizontalIcon,
   SparklesIcon,
   type LucideIcon,
@@ -69,6 +70,7 @@ export function SettingsNav() {
       items: [
         { id: "app", label: t`App`, icon: CogIcon },
         { id: "notifications", label: t`Notifications`, icon: BellIcon },
+        { id: "integrations", label: t`Integrations`, icon: PlugIcon },
       ],
     },
     {

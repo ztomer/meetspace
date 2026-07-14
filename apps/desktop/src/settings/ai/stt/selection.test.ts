@@ -1,22 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import {
-  getDefaultSttModel,
-  getPreferredProviderModel,
-  resolveLiveLanguageSupportMode,
-} from "./selection";
-
-describe("getDefaultSttModel", () => {
-  test("repairs external providers with their first supported model", () => {
-    expect(getDefaultSttModel("deepgram")).toBe("nova-3-general");
-    expect(getDefaultSttModel("soniox")).toBe("stt-rt-v5");
-  });
-
-  test("does not invent a model for custom or Meetspace providers", () => {
-    expect(getDefaultSttModel("custom")).toBeUndefined();
-    expect(getDefaultSttModel("meetspace")).toBeUndefined();
-  });
-});
+import { getPreferredProviderModel } from "./selection";
 
 describe("getPreferredProviderModel", () => {
   test("returns the remembered model when it is still available", () => {
@@ -78,37 +62,5 @@ describe("getPreferredProviderModel", () => {
         allowSavedModelWithoutChoices: true,
       }),
     ).toBe("whisper-large-v3");
-  });
-});
-
-describe("resolveLiveLanguageSupportMode", () => {
-  test("uses provider live support for hosted models", () => {
-    expect(
-      resolveLiveLanguageSupportMode({
-        isOnDeviceModel: false,
-        useLiveOnDeviceModel: false,
-        liveSupported: true,
-      }),
-    ).toBe(true);
-  });
-
-  test("keeps batch-only on-device models in batch mode", () => {
-    expect(
-      resolveLiveLanguageSupportMode({
-        isOnDeviceModel: true,
-        useLiveOnDeviceModel: false,
-        liveSupported: true,
-      }),
-    ).toBe(false);
-  });
-
-  test("requires provider live support for realtime on-device models", () => {
-    expect(
-      resolveLiveLanguageSupportMode({
-        isOnDeviceModel: true,
-        useLiveOnDeviceModel: true,
-        liveSupported: false,
-      }),
-    ).toBe(false);
   });
 });

@@ -1,41 +1,41 @@
 ---
 title: "Quickstart"
-description: "Query your first Anarlog meeting from a terminal or agent."
+description: "Query your first Meetspace meeting from a terminal or agent."
 ---
 
-This quickstart installs the current CLI from source and reads a meeting from the local Anarlog database.
+This quickstart installs the current CLI from source and reads a meeting from the local Meetspace database.
 
 ## Prerequisites
 
-- [Anarlog desktop](https://anarlog.so/download), opened at least once
+- [Meetspace desktop](https://meetspace.so/download), opened at least once
 - A recent Rust toolchain with `cargo`
 - Git
 
 <Steps>
   <Step title="Install from source">
     ```bash
-    git clone https://github.com/fastrepl/anarlog.git
-    cd anarlog
+    git clone https://github.com/fastrepl/meetspace.git
+    cd meetspace
     cargo install --locked --path apps/cli
     ```
   </Step>
   <Step title="List recent meetings">
     ```bash
-    anarlog --json meetings list --limit 5
+    meetspace --json meetings list --limit 5
     ```
 
     Copy the `id` of the meeting you want to inspect.
   </Step>
   <Step title="Read one meeting">
     ```bash
-    anarlog --json meetings get MEETING_ID
+    meetspace --json meetings get MEETING_ID
     ```
 
     The result contains meeting metadata, the canonical note, generated summaries, participants, and action items.
   </Step>
   <Step title="Connect an agent">
-    Configure an MCP client to launch `anarlog mcp`, or give the agent the [Anarlog skill](/agents/skills) so it can fall back to CLI JSON.
+    Configure an MCP client to launch `meetspace mcp`, or give the agent the [Meetspace skill](/agents/skills) so it can fall back to CLI JSON.
   </Step>
 </Steps>
 
-If the CLI cannot locate your database, open Anarlog once or follow [database troubleshooting](/troubleshooting#database-not-found).
+If the CLI cannot locate your database, open Meetspace once or follow [database troubleshooting](/troubleshooting#database-not-found).

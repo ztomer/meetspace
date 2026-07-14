@@ -1,3 +1,4 @@
+import { Trans, useLingui } from "@lingui/react/macro";
 import { useForm } from "@tanstack/react-form";
 import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
@@ -7,10 +8,10 @@ import {
   commands as detectCommands,
   type InstalledApp,
   type Result,
-} from "@meetspace/plugin-detect";
-import { commands as notificationCommands } from "@meetspace/plugin-notification";
-import { Badge } from "@meetspace/ui/components/ui/badge";
-import { Button } from "@meetspace/ui/components/ui/button";
+} from "@hypr/plugin-detect";
+import { commands as notificationCommands } from "@hypr/plugin-notification";
+import { Badge } from "@hypr/ui/components/ui/badge";
+import { Button } from "@hypr/ui/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -18,22 +19,22 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@meetspace/ui/components/ui/command";
+} from "@hypr/ui/components/ui/command";
 import {
   AppFloatingPanel,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@meetspace/ui/components/ui/popover";
+} from "@hypr/ui/components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@meetspace/ui/components/ui/select";
-import { Switch } from "@meetspace/ui/components/ui/switch";
-import { cn } from "@meetspace/utils";
+} from "@hypr/ui/components/ui/select";
+import { Switch } from "@hypr/ui/components/ui/switch";
+import { cn } from "@hypr/utils";
 
 import {
   getIgnoredBundleIds,
@@ -45,6 +46,7 @@ import { useSetSettingValues } from "~/settings/queries";
 import { useConfigValues } from "~/shared/config";
 
 export function NotificationSettingsView() {
+  const { t } = useLingui();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -87,13 +89,11 @@ export function NotificationSettingsView() {
   });
 
   const bundleIdToName = (bundleId: string) => {
-    return (
-      (installedApps ?? []).find((a) => a.id === bundleId)?.name ?? bundleId
-    );
+    return installedApps.find((a) => a.id === bundleId)?.name ?? bundleId;
   };
 
   const isDefaultIgnored = (bundleId: string) => {
-    return (defaultIgnoredBundleIds ?? []).includes(bundleId);
+    return defaultIgnoredBundleIds.includes(bundleId);
   };
 
   const setSettingValues = useSetSettingValues();
@@ -130,17 +130,17 @@ export function NotificationSettingsView() {
   const includedPlatforms = form.getFieldValue("included_platforms");
 
   const ignorableApps = getIgnorableApps({
-    installedApps: installedApps ?? [],
+    installedApps,
     ignoredPlatforms,
     includedPlatforms,
     inputValue: searchQuery,
-    defaultIgnoredBundleIds: defaultIgnoredBundleIds ?? [],
+    defaultIgnoredBundleIds,
   });
   const ignoredBundleIds = getIgnoredBundleIds({
-    installedApps: installedApps ?? [],
+    installedApps: installedApps,
     ignoredPlatforms,
     includedPlatforms,
-    defaultIgnoredBundleIds: defaultIgnoredBundleIds ?? [],
+    defaultIgnoredBundleIds,
   });
 
   const handleToggleIgnoredApp = (bundleId: string) => {
@@ -171,9 +171,13 @@ export function NotificationSettingsView() {
         {(field) => (
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-              <h3 className="mb-1 text-sm font-medium">Event notifications</h3>
+              <h3 className="mb-1 text-sm font-medium">
+                <Trans>Event notifications</Trans>
+              </h3>
               <p className="text-muted-foreground text-xs">
-                Get notified 5 minutes before calendar events start
+                <Trans>
+                  Get notified 5 minutes before calendar events start
+                </Trans>
               </p>
             </div>
             <Switch
@@ -190,11 +194,13 @@ export function NotificationSettingsView() {
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 <h3 className="mb-1 text-sm font-medium">
-                  Microphone detection
+                  <Trans>Microphone detection</Trans>
                 </h3>
                 <p className="text-muted-foreground text-xs">
-                  Automatically detect when a meeting starts based on microphone
-                  activity.
+                  <Trans>
+                    Automatically detect when a meeting starts based on
+                    microphone activity.
+                  </Trans>
                 </p>
               </div>
               <Switch
@@ -209,9 +215,13 @@ export function NotificationSettingsView() {
                   {(thresholdField) => (
                     <div className="mb-4 flex items-center justify-between gap-4">
                       <div className="flex-1">
-                        <h4 className="text-sm font-medium">Detection delay</h4>
+                        <h4 className="text-sm font-medium">
+                          <Trans>Detection delay</Trans>
+                        </h4>
                         <p className="text-muted-foreground text-xs">
-                          How long the mic must be active before triggering
+                          <Trans>
+                            How long the mic must be active before triggering
+                          </Trans>
                         </p>
                       </div>
                       <Select
@@ -238,11 +248,13 @@ export function NotificationSettingsView() {
 
                 <div className="mb-3 flex flex-col gap-1">
                   <h4 className="text-sm font-medium">
-                    Exclude apps from detection
+                    <Trans>Exclude apps from detection</Trans>
                   </h4>
                   <p className="text-muted-foreground text-xs">
-                    Search installed apps to exclude them. Click an excluded app
-                    to include it again.
+                    <Trans>
+                      Search installed apps to exclude them. Click an excluded
+                      app to include it again.
+                    </Trans>
                   </p>
                 </div>
                 <div className="flex flex-col gap-3">
@@ -280,7 +292,7 @@ export function NotificationSettingsView() {
                               {bundleIdToName(bundleId)}
                               {isDefault && (
                                 <span className="text-[10px] opacity-70">
-                                  (default)
+                                  <Trans>(default)</Trans>
                                 </span>
                               )}
                               <Button
@@ -299,7 +311,7 @@ export function NotificationSettingsView() {
                           );
                         })}
                         <span className="text-muted-foreground text-sm">
-                          Search installed apps...
+                          <Trans>Search installed apps...</Trans>
                         </span>
                       </div>
                     </PopoverTrigger>
@@ -311,13 +323,13 @@ export function NotificationSettingsView() {
                       <AppFloatingPanel className="overflow-hidden">
                         <Command className="rounded-[inherit] border-0 bg-transparent">
                           <CommandInput
-                            placeholder="Search installed apps..."
+                            placeholder={t`Search installed apps...`}
                             value={searchQuery}
                             onValueChange={setSearchQuery}
                           />
                           <CommandEmpty>
                             <div className="text-muted-foreground px-2 py-1.5 text-sm">
-                              No apps found.
+                              <Trans>No apps found.</Trans>
                             </div>
                           </CommandEmpty>
                           <CommandList>
@@ -356,7 +368,7 @@ export function NotificationSettingsView() {
         <div className="flex items-center gap-4 pt-4 pb-2">
           <div className="border-muted min-w-0 flex-1 border-t" />
           <span className="text-muted-foreground shrink-0 text-xs font-medium">
-            For enabled notifications
+            <Trans>For enabled notifications</Trans>
           </span>
           <div className="border-muted min-w-0 flex-1 border-t" />
         </div>
@@ -366,11 +378,13 @@ export function NotificationSettingsView() {
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 <h3 className="mb-1 text-sm font-medium">
-                  Respect Do-Not-Disturb mode
+                  <Trans>Respect Do-Not-Disturb mode</Trans>
                 </h3>
                 <p className="text-muted-foreground text-xs">
-                  Don't show notifications when Do-Not-Disturb is enabled on
-                  your system
+                  <Trans>
+                    Don't show notifications when Do-Not-Disturb is enabled on
+                    your system
+                  </Trans>
                 </p>
               </div>
               <Switch

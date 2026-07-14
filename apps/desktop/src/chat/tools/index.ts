@@ -6,7 +6,7 @@ import type {
   Meeting,
   MeetingPage,
   TranscriptPage,
-} from "@meetspace/plugin-db";
+} from "@hypr/plugin-db";
 
 import { CONTEXT_TEXT_FIELD } from "./context-text";
 import { buildEditSummaryTool } from "./edit-summary";

@@ -35,8 +35,8 @@ import {
 } from "./shared";
 
 import { useNotifications } from "~/contexts/notifications";
+import { useSetSettingValue } from "~/settings/queries";
 import { useConfigValues } from "~/shared/config";
-import * as settings from "~/store/tinybase/store/settings";
 import { isRealtimeLocalModel } from "~/stt/capabilities";
 
 type ModelEntry = {
@@ -56,19 +56,8 @@ export function SelectProviderAndModel() {
   const health = useConnectionHealth();
   const models = useLocalModels();
 
-  const setProvider = settings.UI.useSetValueCallback(
-    "current_stt_provider",
-    (provider: string) => provider,
-    [],
-    settings.STORE_ID,
-  );
-
-  const setModel = settings.UI.useSetValueCallback(
-    "current_stt_model",
-    (model: string) => model,
-    [],
-    settings.STORE_ID,
-  );
+  const setProvider = useSetSettingValue("current_stt_provider");
+  const setModel = useSetSettingValue("current_stt_model");
 
   // Auto-seed the (only) provider so callers that read current_stt_provider
   // see something consistent without making the user click anything.

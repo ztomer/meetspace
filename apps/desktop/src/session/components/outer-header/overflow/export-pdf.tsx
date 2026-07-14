@@ -15,8 +15,9 @@ import { DropdownMenuItem } from "@meetspace/ui/components/ui/dropdown-menu";
 
 import { formatDate, formatDuration } from "./export-utils";
 
-import { useSessionEvent } from "~/store/tinybase/hooks";
-import * as main from "~/store/tinybase/store/main";
+import { useSession, useSessionParticipants, useEnhancedNote } from "~/session/queries";
+import { useSessionTranscripts } from "~/stt/queries";
+import { getSessionEvent } from "~/session/utils";
 import type { EditorView } from "~/store/zustand/tabs/schema";
 
 export function ExportPDF({
@@ -26,89 +27,36 @@ export function ExportPDF({
   sessionId: string;
   currentView: EditorView;
 }) {
-  const store = main.UI.useStore(main.STORE_ID);
-  const queries = main.UI.useQueries(main.STORE_ID);
-
-  const sessionTitle = main.UI.useCell(
-    "sessions",
-    sessionId,
-    "title",
-    main.STORE_ID,
-  ) as string | undefined;
-
-  const sessionCreatedAt = main.UI.useCell(
-    "sessions",
-    sessionId,
-    "created_at",
-    main.STORE_ID,
-  ) as string | undefined;
-
-  const event = useSessionEvent(sessionId);
+  const session = useSession(sessionId);
+  const sessionTitle = session?.title;
+  const sessionCreatedAt = session?.created_at;
+  const event = session ? getSessionEvent(session) : null;
   const eventTitle = event?.title;
 
-  const rawMd = main.UI.useCell(
-    "sessions",
-    sessionId,
-    "raw_md",
-    main.STORE_ID,
-  ) as string | undefined;
+  const rawMd = session?.raw_md;
 
   const enhancedNoteId = currentView.type === "enhanced" ? currentView.id : "";
-  const enhancedNoteContent = main.UI.useCell(
-    "enhanced_notes",
-    enhancedNoteId,
-    "content",
-    main.STORE_ID,
-  ) as string | undefined;
+  const enhancedNote = useEnhancedNote(enhancedNoteId);
+  const enhancedNoteContent = enhancedNote?.content;
 
+  const participants = useSessionParticipants(sessionId);
   const participantNames = useMemo((): string[] => {
-    if (!queries) return [];
+    return participants.map((p) => p.name).filter(Boolean);
+  }, [participants]);
 
-    const names: string[] = [];
-    queries.forEachResultRow(
-      main.QUERIES.sessionParticipantsWithDetails,
-      (rowId) => {
-        const participantSessionId = queries.getResultCell(
-          main.QUERIES.sessionParticipantsWithDetails,
-          rowId,
-          "session_id",
-        );
-        if (participantSessionId === sessionId) {
-          const name = queries.getResultCell(
-            main.QUERIES.sessionParticipantsWithDetails,
-            rowId,
-            "human_name",
-          );
-          if (name && typeof name === "string") {
-            names.push(name);
-          }
-        }
-      },
-    );
-    return names;
-  }, [queries, sessionId]);
-
-  const transcriptIds = main.UI.useSliceRowIds(
-    main.INDEXES.transcriptBySession,
-    sessionId,
-    main.STORE_ID,
-  );
+  const transcripts = useSessionTranscripts(sessionId);
 
   const transcriptDuration = useMemo((): string | null => {
-    if (!store || !transcriptIds || transcriptIds.length === 0) {
+    if (transcripts.length === 0) {
       return null;
     }
 
     let minStartedAt: number | null = null;
     let maxEndedAt: number | null = null;
 
-    for (const transcriptId of transcriptIds) {
-      const startedAt = store.getCell(
-        "transcripts",
-        transcriptId,
-        "started_at",
-      );
-      const endedAt = store.getCell("transcripts", transcriptId, "ended_at");
+    for (const transcript of transcripts) {
+      const startedAt = transcript.startedAt;
+      const endedAt = transcript.endedAt;
 
       if (typeof startedAt === "number") {
         if (minStartedAt === null || startedAt < minStartedAt) {
@@ -126,7 +74,7 @@ export function ExportPDF({
       return formatDuration(minStartedAt, maxEndedAt);
     }
     return null;
-  }, [store, transcriptIds]);
+  }, [transcripts]);
 
   const getExportContent = useMemo(() => {
     return (): {

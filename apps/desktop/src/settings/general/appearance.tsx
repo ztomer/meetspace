@@ -3,8 +3,8 @@ import { MoonIcon, MonitorIcon, SunIcon } from "lucide-react";
 import { cn } from "@meetspace/utils";
 
 import { useConfigValue } from "~/shared/config";
+import { useSetSettingValue } from "~/settings/queries";
 import type { ThemeChoice } from "~/shared/theme";
-import * as settings from "~/store/tinybase/store/settings";
 
 const OPTIONS: Array<{
   value: ThemeChoice;
@@ -18,12 +18,7 @@ const OPTIONS: Array<{
 
 export function AppearanceSettings() {
   const theme = (useConfigValue("theme") ?? "system") as ThemeChoice;
-  const setTheme = settings.UI.useSetValueCallback(
-    "theme",
-    (value: ThemeChoice) => value,
-    [],
-    settings.STORE_ID,
-  );
+  const setTheme = useSetSettingValue("theme");
 
   return (
     <div>

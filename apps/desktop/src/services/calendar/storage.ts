@@ -1,7 +1,7 @@
 import type {
   CalendarListItem,
   CalendarProviderType,
-} from "@meetspace/plugin-calendar";
+} from "@hypr/plugin-calendar";
 
 import type { Ctx } from "./ctx";
 import type { ExistingEvent, IncomingParticipants } from "./fetch/types";

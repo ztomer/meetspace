@@ -1,15 +1,16 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 
-import { useSync } from "../context";
-
+import { useSync } from "~/calendar/components/context";
 import {
+  CalendarSelection,
   type CalendarGroup,
   type CalendarItem,
-  CalendarSelection,
 } from "~/calendar/components/calendar-selection";
 import type { CalendarProvider } from "~/calendar/components/shared";
-import { setCalendarEnabled, useCalendarRows } from "~/calendar/queries";
+import { db, useDrizzleLiveQuery } from "~/db";
+import { calendars as calendarsTable } from "@meetspace/db";
+import { eq } from "drizzle-orm";
 
 export function OAuthCalendarSelection({
   groups,
@@ -34,27 +35,34 @@ export function OAuthCalendarSelection({
 
 export function useOAuthCalendarSelection(config: CalendarProvider) {
   const queryClient = useQueryClient();
-  const calendars = useCalendarRows(config.id);
+  const { data: rawCalendars = [] } = useDrizzleLiveQuery(
+    db.select().from(calendarsTable),
+  ) as { data: any[] };
   const { cancelDebouncedSync, status, scheduleDebouncedSync, scheduleSync } =
     useSync();
 
   const { groups, connectionSourceMap } = useMemo(() => {
+    const providerCalendars = rawCalendars.filter(
+      (cal) => cal.provider === config.id,
+    );
+
     const sourceMap = new Map<string, string>();
 
-    for (const cal of calendars) {
-      if (cal.source && cal.connection_id) {
-        sourceMap.set(cal.connection_id, cal.source);
+    for (const cal of providerCalendars) {
+      // HACK: derive connectionId -> source mapping from calendar entries
+      if (cal.source && cal.connectionId) {
+        sourceMap.set(cal.connectionId, cal.source);
       }
     }
 
     const nonNullSources = new Set(
-      calendars
+      providerCalendars
         .map((cal) => {
           if (cal.source) {
             return cal.source;
           }
-          if (cal.connection_id) {
-            return sourceMap.get(cal.connection_id);
+          if (cal.connectionId) {
+            return sourceMap.get(cal.connectionId);
           }
           return undefined;
         })
@@ -68,8 +76,8 @@ export function useOAuthCalendarSelection(config: CalendarProvider) {
       { connectionId?: string; calendars: CalendarItem[] }
     >();
 
-    for (const cal of calendars) {
-      const connectionId = cal.connection_id || undefined;
+    for (const cal of providerCalendars) {
+      const connectionId = cal.connectionId ?? undefined;
       const source =
         cal.source ||
         (connectionId ? sourceMap.get(connectionId) : undefined) ||
@@ -98,15 +106,15 @@ export function useOAuthCalendarSelection(config: CalendarProvider) {
       })),
       connectionSourceMap: sourceMap,
     };
-  }, [calendars, config.displayName]);
+  }, [rawCalendars, config.id]);
 
   const handleToggle = useCallback(
-    (calendar: CalendarItem, enabled: boolean) => {
-      void setCalendarEnabled(calendar.id, enabled)
-        .then(scheduleDebouncedSync)
-        .catch((error) => {
-          console.error("[calendar] failed to update calendar", error);
-        });
+    async (calendar: CalendarItem, enabled: boolean) => {
+      await db
+        .update(calendarsTable)
+        .set({ enabled })
+        .where(eq(calendarsTable.id, calendar.id));
+      scheduleDebouncedSync();
     },
     [scheduleDebouncedSync],
   );

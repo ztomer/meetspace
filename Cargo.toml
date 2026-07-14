@@ -10,7 +10,6 @@ debug = false
 [workspace]
 resolver = "2"
 members = [
-  "apps/api",
   "apps/cli",
   "apps/desktop/src-tauri",
   "crates/*",
@@ -24,6 +23,8 @@ exclude = [
 ]
 
 [workspace.dependencies]
+tauri-plugin-diarize = { path = "plugins/diarize" }
+tauri-plugin-oauth = { path = "plugins/oauth" }
 meetspace-aec = { path = "crates/aec", package = "aec" }
 meetspace-afconvert = { path = "crates/afconvert", package = "afconvert" }
 meetspace-agc = { path = "crates/agc", package = "agc" }

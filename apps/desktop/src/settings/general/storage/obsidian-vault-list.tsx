@@ -1,4 +1,4 @@
-import { cn } from "@meetspace/utils";
+import { cn } from "@hypr/utils";
 
 import { displayPath } from "./path-utils";
 

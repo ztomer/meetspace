@@ -2,7 +2,7 @@ import { useLingui } from "@lingui/react/macro";
 import { Check, ChevronDown } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
-import { Button } from "@meetspace/ui/components/ui/button";
+import { Button } from "@hypr/ui/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -10,14 +10,14 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@meetspace/ui/components/ui/command";
+} from "@hypr/ui/components/ui/command";
 import {
   AppFloatingPanel,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@meetspace/ui/components/ui/popover";
-import { cn } from "@meetspace/utils";
+} from "@hypr/ui/components/ui/popover";
+import { cn } from "@hypr/utils";
 
 export interface SearchableSelectOption {
   value: string;
