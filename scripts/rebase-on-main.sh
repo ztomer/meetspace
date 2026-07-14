@@ -186,8 +186,16 @@ pnpm install --frozen-lockfile=false
 bold "==> Automatically rebranding legacy names and imports to Meetspace"
 python3 scripts/rebrand_sweep.py
 
-bold "==> Regenerating i18n catalogs (resolved via keep-ours during rebase)"
-pnpm -F desktop i18n:compile || yellow "i18n:compile failed; run it manually before release"
+bold "==> Regenerating i18n catalogs (extract from rebranded source, then compile)"
+# Must extract BEFORE compile: after the rebrand sweep, source-generated message
+# hashes change, so compiling the stale .po alone leaves those hashes unmapped and
+# the UI renders raw hashes as gibberish. Extract --clean picks up the current
+# (rebranded) source strings, then compile regenerates the .ts catalogs.
+if pnpm -F desktop i18n:extract --clean && pnpm -F desktop i18n:compile; then
+  green "  i18n catalogs regenerated."
+else
+  yellow "i18n regeneration failed; run 'pnpm -F desktop i18n:extract --clean && pnpm -F desktop i18n:compile' manually before release"
+fi
 
 bold "==> Formatting codebase with dprint"
 pnpm exec dprint fmt
