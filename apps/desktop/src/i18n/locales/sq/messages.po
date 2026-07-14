@@ -27,20 +27,8 @@ msgstr ""
 msgid "{0} verified legacy files can be removed"
 msgstr ""
 
-#: src/settings/general/account.tsx
-msgid "{trialDaysRemaining} day left"
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "{trialDaysRemaining} days left"
-msgstr ""
-
 #: src/settings/ai/llm/select.tsx
-msgid "<0>Language model</0> is needed to make Anarlog summarize and chat about your conversations."
-msgstr ""
-
-#: src/settings/ai/stt/select.tsx
-msgid "<0>Transcription model</0> is needed to make Anarlog listen to your conversations."
+msgid "<0>Language model</0> is needed to make Meetspace summarize and chat about your conversations."
 msgstr ""
 
 #: src/settings/general/storage/index.tsx
@@ -65,12 +53,6 @@ msgstr ""
 
 #: src/settings/general/permissions.tsx
 msgid "Accessibility"
-msgstr ""
-
-#: src/onboarding/index.tsx
-#: src/settings/general/account.tsx
-#: src/sidebar/settings.tsx
-msgid "Account"
 msgstr ""
 
 #: src/templates/template-icon-picker.tsx
@@ -129,10 +111,6 @@ msgstr "Gjuhë të tjera të folura"
 msgid "Advanced"
 msgstr ""
 
-#: src/settings/ai/stt/select.tsx
-msgid "After recording"
-msgstr ""
-
 #: src/contacts/details.tsx
 msgid "AI-generated summary of all interactions and notes with this contact will appear here. This will synthesize key discussion points, action items, and relationship context across all meetings and notes."
 msgstr ""
@@ -141,44 +119,12 @@ msgstr ""
 msgid "All Notes"
 msgstr ""
 
-#: src/onboarding/permissions.tsx
-msgid "Allow access"
-msgstr ""
-
-#: src/onboarding/permissions.tsx
-msgid "Allow microphone access"
-msgstr ""
-
-#: src/onboarding/permissions.tsx
-msgid "Allow system audio access"
-msgstr ""
-
 #: src/settings/general/app-settings.tsx
 msgid "Always ready without manually launching."
 msgstr "Gjithmonë gati pa nisur manualisht."
 
 #: src/session/components/note-input/enhanced/streaming.tsx
 msgid "Analyzing structure..."
-msgstr ""
-
-#: src/onboarding/permissions.tsx
-msgid "Anarlog can hear others"
-msgstr ""
-
-#: src/onboarding/permissions.tsx
-msgid "Anarlog can hear your voice"
-msgstr ""
-
-#: src/settings/general/storage/legacy-cleanup.tsx
-msgid "Anarlog could not verify the migration status"
-msgstr ""
-
-#: src/onboarding/index.tsx
-msgid "Anarlog needs access to your microphone and system audio to record and transcribe your meetings"
-msgstr ""
-
-#: src/onboarding/index.tsx
-msgid "Anarlog will sync your calendar to get meeting reminders"
 msgstr ""
 
 #: src/templates/template-icon-picker.tsx
@@ -206,13 +152,13 @@ msgstr ""
 msgid "Ask & search about anything, or be creative!"
 msgstr ""
 
-#: src/shared/chat-cta.tsx
-msgid "Ask Anarlog anything"
-msgstr ""
-
 #: src/chat/components/input/index.tsx
 #: src/shared/chat-cta.tsx
 msgid "Ask anything"
+msgstr ""
+
+#: src/shared/chat-cta.tsx
+msgid "Ask Meetspace anything"
 msgstr ""
 
 #: src/task/resource-view.tsx
@@ -228,7 +174,7 @@ msgid "Audio file retention"
 msgstr ""
 
 #: src/instruction/index.tsx
-msgid "Authorize access in your browser, then return to Anarlog."
+msgid "Authorize access in your browser, then return to Meetspace."
 msgstr ""
 
 #: src/settings/general/notification.tsx
@@ -264,15 +210,6 @@ msgstr ""
 msgid "Calendar"
 msgstr ""
 
-#: src/onboarding/index.tsx
-msgid "Calendar connected"
-msgstr ""
-
-#: src/settings/ai/stt/select.tsx
-msgid "Can transcribe while the meeting is happening."
-msgstr ""
-
-#: src/settings/general/account.tsx
 #: src/settings/general/storage/legacy-cleanup.tsx
 #: src/settings/todo/github.tsx
 msgid "Cancel"
@@ -282,20 +219,12 @@ msgstr ""
 msgid "Cancel date edit"
 msgstr ""
 
-#: src/onboarding/folder-location.tsx
-msgid "Change"
-msgstr ""
-
 #: src/chat/components/toolbar-controls.tsx
 msgid "Chat history"
 msgstr ""
 
 #: src/settings/general/storage/legacy-cleanup.tsx
 msgid "Checking migration..."
-msgstr ""
-
-#: src/onboarding/account/after-login.tsx
-msgid "Checking trial eligibility..."
 msgstr ""
 
 #: src/session/components/outer-header/overflow/export-modal.tsx
@@ -308,10 +237,6 @@ msgstr ""
 
 #: src/settings/general/theme.tsx
 msgid "Choose light, dark, or match your system setting."
-msgstr ""
-
-#: src/onboarding/folder-location.tsx
-msgid "Choose storage location"
 msgstr ""
 
 #: src/templates/template-icon-picker.tsx
@@ -373,16 +298,8 @@ msgstr ""
 msgid "Company"
 msgstr ""
 
-#: src/settings/general/account.tsx
-msgid "Compare Free and Pro before you sign in."
-msgstr ""
-
 #: src/instruction/index.tsx
-msgid "Complete sign-in in your browser, then return to Anarlog."
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "Complete the sign-in flow in your browser, then come back here if Anarlog does not reconnect automatically."
+msgid "Complete sign-in in your browser, then return to Meetspace."
 msgstr ""
 
 #: src/instruction/index.tsx
@@ -395,7 +312,6 @@ msgid "Configure"
 msgstr ""
 
 #: src/settings/ai/llm/configure.tsx
-#: src/settings/ai/stt/configure.tsx
 msgid "Configure Providers"
 msgstr ""
 
@@ -403,7 +319,6 @@ msgstr ""
 msgid "Configure this provider to use it."
 msgstr ""
 
-#: src/onboarding/folder-location.tsx
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
 msgid "Confirm"
 msgstr ""
@@ -415,20 +330,8 @@ msgstr ""
 msgid "Connect {0}"
 msgstr ""
 
-#: src/onboarding/index.tsx
-msgid "Connect calendar"
-msgstr ""
-
 #: src/settings/todo/github.tsx
 msgid "Connect GitHub for private repos."
-msgstr ""
-
-#: src/onboarding/calendar.tsx
-msgid "Connect Google Calendar"
-msgstr ""
-
-#: src/onboarding/calendar.tsx
-msgid "Connect Outlook"
 msgstr ""
 
 #: src/instruction/index.tsx
@@ -444,24 +347,8 @@ msgstr ""
 msgid "Context"
 msgstr ""
 
-#: src/onboarding/calendar.tsx
-msgid "Continue"
-msgstr ""
-
-#: src/onboarding/account/after-login.tsx
-msgid "Continuing without trial"
-msgstr ""
-
 #: src/chat/components/message/normal.tsx
 msgid "Copy message"
-msgstr ""
-
-#: src/onboarding/account/after-login.tsx
-msgid "Could not start trial"
-msgstr ""
-
-#: src/onboarding/index.tsx
-msgid "Create account"
 msgstr ""
 
 #: src/templates/details.tsx
@@ -492,10 +379,6 @@ msgstr ""
 
 #: src/sidebar/timeline/item.tsx
 msgid "Delete Event"
-msgstr ""
-
-#: src/settings/ai/stt/select.tsx
-msgid "Delete model"
 msgstr ""
 
 #: src/sidebar/timeline/item.tsx
@@ -546,10 +429,6 @@ msgstr ""
 msgid "Don't show notifications when Do-Not-Disturb is enabled on your system"
 msgstr ""
 
-#: src/settings/ai/stt/select.tsx
-msgid "Download"
-msgstr ""
-
 #: src/templates/details.tsx
 #: src/templates/template-form.tsx
 msgid "Duplicate"
@@ -563,10 +442,6 @@ msgstr ""
 msgid "Edit date"
 msgstr ""
 
-#: src/onboarding/account/after-login.tsx
-msgid "Eligible for free trial"
-msgstr ""
-
 #: src/contacts/details.tsx
 msgid "Email"
 msgstr ""
@@ -575,21 +450,12 @@ msgstr ""
 msgid "Emojis"
 msgstr ""
 
-#. placeholder {0}: permissionName.toLowerCase()
-#: src/onboarding/permissions.tsx
-msgid "Enable {0}"
-msgstr ""
-
 #: src/session/components/outer-header/metadata/participants/chip.tsx
 msgid "Enhance contact"
 msgstr ""
 
 #: src/session/components/outer-header/metadata/participants/chip.tsx
 msgid "Enhance contact {label}"
-msgstr ""
-
-#: src/settings/ai/stt/select.tsx
-msgid "Enter a model identifier"
 msgstr ""
 
 #: src/session/components/outer-header/metadata/date.tsx
@@ -625,20 +491,12 @@ msgstr ""
 msgid "Exporting..."
 msgstr ""
 
-#: src/onboarding/calendar.tsx
-msgid "Failed to load Google Calendar"
-msgstr ""
-
 #: src/settings/todo/provider-content.tsx
 msgid "Failed to load integration status"
 msgstr ""
 
 #: src/task/resource-view.tsx
 msgid "Failed to load issue"
-msgstr ""
-
-#: src/onboarding/calendar.tsx
-msgid "Failed to load Outlook Calendar"
 msgstr ""
 
 #: src/task/resource-view.tsx
@@ -663,11 +521,7 @@ msgid "Find a note..."
 msgstr ""
 
 #: src/instruction/index.tsx
-msgid "Finish checkout in your browser, then return to Anarlog."
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "Finish sign-in"
+msgid "Finish checkout in your browser, then return to Meetspace."
 msgstr ""
 
 #: src/settings/general/week-start.tsx
@@ -694,10 +548,6 @@ msgstr ""
 msgid "Forever"
 msgstr ""
 
-#: src/settings/general/account.tsx
-msgid "Free"
-msgstr ""
-
 #: src/templates/template-icon-picker.tsx
 msgid "Frequently used"
 msgstr ""
@@ -715,14 +565,6 @@ msgstr ""
 msgid "Get notified 5 minutes before calendar events start"
 msgstr ""
 
-#: src/settings/general/account.tsx
-msgid "Get started"
-msgstr ""
-
-#: src/onboarding/account/before-login.tsx
-msgid "Get started for free"
-msgstr ""
-
 #: src/sidebar/timeline/index.tsx
 msgid "Go back to now"
 msgstr ""
@@ -731,28 +573,12 @@ msgstr ""
 msgid "Go home"
 msgstr ""
 
-#: src/onboarding/shared.tsx
-msgid "Go to next section"
-msgstr ""
-
-#: src/onboarding/shared.tsx
-msgid "Go to previous section"
-msgstr ""
-
 #: src/chat/components/body/index.tsx
 msgid "Go to recent"
 msgstr ""
 
 #: src/calendar/components/apple/permission.tsx
 msgid "Having trouble?"
-msgstr ""
-
-#: src/onboarding/permissions.tsx
-msgid "Help Anarlog listen to others"
-msgstr ""
-
-#: src/onboarding/permissions.tsx
-msgid "Help Anarlog listen to you"
 msgstr ""
 
 #: src/sidebar/timeline/index.tsx
@@ -769,10 +595,6 @@ msgstr ""
 
 #: src/templates/template-icon-picker.tsx
 msgid "Icons"
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "If the browser does not reopen Anarlog, use the paste-link fallback in the sign-in instruction window."
 msgstr ""
 
 #: src/sidebar/timeline/upcoming-meeting.ts
@@ -795,6 +617,10 @@ msgstr ""
 msgid "Insert below"
 msgstr ""
 
+#: src/sidebar/settings.tsx
+msgid "Integrations"
+msgstr ""
+
 #: src/settings/ai/llm/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Intelligence"
@@ -812,12 +638,8 @@ msgstr ""
 msgid "Join meeting and record"
 msgstr ""
 
-#: src/onboarding/final.tsx
-msgid "Join our community and stay updated:"
-msgstr ""
-
 #: src/settings/general/app-settings.tsx
-msgid "Keep Anarlog available from the menu bar."
+msgid "Keep Meetspace available from the menu bar."
 msgstr ""
 
 #: src/settings/general/index.tsx
@@ -844,10 +666,6 @@ msgstr ""
 msgid "LinkedIn"
 msgstr ""
 
-#: src/settings/ai/stt/select.tsx
-msgid "Live"
-msgstr ""
-
 #: src/calendar/components/calendar-selection.tsx
 msgid "Loading calendars..."
 msgstr ""
@@ -861,21 +679,9 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
-#: src/onboarding/account/before-login.tsx
-msgid "Login with existing account"
-msgstr ""
-
 #: src/settings/general/main-language.tsx
 msgid "Main language"
 msgstr "Gjuha kryesore"
-
-#: src/onboarding/permissions.tsx
-msgid "Manage"
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "Manage billing"
-msgstr ""
 
 #: src/session/components/note-input/search/bar.tsx
 msgid "Match case"
@@ -892,6 +698,10 @@ msgstr ""
 #: src/settings/general/app-settings.tsx
 msgid "Meetings"
 msgstr "Takime"
+
+#: src/settings/general/storage/legacy-cleanup.tsx
+msgid "Meetspace could not verify the migration status"
+msgstr ""
 
 #: src/contacts/organization-details.tsx
 msgid "member"
@@ -917,13 +727,8 @@ msgstr ""
 msgid "Metadata"
 msgstr ""
 
-#: src/onboarding/permissions.tsx
 #: src/settings/general/permissions.tsx
 msgid "Microphone"
-msgstr ""
-
-#: src/onboarding/permissions.tsx
-msgid "Microphone access turned on"
 msgstr ""
 
 #: src/settings/general/notification.tsx
@@ -943,7 +748,6 @@ msgid "Migration status unavailable"
 msgstr ""
 
 #: src/settings/ai/llm/select.tsx
-#: src/settings/ai/stt/select.tsx
 msgid "Model being used"
 msgstr ""
 
@@ -1109,16 +913,10 @@ msgstr ""
 msgid "Open"
 msgstr ""
 
-#. placeholder {0}: permissionName.toLowerCase()
 #. placeholder {0}: title.toLowerCase()
 #: src/calendar/components/apple/permission.tsx
-#: src/onboarding/permissions.tsx
 #: src/settings/general/permissions.tsx
 msgid "Open {0} settings"
-msgstr ""
-
-#: src/onboarding/final.tsx
-msgid "Open Anarlog"
 msgstr ""
 
 #: src/sidebar/timeline/index.tsx
@@ -1150,10 +948,6 @@ msgstr ""
 msgid "Open repository on GitHub"
 msgstr ""
 
-#: src/onboarding/permissions.tsx
-msgid "Open settings"
-msgstr ""
-
 #: src/calendar/components/apple/permission.tsx
 #: src/settings/todo/provider-content.tsx
 msgid "or"
@@ -1181,7 +975,7 @@ msgid "Participants"
 msgstr ""
 
 #: src/instruction/index.tsx
-msgid "Paste the browser URL here if the browser button did not reopen Anarlog."
+msgid "Paste the browser URL here if the browser button did not reopen Meetspace."
 msgstr ""
 
 #: src/contacts/organization-details.tsx
@@ -1198,10 +992,6 @@ msgstr ""
 msgid "Permissions"
 msgstr ""
 
-#: src/onboarding/index.tsx
-msgid "Permissions granted"
-msgstr ""
-
 #: src/settings/personalization/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Personalization"
@@ -1209,14 +999,6 @@ msgstr ""
 
 #: src/contacts/details.tsx
 msgid "Phone"
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "Plan & Billing"
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "Plans"
 msgstr ""
 
 #: src/session/components/outer-header/overflow/export-modal.tsx
@@ -1227,33 +1009,16 @@ msgstr ""
 msgid "Previous match"
 msgstr ""
 
-#: src/settings/ai/stt/select.tsx
-msgid "Pro"
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "Pro trial"
-msgstr ""
-
-#: src/onboarding/index.tsx
-msgid "Ready to go"
-msgstr ""
-
 #: src/shared/open-note-dialog.tsx
 msgid "Recent"
 msgstr ""
 
-#: src/calendar/components/oauth/status.tsx
 #: src/settings/todo/provider-content.tsx
 msgid "Reconnect required"
 msgstr ""
 
 #: src/session/components/outer-header/index.tsx
 msgid "Record"
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "Refresh billing status"
 msgstr ""
 
 #: src/calendar/components/calendar-selection.tsx
@@ -1286,10 +1051,6 @@ msgstr ""
 
 #: src/instruction/index.tsx
 msgid "Reopen in browser"
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "Reopen sign-in page"
 msgstr ""
 
 #: src/session/components/note-input/search/bar.tsx
@@ -1335,7 +1096,7 @@ msgid "Required to record your voice during meetings and calls"
 msgstr ""
 
 #: src/settings/general/permissions.tsx
-msgid "Required to sync Apple Calendar events into Anarlog"
+msgid "Required to sync Apple Calendar events into Meetspace"
 msgstr ""
 
 #: src/calendar/components/apple/permission.tsx
@@ -1360,7 +1121,6 @@ msgid "Retry"
 msgstr ""
 
 #: src/settings/ai/shared/index.tsx
-#: src/settings/ai/stt/select.tsx
 msgid "Runs after the recording finishes, not during the meeting."
 msgstr ""
 
@@ -1431,7 +1191,6 @@ msgid "See all templates"
 msgstr ""
 
 #: src/settings/ai/shared/model-combobox.tsx
-#: src/settings/ai/stt/select.tsx
 msgid "Select a model"
 msgstr ""
 
@@ -1440,7 +1199,6 @@ msgid "Select a person to view details"
 msgstr ""
 
 #: src/settings/ai/llm/select.tsx
-#: src/settings/ai/stt/select.tsx
 msgid "Select a provider"
 msgstr ""
 
@@ -1469,8 +1227,8 @@ msgid "Select..."
 msgstr ""
 
 #: src/settings/general/app-settings.tsx
-msgid "Send anonymous usage analytics to help improve Anarlog."
-msgstr "Dërgo analitikë anonime përdorimi për të ndihmuar në përmirësimin e Anarlog."
+msgid "Send anonymous usage analytics to help improve Meetspace."
+msgstr ""
 
 #: src/contacts/organization-details.tsx
 msgid "Send email"
@@ -1506,10 +1264,6 @@ msgid "Show All Recurring Events"
 msgstr ""
 
 #: src/settings/general/app-settings.tsx
-msgid "Show Anarlog in the Dock and app switcher."
-msgstr ""
-
-#: src/settings/general/app-settings.tsx
 msgid "Show app in Dock"
 msgstr ""
 
@@ -1525,9 +1279,12 @@ msgstr ""
 msgid "Show floating bar"
 msgstr ""
 
-#: src/settings/ai/stt/select.tsx
 #: src/sidebar/timeline/item.tsx
 msgid "Show in Finder"
+msgstr ""
+
+#: src/settings/general/app-settings.tsx
+msgid "Show Meetspace in the Dock and app switcher."
 msgstr ""
 
 #: src/settings/general/app-settings.tsx
@@ -1542,24 +1299,8 @@ msgstr ""
 msgid "Show tray icon"
 msgstr ""
 
-#: src/settings/general/account.tsx
-msgid "Sign in"
-msgstr ""
-
 #: src/settings/todo/github.tsx
 msgid "Sign in for private repo access."
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "Sign in for Pro"
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "Sign in to Anarlog"
-msgstr ""
-
-#: src/onboarding/calendar.tsx
-msgid "Sign in to connect"
 msgstr ""
 
 #. placeholder {0}: config.displayName
@@ -1567,38 +1308,8 @@ msgstr ""
 msgid "Sign in to connect {0}"
 msgstr ""
 
-#: src/settings/general/account.tsx
-msgid "Sign in to unlock cloud transcription and AI models, plus Pro features like sharing."
-msgstr ""
-
-#: src/onboarding/index.tsx
-msgid "Sign in to unlock powerful AI models, sync across devices, and personalization."
-msgstr ""
-
 #: src/instruction/index.tsx
 msgid "Sign in to your account"
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "Sign out"
-msgstr ""
-
-#: src/onboarding/account/after-login.tsx
-#: src/onboarding/index.tsx
-#: src/settings/general/account.tsx
-msgid "Signed in"
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "Signing out..."
-msgstr ""
-
-#: src/onboarding/shared.tsx
-msgid "Skip"
-msgstr ""
-
-#: src/onboarding/index.tsx
-msgid "Skipped"
 msgstr ""
 
 #: src/templates/template-icon-picker.tsx
@@ -1622,8 +1333,8 @@ msgid "SQLite migration verification is incomplete"
 msgstr ""
 
 #: src/settings/general/app-settings.tsx
-msgid "Start Anarlog at login"
-msgstr "Filloni Anarlog në hyrje"
+msgid "Start Meetspace at login"
+msgstr ""
 
 #: src/main/empty.tsx
 msgid "Start Recording"
@@ -1632,14 +1343,6 @@ msgstr ""
 #: src/settings/general/app-settings.tsx
 msgid "Start when meeting begins"
 msgstr "Fillo kur të fillojë takimi"
-
-#: src/onboarding/index.tsx
-msgid "Start with permissions"
-msgstr ""
-
-#: src/onboarding/account/after-login.tsx
-msgid "Starting your trial..."
-msgstr ""
 
 #: src/session/components/outer-header/index.tsx
 msgid "Stop"
@@ -1662,17 +1365,8 @@ msgstr ""
 msgid "Stop when meeting ends"
 msgstr "Ndalo kur të përfundojë takimi"
 
-#: src/onboarding/index.tsx
 #: src/settings/general/storage/index.tsx
 msgid "Storage"
-msgstr ""
-
-#: src/onboarding/index.tsx
-msgid "Storage configured"
-msgstr ""
-
-#: src/onboarding/folder-location.tsx
-msgid "Storage Updated"
 msgstr ""
 
 #: src/instruction/index.tsx
@@ -1696,13 +1390,8 @@ msgstr ""
 msgid "System"
 msgstr ""
 
-#: src/onboarding/permissions.tsx
 #: src/settings/general/permissions.tsx
 msgid "System audio"
-msgstr ""
-
-#: src/onboarding/permissions.tsx
-msgid "System audio enabled"
 msgstr ""
 
 #: src/templates/details.tsx
@@ -1717,10 +1406,6 @@ msgstr ""
 #: src/sidebar/settings.tsx
 #: src/templates/template-sidebar.tsx
 msgid "Templates"
-msgstr ""
-
-#: src/onboarding/folder-location.tsx
-msgid "The app will restart after onboarding to apply your storage changes"
 msgstr ""
 
 #: src/settings/general/spoken-languages.tsx
@@ -1746,7 +1431,7 @@ msgid "Timezone"
 msgstr ""
 
 #: src/session/components/note-input/enhanced/streaming.tsx
-msgid "Tip: The Anarlog team loves our users!"
+msgid "Tip: The Meetspace team loves our users!"
 msgstr ""
 
 #: src/session/components/note-input/header.tsx
@@ -1754,21 +1439,12 @@ msgstr ""
 msgid "Transcript"
 msgstr ""
 
-#: src/settings/ai/stt/index.tsx
 #: src/sidebar/settings.tsx
 msgid "Transcription"
 msgstr ""
 
 #: src/templates/template-icon-picker.tsx
 msgid "Travel & Places"
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "Trial"
-msgstr ""
-
-#: src/onboarding/account/after-login.tsx
-msgid "Trial activated - 14 days of Pro"
 msgstr ""
 
 #: src/session/components/note-input/transcript/renderer/speaker-assign.tsx
@@ -1815,12 +1491,7 @@ msgid "Upgrade to Pro for {0}"
 msgstr ""
 
 #: src/settings/ai/llm/select.tsx
-#: src/settings/ai/stt/select.tsx
 msgid "Upgrade to Pro to use this provider."
-msgstr ""
-
-#: src/settings/ai/stt/select.tsx
-msgid "Upgrade to use"
 msgstr ""
 
 #: src/session/components/floating/options-menu.tsx
@@ -1845,16 +1516,8 @@ msgstr ""
 msgid "Week starts on"
 msgstr ""
 
-#: src/onboarding/index.tsx
-msgid "Welcome to Anarlog"
-msgstr ""
-
 #: src/changelog/index.tsx
 msgid "What's new in {version}?"
-msgstr ""
-
-#: src/onboarding/index.tsx
-msgid "Where your notes and recordings are stored"
 msgstr ""
 
 #: src/task/tab-content.tsx
@@ -1863,10 +1526,6 @@ msgstr ""
 
 #: src/calendar/components/apple/permission.tsx
 msgid "You can"
-msgstr ""
-
-#: src/onboarding/account/after-login.tsx
-msgid "You have an active plan"
 msgstr ""
 
 #: src/session/components/note-input/enhanced/config-error.tsx
@@ -1890,23 +1549,11 @@ msgid "You need to select a model to summarize this meeting"
 msgstr ""
 
 #: src/session/components/note-input/enhanced/config-error.tsx
-msgid "You need to sign in to use Anarlog's language model"
-msgstr ""
-
-#: src/onboarding/account/after-login.tsx
-msgid "You're on a Pro trial"
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "You're on the <0>{planLabel}</0> plan"
-msgstr ""
-
-#: src/settings/general/account.tsx
-msgid "Your Account"
+msgid "You need to sign in to use Meetspace's language model"
 msgstr ""
 
 #: src/session/components/note-input/enhanced/config-error.tsx
-msgid "Your Anarlog plan has expired. Configure another language model or renew your plan"
+msgid "Your Meetspace plan has expired. Configure another language model or renew your plan"
 msgstr ""
 
 #: src/templates/template-sidebar.tsx
