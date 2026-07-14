@@ -5,7 +5,7 @@ import { commands as openerCommands } from "@meetspace/plugin-opener2";
 
 import { OnboardingButton } from "./shared";
 
-import { flushAutomaticRelaunch } from "~/store/tinybase/store/save";
+import { flushAutomaticRelaunch } from "~/shared/relaunch";
 import { commands } from "~/types/tauri.gen";
 
 const SOCIALS = [

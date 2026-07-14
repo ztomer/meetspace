@@ -22,7 +22,8 @@ import { cn, format, safeParseDate } from "@meetspace/utils";
 import { useLanguageModel, useLLMConnectionStatus } from "~/ai/hooks";
 import { useNow } from "~/calendar/hooks";
 import { StandardContentWrapper } from "~/shared/main";
-import * as main from "~/store/tinybase/store/main";
+import { db, useDrizzleLiveQuery } from "~/db";
+import { events, humans, sessionParticipants, sessions } from "@meetspace/db";
 import { useTabs } from "~/store/zustand/tabs";
 
 export function TabContentPrep() {
@@ -39,13 +40,56 @@ function ProactivePrepView() {
   const now = useNow();
   const openNew = useTabs((state) => state.openNew);
 
-  const eventsTable = main.UI.useTable("events", main.STORE_ID);
-  const humansTable = main.UI.useTable("humans", main.STORE_ID);
-  const mappingTable = main.UI.useTable(
-    "mapping_session_participant",
-    main.STORE_ID,
-  );
-  const sessionsTable = main.UI.useTable("sessions", main.STORE_ID);
+  const { data: allEvents = [] } = useDrizzleLiveQuery(db.select().from(events)) as { data: any[] };
+  const { data: allHumans = [] } = useDrizzleLiveQuery(db.select().from(humans)) as { data: any[] };
+  const { data: allParticipants = [] } = useDrizzleLiveQuery(db.select().from(sessionParticipants)) as { data: any[] };
+  const { data: allSessions = [] } = useDrizzleLiveQuery(db.select().from(sessions)) as { data: any[] };
+
+  const eventsTable = useMemo(() => {
+    const map: Record<string, any> = {};
+    for (const e of allEvents) {
+      map[e.id] = {
+        title: e.title,
+        started_at: e.startedAt,
+        ended_at: e.endedAt,
+        participants_json: e.participantsJson ? JSON.stringify(e.participantsJson) : null,
+      };
+    }
+    return map;
+  }, [allEvents]);
+
+  const humansTable = useMemo(() => {
+    const map: Record<string, any> = {};
+    for (const h of allHumans) {
+      map[h.id] = {
+        name: h.name,
+        email: h.email,
+      };
+    }
+    return map;
+  }, [allHumans]);
+
+  const mappingTable = useMemo(() => {
+    const map: Record<string, any> = {};
+    for (const p of allParticipants) {
+      map[p.id] = {
+        human_id: p.humanId,
+        session_id: p.sessionId,
+      };
+    }
+    return map;
+  }, [allParticipants]);
+
+  const sessionsTable = useMemo(() => {
+    const map: Record<string, any> = {};
+    for (const s of allSessions) {
+      map[s.id] = {
+        title: s.title,
+        started_at: s.startedAt,
+      };
+    }
+    return map;
+  }, [allSessions]);
 
   const llmStatus = useLLMConnectionStatus();
   const model = useLanguageModel();

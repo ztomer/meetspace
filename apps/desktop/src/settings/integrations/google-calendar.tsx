@@ -12,8 +12,8 @@ import { Input } from "@meetspace/ui/components/ui/input";
 
 import { listGoogleCalendars } from "~/integrations/calendar-api";
 import { OAUTH_PROVIDERS, signIn } from "~/integrations/oauth-providers";
+import { useSetSettingValue } from "~/settings/queries";
 import { useConfigValues } from "~/shared/config";
-import * as settings from "~/store/tinybase/store/settings";
 
 export function GoogleCalendarIntegration() {
   const cfg = OAUTH_PROVIDERS.google;
@@ -29,30 +29,10 @@ export function GoogleCalendarIntegration() {
     "google_token_expires_at",
   ] as const);
 
-  const setClientId = settings.UI.useSetValueCallback(
-    "google_client_id",
-    (v: string) => v,
-    [],
-    settings.STORE_ID,
-  );
-  const setRefreshToken = settings.UI.useSetValueCallback(
-    "google_refresh_token",
-    (v: string) => v,
-    [],
-    settings.STORE_ID,
-  );
-  const setAccessToken = settings.UI.useSetValueCallback(
-    "google_access_token",
-    (v: string) => v,
-    [],
-    settings.STORE_ID,
-  );
-  const setExpiresAt = settings.UI.useSetValueCallback(
-    "google_token_expires_at",
-    (v: number) => v,
-    [],
-    settings.STORE_ID,
-  );
+  const setClientId = useSetSettingValue("google_client_id");
+  const setRefreshToken = useSetSettingValue("google_refresh_token");
+  const setAccessToken = useSetSettingValue("google_access_token");
+  const setExpiresAt = useSetSettingValue("google_token_expires_at");
 
   const connected = !!google_refresh_token;
   const clientId = (google_client_id ?? "").trim();

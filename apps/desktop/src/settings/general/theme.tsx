@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@meetspace/ui/components/ui/select";
+} from "@hypr/ui/components/ui/select";
 
 import { useSetSettingValue } from "~/settings/queries";
 import { useConfigValue } from "~/shared/config";

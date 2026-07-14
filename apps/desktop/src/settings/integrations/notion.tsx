@@ -1,7 +1,7 @@
 import { Input } from "@meetspace/ui/components/ui/input";
 
+import { useSetSettingValue } from "~/settings/queries";
 import { useConfigValues } from "~/shared/config";
-import * as settings from "~/store/tinybase/store/settings";
 
 export function NotionIntegration() {
   const { notion_token, notion_database_id } = useConfigValues([
@@ -9,18 +9,8 @@ export function NotionIntegration() {
     "notion_database_id",
   ] as const);
 
-  const setToken = settings.UI.useSetValueCallback(
-    "notion_token",
-    (v: string) => v,
-    [],
-    settings.STORE_ID,
-  );
-  const setDb = settings.UI.useSetValueCallback(
-    "notion_database_id",
-    (v: string) => v,
-    [],
-    settings.STORE_ID,
-  );
+  const setToken = useSetSettingValue("notion_token");
+  const setDb = useSetSettingValue("notion_database_id");
 
   return (
     <section className="border-border rounded-lg border p-5">

@@ -1,14 +1,14 @@
 import { SearchIcon } from "lucide-react";
 import { useCallback, useMemo } from "react";
 
-import { Card, CardContent } from "@meetspace/ui/components/ui/card";
+import { Card, CardContent } from "@hypr/ui/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@meetspace/ui/components/ui/carousel";
+} from "@hypr/ui/components/ui/carousel";
 
 import { useToolState } from "./shared";
 
@@ -218,9 +218,7 @@ function RenderContent({ part }: { part: Part }) {
   }
 
   if (part.state === "output-error") {
-    return (
-      <div className="text-destructive text-sm">Error: {part.errorText}</div>
-    );
+    return <div className="text-sm text-red-500">Error: {part.errorText}</div>;
   }
 
   return details.length > 0 ? (

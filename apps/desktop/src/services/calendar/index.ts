@@ -1,4 +1,4 @@
-import type { CalendarProviderType } from "@meetspace/plugin-calendar";
+import type { CalendarProviderType } from "@hypr/plugin-calendar";
 
 import {
   type CalendarSyncRange,

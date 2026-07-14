@@ -1,7 +1,7 @@
 import { Switch } from "@meetspace/ui/components/ui/switch";
 
+import { useSetSettingValue } from "~/settings/queries";
 import { useConfigValues } from "~/shared/config";
-import * as settings from "~/store/tinybase/store/settings";
 
 /**
  * Toggle for local Pyannote speaker diarization. Off by default — the
@@ -13,12 +13,7 @@ import * as settings from "~/store/tinybase/store/settings";
  */
 export function DiarizationSetting() {
   const { diarize_auto } = useConfigValues(["diarize_auto"] as const);
-  const setDiarizeAuto = settings.UI.useSetValueCallback(
-    "diarize_auto",
-    (v: boolean) => v,
-    [],
-    settings.STORE_ID,
-  );
+  const setDiarizeAuto = useSetSettingValue("diarize_auto");
 
   return (
     <section className="flex flex-col gap-3">

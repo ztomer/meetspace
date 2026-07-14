@@ -85,7 +85,7 @@ function OnboardingScreen({ onFinish }: { onFinish: () => void }) {
 export function StandaloneOnboardingScreen({
   onFinish,
 }: {
-  onFinish: () => void;
+  onFinish: (sessionId?: string) => void;
 }) {
   const isMacOS = platform() === "macos";
 
@@ -107,7 +107,7 @@ function OnboardingScreenContent({
   headerClassName,
   headerDragRegion = false,
 }: {
-  onFinish: () => void;
+  onFinish: (sessionId?: string) => void;
   headerClassName: string;
   headerDragRegion?: boolean;
 }) {
@@ -133,9 +133,9 @@ function OnboardingScreenContent({
     });
   }, [currentPlatform, currentStep]);
 
-  const handleFinish = useCallback(() => {
+  const handleFinish = useCallback((sessionId?: string) => {
     void queryClient.invalidateQueries({ queryKey: ["onboarding-needed"] });
-    onFinish();
+    onFinish(sessionId);
   }, [onFinish, queryClient]);
 
   return (

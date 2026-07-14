@@ -1,35 +1,11 @@
+import { Trans, useLingui } from "@lingui/react/macro";
 import { AlertCircleIcon, ArrowRightIcon, CheckIcon } from "lucide-react";
-import { useState } from "react";
 
-import type { PermissionStatus } from "@meetspace/plugin-permissions";
-import { Button } from "@meetspace/ui/components/ui/button";
-import { cn } from "@meetspace/utils";
+import type { PermissionStatus } from "@hypr/plugin-permissions";
+import { Button } from "@hypr/ui/components/ui/button";
+import { cn } from "@hypr/utils";
 
 import { usePermission } from "~/shared/hooks/usePermissions";
-
-function ActionLink({
-  onClick,
-  disabled,
-  children,
-}: {
-  onClick: () => void;
-  disabled?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className={cn([
-        "hover:text-foreground underline transition-colors",
-        disabled && "cursor-not-allowed opacity-50",
-      ])}
-    >
-      {children}
-    </button>
-  );
-}
 
 function PermissionRow({
   title,
@@ -37,7 +13,6 @@ function PermissionRow({
   status,
   isPending,
   onRequest,
-  onReset,
   onOpen,
 }: {
   title: string;
@@ -45,10 +20,9 @@ function PermissionRow({
   status: PermissionStatus | undefined;
   isPending: boolean;
   onRequest: () => void;
-  onReset: () => void;
   onOpen: () => void;
 }) {
-  const [showActions, setShowActions] = useState(false);
+  const { t } = useLingui();
   const isAuthorized = status === "authorized";
   const isDenied = status === "denied";
 
@@ -72,35 +46,7 @@ function PermissionRow({
           {!isAuthorized && <AlertCircleIcon className="size-4" />}
           <h3 className="text-sm font-medium">{title}</h3>
         </div>
-        <div className="text-muted-foreground text-xs">
-          {!showActions ? (
-            <div>
-              {!isAuthorized && <span>{description} · </span>}
-              <button
-                type="button"
-                onClick={() => setShowActions(true)}
-                className="hover:text-foreground underline transition-colors"
-              >
-                Having trouble?
-              </button>
-            </div>
-          ) : (
-            <div>
-              You can{" "}
-              <ActionLink onClick={onRequest} disabled={isPending}>
-                Request,
-              </ActionLink>{" "}
-              <ActionLink onClick={onReset} disabled={isPending}>
-                Reset
-              </ActionLink>{" "}
-              or{" "}
-              <ActionLink onClick={onOpen} disabled={isPending}>
-                Open
-              </ActionLink>{" "}
-              permission panel.
-            </div>
-          )}
-        </div>
+        <p className="text-muted-foreground text-xs">{description}</p>
       </div>
       <Button
         variant={isAuthorized ? "ghost" : "default"}
@@ -114,12 +60,12 @@ function PermissionRow({
         ])}
         aria-label={
           isAuthorized
-            ? `Open ${title.toLowerCase()} settings`
-            : `Request ${title.toLowerCase()} permission`
+            ? t`Open ${title.toLowerCase()} settings`
+            : t`Request ${title.toLowerCase()} permission`
         }
       >
         {isAuthorized ? (
-          <CheckIcon className="size-5" />
+          <CheckIcon className="size-4" />
         ) : (
           <ArrowRightIcon className="size-5" />
         )}
@@ -132,7 +78,7 @@ function PermissionGroup({
   title,
   children,
 }: {
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
@@ -146,6 +92,7 @@ function PermissionGroup({
 }
 
 export function Permissions() {
+  const { t } = useLingui();
   const calendar = usePermission("calendar");
   const mic = usePermission("microphone");
   const systemAudio = usePermission("systemAudio");
@@ -153,47 +100,41 @@ export function Permissions() {
 
   return (
     <div className="flex flex-col gap-8">
-      <PermissionGroup title="Audio">
+      <PermissionGroup title={<Trans>Audio</Trans>}>
         <PermissionRow
-          title="Microphone"
-          description="Required to record your voice during meetings and calls"
+          title={t`Microphone`}
+          description={t`Required to record your voice during meetings and calls`}
           status={mic.status}
           isPending={mic.isPending}
           onRequest={mic.request}
-          onReset={mic.reset}
           onOpen={mic.open}
         />
         <PermissionRow
-          title="System audio"
-          description="Required to capture other participants' voices in meetings"
+          title={t`System audio`}
+          description={t`Required to capture other participants' voices in meetings`}
           status={systemAudio.status}
           isPending={systemAudio.isPending}
           onRequest={systemAudio.request}
-          onReset={systemAudio.reset}
           onOpen={systemAudio.open}
         />
       </PermissionGroup>
 
-      <PermissionGroup title="Dailynote">
-        <PermissionRow
-          title="Accessibility"
-          description="Required to detect meeting apps and sync mute status"
-          status={accessibility.status}
-          isPending={accessibility.isPending}
-          onRequest={accessibility.request}
-          onReset={accessibility.reset}
-          onOpen={accessibility.open}
-        />
-      </PermissionGroup>
+      <PermissionRow
+        title={t`Accessibility`}
+        description={t`Required to detect meeting apps and sync mute status`}
+        status={accessibility.status}
+        isPending={accessibility.isPending}
+        onRequest={accessibility.request}
+        onOpen={accessibility.open}
+      />
 
-      <PermissionGroup title="Others">
+      <PermissionGroup title={<Trans>Others</Trans>}>
         <PermissionRow
-          title="Calendar"
-          description="Required to sync Apple Calendar events into Meetspace"
+          title={t`Calendar`}
+          description={t`Required to sync Apple Calendar events into Anarlog`}
           status={calendar.status}
           isPending={calendar.isPending}
           onRequest={calendar.request}
-          onReset={calendar.reset}
           onOpen={calendar.open}
         />
       </PermissionGroup>

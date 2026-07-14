@@ -1,5 +1,5 @@
 import { resolveResource } from "@tauri-apps/api/path";
-import React, { createContext, useContext, useEffect, useRef } from "react";
+import React, { createContext, useContext, useRef } from "react";
 import { useStore } from "zustand";
 import { useShallow } from "zustand/shallow";
 
@@ -17,9 +17,13 @@ import {
   createAutoStopEndedNotificationKey,
 } from "./auto-stop-notification";
 
-import { getSessionEventById } from "~/session/utils";
-import * as main from "~/store/tinybase/store/main";
-import * as settings from "~/store/tinybase/store/settings";
+import {
+  getNearbyCalendarEvents,
+  type NearbyCalendarEvent,
+} from "~/calendar/queries";
+import { loadSessionEvent } from "~/session/queries";
+import { useConfigValue } from "~/shared/config";
+import { useMountEffect } from "~/shared/hooks/useMountEffect";
 import {
   createListenerStore,
   type ListenerStore,
@@ -29,6 +33,9 @@ const ListenerContext = createContext<ListenerStore | null>(null);
 export const AUTO_STOP_CONFIRM_DELAY_MS = 5_000;
 export const AUTO_STOP_CALENDAR_EARLY_END_THRESHOLD_MS = 3 * 60_000;
 export const AUTO_STOP_CALENDAR_EARLY_START_BUFFER_MS = 5 * 60_000;
+export const AUTO_STOP_EVENT_END_GRACE_MS = 10 * 60_000;
+
+const MAX_TIMEOUT_DELAY_MS = 2_147_483_647;
 
 const BROWSER_AUTO_STOP_APP_IDS = new Set([
   "at.studio.AsideBrowser",
@@ -67,15 +74,13 @@ const BROWSER_AUTO_STOP_APP_IDS = new Set([
 
 const UNRELIABLE_AUTO_STOP_APP_IDS = new Set(["com.kakao.KakaoTalkMac"]);
 
-type MainStore = NonNullable<ReturnType<typeof main.UI.useStore>>;
 type MicApp = { id: string; name: string };
-type NearbyEvent = {
-  id: string;
-  title: string;
-  meetingLink?: string;
-  location?: string;
-  description?: string;
-  participantNames: string[];
+type NearbyEvent = NearbyCalendarEvent;
+type PendingAutoStop = {
+  timeout?: ReturnType<typeof setTimeout>;
+  requireMicSnapshot: boolean;
+  sessionId: string | null;
+  networkInterrupted: boolean;
 };
 type MeetingPlatform = {
   displayName: string;
@@ -687,26 +692,24 @@ function parseEventTimeMs(value: string | undefined): number | null {
   return Number.isNaN(ms) ? null : ms;
 }
 
-function shouldPromptBeforeAutoStopping({
+async function shouldPromptBeforeAutoStopping({
   appIds,
-  tinybaseStore,
   sessionId,
   nowMs,
 }: {
   appIds: string[];
-  tinybaseStore: MainStore | null | undefined;
   sessionId: string | null;
   nowMs: number;
-}) {
+}): Promise<boolean> {
   if (!appIds.some((id) => BROWSER_AUTO_STOP_APP_IDS.has(id))) {
     return false;
   }
 
-  if (!tinybaseStore || !sessionId) {
+  if (!sessionId) {
     return false;
   }
 
-  const event = getSessionEventById(tinybaseStore, sessionId);
+  const event = await loadSessionEvent(sessionId);
   if (!event || event.is_all_day) {
     return false;
   }
@@ -722,6 +725,36 @@ function shouldPromptBeforeAutoStopping({
   }
 
   return nowMs < endMs - AUTO_STOP_CALENDAR_EARLY_END_THRESHOLD_MS;
+}
+
+async function getNetworkInterruptionDeadlineMs({
+  sessionId,
+  nowMs,
+}: {
+  sessionId: string | null;
+  nowMs: number;
+}): Promise<number | null> {
+  if (!sessionId) {
+    return null;
+  }
+
+  const event = await loadSessionEvent(sessionId);
+  if (!event || event.is_all_day) {
+    return null;
+  }
+
+  const endMs = parseEventTimeMs(event.ended_at);
+  if (!endMs) {
+    return null;
+  }
+
+  const startMs = parseEventTimeMs(event.started_at);
+  if (startMs && nowMs < startMs - AUTO_STOP_CALENDAR_EARLY_START_BUFFER_MS) {
+    return null;
+  }
+
+  const deadlineMs = endMs + AUTO_STOP_EVENT_END_GRACE_MS;
+  return deadlineMs > nowMs ? deadlineMs : null;
 }
 
 function getPrimaryStoppedApp(
@@ -773,7 +806,7 @@ async function showMeetingEndedPrompt({
 }) {
   const app = getPrimaryStoppedApp(stoppedTriggerAppIds, stoppedApps);
 
-  void notificationCommands.showNotification({
+  await notificationCommands.showNotification({
     key: createAutoStopEndedNotificationKey(sessionId),
     title: "Did your meeting end?",
     message: `Meetspace will stop listening in ${AUTO_STOP_CONFIRM_TIMEOUT_SECONDS} seconds.`,
@@ -825,84 +858,6 @@ export const useListener = <T,>(
   return useStore(store, useShallow(selector));
 };
 
-function getNearbyEvents(
-  tinybaseStore: NonNullable<ReturnType<typeof main.UI.useStore>>,
-): NearbyEvent[] {
-  const now = Date.now();
-  const windowMs = 15 * 60 * 1000;
-  const results: (NearbyEvent & { startedAt: number })[] = [];
-
-  tinybaseStore.forEachRow("events", (eventId, _forEachCell) => {
-    const event = tinybaseStore.getRow("events", eventId);
-    if (!event?.started_at) return;
-    if (event.is_all_day) return;
-
-    const startTime = new Date(String(event.started_at)).getTime();
-    if (isNaN(startTime)) return;
-
-    if (Math.abs(startTime - now) <= windowMs) {
-      results.push({
-        id: eventId,
-        title: String(event.title || "Untitled Event"),
-        meetingLink:
-          typeof event.meeting_link === "string"
-            ? event.meeting_link
-            : undefined,
-        location:
-          typeof event.location === "string" ? event.location : undefined,
-        description:
-          typeof event.description === "string" ? event.description : undefined,
-        participantNames: getEventParticipantNames(event.participants_json),
-        startedAt: startTime,
-      });
-    }
-  });
-
-  results.sort(
-    (a, b) =>
-      Math.abs(a.startedAt - now) - Math.abs(b.startedAt - now) ||
-      a.startedAt - b.startedAt,
-  );
-  return results.map(
-    ({ id, title, meetingLink, location, description, participantNames }) => ({
-      id,
-      title,
-      meetingLink,
-      location,
-      description,
-      participantNames,
-    }),
-  );
-}
-
-function getEventParticipantNames(participantsJson: unknown): string[] {
-  if (typeof participantsJson !== "string" || !participantsJson) {
-    return [];
-  }
-
-  try {
-    const participants = JSON.parse(participantsJson);
-    if (!Array.isArray(participants)) {
-      return [];
-    }
-
-    return [
-      ...new Set(
-        participants
-          .filter((participant) => participant?.is_current_user !== true)
-          .map((participant) =>
-            typeof participant?.name === "string"
-              ? participant.name.trim()
-              : "",
-          )
-          .filter(Boolean),
-      ),
-    ];
-  } catch {
-    return [];
-  }
-}
-
 function getMicDetectedNotificationTitle(event: NearbyEvent | null): string {
   if (!event) {
     return "Are you in a meeting?";
@@ -922,27 +877,23 @@ function getMicDetectedNotificationTitle(event: NearbyEvent | null): string {
 const useHandleDetectEvents = (store: ListenerStore) => {
   const stop = useStore(store, (state) => state.stop);
   const setMuted = useStore(store, (state) => state.setMuted);
-  const tinybaseStore = main.UI.useStore(main.STORE_ID);
-  const settingsStore = settings.UI.useStore(settings.STORE_ID);
+  const autoStopMeetings = useConfigValue("auto_stop_meetings");
 
-  const tinybaseStoreRef = useRef(tinybaseStore);
-  const settingsStoreRef = useRef(settingsStore);
-  const pendingAutoStopRef = useRef<{
-    timeout: ReturnType<typeof setTimeout>;
-    requireMicSnapshot: boolean;
-  } | null>(null);
+  const autoStopMeetingsRef = useRef(autoStopMeetings);
+  autoStopMeetingsRef.current = autoStopMeetings;
+  const isOnlineRef = useRef(true);
+  const pendingAutoStopRef = useRef<PendingAutoStop | null>(null);
   const pendingMicDetectedPromptRef = useRef(false);
-  useEffect(() => {
-    tinybaseStoreRef.current = tinybaseStore;
-    settingsStoreRef.current = settingsStore;
-  }, [tinybaseStore, settingsStore]);
 
-  useEffect(() => {
-    let unlisten: (() => void) | undefined;
+  useMountEffect(() => {
+    let unlistenDetect: (() => void) | undefined;
     let cancelled = false;
+    isOnlineRef.current = navigator.onLine;
     const clearPendingAutoStop = () => {
       if (pendingAutoStopRef.current) {
-        clearTimeout(pendingAutoStopRef.current.timeout);
+        if (pendingAutoStopRef.current.timeout) {
+          clearTimeout(pendingAutoStopRef.current.timeout);
+        }
         pendingAutoStopRef.current = null;
       }
     };
@@ -967,13 +918,47 @@ const useHandleDetectEvents = (store: ListenerStore) => {
         .setTriggerAppIds([...new Set([...currentTrigger, ...appIds])]);
     };
 
-    const confirmAutoStop = async (
+    function scheduleAutoStop(
+      delayMs: number,
       candidateAppIds: string[],
       stoppedApps: { id: string; name: string }[],
-      requireMicSnapshot = false,
-    ) => {
+      requireMicSnapshot: boolean,
+      sessionId: string | null,
+      networkInterrupted: boolean,
+    ) {
+      clearPendingAutoStop();
+
+      const pending: PendingAutoStop = {
+        requireMicSnapshot,
+        sessionId,
+        networkInterrupted,
+      };
+      pending.timeout = setTimeout(
+        () => {
+          void confirmAutoStop(candidateAppIds, stoppedApps, pending).finally(
+            () => {
+              if (pendingAutoStopRef.current === pending) {
+                pendingAutoStopRef.current = null;
+              }
+            },
+          );
+        },
+        Math.min(Math.max(delayMs, 0), MAX_TIMEOUT_DELAY_MS),
+      );
+      pendingAutoStopRef.current = pending;
+    }
+
+    async function confirmAutoStop(
+      candidateAppIds: string[],
+      stoppedApps: { id: string; name: string }[],
+      pending: PendingAutoStop,
+    ) {
       const live = store.getState().live;
-      if (live.status !== "active") {
+      if (
+        pendingAutoStopRef.current !== pending ||
+        live.status !== "active" ||
+        live.sessionId !== pending.sessionId
+      ) {
         return;
       }
 
@@ -998,22 +983,47 @@ const useHandleDetectEvents = (store: ListenerStore) => {
         if (activeCheckAppIds.some((id) => activeAppIds.has(id))) {
           return;
         }
-      } else if (requireMicSnapshot || hasUnreliableActiveCheckApp) {
+      } else if (pending.requireMicSnapshot || hasUnreliableActiveCheckApp) {
         return;
       }
 
-      const sessionId = store.getState().live.sessionId;
-      if (
-        shouldPromptBeforeAutoStopping({
-          appIds: candidateAppIds,
-          tinybaseStore: tinybaseStoreRef.current,
-          sessionId,
+      if (pendingAutoStopRef.current !== pending) {
+        return;
+      }
+
+      if (pending.networkInterrupted || !isOnlineRef.current) {
+        const deadlineMs = await getNetworkInterruptionDeadlineMs({
+          sessionId: pending.sessionId,
           nowMs: Date.now(),
-        })
-      ) {
-        if (sessionId) {
+        });
+        if (pendingAutoStopRef.current !== pending) {
+          return;
+        }
+        if (deadlineMs) {
+          scheduleAutoStop(
+            deadlineMs - Date.now(),
+            candidateAppIds,
+            stoppedApps,
+            pending.requireMicSnapshot,
+            pending.sessionId,
+            true,
+          );
+          return;
+        }
+      }
+
+      const shouldPrompt = await shouldPromptBeforeAutoStopping({
+        appIds: candidateAppIds,
+        sessionId: pending.sessionId,
+        nowMs: Date.now(),
+      });
+      if (pendingAutoStopRef.current !== pending) {
+        return;
+      }
+      if (shouldPrompt) {
+        if (pending.sessionId) {
           await showMeetingEndedPrompt({
-            sessionId,
+            sessionId: pending.sessionId,
             stoppedTriggerAppIds: candidateAppIds,
             stoppedApps,
           });
@@ -1021,8 +1031,29 @@ const useHandleDetectEvents = (store: ListenerStore) => {
         return;
       }
 
+      const currentLive = store.getState().live;
+      if (
+        pendingAutoStopRef.current !== pending ||
+        currentLive.status !== "active" ||
+        currentLive.sessionId !== pending.sessionId
+      ) {
+        return;
+      }
+
       stop();
+    }
+
+    const handleOffline = () => {
+      isOnlineRef.current = false;
+      if (pendingAutoStopRef.current) {
+        pendingAutoStopRef.current.networkInterrupted = true;
+      }
     };
+    const handleOnline = () => {
+      isOnlineRef.current = true;
+    };
+    window.addEventListener("offline", handleOffline);
+    window.addEventListener("online", handleOnline);
 
     detectEvents.detectEvent
       .listen(({ payload }) => {
@@ -1042,10 +1073,10 @@ const useHandleDetectEvents = (store: ListenerStore) => {
 
           void (async () => {
             try {
-              const currentTinybaseStore = tinybaseStoreRef.current;
-              const nearbyEvents = currentTinybaseStore
-                ? getNearbyEvents(currentTinybaseStore)
-                : [];
+              const nearbyEvents = await getNearbyCalendarEvents(
+                Date.now(),
+                15 * 60 * 1000,
+              );
               const nearbyEvent = nearbyEvents[0] ?? null;
               const browserMeetingPlatform = getBrowserMeetingPlatform(
                 payload.apps,
@@ -1084,7 +1115,7 @@ const useHandleDetectEvents = (store: ListenerStore) => {
                 return;
               }
 
-              void notificationCommands.showNotification({
+              await notificationCommands.showNotification({
                 key: payload.key,
                 title: getMicDetectedNotificationTitle(nearbyEvent),
                 message: "",
@@ -1111,8 +1142,7 @@ const useHandleDetectEvents = (store: ListenerStore) => {
             }
           })();
         } else if (payload.type === "micStopped") {
-          const autoStopEnabled =
-            settingsStoreRef.current?.getValue("auto_stop_meetings") !== false;
+          const autoStopEnabled = autoStopMeetingsRef.current !== false;
           if (!autoStopEnabled) {
             return;
           }
@@ -1136,19 +1166,14 @@ const useHandleDetectEvents = (store: ListenerStore) => {
               return;
             }
 
-            clearPendingAutoStop();
-
-            pendingAutoStopRef.current = {
-              timeout: setTimeout(() => {
-                pendingAutoStopRef.current = null;
-                void confirmAutoStop(
-                  candidateAppIds,
-                  payload.apps,
-                  requireMicSnapshot,
-                );
-              }, AUTO_STOP_CONFIRM_DELAY_MS),
+            scheduleAutoStop(
+              AUTO_STOP_CONFIRM_DELAY_MS,
+              candidateAppIds,
+              payload.apps,
               requireMicSnapshot,
-            };
+              store.getState().live.sessionId,
+              !isOnlineRef.current,
+            );
           }
         } else if (payload.type === "sleepStateChanged") {
           if (payload.value) {
@@ -1163,7 +1188,7 @@ const useHandleDetectEvents = (store: ListenerStore) => {
         if (cancelled) {
           fn();
         } else {
-          unlisten = fn;
+          unlistenDetect = fn;
         }
       })
       .catch((err) => {
@@ -1173,7 +1198,9 @@ const useHandleDetectEvents = (store: ListenerStore) => {
     return () => {
       cancelled = true;
       clearPendingAutoStop();
-      unlisten?.();
+      window.removeEventListener("offline", handleOffline);
+      window.removeEventListener("online", handleOnline);
+      unlistenDetect?.();
     };
-  }, [stop, setMuted, store]);
+  });
 };

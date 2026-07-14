@@ -49,6 +49,7 @@ import {
 
 import { useBillingAccess } from "~/auth/billing-context";
 import { useNotifications } from "~/contexts/notifications";
+<<<<<<< HEAD
 import { providerRowId, ProviderIconSlot } from "~/settings/ai/shared";
 import {
   getProviderSelectionBlockers,
@@ -63,7 +64,12 @@ import {
 import { getBaseLanguageDisplayName } from "~/settings/general/language";
 import { useAiProvidersState } from "~/settings/providers";
 import { useSetSettingValues } from "~/settings/queries";
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+=======
+import { useSetSettingValue } from "~/settings/queries";
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
 import { useConfigValues } from "~/shared/config";
+<<<<<<< HEAD
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 import { SettingsAlertToast } from "~/shared/ui/settings-alert";
 import {
@@ -79,6 +85,28 @@ import {
   getDefaultSttModel,
   getPreferredProviderModel,
 } from "~/stt/model-selection";
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+import * as settings from "~/store/tinybase/store/settings";
+import { isRealtimeLocalModel } from "~/stt/capabilities";
+
+type ModelEntry = {
+  id: string;
+  isDownloaded: boolean;
+  displayName?: string;
+  sizeBytes?: number | null;
+  mode?: "realtime" | "batch";
+};
+=======
+import { isRealtimeLocalModel } from "~/stt/capabilities";
+
+type ModelEntry = {
+  id: string;
+  isDownloaded: boolean;
+  displayName?: string;
+  sizeBytes?: number | null;
+  mode?: "realtime" | "batch";
+};
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
 
 export function SelectProviderAndModel() {
   const { current_stt_provider, current_stt_model } = useConfigValues([
@@ -90,6 +118,7 @@ export function SelectProviderAndModel() {
     useConfiguredMapping();
   const { startDownload, startTrial } = useSttSettings();
   const health = useConnectionHealth();
+<<<<<<< HEAD
   const [pendingProvider, setPendingProvider] = useState<ProviderId | null>(
     null,
   );
@@ -155,6 +184,28 @@ export function SelectProviderAndModel() {
     selectableProviders,
     configuredProviders,
   );
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+  const models = useLocalModels();
+
+  const setProvider = settings.UI.useSetValueCallback(
+    "current_stt_provider",
+    (provider: string) => provider,
+    [],
+    settings.STORE_ID,
+  );
+
+  const setModel = settings.UI.useSetValueCallback(
+    "current_stt_model",
+    (model: string) => model,
+    [],
+    settings.STORE_ID,
+  );
+=======
+  const models = useLocalModels();
+
+  const setProvider = useSetSettingValue("current_stt_provider");
+  const setModel = useSetSettingValue("current_stt_model");
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
 
   const setSelection = useSetSettingValues();
   const lastSelectedModelsRef = useRef<Record<string, string>>(
