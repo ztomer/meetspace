@@ -68,7 +68,10 @@ where
     }
 
     let applied_migrations = conn.list_applied_migrations(MIGRATIONS_TABLE).await?;
-    eprintln!("[ ==> ] run_direct: applied_migrations count = {}", applied_migrations.len());
+    eprintln!(
+        "[ ==> ] run_direct: applied_migrations count = {}",
+        applied_migrations.len()
+    );
     validate_applied_migrations(&applied_migrations, migrations)?;
 
     let applied_migrations: HashMap<_, _> = applied_migrations

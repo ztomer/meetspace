@@ -148,7 +148,10 @@ pub fn init<R: tauri::Runtime>(
         .invoke_handler(specta_builder.invoke_handler())
         .setup(move |app, _| {
             meetspace_tauri_utils::block_on(meetspace_db_app::prepare_schema(db.as_ref()))?;
-            meetspace_tauri_utils::block_on(import::import_legacy_data(app.app_handle(), db.pool()))?;
+            meetspace_tauri_utils::block_on(import::import_legacy_data(
+                app.app_handle(),
+                db.pool(),
+            ))?;
             app.manage(std::sync::Arc::new(runtime::PluginDbRuntime::new(db)));
             Ok(())
         })

@@ -1,8 +1,8 @@
 use std::process::ExitCode;
 
-use meetspace_cli::Args;
 use clap::Parser;
 use clap::error::ErrorKind;
+use meetspace_cli::Args;
 
 #[tokio::main]
 async fn main() -> ExitCode {

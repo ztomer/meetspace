@@ -1,16 +1,17 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { eq } from "drizzle-orm";
 import { useCallback, useMemo } from "react";
 
-import { useSync } from "~/calendar/components/context";
+import { calendars as calendarsTable } from "@meetspace/db";
+
 import {
   CalendarSelection,
   type CalendarGroup,
   type CalendarItem,
 } from "~/calendar/components/calendar-selection";
+import { useSync } from "~/calendar/components/context";
 import type { CalendarProvider } from "~/calendar/components/shared";
 import { db, useDrizzleLiveQuery } from "~/db";
-import { calendars as calendarsTable } from "@meetspace/db";
-import { eq } from "drizzle-orm";
 
 export function OAuthCalendarSelection({
   groups,
