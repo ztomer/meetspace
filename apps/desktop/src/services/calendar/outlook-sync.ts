@@ -9,16 +9,17 @@
 
 import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 import { eq, and, inArray } from "drizzle-orm";
-import { db } from "~/db";
-import { calendars, events } from "@meetspace/db";
-import { getStoredSettingValues, setSettingValues } from "~/settings/queries";
-import type { SettingValues } from "~/settings/schema";
 
+import { calendars, events } from "@meetspace/db";
+
+import { db } from "~/db";
 import {
   isExpired,
   refresh as refreshToken,
   type StoredTokens,
 } from "~/integrations/oauth-providers";
+import { getStoredSettingValues, setSettingValues } from "~/settings/queries";
+import type { SettingValues } from "~/settings/schema";
 
 const OUTLOOK_CONNECTION_ID = "outlook-default";
 const PROVIDER = "outlook" as const;
@@ -50,10 +51,18 @@ export async function syncOutlookCalendar(): Promise<
   { ok: true; calendars: number; events: number } | { ok: false; error: string }
 > {
   const storedSettings = await getStoredSettingValues();
-  const clientId = (storedSettings.values.outlook_client_id as string | undefined)?.trim();
-  const accessToken = storedSettings.values.outlook_access_token as string | undefined;
-  const refreshTok = storedSettings.values.outlook_refresh_token as string | undefined;
-  const expiresAt = storedSettings.values.outlook_token_expires_at as number | undefined;
+  const clientId = (
+    storedSettings.values.outlook_client_id as string | undefined
+  )?.trim();
+  const accessToken = storedSettings.values.outlook_access_token as
+    | string
+    | undefined;
+  const refreshTok = storedSettings.values.outlook_refresh_token as
+    | string
+    | undefined;
+  const expiresAt = storedSettings.values.outlook_token_expires_at as
+    | number
+    | undefined;
 
   if (!clientId || !accessToken || !refreshTok) {
     return { ok: false, error: "outlook calendar not signed in" };
@@ -128,7 +137,10 @@ export async function syncOutlookCalendar(): Promise<
   const trackingIdToRowId = new Map<string, string>();
   const enabledRowIds = new Set<string>();
 
-  const existingCals = await db.select().from(calendars).where(eq(calendars.provider, PROVIDER));
+  const existingCals = await db
+    .select()
+    .from(calendars)
+    .where(eq(calendars.provider, PROVIDER));
 
   for (const cal of graphCalendars) {
     seenCalendarTrackingIds.add(cal.id);
@@ -166,7 +178,9 @@ export async function syncOutlookCalendar(): Promise<
     }
   }
 
-  const calendarsToDelete = existingCals.filter((c) => !seenCalendarTrackingIds.has(c.trackingIdCalendar));
+  const calendarsToDelete = existingCals.filter(
+    (c) => !seenCalendarTrackingIds.has(c.trackingIdCalendar),
+  );
   for (const cal of calendarsToDelete) {
     await db.delete(events).where(eq(events.calendarId, cal.id));
     await db.delete(calendars).where(eq(calendars.id, cal.id));
@@ -177,9 +191,13 @@ export async function syncOutlookCalendar(): Promise<
   const upstreamEventKey = new Set<string>();
 
   const enabledCalendarIdsArray = Array.from(enabledRowIds);
-  const existingEvents = enabledCalendarIdsArray.length > 0
-    ? await db.select().from(events).where(inArray(events.calendarId, enabledCalendarIdsArray))
-    : [];
+  const existingEvents =
+    enabledCalendarIdsArray.length > 0
+      ? await db
+          .select()
+          .from(events)
+          .where(inArray(events.calendarId, enabledCalendarIdsArray))
+      : [];
 
   for (const [trackingId, calendarRowId] of trackingIdToRowId.entries()) {
     if (!enabledRowIds.has(calendarRowId)) continue;
@@ -210,7 +228,9 @@ export async function syncOutlookCalendar(): Promise<
         if (!started || !ended) continue;
 
         upstreamEventKey.add(`${calendarRowId}:${ev.id}`);
-        const existing = existingEvents.find((e) => e.calendarId === calendarRowId && e.trackingIdEvent === ev.id);
+        const existing = existingEvents.find(
+          (e) => e.calendarId === calendarRowId && e.trackingIdEvent === ev.id,
+        );
         const rowId = existing?.id ?? crypto.randomUUID();
 
         const row = {
@@ -230,10 +250,7 @@ export async function syncOutlookCalendar(): Promise<
         };
 
         if (existing) {
-          await db
-            .update(events)
-            .set(row)
-            .where(eq(events.id, rowId));
+          await db.update(events).set(row).where(eq(events.id, rowId));
         } else {
           await db.insert(events).values({
             id: rowId,
@@ -253,7 +270,12 @@ export async function syncOutlookCalendar(): Promise<
     const allEventsForEnabled = await db
       .select()
       .from(events)
-      .where(and(eq(events.provider, PROVIDER), inArray(events.calendarId, enabledCalendarIdsArray)));
+      .where(
+        and(
+          eq(events.provider, PROVIDER),
+          inArray(events.calendarId, enabledCalendarIdsArray),
+        ),
+      );
 
     for (const ev of allEventsForEnabled) {
       if (!upstreamEventKey.has(`${ev.calendarId}:${ev.trackingIdEvent}`)) {

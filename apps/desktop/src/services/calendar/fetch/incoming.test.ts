@@ -5,7 +5,7 @@ const calendarCommands = vi.hoisted(() => ({
   parseMeetingLink: vi.fn(),
 }));
 
-vi.mock("@hypr/plugin-calendar", () => ({
+vi.mock("@meetspace/plugin-calendar", () => ({
   commands: calendarCommands,
 }));
 

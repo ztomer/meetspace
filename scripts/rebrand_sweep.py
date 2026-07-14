@@ -25,7 +25,16 @@ def print_ok(message):
 
 
 # Directories to search
-SEARCH_DIRS = ["apps", "crates", "packages", "plugins", "scripts", "e2e", "skills", "docs"]
+SEARCH_DIRS = [
+    "apps",
+    "crates",
+    "packages",
+    "plugins",
+    "scripts",
+    "e2e",
+    "skills",
+    "docs",
+]
 
 # File extensions to process
 EXTENSIONS = {

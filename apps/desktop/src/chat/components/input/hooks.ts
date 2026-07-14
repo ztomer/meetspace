@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import type { ChatEditorHandle, JSONContent } from "@hypr/editor/chat";
-import { EMPTY_DOC } from "@hypr/editor/markdown";
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
+import type { ChatEditorHandle, JSONContent } from "@meetspace/editor/chat";
+import { EMPTY_DOC } from "@meetspace/editor/markdown";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 
 import type { ContextRef } from "~/chat/context/entities";
 

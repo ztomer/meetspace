@@ -1,6 +1,12 @@
 import { createDb } from "@meetspace/db";
-import { createUseDrizzleLiveQuery, createUseLiveQuery } from "@meetspace/db-react";
-import { tauriLiveQueryClient, tauriTransactionClient } from "@meetspace/db-tauri";
+import {
+  createUseDrizzleLiveQuery,
+  createUseLiveQuery,
+} from "@meetspace/db-react";
+import {
+  tauriLiveQueryClient,
+  tauriTransactionClient,
+} from "@meetspace/db-tauri";
 
 export const liveQueryClient = tauriLiveQueryClient;
 export const db = createDb(liveQueryClient);
