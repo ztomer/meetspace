@@ -1,8 +1,9 @@
 name: fork-guard
 
-# Cheap guard against the two failure modes that have silently broken
-# past upstream syncs: leftover conflict markers and un-rebranded
-# upstream identifiers in source.
+# Cheap guard against the failure modes that have silently broken past
+# upstream syncs: leftover conflict markers, un-rebranded upstream
+# identifiers in source, and stale i18n catalogs (source-generated message
+# hashes missing from the compiled catalog render as gibberish in the UI).
 
 on:
   push:
@@ -18,3 +19,20 @@ jobs:
           fetch-depth: 0
       - name: Conflict markers + rebrand leaks
         run: python3 scripts/check-clean.py
+
+  i18n-catalogs:
+    name: i18n catalogs up to date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile=false
+      - name: Extract + compile must produce no diff
+        run: pnpm -F desktop i18n:check
