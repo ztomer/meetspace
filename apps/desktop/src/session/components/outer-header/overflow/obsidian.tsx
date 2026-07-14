@@ -10,8 +10,8 @@ import {
 } from "@meetspace/ui/components/ui/tooltip";
 
 import { exportSessionToObsidian } from "~/integrations/obsidian";
+import { useSession } from "~/session/queries";
 import { useConfigValues } from "~/shared/config";
-import * as main from "~/store/tinybase/store/main";
 
 export function ExportToObsidian({ sessionId }: { sessionId: string }) {
   const { obsidian_vault_path, obsidian_subfolder } = useConfigValues([
@@ -19,24 +19,10 @@ export function ExportToObsidian({ sessionId }: { sessionId: string }) {
     "obsidian_subfolder",
   ] as const);
 
-  const sessionTitle = main.UI.useCell(
-    "sessions",
-    sessionId,
-    "title",
-    main.STORE_ID,
-  ) as string | undefined;
-  const sessionCreatedAt = main.UI.useCell(
-    "sessions",
-    sessionId,
-    "created_at",
-    main.STORE_ID,
-  ) as string | undefined;
-  const rawMd = main.UI.useCell(
-    "sessions",
-    sessionId,
-    "raw_md",
-    main.STORE_ID,
-  ) as string | undefined;
+  const session = useSession(sessionId);
+  const sessionTitle = session?.title;
+  const sessionCreatedAt = session?.created_at;
+  const rawMd = session?.raw_md;
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {

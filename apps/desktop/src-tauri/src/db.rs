@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use meetspace_db_core::Db;
 
+const DEV_BUNDLE_ID: &str = "com.meetspace.dev";
 const DB_FILENAME: &str = "app.db";
 const DEFAULT_CLOUDSYNC_INTERVAL_MS: u64 = 30_000;
 
@@ -10,6 +11,8 @@ pub async fn open_desktop_db(identifier: &str) -> Arc<Db> {
         std::fs::create_dir_all(&dir).expect("failed to create app data dir");
         dir.join(DB_FILENAME)
     });
+
+    println!("[ ==> ] open_desktop_db: identifier={}, db_path={:?}", identifier, db_path);
 
     let db = tauri_plugin_db::open_app_db(db_path.as_deref())
         .await
@@ -99,6 +102,10 @@ fn parse_env_flag(value: String) -> Result<bool, String> {
 }
 
 fn desktop_db_dir(identifier: &str) -> Option<std::path::PathBuf> {
+    if identifier == DEV_BUNDLE_ID {
+        return None;
+    }
+
     let data_dir = dirs::data_dir().expect("data_dir must be available");
     let default_dir = meetspace_storage::global::compute_default_base(identifier)
         .expect("data_dir must be available");
@@ -110,6 +117,7 @@ fn desktop_db_dir(identifier: &str) -> Option<std::path::PathBuf> {
         Some(default_dir)
     }
 }
+<<<<<<< HEAD
 
 #[cfg(test)]
 mod tests {
@@ -195,3 +203,18 @@ mod tests {
         assert!(config.is_none());
     }
 }
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn dev_uses_an_isolated_persistent_database() {
+        let db_dir = desktop_db_dir("com.meetspace.dev").unwrap();
+
+        assert!(db_dir.ends_with("com.meetspace.dev"));
+    }
+}
+=======
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)

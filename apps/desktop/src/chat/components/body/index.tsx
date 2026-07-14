@@ -2,8 +2,8 @@ import { Trans } from "@lingui/react/macro";
 import type { ChatStatus } from "ai";
 import { ChevronDownIcon } from "lucide-react";
 
-import { Button } from "@meetspace/ui/components/ui/button";
-import { cn } from "@meetspace/utils";
+import { Button } from "@hypr/ui/components/ui/button";
+import { cn } from "@hypr/utils";
 
 import { ChatBodyEmpty } from "./empty";
 import { ChatBodyNonEmpty } from "./non-empty";

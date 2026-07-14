@@ -1,6 +1,6 @@
 # Syncing the fork with upstream
 
-`meetspace` is a fork of `fastrepl/anarlog`. Fork work lives on `MIT_BACK`;
+`meetspace` is a fork of `fastrepl/meetspace`. Fork work lives on `MIT_BACK`;
 upstream is `origin/main`. This doc describes how to pull in newer upstream
 releases with the least pain.
 
@@ -101,7 +101,7 @@ So:
 - **The fork's only deltas are:** (1) remove commercial/cloud — auth, billing,
   Supabase, accounts, api/web/stripe apps, paid gating, cloud sync (keep those
   removals / local stubs); (2) local-first defaults (local STT/LLM, no cloud
-  calls); (3) the `hypr/anarlog → meetspace` rebrand (applied last by
+  calls); (3) the `hypr/meetspace → meetspace` rebrand (applied last by
   `rebrand_sweep.py`).
 
 In short: conflict in feature/UI code → take upstream; conflict in
@@ -167,7 +167,7 @@ When a sync touches plugins or strings, check for:
 | Symptom | Cause | Fix |
 |---|---|---|
 | Launch panic `Event X not found in registry` | upstream reordered/added a plugin whose setup `listen`s an event; fork's `lib.rs` registers plugins in the old order (listener before the emitter mounts) | match upstream's plugin-registration order in `lib.rs` (e.g. `updater2` **before** `tray`) |
-| Build error `Permission X:default not found` | upstream renamed a plugin package (`tauri-plugin-tray` → `hypr-tray` → `meetspace-tray`), changing its permission prefix; fork capability still names the old prefix | update `apps/desktop/src-tauri/capabilities/default.json` to the new prefix |
+| Build error `Permission X:default not found` | upstream renamed a plugin package (`tauri-plugin-tray` → `meetspace-tray` → `meetspace-tray`), changing its permission prefix; fork capability still names the old prefix | update `apps/desktop/src-tauri/capabilities/default.json` to the new prefix |
 | UI shows lingui hashes (`saL1iI`, `XDmqQW`) | taking upstream's catalogs dropped fork strings; only `i18n:compile` ran | run `i18n:extract` **then** `compile` (sync-upstream.sh does this) |
 | Workspace won't load / missing dep | upstream `Cargo.toml`/`package.json` re-added deleted members or dropped fork deps | `reconcile-cargo.py` / `reconcile-package.py` (sync-upstream.sh runs both) |
 

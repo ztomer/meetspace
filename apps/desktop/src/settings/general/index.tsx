@@ -1,15 +1,14 @@
 import { Trans } from "@lingui/react/macro";
 import { useForm } from "@tanstack/react-form";
-import { useQuery } from "@tanstack/react-query";
-import { disable, enable } from "@tauri-apps/plugin-autostart";
+import { Loader2Icon } from "lucide-react";
 
-import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
-import { commands as listenerCommands } from "@meetspace/plugin-transcription";
-import type { General, GeneralStorage } from "@meetspace/store";
+import { commands as analyticsCommands } from "@hypr/plugin-analytics";
 
 import { AppSettingsView } from "./app-settings";
-import { AppearanceSettings } from "./appearance";
-import { getAdditionalSpokenLanguages } from "./language";
+import {
+  CORE_TRANSCRIPTION_LANGUAGE_CODES,
+  getAdditionalSpokenLanguages,
+} from "./language";
 import { MainLanguageView } from "./main-language";
 import { NotificationSettingsView } from "./notification";
 import { Permissions } from "./permissions";
@@ -20,63 +19,47 @@ import { TimezoneSelector } from "./timezone";
 import { WeekStartSelector } from "./week-start";
 
 import { SettingsPageTitle } from "~/settings/page-title";
-import { useConfigValues } from "~/shared/config";
-import * as settings from "~/store/tinybase/store/settings";
+import {
+  type StoredSettingValues,
+  useSetSettingValues,
+  useStoredSettingValuesQuery,
+} from "~/settings/queries";
+import { resolveConfigValues } from "~/shared/config";
 
-function useSettingsForm() {
-  const value = useConfigValues([
-    "autostart",
-    "auto_start_scheduled_meetings",
-    "auto_stop_meetings",
-    "floating_bar_enabled",
-    "notification_detect",
-    "telemetry_consent",
-    "ai_language",
-    "spoken_languages",
-    "current_stt_provider",
-    "sidebar_timeline_enabled",
-  ] as const);
+const SETTINGS_FORM_KEYS = [
+  "autostart",
+  "auto_start_scheduled_meetings",
+  "auto_stop_meetings",
+  "floating_bar_enabled",
+  "show_app_in_dock",
+  "show_tray_icon",
+  "notification_detect",
+  "telemetry_consent",
+  "ai_language",
+  "spoken_languages",
+  "current_stt_provider",
+] as const;
 
-  const setPartialValues = settings.UI.useSetPartialValuesCallback(
-    (row: Partial<General>) =>
-      ({
-        ...row,
-        spoken_languages: row.spoken_languages
-          ? JSON.stringify(row.spoken_languages)
-          : undefined,
-        ignored_platforms: row.ignored_platforms
-          ? JSON.stringify(row.ignored_platforms)
-          : undefined,
-        included_platforms: row.included_platforms
-          ? JSON.stringify(row.included_platforms)
-          : undefined,
-        ignored_recurring_series: row.ignored_recurring_series
-          ? JSON.stringify(row.ignored_recurring_series)
-          : undefined,
-        ignored_events: row.ignored_events
-          ? JSON.stringify(row.ignored_events)
-          : undefined,
-        personalization_dictionary_terms: row.personalization_dictionary_terms
-          ? JSON.stringify(row.personalization_dictionary_terms)
-          : undefined,
-      }) satisfies Partial<GeneralStorage>,
-    [],
-    settings.STORE_ID,
-  );
+function useSettingsForm(storedSettings: StoredSettingValues) {
+  const settingsValue = resolveConfigValues(SETTINGS_FORM_KEYS, storedSettings);
+
+  const setSettingValues = useSetSettingValues();
 
   const form = useForm({
     defaultValues: {
-      autostart: value.autostart,
-      auto_start_scheduled_meetings: value.auto_start_scheduled_meetings,
-      auto_stop_meetings: value.auto_stop_meetings,
-      floating_bar_enabled: value.floating_bar_enabled,
-      notification_detect: value.notification_detect,
-      sidebar_timeline_enabled: value.sidebar_timeline_enabled,
-      telemetry_consent: value.telemetry_consent,
-      ai_language: value.ai_language,
+      autostart: settingsValue.autostart,
+      auto_start_scheduled_meetings:
+        settingsValue.auto_start_scheduled_meetings,
+      auto_stop_meetings: settingsValue.auto_stop_meetings,
+      floating_bar_enabled: settingsValue.floating_bar_enabled,
+      show_app_in_dock: settingsValue.show_app_in_dock,
+      show_tray_icon: settingsValue.show_tray_icon,
+      notification_detect: settingsValue.notification_detect,
+      telemetry_consent: settingsValue.telemetry_consent,
+      ai_language: settingsValue.ai_language,
       spoken_languages: getAdditionalSpokenLanguages(
-        value.ai_language,
-        value.spoken_languages,
+        settingsValue.ai_language,
+        settingsValue.spoken_languages,
       ),
     },
     listeners: {
@@ -99,13 +82,19 @@ function useSettingsForm() {
         ),
       };
 
-      setPartialValues(normalizedValue);
-
-      if (normalizedValue.autostart) {
-        void enable();
-      } else {
-        void disable();
-      }
+      setSettingValues({
+        autostart: normalizedValue.autostart,
+        auto_start_scheduled_meetings:
+          normalizedValue.auto_start_scheduled_meetings,
+        auto_stop_meetings: normalizedValue.auto_stop_meetings,
+        floating_bar_enabled: normalizedValue.floating_bar_enabled,
+        show_app_in_dock: normalizedValue.show_app_in_dock,
+        show_tray_icon: normalizedValue.show_tray_icon,
+        notification_detect: normalizedValue.notification_detect,
+        telemetry_consent: normalizedValue.telemetry_consent,
+        ai_language: normalizedValue.ai_language,
+        spoken_languages: JSON.stringify(normalizedValue.spoken_languages),
+      });
 
       void analyticsCommands.event({
         event: "settings_changed",
@@ -114,8 +103,9 @@ function useSettingsForm() {
           normalizedValue.auto_start_scheduled_meetings,
         auto_stop_meetings: normalizedValue.auto_stop_meetings,
         floating_bar_enabled: normalizedValue.floating_bar_enabled,
+        show_app_in_dock: normalizedValue.show_app_in_dock,
+        show_tray_icon: normalizedValue.show_tray_icon,
         notification_detect: normalizedValue.notification_detect,
-        sidebar_timeline_enabled: normalizedValue.sidebar_timeline_enabled,
         telemetry_consent: normalizedValue.telemetry_consent,
       });
       void analyticsCommands.setProperties({
@@ -126,24 +116,35 @@ function useSettingsForm() {
     },
   });
 
-  return { form, value };
+  return { form, value: settingsValue };
 }
 
 export function SettingsApp() {
-  const { form } = useSettingsForm();
+  const { data, isLoading, error } = useStoredSettingValuesQuery();
 
-  const supportedLanguagesQuery = useQuery({
-    queryKey: ["documented-language-codes", "live"],
-    queryFn: async () => {
-      const result = await listenerCommands.listDocumentedLanguageCodesLive();
-      if (result.status === "error") {
-        throw new Error(result.error);
-      }
-      return result.data;
-    },
-    staleTime: Infinity,
-  });
-  const supportedLanguages = supportedLanguagesQuery.data ?? ["en"];
+  if (error) {
+    throw error;
+  }
+  if (isLoading || !data) {
+    return (
+      <div className="flex min-h-48 items-center justify-center">
+        <Loader2Icon
+          aria-label="Loading settings"
+          className="text-muted-foreground size-5 animate-spin"
+        />
+      </div>
+    );
+  }
+
+  return <SettingsAppContent storedSettings={data} />;
+}
+
+function SettingsAppContent({
+  storedSettings,
+}: {
+  storedSettings: StoredSettingValues;
+}) {
+  const { form } = useSettingsForm(storedSettings);
 
   return (
     <div className="flex flex-col gap-8">
@@ -158,49 +159,64 @@ export function SettingsApp() {
                   {(autoStopMeetingsField) => (
                     <form.Field name="floating_bar_enabled">
                       {(floatingBarEnabledField) => (
-                        <form.Field name="sidebar_timeline_enabled">
-                          {(sidebarTimelineEnabledField) => (
-                            <form.Field name="telemetry_consent">
-                              {(telemetryConsentField) => (
-                                <AppSettingsView
-                                  autostart={{
-                                    value: autostartField.state.value,
-                                    onChange: (val) =>
-                                      autostartField.handleChange(val),
-                                  }}
-                                  autoStartScheduledMeetings={{
-                                    value:
-                                      autoStartScheduledMeetingsField.state
-                                        .value,
-                                    onChange: (val) =>
-                                      autoStartScheduledMeetingsField.handleChange(
-                                        val,
-                                      ),
-                                  }}
-                                  autoStopMeetings={{
-                                    value: autoStopMeetingsField.state.value,
-                                    onChange: (val) =>
-                                      autoStopMeetingsField.handleChange(val),
-                                  }}
-                                  floatingBar={{
-                                    value: floatingBarEnabledField.state.value,
-                                    onChange: (val) =>
-                                      floatingBarEnabledField.handleChange(val),
-                                  }}
-                                  sidebarTimeline={{
-                                    value:
-                                      sidebarTimelineEnabledField.state.value,
-                                    onChange: (val) =>
-                                      sidebarTimelineEnabledField.handleChange(
-                                        val,
-                                      ),
-                                  }}
-                                  telemetryConsent={{
-                                    value: telemetryConsentField.state.value,
-                                    onChange: (val) =>
-                                      telemetryConsentField.handleChange(val),
-                                  }}
-                                />
+                        <form.Field name="show_app_in_dock">
+                          {(showAppInDockField) => (
+                            <form.Field name="show_tray_icon">
+                              {(showTrayIconField) => (
+                                <form.Field name="telemetry_consent">
+                                  {(telemetryConsentField) => (
+                                    <AppSettingsView
+                                      autostart={{
+                                        value: autostartField.state.value,
+                                        onChange: (val) =>
+                                          autostartField.handleChange(val),
+                                      }}
+                                      autoStartScheduledMeetings={{
+                                        value:
+                                          autoStartScheduledMeetingsField.state
+                                            .value,
+                                        onChange: (val) =>
+                                          autoStartScheduledMeetingsField.handleChange(
+                                            val,
+                                          ),
+                                      }}
+                                      autoStopMeetings={{
+                                        value:
+                                          autoStopMeetingsField.state.value,
+                                        onChange: (val) =>
+                                          autoStopMeetingsField.handleChange(
+                                            val,
+                                          ),
+                                      }}
+                                      floatingBar={{
+                                        value:
+                                          floatingBarEnabledField.state.value,
+                                        onChange: (val) =>
+                                          floatingBarEnabledField.handleChange(
+                                            val,
+                                          ),
+                                      }}
+                                      showAppInDock={{
+                                        value: showAppInDockField.state.value,
+                                        onChange: (val) =>
+                                          showAppInDockField.handleChange(val),
+                                      }}
+                                      showTrayIcon={{
+                                        value: showTrayIconField.state.value,
+                                        onChange: (val) =>
+                                          showTrayIconField.handleChange(val),
+                                      }}
+                                      telemetryConsent={{
+                                        value:
+                                          telemetryConsentField.state.value,
+                                        onChange: (val) =>
+                                          telemetryConsentField.handleChange(
+                                            val,
+                                          ),
+                                      }}
+                                    />
+                                  )}
+                                </form.Field>
                               )}
                             </form.Field>
                           )}
@@ -214,8 +230,6 @@ export function SettingsApp() {
           )}
         </form.Field>
       </div>
-
-      <AppearanceSettings />
 
       <div>
         <h2 className="mb-4 font-sans text-lg font-semibold">
@@ -236,7 +250,7 @@ export function SettingsApp() {
                     ),
                   );
                 }}
-                supportedLanguages={supportedLanguages}
+                supportedLanguages={CORE_TRANSCRIPTION_LANGUAGE_CODES}
               />
             )}
           </form.Field>
@@ -255,12 +269,13 @@ export function SettingsApp() {
                     ),
                   )
                 }
-                supportedLanguages={supportedLanguages}
+                supportedLanguages={CORE_TRANSCRIPTION_LANGUAGE_CODES}
               />
             )}
           </form.Field>
         </div>
       </div>
+
       <StorageSettingsView />
     </div>
   );

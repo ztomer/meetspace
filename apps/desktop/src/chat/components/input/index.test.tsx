@@ -23,7 +23,7 @@ const { clearContentMock, editorState, shellState } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("@meetspace/editor/chat", async () => {
+vi.mock("@hypr/editor/chat", async () => {
   const React = await vi.importActual<typeof import("react")>("react");
 
   return {
@@ -67,7 +67,7 @@ vi.mock("@meetspace/editor/chat", async () => {
   };
 });
 
-vi.mock("@meetspace/plugin-analytics", () => ({
+vi.mock("@hypr/plugin-analytics", () => ({
   commands: {
     event: vi.fn(() => Promise.resolve()),
   },

@@ -1,7 +1,7 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import { ExternalLink, RotateCcw } from "lucide-react";
 
-import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { commands as openerCommands } from "@hypr/plugin-opener2";
 
 import { ActionButton, MessageBubble, MessageContainer } from "./shared";
 
@@ -43,7 +43,7 @@ export function ErrorMessage({
         {showContextLengthHelp && (
           <button
             onClick={handleOpenFaq}
-            className="text-destructive hover:text-destructive-fg mt-2 flex items-center gap-1 text-xs underline"
+            className="mt-2 flex items-center gap-1 text-xs text-red-700 underline hover:text-red-900"
           >
             <ExternalLink className="h-3 w-3" />
             <Trans>Learn how to fix this</Trans>

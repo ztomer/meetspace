@@ -1,6 +1,6 @@
 import { type ReactNode, useCallback } from "react";
 
-import { cn } from "@meetspace/utils";
+import { cn } from "@hypr/utils";
 
 import { ChatBody } from "./body";
 import { ChatContent } from "./content";

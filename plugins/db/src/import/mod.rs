@@ -12,6 +12,13 @@ pub async fn import_legacy_data<R: tauri::Runtime>(
     app: &tauri::AppHandle<R>,
     pool: &SqlitePool,
 ) -> crate::Result<()> {
+    let tables: Vec<String> = sqlx::query_scalar(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name"
+    )
+    .fetch_all(pool)
+    .await?;
+    eprintln!("[ ==> ] import_legacy_data tables: {:?}", tables);
+
     if !legacy_import_required(pool).await? {
         return Ok(());
     }

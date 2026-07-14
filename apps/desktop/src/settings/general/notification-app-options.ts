@@ -1,4 +1,4 @@
-import type { InstalledApp } from "@meetspace/plugin-detect";
+import type { InstalledApp } from "@hypr/plugin-detect";
 
 function isAppIgnored({
   bundleId,

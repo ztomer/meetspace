@@ -36,6 +36,7 @@ impl<'a> DbMigrateConnection<'a> {
 }
 
 pub(crate) async fn run_migrations(db: &Db, schema: DbSchema) -> Result<(), MigrateError> {
+    eprintln!("[ ==> ] run_migrations: starting");
     let resolved = resolve_migrations(schema)?;
     let scopes_by_version = resolved
         .iter()
@@ -49,6 +50,7 @@ pub(crate) async fn run_migrations(db: &Db, schema: DbSchema) -> Result<(), Migr
     let conn = db.pool().acquire().await?;
     let mut conn = DbMigrateConnection::new(db, conn, scopes_by_version);
     run_direct(&migrations, &mut conn).await?;
+    eprintln!("[ ==> ] run_migrations: completed successfully");
     Ok(())
 }
 
@@ -66,6 +68,7 @@ where
     }
 
     let applied_migrations = conn.list_applied_migrations(MIGRATIONS_TABLE).await?;
+    eprintln!("[ ==> ] run_direct: applied_migrations count = {}", applied_migrations.len());
     validate_applied_migrations(&applied_migrations, migrations)?;
 
     let applied_migrations: HashMap<_, _> = applied_migrations

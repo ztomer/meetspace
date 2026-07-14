@@ -1,28 +1,118 @@
 ---
+<<<<<<< HEAD
 title: "Your first meeting"
 description: "Set up Meetspace and try a private demo before your next call."
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+title: "Quickstart"
+description: "Query your first Anarlog meeting from a terminal or agent."
+=======
+title: "Quickstart"
+description: "Query your first Meetspace meeting from a terminal or agent."
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
 ---
 
+<<<<<<< HEAD
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+This quickstart installs the current CLI from source and reads a meeting from the local Anarlog database.
+
+## Prerequisites
+
+- [Anarlog desktop](https://anarlog.so/download), opened at least once
+- A recent Rust toolchain with `cargo`
+- Git
+
+=======
+This quickstart installs the current CLI from source and reads a meeting from the local Meetspace database.
+
+## Prerequisites
+
+- [Meetspace desktop](https://meetspace.so/download), opened at least once
+- A recent Rust toolchain with `cargo`
+- Git
+
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
 <Steps>
+<<<<<<< HEAD
   <Step title="Install Meetspace">
     [Download Meetspace](https://meetspace.so/download), open it, and follow the setup screen.
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+  <Step title="Install from source">
+    ```bash
+    git clone https://github.com/fastrepl/anarlog.git
+    cd anarlog
+    cargo install --locked --path apps/cli
+    ```
+=======
+  <Step title="Install from source">
+    ```bash
+    git clone https://github.com/fastrepl/meetspace.git
+    cd meetspace
+    cargo install --locked --path apps/cli
+    ```
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
   </Step>
+<<<<<<< HEAD
   <Step title="Allow audio access">
     Allow **Microphone** so Meetspace can hear you. Allow **System Audio** so it can hear everyone else on the call.
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+  <Step title="List recent meetings">
+    ```bash
+    anarlog --json meetings list --limit 5
+    ```
+
+    Copy the `id` of the meeting you want to inspect.
+=======
+  <Step title="List recent meetings">
+    ```bash
+    meetspace --json meetings list --limit 5
+    ```
+
+    Copy the `id` of the meeting you want to inspect.
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
   </Step>
+<<<<<<< HEAD
   <Step title="Finish the optional setup">
     Sign in if you want Meetspace Cloud, sync, or connected calendars. Choose where Meetspace stores its local data.
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+  <Step title="Read one meeting">
+    ```bash
+    anarlog --json meetings get MEETING_ID
+    ```
+
+    The result contains meeting metadata, the canonical note, generated summaries, participants, and action items.
+=======
+  <Step title="Read one meeting">
+    ```bash
+    meetspace --json meetings get MEETING_ID
+    ```
+
+    The result contains meeting metadata, the canonical note, generated summaries, participants, and action items.
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
   </Step>
+<<<<<<< HEAD
   <Step title="Run the private demo">
     Open **Welcome to Meetspace** and click **Join & record**. Meetspace opens a prerecorded meeting and treats it like a real call.
   </Step>
   <Step title="Review the result">
     When the video ends, return to Meetspace and stop listening. Open **Memos**, **Summary**, and **Transcript** to see what Meetspace captured.
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+  <Step title="Connect an agent">
+    Configure an MCP client to launch `anarlog mcp`, or give the agent the [Anarlog skill](/agents/skills) so it can fall back to CLI JSON.
+=======
+  <Step title="Connect an agent">
+    Configure an MCP client to launch `meetspace mcp`, or give the agent the [Meetspace skill](/agents/skills) so it can fall back to CLI JSON.
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
   </Step>
 </Steps>
 
+<<<<<<< HEAD
 ## Record a real meeting
 
 Open a calendar event or create a note, then click **Join & record** or **Record** in the top-right corner. See [Record meetings](/meetings) for the full flow.
 
 If Meetspace cannot hear the call, start with [audio troubleshooting](/troubleshooting#audio-is-missing).
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+If the CLI cannot locate your database, open Anarlog once or follow [database troubleshooting](/troubleshooting#database-not-found).
+=======
+If the CLI cannot locate your database, open Meetspace once or follow [database troubleshooting](/troubleshooting#database-not-found).
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)

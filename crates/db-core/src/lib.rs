@@ -276,7 +276,7 @@ async fn connect_with_options(
     let mut pool_options = pool_options;
     match options.storage {
         DbStorage::Memory => {
-            pool_options = pool_options.max_connections(1);
+            pool_options = pool_options.max_connections(1).min_connections(1);
         }
         DbStorage::Local(_) => {
             if let Some(max) = options.max_connections {
