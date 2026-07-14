@@ -1,7 +1,7 @@
 import { ChevronRight, Loader2 } from "lucide-react";
 import { type ReactNode } from "react";
 
-import { cn } from "@meetspace/utils";
+import { cn } from "@hypr/utils";
 
 import { useChatAppearance } from "~/chat/hooks/use-chat-appearance";
 
@@ -40,7 +40,7 @@ export function MessageBubble({
       className={cn([
         "select-text-deep text-sm",
         variant === "user" &&
-          "text-foreground w-fit max-w-full rounded-2xl bg-blue-100 px-3 py-1 [&_p]:[text-wrap:wrap]",
+          "w-fit max-w-full rounded-2xl bg-blue-100 px-3 py-1 text-neutral-800 [&_p]:[text-wrap:wrap]",
         variant === "assistant" &&
           (isDarkAppearance
             ? "bg-accent text-accent-foreground rounded-2xl px-3 py-1"
@@ -50,7 +50,7 @@ export function MessageBubble({
             ? "bg-accent text-accent-foreground w-fit rounded-2xl px-3 py-1"
             : "text-foreground"),
         variant === "error" &&
-          "border-destructive/30 bg-destructive-bg text-destructive rounded-2xl border px-3 py-1",
+          "rounded-2xl border border-red-200 bg-red-50 px-3 py-1 text-red-600",
         withActionButton && "group relative",
       ])}
     >
@@ -84,8 +84,8 @@ export function ActionButton({
           "text-muted-foreground hover:text-foreground",
         ],
         variant === "error" && [
-          "bg-destructive-bg hover:bg-destructive-bg",
-          "text-destructive hover:text-destructive-fg",
+          "bg-red-100 hover:bg-red-200",
+          "text-red-600 hover:text-red-800",
         ],
       ])}
     >

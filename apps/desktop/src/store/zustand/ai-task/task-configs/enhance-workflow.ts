@@ -20,7 +20,6 @@ import type { EnhanceImageContext } from "./enhance-images";
 import { createEnhanceValidator } from "./enhance-validator";
 
 import { deterministicGenerationSettings } from "~/ai/model-settings";
-import type { Store } from "~/store/tinybase/store/main";
 import { normalizeBulletPoints } from "~/store/zustand/ai-task/shared/transform_impl";
 import { withEarlyValidationRetry } from "~/store/zustand/ai-task/shared/validate";
 import { assertCanonicalTemplateSections } from "~/templates/codec";
@@ -47,10 +46,10 @@ async function* executeWorkflow(params: {
   args: TaskArgsMapTransformed["enhance"];
   onProgress: (step: any) => void;
   signal: AbortSignal;
-  store: Store;
 }) {
-  const { model, args, onProgress, signal, store } = params;
+  const { model, args, onProgress, signal } = params;
 
+<<<<<<< HEAD
   const usesTemplate = hasSummaryTemplateToken(args.customInstructions);
   const sections = usesTemplate
     ? await generateTemplateIfNeeded({
@@ -60,6 +59,22 @@ async function* executeWorkflow(params: {
         signal,
       })
     : null;
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+  const sections = await generateTemplateIfNeeded({
+    model,
+    args,
+    onProgress,
+    signal,
+    store,
+  });
+=======
+  const sections = await generateTemplateIfNeeded({
+    model,
+    args,
+    onProgress,
+    signal,
+  });
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
   const argsWithTemplate: TaskArgsMapTransformed["enhance"] = {
     ...args,
     template:
@@ -74,7 +89,7 @@ async function* executeWorkflow(params: {
 
   const system = await getSystemPrompt(argsWithTemplate);
   const prompt = withImageContextNote(
-    await getUserPrompt(argsWithTemplate, store),
+    await getUserPrompt(argsWithTemplate),
     argsWithTemplate.imageContext.length,
   );
 
@@ -106,10 +121,7 @@ async function getSystemPrompt(args: TaskArgsMapTransformed["enhance"]) {
   return result.data;
 }
 
-async function getUserPrompt(
-  args: TaskArgsMapTransformed["enhance"],
-  _store: Store,
-) {
+async function getUserPrompt(args: TaskArgsMapTransformed["enhance"]) {
   const {
     session,
     participants,
@@ -151,15 +163,14 @@ async function generateTemplateIfNeeded(params: {
   args: TaskArgsMapTransformed["enhance"];
   onProgress: (step: any) => void;
   signal: AbortSignal;
-  store: Store;
 }): Promise<TemplateSection[] | null> {
-  const { model, args, onProgress, signal, store } = params;
+  const { model, args, onProgress, signal } = params;
 
   if (!args.template) {
     onProgress({ type: "analyzing" });
 
     const schema = z.object({ sections: z.array(templateSectionSchema) });
-    const userPrompt = await getUserPrompt(args, store);
+    const userPrompt = await getUserPrompt(args);
 
     const result = await generateStructuredOutput({
       model,
@@ -232,7 +243,7 @@ async function generateStructuredOutput<T extends z.ZodTypeAny>(params: {
     }
 
     return result.output as z.infer<T>;
-  } catch (error) {
+  } catch {
     try {
       const fallbackResult = await generateText({
         model,

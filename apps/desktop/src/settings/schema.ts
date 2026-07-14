@@ -178,6 +178,91 @@ export const SETTING_DEFINITIONS = {
     type: "string",
     path: ["general", "week_start"],
   },
+  calendar_provider_precedence: {
+    type: "string",
+    path: ["general", "calendar_provider_precedence"],
+    default: "[]" as string,
+  },
+  google_client_id: {
+    type: "string",
+    path: ["general", "google_client_id"],
+    default: "" as string,
+  },
+  google_refresh_token: {
+    type: "string",
+    path: ["general", "google_refresh_token"],
+    default: "" as string,
+  },
+  google_access_token: {
+    type: "string",
+    path: ["general", "google_access_token"],
+    default: "" as string,
+  },
+  google_token_expires_at: {
+    type: "number",
+    path: ["general", "google_token_expires_at"],
+    default: 0 as number,
+  },
+  outlook_client_id: {
+    type: "string",
+    path: ["general", "outlook_client_id"],
+    default: "" as string,
+  },
+  outlook_refresh_token: {
+    type: "string",
+    path: ["general", "outlook_refresh_token"],
+    default: "" as string,
+  },
+  outlook_access_token: {
+    type: "string",
+    path: ["general", "outlook_access_token"],
+    default: "" as string,
+  },
+  outlook_token_expires_at: {
+    type: "number",
+    path: ["general", "outlook_token_expires_at"],
+    default: 0 as number,
+  },
+  linear_api_key: {
+    type: "string",
+    path: ["general", "linear_api_key"],
+    default: "" as string,
+  },
+  linear_team_id: {
+    type: "string",
+    path: ["general", "linear_team_id"],
+    default: "" as string,
+  },
+  notion_token: {
+    type: "string",
+    path: ["general", "notion_token"],
+    default: "" as string,
+  },
+  notion_database_id: {
+    type: "string",
+    path: ["general", "notion_database_id"],
+    default: "" as string,
+  },
+  obsidian_vault_path: {
+    type: "string",
+    path: ["general", "obsidian_vault_path"],
+    default: "" as string,
+  },
+  obsidian_subfolder: {
+    type: "string",
+    path: ["general", "obsidian_subfolder"],
+    default: "" as string,
+  },
+  obsidian_auto_export: {
+    type: "boolean",
+    path: ["general", "obsidian_auto_export"],
+    default: false as boolean,
+  },
+  diarize_auto: {
+    type: "boolean",
+    path: ["general", "diarize_auto"],
+    default: false as boolean,
+  },
   selected_template_id: {
     type: "string",
     path: ["general", "selected_template_id"],

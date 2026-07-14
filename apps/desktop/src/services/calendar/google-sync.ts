@@ -1,11 +1,9 @@
 /**
  * Phase 10.1 — TS-side Google Calendar sync.
  *
- * Bypasses the Rust runtime entirely for Google. Reads tokens from tinybase
- * settings, calls the Google Calendar v3 REST API via @tauri-apps/plugin-http,
- * upserts rows into the local `calendars` and `events` tables in the same
- * shape Apple Calendar produces — so the existing sidebar agenda widget
- * picks them up with no UI changes.
+ * Bypasses the Rust runtime entirely for Google. Reads tokens from SQLite settings,
+ * calls the Google Calendar v3 REST API via @tauri-apps/plugin-http,
+ * upserts rows into the local `calendars` and `events` tables.
  *
  * - Token refresh on 401 via the existing `refresh()` helper.
  * - Sliding window: 7 days back, 30 days forward (matches Apple sync).
@@ -17,22 +15,17 @@
  */
 
 import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
-import type { Store } from "tinybase/with-schemas";
-
-import type { CalendarStorage, EventStorage } from "@meetspace/store";
+import { eq, and, inArray } from "drizzle-orm";
+import { db } from "~/db";
+import { calendars, events } from "@meetspace/db";
+import { getStoredSettingValues, setSettingValues } from "~/settings/queries";
+import type { SettingValues } from "~/settings/schema";
 
 import {
   isExpired,
   refresh as refreshToken,
   type StoredTokens,
 } from "~/integrations/oauth-providers";
-
-// Looser store types so callers holding either the React-hook flavor
-// (Store<Schemas>) or the merged flavor (MergeableStore<Schemas>) can pass
-// them in without a cast. See services/obsidian-auto-export.ts for the
-// same pattern.
-// biome-ignore lint/suspicious/noExplicitAny: tinybase generic
-type AnyStore = Store<any>;
 
 /** Single logical "connection" — we support one Google account per device. */
 const GOOGLE_CONNECTION_ID = "google-default";
@@ -66,27 +59,14 @@ type GoogleEvent = {
  * Run one sync cycle for Google Calendar. Caller decides cadence. Returns
  * a summary so the UI can show "Last synced …" / error states.
  */
-export async function syncGoogleCalendar(args: {
-  mainStore: AnyStore;
-  settingsStore: AnyStore;
-  userId: string;
-}): Promise<
+export async function syncGoogleCalendar(): Promise<
   { ok: true; calendars: number; events: number } | { ok: false; error: string }
 > {
-  const { mainStore, settingsStore, userId } = args;
-
-  const clientId = (
-    settingsStore.getValue("google_client_id") as string | undefined
-  )?.trim();
-  const accessToken = settingsStore.getValue("google_access_token") as
-    | string
-    | undefined;
-  const refreshTok = settingsStore.getValue("google_refresh_token") as
-    | string
-    | undefined;
-  const expiresAt = settingsStore.getValue("google_token_expires_at") as
-    | number
-    | undefined;
+  const storedSettings = await getStoredSettingValues();
+  const clientId = (storedSettings.values.google_client_id as string | undefined)?.trim();
+  const accessToken = storedSettings.values.google_access_token as string | undefined;
+  const refreshTok = storedSettings.values.google_refresh_token as string | undefined;
+  const expiresAt = storedSettings.values.google_token_expires_at as number | undefined;
 
   if (!clientId || !accessToken || !refreshTok) {
     return { ok: false, error: "google calendar not signed in" };
@@ -106,7 +86,7 @@ export async function syncGoogleCalendar(args: {
         clientId,
         tokenState.refreshToken,
       );
-      persistTokens(settingsStore, next);
+      await persistTokens(next);
       tokenState.accessToken = next.accessToken;
       tokenState.refreshToken = next.refreshToken ?? tokenState.refreshToken;
       tokenState.expiresAt = next.expiresAt;
@@ -128,7 +108,7 @@ export async function syncGoogleCalendar(args: {
         clientId,
         tokenState.refreshToken,
       );
-      persistTokens(settingsStore, next);
+      await persistTokens(next);
       tokenState.accessToken = next.accessToken;
       tokenState.refreshToken = next.refreshToken ?? tokenState.refreshToken;
       tokenState.expiresAt = next.expiresAt;
@@ -138,7 +118,7 @@ export async function syncGoogleCalendar(args: {
   };
 
   // 1. Fetch calendar list.
-  let calendars: GoogleCalendar[];
+  let googleCalendars: GoogleCalendar[];
   try {
     const res = await fetchAuthed(
       "https://www.googleapis.com/calendar/v3/users/me/calendarList?fields=items(id,summary,summaryOverride,primary,backgroundColor)",
@@ -150,7 +130,7 @@ export async function syncGoogleCalendar(args: {
       };
     }
     const json = (await res.json()) as { items?: GoogleCalendar[] };
-    calendars = json.items ?? [];
+    googleCalendars = json.items ?? [];
   } catch (e) {
     return {
       ok: false,
@@ -163,54 +143,60 @@ export async function syncGoogleCalendar(args: {
   const trackingIdToRowId = new Map<string, string>();
   const enabledRowIds = new Set<string>();
 
-  mainStore.transaction(() => {
-    for (const cal of calendars) {
-      seenCalendarTrackingIds.add(cal.id);
-      const name = cal.summaryOverride ?? cal.summary ?? cal.id;
-      const existingRowId = findCalendarRowId(mainStore, cal.id);
-      const rowId = existingRowId ?? crypto.randomUUID();
-      const existing = existingRowId
-        ? mainStore.getRow("calendars", existingRowId)
-        : null;
+  const existingCals = await db.select().from(calendars).where(eq(calendars.provider, PROVIDER));
 
-      const row: CalendarStorage = {
-        user_id: userId,
-        created_at:
-          (existing?.created_at as string) || new Date().toISOString(),
-        tracking_id_calendar: cal.id,
+  for (const cal of googleCalendars) {
+    seenCalendarTrackingIds.add(cal.id);
+    const name = cal.summaryOverride ?? cal.summary ?? cal.id;
+    const existing = existingCals.find((c) => c.trackingIdCalendar === cal.id);
+    const rowId = existing?.id ?? crypto.randomUUID();
+
+    if (existing) {
+      await db
+        .update(calendars)
+        .set({
+          name,
+          source: cal.primary ? "primary" : "",
+          color: cal.backgroundColor ?? "#888",
+          updatedAt: new Date().toISOString(),
+        })
+        .where(eq(calendars.id, rowId));
+    } else {
+      await db.insert(calendars).values({
+        id: rowId,
+        trackingIdCalendar: cal.id,
         name,
-        enabled: (existing?.enabled as boolean) ?? false,
+        enabled: false,
         provider: PROVIDER,
-        source: cal.primary ? "primary" : undefined,
+        source: cal.primary ? "primary" : "",
         color: cal.backgroundColor ?? "#888",
-        connection_id: GOOGLE_CONNECTION_ID,
-      };
-      mainStore.setRow("calendars", rowId, row);
-      trackingIdToRowId.set(cal.id, rowId);
-      if (row.enabled) enabledRowIds.add(rowId);
+        connectionId: GOOGLE_CONNECTION_ID,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
     }
 
-    // Prune calendars our cache had under provider=google that aren't there
-    // anymore (e.g. user unshared / deleted on Google's side).
-    for (const rowId of mainStore.getRowIds("calendars")) {
-      const row = mainStore.getRow("calendars", rowId);
-      if (row.provider !== PROVIDER) continue;
-      const tracking = row.tracking_id_calendar as string | undefined;
-      if (!tracking || seenCalendarTrackingIds.has(tracking)) continue;
-      mainStore.delRow("calendars", rowId);
-      // And its events.
-      for (const eventId of mainStore.getRowIds("events")) {
-        if (mainStore.getCell("events", eventId, "calendar_id") === rowId) {
-          mainStore.delRow("events", eventId);
-        }
-      }
+    trackingIdToRowId.set(cal.id, rowId);
+    if (existing?.enabled ?? false) {
+      enabledRowIds.add(rowId);
     }
-  });
+  }
+
+  const calendarsToDelete = existingCals.filter((c) => !seenCalendarTrackingIds.has(c.trackingIdCalendar));
+  for (const cal of calendarsToDelete) {
+    await db.delete(events).where(eq(events.calendarId, cal.id));
+    await db.delete(calendars).where(eq(calendars.id, cal.id));
+  }
 
   // 3. Fetch events per enabled calendar, sliding window 7d back / 30d forward.
   const { fromIso, toIso } = isoWindow();
   let totalEvents = 0;
-  const upstreamEventKey = new Set<string>(); // calendarRowId + ":" + tracking_id_event
+  const upstreamEventKey = new Set<string>();
+
+  const enabledCalendarIdsArray = Array.from(enabledRowIds);
+  const existingEvents = enabledCalendarIdsArray.length > 0
+    ? await db.select().from(events).where(inArray(events.calendarId, enabledCalendarIdsArray))
+    : [];
 
   for (const [trackingId, calendarRowId] of trackingIdToRowId.entries()) {
     if (!enabledRowIds.has(calendarRowId)) continue;
@@ -231,75 +217,84 @@ export async function syncGoogleCalendar(args: {
         continue;
       }
       const json = (await res.json()) as { items?: GoogleEvent[] };
-      const events = (json.items ?? []).filter((e) => e.status !== "cancelled");
+      const googleEvents = (json.items ?? []).filter((e) => e.status !== "cancelled");
 
-      mainStore.transaction(() => {
-        for (const ev of events) {
-          const started = ev.start?.dateTime ?? ev.start?.date ?? null;
-          const ended = ev.end?.dateTime ?? ev.end?.date ?? null;
-          if (!started || !ended) continue;
+      for (const ev of googleEvents) {
+        const started = ev.start?.dateTime ?? ev.start?.date ?? null;
+        const ended = ev.end?.dateTime ?? ev.end?.date ?? null;
+        if (!started || !ended) continue;
 
-          upstreamEventKey.add(`${calendarRowId}:${ev.id}`);
-          const existingRowId = findEventRowId(mainStore, calendarRowId, ev.id);
-          const rowId = existingRowId ?? crypto.randomUUID();
-          const existing = existingRowId
-            ? mainStore.getRow("events", existingRowId)
-            : null;
+        upstreamEventKey.add(`${calendarRowId}:${ev.id}`);
+        const existing = existingEvents.find((e) => e.calendarId === calendarRowId && e.trackingIdEvent === ev.id);
+        const rowId = existing?.id ?? crypto.randomUUID();
 
-          const row: EventStorage = {
-            user_id: userId,
-            created_at:
-              (existing?.created_at as string) || new Date().toISOString(),
-            tracking_id_event: ev.id,
-            calendar_id: calendarRowId,
-            title: ev.summary ?? "(no title)",
-            started_at: started,
-            ended_at: ended,
-            location: ev.location,
-            meeting_link: ev.hangoutLink ?? meetingLinkFromConference(ev),
-            description: ev.description,
-            recurrence_series_id: ev.recurringEventId,
-            has_recurrence_rules: !!ev.recurringEventId,
-            is_all_day: !!ev.start?.date && !ev.start?.dateTime,
-            provider: PROVIDER,
-          };
-          mainStore.setRow("events", rowId, row);
-          totalEvents++;
+        const row = {
+          trackingIdEvent: ev.id,
+          calendarId: calendarRowId,
+          title: ev.summary ?? "(no title)",
+          startedAt: started,
+          endedAt: ended,
+          location: ev.location ?? "",
+          meetingLink: ev.hangoutLink ?? meetingLinkFromConference(ev) ?? "",
+          description: ev.description ?? "",
+          recurrenceSeriesId: ev.recurringEventId ?? "",
+          hasRecurrenceRules: !!ev.recurringEventId,
+          isAllDay: !!ev.start?.date && !ev.start?.dateTime,
+          provider: PROVIDER,
+          updatedAt: new Date().toISOString(),
+        };
+
+        if (existing) {
+          await db
+            .update(events)
+            .set(row)
+            .where(eq(events.id, rowId));
+        } else {
+          await db.insert(events).values({
+            id: rowId,
+            ...row,
+            createdAt: new Date().toISOString(),
+          });
         }
-      });
+        totalEvents++;
+      }
     } catch (e) {
       console.warn(`[google-sync] events fetch threw for ${trackingId}`, e);
     }
   }
 
-  // 4. Prune stale events: anything in our DB for an enabled google calendar
-  // whose key didn't show up in the upstream response this cycle.
-  mainStore.transaction(() => {
-    for (const eventId of mainStore.getRowIds("events")) {
-      const row = mainStore.getRow("events", eventId);
-      if (row.provider !== PROVIDER) continue;
-      const calendarRowId = row.calendar_id as string | undefined;
-      if (!calendarRowId || !enabledRowIds.has(calendarRowId)) continue;
-      const tracking = row.tracking_id_event as string | undefined;
-      if (!tracking) continue;
-      if (upstreamEventKey.has(`${calendarRowId}:${tracking}`)) continue;
-      mainStore.delRow("events", eventId);
+  // 4. Prune stale events
+  if (enabledCalendarIdsArray.length > 0) {
+    const allEventsForEnabled = await db
+      .select()
+      .from(events)
+      .where(and(eq(events.provider, PROVIDER), inArray(events.calendarId, enabledCalendarIdsArray)));
+
+    for (const ev of allEventsForEnabled) {
+      if (!upstreamEventKey.has(`${ev.calendarId}:${ev.trackingIdEvent}`)) {
+        await db.delete(events).where(eq(events.id, ev.id));
+      }
     }
-  });
+  }
 
   return {
     ok: true,
-    calendars: calendars.length,
+    calendars: googleCalendars.length,
     events: totalEvents,
   };
 }
 
-function persistTokens(settingsStore: AnyStore, t: StoredTokens) {
-  settingsStore.setValue("google_access_token", t.accessToken);
-  if (t.refreshToken)
-    settingsStore.setValue("google_refresh_token", t.refreshToken);
-  if (t.expiresAt)
-    settingsStore.setValue("google_token_expires_at", t.expiresAt);
+async function persistTokens(t: StoredTokens) {
+  const updates: Partial<SettingValues> = {
+    google_access_token: t.accessToken,
+  };
+  if (t.refreshToken) {
+    updates.google_refresh_token = t.refreshToken;
+  }
+  if (t.expiresAt) {
+    updates.google_token_expires_at = t.expiresAt;
+  }
+  await setSettingValues(updates as SettingValues);
 }
 
 function isoWindow(): { fromIso: string; toIso: string } {
@@ -316,35 +311,4 @@ function meetingLinkFromConference(ev: GoogleEvent): string | undefined {
     (p) => p.entryPointType === "video",
   );
   return ep?.uri;
-}
-
-function findCalendarRowId(store: AnyStore, trackingId: string): string | null {
-  let found: string | null = null;
-  store.forEachRow("calendars", (rowId: string, _forEachCell: unknown) => {
-    if (found) return;
-    const r = store.getRow("calendars", rowId);
-    if (r.provider === PROVIDER && r.tracking_id_calendar === trackingId) {
-      found = rowId;
-    }
-  });
-  return found;
-}
-
-function findEventRowId(
-  store: AnyStore,
-  calendarRowId: string,
-  trackingEventId: string,
-): string | null {
-  let found: string | null = null;
-  store.forEachRow("events", (rowId: string, _forEachCell: unknown) => {
-    if (found) return;
-    const r = store.getRow("events", rowId);
-    if (
-      r.calendar_id === calendarRowId &&
-      r.tracking_id_event === trackingEventId
-    ) {
-      found = rowId;
-    }
-  });
-  return found;
 }

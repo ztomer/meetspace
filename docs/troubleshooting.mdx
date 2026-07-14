@@ -7,8 +7,10 @@ description: "Fix the most common recording, transcription, summary, and calenda
 
 Open **Settings → Permissions** and confirm:
 
-- **Microphone** is allowed so Meetspace can hear you.
-- **System Audio** is allowed so Meetspace can hear the other people on the call.
+```bash
+cargo install --locked --path apps/cli
+meetspace --version
+```
 
 If a permission is denied, use **Open** to change it in macOS Settings, then restart Meetspace.
 
@@ -16,21 +18,27 @@ If a permission is denied, use **Open** to change it in macOS Settings, then res
 
 Open **Settings → Transcription** and check the selected model. **Live** models transcribe during the meeting. **After recording** models wait until you stop.
 
-If transcription fails, confirm the provider is configured, the model supports your spoken languages, and a local provider is running.
+```bash
+meetspace --json doctor
+```
 
-## No summary appears
+Open the Meetspace desktop app once if the database does not exist, then retry:
 
-A summary needs an Intelligence model. Open **Settings → Intelligence**, then select Meetspace Cloud or configure another provider.
+```bash
+meetspace --json meetings list --limit 5
+```
 
 For LM Studio and Ollama, confirm the local server is running. See [Transcription and AI](/ai-setup).
 
-## Calendar events are missing
+```bash
+meetspace --db-path /path/to/app.db --json meetings list
+```
 
 Open **Calendar** and confirm the account is connected and the calendar is enabled. Refresh the calendar list. Reconnect any account marked **Reconnect required**.
 
 For Apple Calendar, also check **Settings → Permissions → Calendar**.
 
-## A recording disappeared
+Remove the search filter and list recent meetings. Confirm you opened the same Meetspace data directory as the desktop app.
 
 Open **Settings → App → Storage** and check **Audio file retention**. Meetspace can delete audio immediately or after a selected period while keeping the note and transcript.
 
@@ -40,10 +48,14 @@ See [Data, privacy, and retention](/data-and-privacy#choose-how-long-audio-is-ke
 
 Audio imports accept WAV, MP3, OGG, MP4, M4A, FLAC, WebM, and AAC. Transcript imports accept SRT and VTT.
 
-For audio, confirm that a Transcription model is selected and that a local provider is running. See [Import audio or a transcript](/import-recordings).
+```bash
+meetspace --json meetings list --limit 1
+```
 
-## Get more help
+Then confirm the client launches `meetspace` with `mcp` as an argument. Use an absolute command path if the client's environment does not inherit your shell `PATH`.
 
 Email [hello@meetspace.so](mailto:hello@meetspace.so), [join Discord](https://meetspace.so/discord), or [open a GitHub issue](https://github.com/fastrepl/meetspace/issues).
 
-For CLI and MCP errors, use the [error reference](/reference/errors).
+Rebuild the CLI from the same repository revision as the desktop app. Do not run migrations manually. Published lockstep desktop and CLI artifacts are planned but not available yet.
+
+For further help, email [hello@meetspace.so](mailto:hello@meetspace.so) or open an issue on [GitHub](https://github.com/fastrepl/meetspace/issues).

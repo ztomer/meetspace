@@ -17,7 +17,7 @@ const mocks = vi.hoisted(() => ({
   runLegacyImport: vi.fn(),
 }));
 
-vi.mock("@meetspace/plugin-db", () => ({
+vi.mock("@hypr/plugin-db", () => ({
   cleanupLegacyFiles: mocks.cleanupLegacyFiles,
   getLegacyCleanupStatus: mocks.getLegacyCleanupStatus,
   getLegacyImportReport: mocks.getLegacyImportReport,
@@ -59,7 +59,7 @@ describe("LegacyMigrationCleanupRow", () => {
       alreadyCleaned: false,
       fileCount: 12,
       totalBytes: 2048,
-      sourceRoot: "/Users/test/Meetspace",
+      sourceRoot: "/Users/test/Anarlog",
       blockingReason: null,
     });
     mocks.cleanupLegacyFiles.mockResolvedValue({
@@ -148,7 +148,7 @@ describe("LegacyMigrationCleanupRow", () => {
       alreadyCleaned: false,
       fileCount: 0,
       totalBytes: 0,
-      sourceRoot: "/Users/test/Meetspace",
+      sourceRoot: "/Users/test/Anarlog",
       blockingReason: "1 legacy file changed after migration",
     });
 

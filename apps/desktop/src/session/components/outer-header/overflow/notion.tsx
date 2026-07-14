@@ -10,8 +10,8 @@ import {
 } from "@meetspace/ui/components/ui/tooltip";
 
 import { exportSessionToNotion } from "~/integrations/notion";
+import { useSession } from "~/session/queries";
 import { useConfigValues } from "~/shared/config";
-import * as main from "~/store/tinybase/store/main";
 
 export function ExportToNotion({ sessionId }: { sessionId: string }) {
   const { notion_token, notion_database_id } = useConfigValues([
@@ -19,24 +19,10 @@ export function ExportToNotion({ sessionId }: { sessionId: string }) {
     "notion_database_id",
   ] as const);
 
-  const sessionTitle = main.UI.useCell(
-    "sessions",
-    sessionId,
-    "title",
-    main.STORE_ID,
-  ) as string | undefined;
-  const sessionCreatedAt = main.UI.useCell(
-    "sessions",
-    sessionId,
-    "created_at",
-    main.STORE_ID,
-  ) as string | undefined;
-  const rawMd = main.UI.useCell(
-    "sessions",
-    sessionId,
-    "raw_md",
-    main.STORE_ID,
-  ) as string | undefined;
+  const session = useSession(sessionId);
+  const sessionTitle = session?.title;
+  const sessionCreatedAt = session?.created_at;
+  const rawMd = session?.raw_md;
 
   const configured = !!(notion_token && notion_database_id);
 

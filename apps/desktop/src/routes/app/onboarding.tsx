@@ -15,8 +15,10 @@ function Component() {
   const openCurrent = useTabs((state) => state.openCurrent);
 
   const handleFinish = useCallback(
-    (sessionId: string) => {
-      openCurrent({ type: "sessions", id: sessionId });
+    (sessionId?: string) => {
+      if (sessionId) {
+        openCurrent({ type: "sessions", id: sessionId });
+      }
       void (async () => {
         await navigate({ to: await resolveShellEntryPath() });
       })();

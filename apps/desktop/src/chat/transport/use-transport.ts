@@ -1,7 +1,7 @@
 import type { LanguageModel, ToolSet } from "ai";
 import { useEffect, useMemo, useState } from "react";
 
-import { commands as templateCommands } from "@meetspace/plugin-template";
+import { commands as templateCommands } from "@hypr/plugin-template";
 
 import { CustomChatTransport } from "./index";
 import type { ResolvedChatContext } from "./index";
@@ -34,7 +34,7 @@ Web search guidance:
 export function appendMeetingContextToolGuidance(
   prompt: string | undefined,
 ): string | undefined {
-  if (prompt == null) {
+  if (prompt === undefined) {
     return undefined;
   }
 

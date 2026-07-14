@@ -23,6 +23,7 @@ delete = [
   "packages/pricing/**",
   "apps/desktop/src/billing/**",
   "apps/desktop/src/onboarding/account/**",
+  "apps/desktop/src/settings/general/account.tsx",
 ]
 
 # Fork-owned: keep the fork's version on conflict. The fork's ONLY axes are
@@ -67,7 +68,6 @@ fork = [
   "apps/desktop/src/onboarding/**",
   "apps/desktop/src/settings/general/**",
   "apps/desktop/src/shared/config/**",
-  "apps/desktop/src/store/tinybase/store/settings.ts",
   # --- Native shell + fork infrastructure ---
   "apps/desktop/src-tauri/**",
   "apps/desktop/visual/**",

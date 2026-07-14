@@ -9,7 +9,14 @@ import {
   Code2Icon,
   CogIcon,
   LockIcon,
+<<<<<<< HEAD
   SmileIcon,
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+  SlidersHorizontalIcon,
+=======
+  PlugIcon,
+  SlidersHorizontalIcon,
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
   SparklesIcon,
   type LucideIcon,
   UsersIcon,
@@ -70,7 +77,12 @@ export function SettingsNav() {
       items: [
         { id: "app", label: t`App`, icon: CogIcon },
         { id: "notifications", label: t`Notifications`, icon: BellIcon },
+<<<<<<< HEAD
         { id: "developers", label: t`Developers`, icon: Code2Icon },
+||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
+=======
+        { id: "integrations", label: t`Integrations`, icon: PlugIcon },
+>>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
       ],
     },
     {

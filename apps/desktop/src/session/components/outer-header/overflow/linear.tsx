@@ -26,9 +26,9 @@ import {
 } from "@meetspace/ui/components/ui/tooltip";
 
 import { createLinearIssue, listLinearTeams } from "~/integrations/linear";
+import { useSession } from "~/session/queries";
+import { useSetSettingValue } from "~/settings/queries";
 import { useConfigValues } from "~/shared/config";
-import * as main from "~/store/tinybase/store/main";
-import * as settings from "~/store/tinybase/store/settings";
 
 export function CreateLinearIssue({ sessionId }: { sessionId: string }) {
   const { linear_api_key, linear_team_id } = useConfigValues([
@@ -38,25 +38,11 @@ export function CreateLinearIssue({ sessionId }: { sessionId: string }) {
 
   const [teamPickerOpen, setTeamPickerOpen] = useState(false);
 
-  const sessionTitle = main.UI.useCell(
-    "sessions",
-    sessionId,
-    "title",
-    main.STORE_ID,
-  ) as string | undefined;
-  const rawMd = main.UI.useCell(
-    "sessions",
-    sessionId,
-    "raw_md",
-    main.STORE_ID,
-  ) as string | undefined;
+  const session = useSession(sessionId);
+  const sessionTitle = session?.title;
+  const rawMd = session?.raw_md;
 
-  const setTeamId = settings.UI.useSetValueCallback(
-    "linear_team_id",
-    (v: string) => v,
-    [],
-    settings.STORE_ID,
-  );
+  const setTeamId = useSetSettingValue("linear_team_id");
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
