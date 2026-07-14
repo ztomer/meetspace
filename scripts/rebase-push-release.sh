@@ -21,14 +21,15 @@ yellow() { printf '\033[33m%s\033[0m\n' "$*"; }
 bold()   { printf '\033[1m%s\033[0m\n' "$*"; }
 
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-BRANCH_NAME="${1:-$CURRENT_BRANCH}"
+BRANCH_NAME="$CURRENT_BRANCH"
 SKIP_REBASE=0
 SKIP_PUSH=0
 USE_STABLE=0
 CLEAN_CACHE=0
 
-# Shift first argument if it's a branch name (i.e. does not start with -)
+# Consume the first argument as the branch name only if it is not a flag.
 if [[ $# -gt 0 && ! "$1" =~ ^- ]]; then
+  BRANCH_NAME="$1"
   shift
 fi
 
