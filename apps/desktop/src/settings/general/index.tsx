@@ -2,7 +2,7 @@ import { Trans } from "@lingui/react/macro";
 import { useForm } from "@tanstack/react-form";
 import { Loader2Icon } from "lucide-react";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 
 export { SettingsAccount } from "./account";
 import { AppSettingsView } from "./app-settings";

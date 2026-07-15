@@ -5,7 +5,7 @@
 Run the local stdio server with:
 
 ```bash
-anarlog mcp
+meetspace mcp
 ```
 
 A generic client configuration is:
@@ -13,8 +13,8 @@ A generic client configuration is:
 ```json
 {
   "mcpServers": {
-    "anarlog": {
-      "command": "anarlog",
+    "meetspace": {
+      "command": "meetspace",
       "args": ["mcp"]
     }
   }
@@ -28,12 +28,12 @@ Restart the client after changing its MCP configuration.
 The CLI currently installs from source:
 
 ```bash
-git clone https://github.com/fastrepl/anarlog.git
-cd anarlog
+git clone https://github.com/fastrepl/meetspace.git
+cd meetspace
 cargo install --locked --path apps/cli
-anarlog --version
+meetspace --version
 ```
 
-Run the Anarlog desktop app at least once so its local database exists. Homebrew, desktop-bundled, and Windows binary distribution are planned but not yet available.
+Run the Meetspace desktop app at least once so its local database exists. Homebrew, desktop-bundled, and Windows binary distribution are planned but not yet available.
 
-Use `--db-path FILE` or `ANARLOG_DB_PATH` only when the database is outside Anarlog's default application-data location.
+Use `--db-path FILE` or `MEETSPACE_DB_PATH` only when the database is outside Meetspace's default application-data location.

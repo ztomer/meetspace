@@ -15,8 +15,8 @@ describe("getVisibleModelSelection", () => {
   });
 
   test("keeps a configured provider visible when its model is missing", () => {
-    expect(getVisibleModelSelection("hyprnote", undefined, true)).toEqual({
-      provider: "hyprnote",
+    expect(getVisibleModelSelection("meetspace", undefined, true)).toEqual({
+      provider: "meetspace",
       model: "",
     });
   });
@@ -31,48 +31,48 @@ describe("getVisibleModelSelection", () => {
 
 describe("getConfiguredProviders", () => {
   test("returns only providers whose configuration is complete", () => {
-    const providers = [{ id: "anarlog" }, { id: "deepgram" }, { id: "openai" }];
+    const providers = [{ id: "meetspace" }, { id: "deepgram" }, { id: "openai" }];
 
     expect(
       getConfiguredProviders(providers, {
-        anarlog: { configured: true },
+        meetspace: { configured: true },
         deepgram: { configured: true },
         openai: { configured: false },
       }),
-    ).toEqual([{ id: "anarlog" }, { id: "deepgram" }]);
+    ).toEqual([{ id: "meetspace" }, { id: "deepgram" }]);
   });
 });
 
 describe("getConfiguredProviderIds", () => {
   test("keeps the configured active provider first", () => {
-    const providers = [{ id: "anarlog" }, { id: "deepgram" }, { id: "openai" }];
+    const providers = [{ id: "meetspace" }, { id: "deepgram" }, { id: "openai" }];
 
     expect(
       getConfiguredProviderIds(
         providers,
         {
-          anarlog: { configured: true },
+          meetspace: { configured: true },
           deepgram: { configured: true },
           openai: { configured: false },
         },
         "deepgram",
       ),
-    ).toEqual(["deepgram", "anarlog"]);
+    ).toEqual(["deepgram", "meetspace"]);
   });
 
   test("falls back to configured provider order when the active provider is unavailable", () => {
-    const providers = [{ id: "anarlog" }, { id: "deepgram" }, { id: "openai" }];
+    const providers = [{ id: "meetspace" }, { id: "deepgram" }, { id: "openai" }];
 
     expect(
       getConfiguredProviderIds(
         providers,
         {
-          anarlog: { configured: true },
+          meetspace: { configured: true },
           deepgram: { configured: true },
           openai: { configured: false },
         },
         "openai",
       ),
-    ).toEqual(["anarlog", "deepgram"]);
+    ).toEqual(["meetspace", "deepgram"]);
   });
 });

@@ -4,7 +4,7 @@ import { CheckIcon, CopyIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 
-import { deriveBillingInfo, type SupabaseJwtPayload } from "@hypr/supabase";
+import { deriveBillingInfo, type SupabaseJwtPayload } from "@meetspace/supabase";
 
 import {
   AuthShell,
@@ -30,7 +30,7 @@ const validateSearch = z.object({
     ])
     .optional(),
   flow: z.enum(["desktop", "web"]).default("desktop"),
-  scheme: desktopSchemeSchema.catch("hyprnote"),
+  scheme: desktopSchemeSchema.catch("meetspace"),
   redirect: z.string().optional(),
   access_token: z.string().optional(),
   refresh_token: z.string().optional(),
@@ -246,7 +246,7 @@ function Component() {
                 onClick={handleDeeplink}
                 className={authPrimaryButtonClassName}
               >
-                Open Anarlog
+                Open Meetspace
               </button>
 
               <div className="rounded-xl border border-[#e5ddcf] bg-[#fbfaf7] p-4 text-center">

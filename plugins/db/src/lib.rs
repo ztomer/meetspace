@@ -155,24 +155,24 @@ fn make_specta_builder<R: tauri::Runtime>() -> tauri_specta::Builder<R> {
 }
 
 pub fn init<R: tauri::Runtime>(
-    db: std::sync::Arc<hypr_db_core::Db>,
+    db: std::sync::Arc<meetspace_db_core::Db>,
 ) -> tauri::plugin::TauriPlugin<R> {
     init_with_cloudsync(db, None)
 }
 
 pub fn init_with_cloudsync<R: tauri::Runtime>(
-    db: std::sync::Arc<hypr_db_core::Db>,
-    startup_config: Option<hypr_db_core::CloudsyncRuntimeConfig>,
+    db: std::sync::Arc<meetspace_db_core::Db>,
+    startup_config: Option<meetspace_db_core::CloudsyncRuntimeConfig>,
 ) -> tauri::plugin::TauriPlugin<R> {
     let specta_builder = make_specta_builder();
 
     tauri::plugin::Builder::new(PLUGIN_NAME)
         .invoke_handler(specta_builder.invoke_handler())
         .setup(move |app, _| {
-            hypr_tauri_utils::block_on(hypr_db_app::prepare_schema(db.as_ref()))?;
-            hypr_tauri_utils::block_on(import::import_legacy_data(app.app_handle(), db.pool()))?;
+            meetspace_tauri_utils::block_on(meetspace_db_app::prepare_schema(db.as_ref()))?;
+            meetspace_tauri_utils::block_on(import::import_legacy_data(app.app_handle(), db.pool()))?;
             if let Some(config) = startup_config.clone() {
-                if let Err(error) = hypr_tauri_utils::block_on(db.cloudsync_configure(config)) {
+                if let Err(error) = meetspace_tauri_utils::block_on(db.cloudsync_configure(config)) {
                     tracing::warn!(%error, "failed to configure startup cloudsync");
                 } else {
                     let sync_db = std::sync::Arc::clone(&db);
@@ -198,7 +198,7 @@ mod test {
     use std::sync::{Arc, Mutex};
     use std::time::Duration;
 
-    use hypr_db_reactive::QueryEventSink;
+    use meetspace_db_reactive::QueryEventSink;
     use serde_json::json;
     use tauri::ipc::{Channel, InvokeResponseBody};
 
@@ -257,8 +257,8 @@ mod test {
     ) -> (tempfile::TempDir, Arc<runtime::PluginDbRuntime>) {
         let dir = tempfile::tempdir().unwrap();
         let db_path = dir.path().join("app.db");
-        let db = hypr_db_core::Db::open(hypr_db_core::DbOpenOptions {
-            storage: hypr_db_core::DbStorage::Local(&db_path),
+        let db = meetspace_db_core::Db::open(meetspace_db_core::DbOpenOptions {
+            storage: meetspace_db_core::DbStorage::Local(&db_path),
             cloudsync_enabled,
             journal_mode_wal: true,
             foreign_keys: true,
@@ -266,7 +266,7 @@ mod test {
         })
         .await
         .unwrap();
-        hypr_db_app::prepare_schema(&db).await.unwrap();
+        meetspace_db_app::prepare_schema(&db).await.unwrap();
 
         (dir, Arc::new(runtime::PluginDbRuntime::new(Arc::new(db))))
     }
@@ -283,8 +283,8 @@ mod test {
     async fn setup_unmigrated_runtime() -> (tempfile::TempDir, Arc<runtime::PluginDbRuntime>) {
         let dir = tempfile::tempdir().unwrap();
         let db_path = dir.path().join("app.db");
-        let db = hypr_db_core::Db::open(hypr_db_core::DbOpenOptions {
-            storage: hypr_db_core::DbStorage::Local(&db_path),
+        let db = meetspace_db_core::Db::open(meetspace_db_core::DbOpenOptions {
+            storage: meetspace_db_core::DbStorage::Local(&db_path),
             cloudsync_enabled: false,
             journal_mode_wal: true,
             foreign_keys: true,
@@ -358,7 +358,7 @@ mod test {
             .execute_proxy(
                 "INSERT INTO templates (id, title) VALUES (?, ?)".to_string(),
                 vec![json!("template-1"), json!("Template 1")],
-                hypr_db_execute::ProxyQueryMethod::Run,
+                meetspace_db_execute::ProxyQueryMethod::Run,
             )
             .await
             .unwrap();
@@ -498,7 +498,7 @@ mod test {
 
         assert!(matches!(
             registration.analysis,
-            hypr_db_reactive::DependencyAnalysis::Reactive { .. }
+            meetspace_db_reactive::DependencyAnalysis::Reactive { .. }
         ));
 
         let event = next_event(&events, 0).await.unwrap();
@@ -518,7 +518,7 @@ mod test {
                 serde_json::json!({
                     "connection_string": "managed-database-id",
                     "auth": { "type": "token", "token": "test-token" },
-                    "tables": hypr_db_app::cloudsync_table_registry(),
+                    "tables": meetspace_db_app::cloudsync_table_registry(),
                     "sync_interval_ms": 30_000,
                     "wait_ms": 5_000,
                     "max_retries": 3
@@ -544,7 +544,7 @@ mod test {
     #[tokio::test]
     async fn account_binding_is_durable_without_rekeying_local_rows() {
         let (_dir, runtime) = setup_runtime().await;
-        let local_workspace = hypr_db_app::ensure_cloudsync_workspace_binding(runtime.pool())
+        let local_workspace = meetspace_db_app::ensure_cloudsync_workspace_binding(runtime.pool())
             .await
             .unwrap();
         sqlx::query(
@@ -619,7 +619,7 @@ mod test {
     #[tokio::test]
     async fn token_configuration_rejects_local_only_runtime_before_rekeying() {
         let (_dir, runtime) = setup_runtime().await;
-        let local_workspace = hypr_db_app::ensure_cloudsync_workspace_binding(runtime.pool())
+        let local_workspace = meetspace_db_app::ensure_cloudsync_workspace_binding(runtime.pool())
             .await
             .unwrap();
         sqlx::query(
@@ -657,7 +657,7 @@ mod test {
 
         assert!(matches!(
             error,
-            crate::Error::Cloudsync(hypr_db_core::CloudsyncRuntimeError::Unavailable)
+            crate::Error::Cloudsync(meetspace_db_core::CloudsyncRuntimeError::Unavailable)
         ));
         assert_eq!(binding, (local_workspace.clone(), None));
         assert_eq!(session, (local_workspace.clone(), local_workspace));
@@ -670,7 +670,7 @@ mod test {
     #[tokio::test]
     async fn token_configuration_claims_workspace_and_can_be_suspended() {
         let (_dir, runtime) = setup_enabled_cloudsync_runtime().await;
-        let local_workspace = hypr_db_app::ensure_cloudsync_workspace_binding(runtime.pool())
+        let local_workspace = meetspace_db_app::ensure_cloudsync_workspace_binding(runtime.pool())
             .await
             .unwrap();
         sqlx::query(

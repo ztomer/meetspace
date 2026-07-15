@@ -61,7 +61,7 @@ vi.mock("../shared", () => ({
     mocks.hasTranscriptBySession[sessionId] ?? false,
 }));
 
-vi.mock("@hypr/plugin-opener2", () => ({
+vi.mock("@meetspace/plugin-opener2", () => ({
   commands: {
     openUrl: mocks.openUrl,
   },

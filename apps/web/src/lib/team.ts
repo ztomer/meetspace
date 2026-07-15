@@ -28,7 +28,7 @@ export const EDITORS = {
   artem: {
     id: "artem",
     name: "Artem",
-    email: "artem@hyprnote.com",
+    email: "artem@meetspace.com",
     avatar: "/team/artem.jpg",
     role: "",
     bio: "",
@@ -66,13 +66,13 @@ export const AUTHORS = Object.values(EDITORS).map((m) => ({
 }));
 
 export const ADMIN_EMAILS = [
-  "yujonglee@hyprnote.com",
+  "yujonglee@meetspace.com",
   "yujonglee.dev@gmail.com",
-  "john@hyprnote.com",
-  "marketing@hyprnote.com",
+  "john@meetspace.com",
+  "marketing@meetspace.com",
   "yunhyungjo@yonsei.ac.kr",
   "goranmoomin@daum.net",
-  "artem@hyprnote.com",
+  "artem@meetspace.com",
   "stua@fastmail.com",
   "thestua@gmail.com",
 ];

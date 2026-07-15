@@ -12,11 +12,11 @@ import {
   getAppLinkLabel,
   type GitHubAttrs,
   type AppLinkAttrs,
-} from "@hypr/editor/app-link";
-import { getSafeNodePos } from "@hypr/editor/node-views";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { commands as todoCommands } from "@hypr/plugin-todo";
-import { cn } from "@hypr/utils";
+} from "@meetspace/editor/app-link";
+import { getSafeNodePos } from "@meetspace/editor/node-views";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { commands as todoCommands } from "@meetspace/plugin-todo";
+import { cn } from "@meetspace/utils";
 
 import { collectSiblingResources, openTaskTab } from "~/task/open-task-tab";
 

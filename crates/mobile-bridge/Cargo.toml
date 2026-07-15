@@ -8,11 +8,11 @@ crate-type = ["lib", "cdylib", "staticlib"]
 name = "mobile_bridge"
 
 [dependencies]
-hypr-db-app = { workspace = true }
-hypr-db-core = { workspace = true }
-hypr-db-execute = { workspace = true }
-hypr-db-migrate = { workspace = true }
-hypr-db-reactive = { workspace = true }
+meetspace-db-app = { workspace = true }
+meetspace-db-core = { workspace = true }
+meetspace-db-execute = { workspace = true }
+meetspace-db-migrate = { workspace = true }
+meetspace-db-reactive = { workspace = true }
 
 serde_json = { workspace = true }
 thiserror = { workspace = true }

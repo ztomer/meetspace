@@ -1,7 +1,7 @@
 import type { RefObject } from "react";
 import { useCallback } from "react";
 
-import { Spinner } from "@hypr/ui/components/ui/spinner";
+import { Spinner } from "@meetspace/ui/components/ui/spinner";
 
 import { useRegenerateTranscript } from "./actions";
 import { TranscriptViewer } from "./renderer";

@@ -2,13 +2,13 @@ use std::fmt::Write;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
-use hypr_db_app::{
+use meetspace_db_app::{
     LegacyActionItem, LegacyAppSetting, LegacyAttachment, LegacyChatGroup, LegacyChatMessage,
     LegacyDailyNote, LegacyDocument, LegacyHuman, LegacyImportBatch, LegacyImportItem,
     LegacyImportRow, LegacyOrganization, LegacyParticipant, LegacySession, LegacySessionTag,
     LegacyTag, LegacyTranscript,
 };
-use hypr_fs_sync_core::frontmatter::ParsedDocument;
+use meetspace_fs_sync_core::frontmatter::ParsedDocument;
 use serde_json::{Map, Value};
 use sha2::{Digest, Sha256};
 use sqlx::SqlitePool;
@@ -104,12 +104,12 @@ pub async fn import_legacy_vault(
     let _guard = IMPORT_LOCK.lock().await;
     let run_id = uuid::Uuid::new_v4().to_string();
     let source_root = vault_base.to_string_lossy();
-    hypr_db_app::begin_legacy_import_run(pool, &run_id, &source_root, dry_run).await?;
+    meetspace_db_app::begin_legacy_import_run(pool, &run_id, &source_root, dry_run).await?;
 
     let discovery = match discover_sources(vault_base) {
         Ok(discovery) => discovery,
         Err(error) => {
-            hypr_db_app::fail_legacy_import_run(pool, &run_id, &error.to_string()).await?;
+            meetspace_db_app::fail_legacy_import_run(pool, &run_id, &error.to_string()).await?;
             return Err(error.into());
         }
     };
@@ -119,7 +119,7 @@ pub async fn import_legacy_vault(
             Ok(bytes) => bytes,
             Err(error) => {
                 let item_id = stable_id(&format!("{run_id}:{}", source.relative_path));
-                hypr_db_app::record_legacy_import_error(
+                meetspace_db_app::record_legacy_import_error(
                     pool,
                     LegacyImportItem {
                         id: &item_id,
@@ -144,14 +144,14 @@ pub async fn import_legacy_vault(
 
         if !dry_run
             && !recheck_summary_pair
-            && hypr_db_app::legacy_source_already_imported(
+            && meetspace_db_app::legacy_source_already_imported(
                 pool,
                 &source.relative_path,
                 &source_sha256,
             )
             .await?
         {
-            hypr_db_app::record_legacy_import_unchanged(
+            meetspace_db_app::record_legacy_import_unchanged(
                 pool,
                 LegacyImportItem {
                     id: &item_id,
@@ -184,15 +184,15 @@ pub async fn import_legacy_vault(
                 {
                     promote_canonical_summary(pool, summary_pair, document).await?;
                 }
-                hypr_db_app::apply_legacy_import_item(pool, item, &batch, dry_run).await?;
+                meetspace_db_app::apply_legacy_import_item(pool, item, &batch, dry_run).await?;
             }
             Err(error) => {
-                hypr_db_app::record_legacy_import_error(pool, item, &error).await?;
+                meetspace_db_app::record_legacy_import_error(pool, item, &error).await?;
             }
         }
     }
 
-    hypr_db_app::finish_legacy_import_run(pool, &run_id).await?;
+    meetspace_db_app::finish_legacy_import_run(pool, &run_id).await?;
     Ok(run_id)
 }
 
@@ -1074,11 +1074,11 @@ fn content_type_for_path(path: &Path) -> &'static str {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use hypr_db_core::Db;
+    use meetspace_db_core::Db;
 
     async fn test_db() -> Db {
         let db = Db::connect_memory_plain().await.unwrap();
-        hypr_db_app::prepare_schema(&db).await.unwrap();
+        meetspace_db_app::prepare_schema(&db).await.unwrap();
         db
     }
 
@@ -1362,7 +1362,7 @@ mod tests {
         std::fs::write(session_dir.join("_summary.md"), canonical).unwrap();
 
         let failed_run_id = "failed-run";
-        hypr_db_app::begin_legacy_import_run(
+        meetspace_db_app::begin_legacy_import_run(
             db.pool(),
             failed_run_id,
             &dir.path().to_string_lossy(),
@@ -1405,7 +1405,7 @@ mod tests {
                 .unwrap(),
             ),
         ] {
-            hypr_db_app::apply_legacy_import_item(
+            meetspace_db_app::apply_legacy_import_item(
                 db.pool(),
                 LegacyImportItem {
                     id: item_id,
@@ -1421,7 +1421,7 @@ mod tests {
             .unwrap();
         }
         assert_eq!(
-            hypr_db_app::finish_legacy_import_run(db.pool(), failed_run_id)
+            meetspace_db_app::finish_legacy_import_run(db.pool(), failed_run_id)
                 .await
                 .unwrap(),
             "completed_with_conflicts"

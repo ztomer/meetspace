@@ -56,25 +56,25 @@ impl WhisperModel {
     pub fn model_url(&self) -> &str {
         match self {
             WhisperModel::QuantizedTiny => {
-                "https://hyprnote.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/ggml-tiny-q8_0.bin"
+                "https://meetspace.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/ggml-tiny-q8_0.bin"
             }
             WhisperModel::QuantizedTinyEn => {
-                "https://hyprnote.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/ggml-tiny.en-q8_0.bin"
+                "https://meetspace.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/ggml-tiny.en-q8_0.bin"
             }
             WhisperModel::QuantizedBase => {
-                "https://hyprnote.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/ggml-base-q8_0.bin"
+                "https://meetspace.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/ggml-base-q8_0.bin"
             }
             WhisperModel::QuantizedBaseEn => {
-                "https://hyprnote.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/ggml-base.en-q8_0.bin"
+                "https://meetspace.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/ggml-base.en-q8_0.bin"
             }
             WhisperModel::QuantizedSmall => {
-                "https://hyprnote.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/ggml-small-q8_0.bin"
+                "https://meetspace.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/ggml-small-q8_0.bin"
             }
             WhisperModel::QuantizedSmallEn => {
-                "https://hyprnote.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/ggml-small.en-q8_0.bin"
+                "https://meetspace.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/ggml-small.en-q8_0.bin"
             }
             WhisperModel::QuantizedLargeTurbo => {
-                "https://hyprnote.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/ggml-large-v3-turbo-q8_0.bin"
+                "https://meetspace.s3.us-east-1.amazonaws.com/v0/ggerganov/whisper.cpp/main/ggml-large-v3-turbo-q8_0.bin"
             }
         }
     }
@@ -112,15 +112,15 @@ impl WhisperModel {
         }
     }
 
-    pub fn supported_languages(&self) -> Vec<hypr_language::Language> {
+    pub fn supported_languages(&self) -> Vec<meetspace_language::Language> {
         match self {
             WhisperModel::QuantizedTinyEn
             | WhisperModel::QuantizedBaseEn
-            | WhisperModel::QuantizedSmallEn => vec![hypr_language::ISO639::En.into()],
+            | WhisperModel::QuantizedSmallEn => vec![meetspace_language::ISO639::En.into()],
             WhisperModel::QuantizedTiny
             | WhisperModel::QuantizedBase
             | WhisperModel::QuantizedSmall
-            | WhisperModel::QuantizedLargeTurbo => hypr_language::whisper_multilingual(),
+            | WhisperModel::QuantizedLargeTurbo => meetspace_language::whisper_multilingual(),
         }
     }
 }

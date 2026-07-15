@@ -1,6 +1,6 @@
 use std::sync::LazyLock;
 
-use hypr_db_core::CloudsyncTableSpec;
+use meetspace_db_core::CloudsyncTableSpec;
 use serde::{Deserialize, Serialize};
 use sqlx::{Sqlite, SqlitePool, Transaction};
 
@@ -402,8 +402,8 @@ async fn save_binding(
 mod tests {
     use super::*;
 
-    async fn test_db() -> hypr_db_core::Db {
-        let db = hypr_db_core::Db::connect_memory_plain().await.unwrap();
+    async fn test_db() -> meetspace_db_core::Db {
+        let db = meetspace_db_core::Db::connect_memory_plain().await.unwrap();
         crate::prepare_schema(&db).await.unwrap();
         db
     }

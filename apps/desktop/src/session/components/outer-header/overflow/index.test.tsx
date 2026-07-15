@@ -38,7 +38,7 @@ const {
   windowShowMock: vi.fn(() => Promise.resolve({ status: "ok", data: null })),
 }));
 
-vi.mock("@hypr/ui/components/ui/button", () => ({
+vi.mock("@meetspace/ui/components/ui/button", () => ({
   Button: ({
     children,
     ...props
@@ -47,7 +47,7 @@ vi.mock("@hypr/ui/components/ui/button", () => ({
   ),
 }));
 
-vi.mock("@hypr/ui/components/ui/dropdown-menu", () => ({
+vi.mock("@meetspace/ui/components/ui/dropdown-menu", () => ({
   AppFloatingPanel: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   ),
@@ -103,7 +103,7 @@ vi.mock("~/session/components/note-input/transcript/actions", () => ({
   useRegenerateTranscript: () => regenerateTranscriptMock,
 }));
 
-vi.mock("@hypr/plugin-windows", () => ({
+vi.mock("@meetspace/plugin-windows", () => ({
   commands: {
     windowShow: windowShowMock,
   },

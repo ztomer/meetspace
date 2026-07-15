@@ -6,7 +6,7 @@ const mocks = vi.hoisted(() => ({
   getSessionMode: vi.fn(),
 }));
 
-vi.mock("@hypr/plugin-fs-sync", () => ({
+vi.mock("@meetspace/plugin-fs-sync", () => ({
   commands: { audioDelete: mocks.audioDelete },
 }));
 

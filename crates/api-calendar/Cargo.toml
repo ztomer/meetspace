@@ -4,12 +4,12 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-hypr-api-auth = { workspace = true }
-hypr-api-error = { workspace = true }
-hypr-api-nango = { workspace = true }
-hypr-google-calendar = { workspace = true, features = ["utoipa"] }
-hypr-nango = { workspace = true }
-hypr-outlook-calendar = { workspace = true, features = ["utoipa"] }
+meetspace-api-auth = { workspace = true }
+meetspace-api-error = { workspace = true }
+meetspace-api-nango = { workspace = true }
+meetspace-google-calendar = { workspace = true, features = ["utoipa"] }
+meetspace-nango = { workspace = true }
+meetspace-outlook-calendar = { workspace = true, features = ["utoipa"] }
 
 chrono = { workspace = true, features = ["serde"] }
 

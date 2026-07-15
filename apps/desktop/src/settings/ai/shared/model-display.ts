@@ -6,7 +6,7 @@ const MODEL_NAME_OVERRIDES: Record<string, string> = {
 };
 
 export function displayLlmModelId(providerId: string, model: string): string {
-  if (providerId === "hyprnote" && model === "Auto") {
+  if (providerId === "meetspace" && model === "Auto") {
     return "Pro (Cloud)";
   }
 

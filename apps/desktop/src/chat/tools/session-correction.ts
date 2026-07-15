@@ -1,7 +1,7 @@
 import { tool } from "ai";
 import { z } from "zod";
 
-import { md2json } from "@hypr/editor/markdown";
+import { md2json } from "@meetspace/editor/markdown";
 
 import type { ToolDependencies } from "./types";
 

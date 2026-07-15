@@ -6,10 +6,10 @@ edition = "2024"
 [dev-dependencies]
 clap = { workspace = true, features = ["derive"] }
 hound = { workspace = true }
-hypr-audacity = { workspace = true }
-hypr-data = { workspace = true }
+meetspace-audacity = { workspace = true }
+meetspace-data = { workspace = true }
 rodio = { workspace = true }
 
 [dependencies]
-hypr-audio-utils = { workspace = true }
-hypr-vad = { workspace = true, features = ["earshot"] }
+meetspace-audio-utils = { workspace = true }
+meetspace-vad = { workspace = true, features = ["earshot"] }

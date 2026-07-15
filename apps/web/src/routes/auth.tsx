@@ -5,7 +5,7 @@ import { ArrowLeftIcon, MailIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import {
   AuthShell,
@@ -57,7 +57,7 @@ export const Route = createFileRoute("/auth")({
             to: "/callback/auth/",
             search: {
               flow: "desktop",
-              scheme: search.scheme ?? "hyprnote",
+              scheme: search.scheme ?? "meetspace",
               access_token: result.access_token,
               refresh_token: result.refresh_token,
             },
@@ -85,7 +85,7 @@ function Component() {
       >
         <DesktopReauthView
           email={existingUser.email}
-          scheme={scheme ?? "hyprnote"}
+          scheme={scheme ?? "meetspace"}
         />
       </AuthShell>
     );
@@ -117,7 +117,7 @@ function Component() {
 
   return (
     <AuthShell
-      title="Welcome to Anarlog"
+      title="Welcome to Meetspace"
       description="Choose how you’d like to continue."
     >
       {view === "main" && (
@@ -227,14 +227,14 @@ function LegalText() {
     <p className="mt-6 text-center text-xs leading-5 text-[#8b8174]">
       By signing up, you agree to our{" "}
       <a
-        href="https://anarlog.so/terms"
+        href="https://meetspace.so/terms"
         className="underline decoration-[#b9ae9f] underline-offset-2 hover:text-[#181613]"
       >
         Terms of Service
       </a>{" "}
       and{" "}
       <a
-        href="https://anarlog.so/privacy"
+        href="https://meetspace.so/privacy"
         className="underline decoration-[#b9ae9f] underline-offset-2 hover:text-[#181613]"
       >
         Privacy Policy

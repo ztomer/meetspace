@@ -22,98 +22,98 @@ pub use session_types::*;
 pub use template_ops::*;
 pub use template_types::*;
 
-pub const APP_MIGRATION_STEPS: &[hypr_db_migrate::MigrationStep] = &[
-    hypr_db_migrate::MigrationStep {
+pub const APP_MIGRATION_STEPS: &[meetspace_db_migrate::MigrationStep] = &[
+    meetspace_db_migrate::MigrationStep {
         id: "20260413020000_templates",
-        scope: hypr_db_migrate::MigrationScope::Plain,
+        scope: meetspace_db_migrate::MigrationScope::Plain,
         sql: include_str!("../migrations/20260413020000_templates.sql"),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260414120000_calendars_events",
-        scope: hypr_db_migrate::MigrationScope::Plain,
+        scope: meetspace_db_migrate::MigrationScope::Plain,
         sql: include_str!("../migrations/20260414120000_calendars_events.sql"),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260524000000_default_templates",
-        scope: hypr_db_migrate::MigrationScope::Plain,
+        scope: meetspace_db_migrate::MigrationScope::Plain,
         sql: include_str!("../migrations/20260524000000_default_templates.sql"),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260624000000_repair_templates",
-        scope: hypr_db_migrate::MigrationScope::Plain,
+        scope: meetspace_db_migrate::MigrationScope::Plain,
         sql: include_str!("../migrations/20260624000000_repair_templates.sql"),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260710223922_canonical_data_model",
-        scope: hypr_db_migrate::MigrationScope::Plain,
+        scope: meetspace_db_migrate::MigrationScope::Plain,
         sql: include_str!("../migrations/20260710223922_canonical_data_model.sql"),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260710231809_import_target_audit",
-        scope: hypr_db_migrate::MigrationScope::Plain,
+        scope: meetspace_db_migrate::MigrationScope::Plain,
         sql: include_str!("../migrations/20260710231809_import_target_audit.sql"),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260711000000_calendar_event_tombstones",
-        scope: hypr_db_migrate::MigrationScope::Plain,
+        scope: meetspace_db_migrate::MigrationScope::Plain,
         sql: include_str!("../migrations/20260711000000_calendar_event_tombstones.sql"),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260712170000_template_icons",
-        scope: hypr_db_migrate::MigrationScope::Plain,
+        scope: meetspace_db_migrate::MigrationScope::Plain,
         sql: include_str!("../migrations/20260712170000_template_icons.sql"),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260713164500_repair_empty_session_titles",
-        scope: hypr_db_migrate::MigrationScope::Plain,
+        scope: meetspace_db_migrate::MigrationScope::Plain,
         sql: include_str!("../migrations/20260713164500_repair_empty_session_titles.sql"),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260714120000_search_index_queue",
-        scope: hypr_db_migrate::MigrationScope::Plain,
+        scope: meetspace_db_migrate::MigrationScope::Plain,
         sql: include_str!("../migrations/20260714120000_search_index_queue.sql"),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260714120100_search_index_sessions_triggers",
-        scope: hypr_db_migrate::MigrationScope::CloudsyncAlter {
+        scope: meetspace_db_migrate::MigrationScope::CloudsyncAlter {
             table_name: "sessions",
         },
         sql: include_str!("../migrations/20260714120100_search_index_sessions_triggers.sql"),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260714120200_search_index_session_documents_triggers",
-        scope: hypr_db_migrate::MigrationScope::CloudsyncAlter {
+        scope: meetspace_db_migrate::MigrationScope::CloudsyncAlter {
             table_name: "session_documents",
         },
         sql: include_str!(
             "../migrations/20260714120200_search_index_session_documents_triggers.sql"
         ),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260714120300_search_index_transcripts_triggers",
-        scope: hypr_db_migrate::MigrationScope::CloudsyncAlter {
+        scope: meetspace_db_migrate::MigrationScope::CloudsyncAlter {
             table_name: "transcripts",
         },
         sql: include_str!("../migrations/20260714120300_search_index_transcripts_triggers.sql"),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260714120400_search_index_humans_triggers",
-        scope: hypr_db_migrate::MigrationScope::CloudsyncAlter {
+        scope: meetspace_db_migrate::MigrationScope::CloudsyncAlter {
             table_name: "humans",
         },
         sql: include_str!("../migrations/20260714120400_search_index_humans_triggers.sql"),
     },
-    hypr_db_migrate::MigrationStep {
+    meetspace_db_migrate::MigrationStep {
         id: "20260714120500_search_index_organizations_triggers",
-        scope: hypr_db_migrate::MigrationScope::CloudsyncAlter {
+        scope: meetspace_db_migrate::MigrationScope::CloudsyncAlter {
             table_name: "organizations",
         },
         sql: include_str!("../migrations/20260714120500_search_index_organizations_triggers.sql"),
     },
 ];
 
-pub fn schema() -> hypr_db_migrate::DbSchema {
-    hypr_db_migrate::DbSchema {
+pub fn schema() -> meetspace_db_migrate::DbSchema {
+    meetspace_db_migrate::DbSchema {
         steps: APP_MIGRATION_STEPS,
         validate_cloudsync_table: cloudsync_alter_guard_required,
     }
@@ -121,7 +121,7 @@ pub fn schema() -> hypr_db_migrate::DbSchema {
 
 #[derive(Debug)]
 pub enum AppSchemaError {
-    Migrate(hypr_db_migrate::MigrateError),
+    Migrate(meetspace_db_migrate::MigrateError),
     Sqlx(sqlx::Error),
     CloudsyncWorkspace(CloudsyncWorkspaceError),
 }
@@ -138,8 +138,8 @@ impl std::fmt::Display for AppSchemaError {
 
 impl std::error::Error for AppSchemaError {}
 
-impl From<hypr_db_migrate::MigrateError> for AppSchemaError {
-    fn from(error: hypr_db_migrate::MigrateError) -> Self {
+impl From<meetspace_db_migrate::MigrateError> for AppSchemaError {
+    fn from(error: meetspace_db_migrate::MigrateError) -> Self {
         Self::Migrate(error)
     }
 }
@@ -156,9 +156,9 @@ impl From<CloudsyncWorkspaceError> for AppSchemaError {
     }
 }
 
-pub async fn prepare_schema(db: &hypr_db_core::Db) -> Result<(), AppSchemaError> {
+pub async fn prepare_schema(db: &meetspace_db_core::Db) -> Result<(), AppSchemaError> {
     let templates_missing_before_migration = !templates_table_exists(db.pool()).await?;
-    hypr_db_migrate::migrate(db, schema()).await?;
+    meetspace_db_migrate::migrate(db, schema()).await?;
     repair_missing_core_tables(db.pool(), templates_missing_before_migration).await?;
     ensure_cloudsync_workspace_binding(db.pool()).await?;
     Ok(())
@@ -213,12 +213,12 @@ async fn repair_missing_core_tables(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use hypr_db_core::Db;
+    use meetspace_db_core::Db;
     use sqlx::Row;
 
     async fn test_db() -> Db {
-        let db = Db::open(hypr_db_core::DbOpenOptions {
-            storage: hypr_db_core::DbStorage::Memory,
+        let db = Db::open(meetspace_db_core::DbOpenOptions {
+            storage: meetspace_db_core::DbStorage::Memory,
             cloudsync_enabled: false,
             journal_mode_wal: true,
             foreign_keys: true,
@@ -245,7 +245,7 @@ mod tests {
         }
     }
 
-    fn migration_steps_before(id: &str) -> &'static [hypr_db_migrate::MigrationStep] {
+    fn migration_steps_before(id: &str) -> &'static [meetspace_db_migrate::MigrationStep] {
         let index = APP_MIGRATION_STEPS
             .iter()
             .position(|step| step.id == id)
@@ -254,8 +254,8 @@ mod tests {
     }
 
     async fn test_db_without_default_templates() -> Db {
-        let db = Db::open(hypr_db_core::DbOpenOptions {
-            storage: hypr_db_core::DbStorage::Memory,
+        let db = Db::open(meetspace_db_core::DbOpenOptions {
+            storage: meetspace_db_core::DbStorage::Memory,
             cloudsync_enabled: false,
             journal_mode_wal: true,
             foreign_keys: true,
@@ -263,9 +263,9 @@ mod tests {
         })
         .await
         .unwrap();
-        hypr_db_migrate::migrate(
+        meetspace_db_migrate::migrate(
             &db,
-            hypr_db_migrate::DbSchema {
+            meetspace_db_migrate::DbSchema {
                 steps: &APP_MIGRATION_STEPS[..2],
                 validate_cloudsync_table: cloudsync_alter_guard_required,
             },
@@ -396,9 +396,9 @@ mod tests {
     #[tokio::test]
     async fn search_index_migrations_apply_to_initialized_cloudsync_tables() {
         let db = Db::connect_memory().await.unwrap();
-        hypr_db_migrate::migrate(
+        meetspace_db_migrate::migrate(
             &db,
-            hypr_db_migrate::DbSchema {
+            meetspace_db_migrate::DbSchema {
                 steps: migration_steps_before("20260714120000_search_index_queue"),
                 validate_cloudsync_table: cloudsync_alter_guard_required,
             },
@@ -427,7 +427,7 @@ mod tests {
             .filter(|table| table.enabled)
         {
             assert!(
-                hypr_db_core::cloudsync_is_enabled_on(db.pool(), &table.table_name)
+                meetspace_db_core::cloudsync_is_enabled_on(db.pool(), &table.table_name)
                     .await
                     .unwrap()
             );
@@ -437,9 +437,9 @@ mod tests {
     #[tokio::test]
     async fn migration_repairs_empty_titles_from_summary_headings() {
         let db = Db::connect_memory_plain().await.unwrap();
-        hypr_db_migrate::migrate(
+        meetspace_db_migrate::migrate(
             &db,
-            hypr_db_migrate::DbSchema {
+            meetspace_db_migrate::DbSchema {
                 steps: migration_steps_before("20260713164500_repair_empty_session_titles"),
                 validate_cloudsync_table: cloudsync_alter_guard_required,
             },
@@ -469,7 +469,7 @@ mod tests {
         .await
         .unwrap();
 
-        hypr_db_migrate::migrate(&db, schema()).await.unwrap();
+        meetspace_db_migrate::migrate(&db, schema()).await.unwrap();
 
         let titles =
             sqlx::query_as::<_, (String, String)>("SELECT id, title FROM sessions ORDER BY id")
@@ -488,9 +488,9 @@ mod tests {
     #[tokio::test]
     async fn repair_migration_recreates_missing_templates_table() {
         let db = Db::connect_memory_plain().await.unwrap();
-        hypr_db_migrate::migrate(
+        meetspace_db_migrate::migrate(
             &db,
-            hypr_db_migrate::DbSchema {
+            meetspace_db_migrate::DbSchema {
                 steps: &APP_MIGRATION_STEPS[..3],
                 validate_cloudsync_table: cloudsync_alter_guard_required,
             },
@@ -503,7 +503,7 @@ mod tests {
             .await
             .unwrap();
 
-        hypr_db_migrate::migrate(&db, schema()).await.unwrap();
+        meetspace_db_migrate::migrate(&db, schema()).await.unwrap();
 
         let row_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM templates")
             .fetch_one(db.pool())
@@ -543,9 +543,9 @@ mod tests {
     #[tokio::test]
     async fn prepare_schema_seeds_templates_when_repair_migration_creates_missing_table() {
         let db = Db::connect_memory_plain().await.unwrap();
-        hypr_db_migrate::migrate(
+        meetspace_db_migrate::migrate(
             &db,
-            hypr_db_migrate::DbSchema {
+            meetspace_db_migrate::DbSchema {
                 steps: &APP_MIGRATION_STEPS[..3],
                 validate_cloudsync_table: cloudsync_alter_guard_required,
             },
@@ -611,7 +611,7 @@ mod tests {
             .iter()
             .find(|step| step.id == "20260714120000_search_index_queue")
             .unwrap();
-        assert_eq!(queue_step.scope, hypr_db_migrate::MigrationScope::Plain);
+        assert_eq!(queue_step.scope, meetspace_db_migrate::MigrationScope::Plain);
 
         for (id, table_name) in [
             ("20260714120100_search_index_sessions_triggers", "sessions"),
@@ -635,7 +635,7 @@ mod tests {
                 .unwrap();
             assert_eq!(
                 step.scope,
-                hypr_db_migrate::MigrationScope::CloudsyncAlter { table_name }
+                meetspace_db_migrate::MigrationScope::CloudsyncAlter { table_name }
             );
         }
     }
@@ -918,9 +918,9 @@ mod tests {
     #[tokio::test]
     async fn migrations_seed_default_templates_without_overwriting_existing_rows() {
         let db = Db::connect_memory_plain().await.unwrap();
-        hypr_db_migrate::migrate(
+        meetspace_db_migrate::migrate(
             &db,
-            hypr_db_migrate::DbSchema {
+            meetspace_db_migrate::DbSchema {
                 steps: &APP_MIGRATION_STEPS[..1],
                 validate_cloudsync_table: cloudsync_alter_guard_required,
             },
@@ -944,7 +944,7 @@ mod tests {
         .await
         .unwrap();
 
-        hypr_db_migrate::migrate(&db, schema()).await.unwrap();
+        meetspace_db_migrate::migrate(&db, schema()).await.unwrap();
 
         let rows = list_templates(db.pool()).await.unwrap();
         assert_eq!(rows.len(), 17);

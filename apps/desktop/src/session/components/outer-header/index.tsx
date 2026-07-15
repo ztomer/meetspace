@@ -7,8 +7,8 @@ import {
 } from "lucide-react";
 import { useCallback } from "react";
 
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { cn, safeParseDate } from "@hypr/utils";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { cn, safeParseDate } from "@meetspace/utils";
 
 import { RecordingIcon, useHasTranscript } from "../shared";
 import { MetadataButton } from "./metadata";

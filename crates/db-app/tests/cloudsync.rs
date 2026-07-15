@@ -4,7 +4,7 @@ use db_app::{
     claim_cloudsync_workspace, cloudsync_table_registry, ensure_cloudsync_workspace_binding,
     prepare_schema,
 };
-use hypr_db_core::{
+use meetspace_db_core::{
     CloudsyncAuth, CloudsyncRuntimeConfig, CloudsyncRuntimeError, Db, DbOpenOptions, DbStorage,
 };
 use sqlx::{AssertSqlSafe, SqlitePool};
@@ -25,8 +25,8 @@ const SYNCED_TABLES: [&str; 8] = [
 
 fn cloudsync_config(auth: CloudsyncAuth, wait_ms: i64, max_retries: i64) -> CloudsyncRuntimeConfig {
     CloudsyncRuntimeConfig {
-        connection_string: std::env::var("ANARLOG_CLOUDSYNC_DATABASE_ID")
-            .expect("ANARLOG_CLOUDSYNC_DATABASE_ID must be set"),
+        connection_string: std::env::var("MEETSPACE_CLOUDSYNC_DATABASE_ID")
+            .expect("MEETSPACE_CLOUDSYNC_DATABASE_ID must be set"),
         auth,
         tables: cloudsync_table_registry().to_vec(),
         sync_interval_ms: 86_400_000,
@@ -706,18 +706,18 @@ fn policy_fixture_covers_every_enabled_table() {
 }
 
 #[tokio::test]
-#[ignore = "external verification only; requires the anarlog-dev SQLite Cloud credentials"]
+#[ignore = "external verification only; requires the meetspace-dev SQLite Cloud credentials"]
 async fn core_session_syncs_between_two_clients() {
     let marker = format!(
-        "anarlog-cloudsync-e2e-{}",
+        "meetspace-cloudsync-e2e-{}",
         SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_nanos()
     );
     let auth = || CloudsyncAuth::ApiKey {
-        api_key: std::env::var("ANARLOG_CLOUDSYNC_API_KEY")
-            .expect("ANARLOG_CLOUDSYNC_API_KEY must be set"),
+        api_key: std::env::var("MEETSPACE_CLOUDSYNC_API_KEY")
+            .expect("MEETSPACE_CLOUDSYNC_API_KEY must be set"),
     };
     let db_a = setup_db(auth(), None).await;
     let workspace_id = ensure_cloudsync_workspace_binding(db_a.pool())
@@ -775,16 +775,16 @@ async fn core_session_syncs_between_two_clients() {
 #[tokio::test]
 #[ignore = "external smoke test only; creates four dev devices and requires two short-lived access tokens"]
 async fn access_tokens_sync_two_clients_and_isolate_workspace() {
-    let workspace_a = std::env::var("ANARLOG_CLOUDSYNC_WORKSPACE_A")
-        .expect("ANARLOG_CLOUDSYNC_WORKSPACE_A must be set");
-    let workspace_b = std::env::var("ANARLOG_CLOUDSYNC_WORKSPACE_B")
-        .expect("ANARLOG_CLOUDSYNC_WORKSPACE_B must be set");
+    let workspace_a = std::env::var("MEETSPACE_CLOUDSYNC_WORKSPACE_A")
+        .expect("MEETSPACE_CLOUDSYNC_WORKSPACE_A must be set");
+    let workspace_b = std::env::var("MEETSPACE_CLOUDSYNC_WORKSPACE_B")
+        .expect("MEETSPACE_CLOUDSYNC_WORKSPACE_B must be set");
     assert_ne!(workspace_a, workspace_b);
 
     let token_a =
-        std::env::var("ANARLOG_CLOUDSYNC_TOKEN_A").expect("ANARLOG_CLOUDSYNC_TOKEN_A must be set");
+        std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_A").expect("MEETSPACE_CLOUDSYNC_TOKEN_A must be set");
     let token_b =
-        std::env::var("ANARLOG_CLOUDSYNC_TOKEN_B").expect("ANARLOG_CLOUDSYNC_TOKEN_B must be set");
+        std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_B").expect("MEETSPACE_CLOUDSYNC_TOKEN_B must be set");
     let auth_a = || CloudsyncAuth::Token {
         token: token_a.clone(),
     };
@@ -806,7 +806,7 @@ async fn access_tokens_sync_two_clients_and_isolate_workspace() {
         .fetch_one(db_a1.pool())
         .await
         .unwrap();
-    let title_a = format!("anarlog-smoke-a-{marker}");
+    let title_a = format!("meetspace-smoke-a-{marker}");
     sqlx::query(
         "INSERT INTO sessions (id, workspace_id, owner_user_id, title) VALUES (?, ?, ?, ?)",
     )
@@ -828,7 +828,7 @@ async fn access_tokens_sync_two_clients_and_isolate_workspace() {
         .as_deref()
         == Some(title_a.as_str());
 
-    let updated_title_a = format!("anarlog-smoke-a-updated-{marker}");
+    let updated_title_a = format!("meetspace-smoke-a-updated-{marker}");
     sqlx::query("UPDATE sessions SET title = ? WHERE id = ?")
         .bind(&updated_title_a)
         .bind(&session_a)
@@ -850,7 +850,7 @@ async fn access_tokens_sync_two_clients_and_isolate_workspace() {
         .fetch_one(db_b.pool())
         .await
         .unwrap();
-    let title_b = format!("anarlog-smoke-b-{marker}");
+    let title_b = format!("meetspace-smoke-b-{marker}");
     sqlx::query(
         "INSERT INTO sessions (id, workspace_id, owner_user_id, title) VALUES (?, ?, ?, ?)",
     )
@@ -898,7 +898,7 @@ async fn access_tokens_sync_two_clients_and_isolate_workspace() {
     .bind(&pending_session)
     .bind(&workspace_a)
     .bind(&workspace_a)
-    .bind(format!("anarlog-smoke-pending-{marker}"))
+    .bind(format!("meetspace-smoke-pending-{marker}"))
     .execute(db_a1.pool())
     .await
     .unwrap();
@@ -944,7 +944,7 @@ async fn access_tokens_sync_two_clients_and_isolate_workspace() {
     .bind(&foreign_session)
     .bind(&workspace_b)
     .bind(&workspace_b)
-    .bind(format!("anarlog-smoke-foreign-{marker}"))
+    .bind(format!("meetspace-smoke-foreign-{marker}"))
     .execute(db_a2.pool())
     .await
     .unwrap();
@@ -1041,18 +1041,18 @@ async fn access_tokens_sync_two_clients_and_isolate_workspace() {
 }
 
 #[tokio::test]
-#[ignore = "external verification only; requires two short-lived anarlog-dev access tokens"]
+#[ignore = "external verification only; requires two short-lived meetspace-dev access tokens"]
 async fn access_tokens_isolate_two_workspaces() {
-    let workspace_a = std::env::var("ANARLOG_CLOUDSYNC_WORKSPACE_A")
-        .expect("ANARLOG_CLOUDSYNC_WORKSPACE_A must be set");
-    let workspace_b = std::env::var("ANARLOG_CLOUDSYNC_WORKSPACE_B")
-        .expect("ANARLOG_CLOUDSYNC_WORKSPACE_B must be set");
+    let workspace_a = std::env::var("MEETSPACE_CLOUDSYNC_WORKSPACE_A")
+        .expect("MEETSPACE_CLOUDSYNC_WORKSPACE_A must be set");
+    let workspace_b = std::env::var("MEETSPACE_CLOUDSYNC_WORKSPACE_B")
+        .expect("MEETSPACE_CLOUDSYNC_WORKSPACE_B must be set");
     assert_ne!(workspace_a, workspace_b);
 
     let token_a =
-        std::env::var("ANARLOG_CLOUDSYNC_TOKEN_A").expect("ANARLOG_CLOUDSYNC_TOKEN_A must be set");
+        std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_A").expect("MEETSPACE_CLOUDSYNC_TOKEN_A must be set");
     let token_b =
-        std::env::var("ANARLOG_CLOUDSYNC_TOKEN_B").expect("ANARLOG_CLOUDSYNC_TOKEN_B must be set");
+        std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_B").expect("MEETSPACE_CLOUDSYNC_TOKEN_B must be set");
     let db_a = setup_db(
         CloudsyncAuth::Token {
             token: token_a.clone(),
@@ -1072,8 +1072,8 @@ async fn access_tokens_isolate_two_workspaces() {
         .duration_since(UNIX_EPOCH)
         .unwrap()
         .as_nanos();
-    let fixture_a_value = format!("anarlog-tenant-a-{marker}");
-    let fixture_b_value = format!("anarlog-tenant-b-{marker}");
+    let fixture_a_value = format!("meetspace-tenant-a-{marker}");
+    let fixture_b_value = format!("meetspace-tenant-b-{marker}");
     let fixture_a = insert_synced_fixture(db_a.pool(), &workspace_a, &fixture_a_value).await;
     sync_ok(&db_a, "workspace A upload").await;
     let fixture_b = insert_synced_fixture(db_b.pool(), &workspace_b, &fixture_b_value).await;
@@ -1133,7 +1133,7 @@ async fn access_tokens_isolate_two_workspaces() {
             table,
             &workspace_b,
             &fixture_b,
-            &format!("anarlog-foreign-{table}-{marker}"),
+            &format!("meetspace-foreign-{table}-{marker}"),
         )
         .await;
         if let Err(error) = expect_policy_sync_completed_or_denied(&attacker, table).await {
@@ -1152,7 +1152,7 @@ async fn access_tokens_isolate_two_workspaces() {
             attacker.pool(),
             table,
             id,
-            &format!("anarlog-foreign-update-{table}-{marker}"),
+            &format!("meetspace-foreign-update-{table}-{marker}"),
         )
         .await;
         assert_policy_change_pending(&attacker, &format!("{table} UPDATE")).await;

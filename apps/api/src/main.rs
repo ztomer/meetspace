@@ -26,7 +26,7 @@ use env::env;
 
 use crate::env::Env;
 
-const PAID_ENTITLEMENTS: &[&str] = &["hyprnote_pro", "hyprnote_lite"];
+const PAID_ENTITLEMENTS: &[&str] = &["meetspace_pro", "meetspace_lite"];
 
 pub const DEVICE_FINGERPRINT_HEADER: &str = "x-device-fingerprint";
 pub const REQUEST_ID_HEADER: &str = "x-request-id";
@@ -82,9 +82,9 @@ async fn app() -> Router {
     let analytics = build_analytics_client(env);
 
     let llm_config =
-        hypr_llm_proxy::LlmProxyConfig::new(&env.llm).with_analytics(analytics.clone());
-    let stt_config = hypr_transcribe_proxy::SttProxyConfig::new(&env.stt, &env.supabase)
-        .with_hyprnote_routing(hypr_transcribe_proxy::HyprnoteRoutingConfig::default())
+        meetspace_llm_proxy::LlmProxyConfig::new(&env.llm).with_analytics(analytics.clone());
+    let stt_config = meetspace_transcribe_proxy::SttProxyConfig::new(&env.stt, &env.supabase)
+        .with_meetspace_routing(meetspace_transcribe_proxy::MeetspaceRoutingConfig::default())
         .with_analytics(analytics.clone());
 
     let stt_rate_limit = rate_limit::RateLimitState::builder()
@@ -134,16 +134,16 @@ async fn app() -> Router {
     let auth_state_basic = auth_state.clone();
     let auth_state_support = auth_state.clone();
 
-    let nango_config = hypr_api_nango::NangoConfig::new(
+    let nango_config = meetspace_api_nango::NangoConfig::new(
         &env.nango,
         &env.supabase,
         Some(env.supabase.supabase_service_role_key.clone()),
     );
-    let nango_connection_state = hypr_api_nango::NangoConnectionState::from_config(&nango_config);
+    let nango_connection_state = meetspace_api_nango::NangoConnectionState::from_config(&nango_config);
     let subscription_config =
-        hypr_api_subscription::SubscriptionConfig::new(&env.supabase, &env.stripe, &env.loops)
+        meetspace_api_subscription::SubscriptionConfig::new(&env.supabase, &env.stripe, &env.loops)
             .with_analytics(analytics.clone());
-    let support_config = hypr_api_support::SupportConfig::new(
+    let support_config = meetspace_api_support::SupportConfig::new(
         &env.github_app,
         &env.llm,
         &env.support_database,
@@ -152,37 +152,37 @@ async fn app() -> Router {
         &env.chatwoot,
         auth_state_support.clone(),
     );
-    let research_config = hypr_api_research::ResearchConfig {
+    let research_config = meetspace_api_research::ResearchConfig {
         exa_api_key: env.exa_api_key.clone(),
         jina_api_key: env.jina_api_key.clone(),
     };
-    let pyannote_config = hypr_api_pyannote::PyannoteConfig::new(&env.pyannote);
-    let sync_config = hypr_api_sync::SyncConfig::from_env(&env.sync)
+    let pyannote_config = meetspace_api_pyannote::PyannoteConfig::new(&env.pyannote);
+    let sync_config = meetspace_api_sync::SyncConfig::from_env(&env.sync)
         .unwrap_or_else(|error| panic!("Failed to load environment: {error}"));
 
-    use hypr_api_nango::NangoIntegrationId;
+    use meetspace_api_nango::NangoIntegrationId;
 
-    let mut forward_handlers = hypr_api_nango::ForwardHandlerRegistry::new();
+    let mut forward_handlers = meetspace_api_nango::ForwardHandlerRegistry::new();
     forward_handlers.insert(
-        hypr_api_nango::Linear::ID.to_string(),
-        hypr_api_nango::forward_handler(hypr_linear::webhook::handle),
+        meetspace_api_nango::Linear::ID.to_string(),
+        meetspace_api_nango::forward_handler(meetspace_linear::webhook::handle),
     );
 
     let webhook_routes = Router::new()
         .nest(
             "/nango",
-            hypr_api_nango::webhook_router(nango_config.clone(), forward_handlers),
+            meetspace_api_nango::webhook_router(nango_config.clone(), forward_handlers),
         )
         .nest(
             "/stt",
-            hypr_transcribe_proxy::callback_router(stt_config.clone()),
+            meetspace_transcribe_proxy::callback_router(stt_config.clone()),
         );
 
     let auth_state_integration = auth_state_paid.clone();
 
     let paid_routes = Router::new()
-        .merge(hypr_api_research::router(research_config))
-        .nest("/pyannote", hypr_api_pyannote::router(pyannote_config))
+        .merge(meetspace_api_research::router(research_config))
+        .nest("/pyannote", meetspace_api_pyannote::router(pyannote_config))
         .route_layer(middleware::from_fn(auth::sentry_and_analytics))
         .route_layer(middleware::from_fn_with_state(
             auth_state_paid,
@@ -190,26 +190,26 @@ async fn app() -> Router {
         ));
 
     let sync_routes = match sync_config {
-        Some(config) => hypr_api_sync::router(hypr_api_sync::AppState::new(config))
+        Some(config) => meetspace_api_sync::router(meetspace_api_sync::AppState::new(config))
             .route_layer(middleware::from_fn_with_state(
                 sync_rate_limit,
                 rate_limit::rate_limit,
             ))
             .route_layer(middleware::from_fn(auth::sentry_and_analytics))
             .route_layer(middleware::from_fn_with_state(
-                auth_state.clone().with_required_entitlement("hyprnote_pro"),
+                auth_state.clone().with_required_entitlement("meetspace_pro"),
                 auth::require_auth,
             )),
         None => Router::new(),
     };
 
     let integration_routes = Router::new()
-        .nest("/calendar", hypr_api_calendar::router())
-        .nest("/mail", hypr_api_mail::router())
-        .nest("/ticket", hypr_api_ticket::router())
+        .nest("/calendar", meetspace_api_calendar::router())
+        .nest("/mail", meetspace_api_mail::router())
+        .nest("/ticket", meetspace_api_ticket::router())
         .nest(
             "/nango",
-            hypr_api_nango::session_router(nango_config.clone()),
+            meetspace_api_nango::session_router(nango_config.clone()),
         )
         .layer(axum::Extension(nango_connection_state))
         .route_layer(middleware::from_fn(auth::sentry_and_analytics))
@@ -221,7 +221,7 @@ async fn app() -> Router {
     let integration_management_routes = Router::new()
         .nest(
             "/nango",
-            hypr_api_nango::management_router(nango_config.clone()),
+            meetspace_api_nango::management_router(nango_config.clone()),
         )
         .route_layer(middleware::from_fn(auth::sentry_and_analytics))
         .route_layer(middleware::from_fn_with_state(
@@ -230,22 +230,22 @@ async fn app() -> Router {
         ));
 
     let stt_routes = Router::new()
-        .merge(hypr_transcribe_proxy::listen_router(stt_config.clone()))
-        .nest("/stt", hypr_transcribe_proxy::router(stt_config))
+        .merge(meetspace_transcribe_proxy::listen_router(stt_config.clone()))
+        .nest("/stt", meetspace_transcribe_proxy::router(stt_config))
         .route_layer(middleware::from_fn_with_state(
             stt_rate_limit,
             rate_limit::rate_limit,
         ));
 
     let llm_routes = Router::new()
-        .merge(hypr_llm_proxy::chat_completions_router(llm_config.clone()))
-        .nest("/llm", hypr_llm_proxy::router(llm_config))
+        .merge(meetspace_llm_proxy::chat_completions_router(llm_config.clone()))
+        .nest("/llm", meetspace_llm_proxy::router(llm_config))
         .route_layer(middleware::from_fn_with_state(
             llm_rate_limit,
             rate_limit::rate_limit,
         ));
 
-    let subscription_router = hypr_api_subscription::router(subscription_config);
+    let subscription_router = meetspace_api_subscription::router(subscription_config);
     let auth_routes = Router::new()
         .merge(stt_routes)
         .merge(llm_routes)
@@ -259,7 +259,7 @@ async fn app() -> Router {
         ));
 
     let support_routes = Router::new()
-        .merge(hypr_api_support::router(support_config).await)
+        .merge(meetspace_api_support::router(support_config).await)
         .layer(middleware::from_fn_with_state(
             auth_state_support.clone(),
             auth::optional_auth,
@@ -331,19 +331,19 @@ async fn app() -> Router {
                                 server.address = tracing::field::Empty,
                                 server.port = tracing::field::Empty,
                                 client.address = tracing::field::Empty,
-                                hyprnote.subsystem = "edge",
+                                meetspace.subsystem = "edge",
                                 enduser.id = tracing::field::Empty,
                                 enduser.pseudo.id = tracing::field::Empty,
-                                hyprnote.stt.provider.name = tracing::field::Empty,
-                                hyprnote.stt.routing_strategy = tracing::field::Empty,
-                                hyprnote.stt.model = tracing::field::Empty,
-                                hyprnote.stt.language_codes = tracing::field::Empty,
-                                hyprnote.audio.sample_rate_hz = tracing::field::Empty,
-                                hyprnote.audio.channel_count = tracing::field::Empty,
+                                meetspace.stt.provider.name = tracing::field::Empty,
+                                meetspace.stt.routing_strategy = tracing::field::Empty,
+                                meetspace.stt.model = tracing::field::Empty,
+                                meetspace.stt.language_codes = tracing::field::Empty,
+                                meetspace.audio.sample_rate_hz = tracing::field::Empty,
+                                meetspace.audio.channel_count = tracing::field::Empty,
                                 gen_ai.provider.name = tracing::field::Empty,
-                                hyprnote.gen_ai.request.streaming = tracing::field::Empty,
-                                hyprnote.gen_ai.request.message_count = tracing::field::Empty,
-                                hyprnote.request.id = tracing::field::Empty,
+                                meetspace.gen_ai.request.streaming = tracing::field::Empty,
+                                meetspace.gen_ai.request.message_count = tracing::field::Empty,
+                                meetspace.request.id = tracing::field::Empty,
                                 error.type = tracing::field::Empty,
                                 otel.status_code = tracing::field::Empty,
                                 otel.kind = "server",
@@ -359,7 +359,7 @@ async fn app() -> Router {
                             if let Some(client_address) = client_address.as_deref() {
                                 span.record("client.address", client_address);
                             }
-                            hypr_observability::set_remote_parent(&span, request.headers());
+                            meetspace_observability::set_remote_parent(&span, request.headers());
                             span
                         })
                         .on_request(|request: &Request<Body>, span: &tracing::Span| {
@@ -372,7 +372,7 @@ async fn app() -> Router {
                                 .get(REQUEST_ID_HEADER)
                                 .and_then(|v| v.to_str().ok())
                             {
-                                span.record("hyprnote.request.id", request_id);
+                                span.record("meetspace.request.id", request_id);
                             }
                             configure_sentry_trace_scope(span, env, SystemTime::now());
                             tracing::info!(
@@ -394,7 +394,7 @@ async fn app() -> Router {
                                     response.status().as_u16() as i64,
                                 );
                                 if response.status().is_server_error() {
-                                    hypr_observability::mark_span_as_error(
+                                    meetspace_observability::mark_span_as_error(
                                         span,
                                         &response.status().as_u16().to_string(),
                                     );
@@ -402,7 +402,7 @@ async fn app() -> Router {
                                 tracing::info!(
                                     parent: span,
                                     http.response.status_code = %response.status().as_u16(),
-                                    hyprnote.duration_ms = %latency.as_millis(),
+                                    meetspace.duration_ms = %latency.as_millis(),
                                     "http_request_finished"
                                 );
                             },
@@ -422,12 +422,12 @@ async fn app() -> Router {
                                         "http_server_failure".to_string()
                                     }
                                 };
-                                hypr_observability::mark_span_as_error(span, error_type.as_str());
+                                meetspace_observability::mark_span_as_error(span, error_type.as_str());
                                 tracing::error!(
                                     parent: span,
                                     error.type = %error_type,
                                     error = %failure_class,
-                                    hyprnote.duration_ms = %latency.as_millis(),
+                                    meetspace.duration_ms = %latency.as_millis(),
                                     "http_request_failed"
                                 );
                             },
@@ -436,8 +436,8 @@ async fn app() -> Router {
         )
 }
 
-fn build_analytics_client(env: &Env) -> Arc<hypr_analytics::AnalyticsClient> {
-    let mut builder = hypr_analytics::AnalyticsClientBuilder::default();
+fn build_analytics_client(env: &Env) -> Arc<meetspace_analytics::AnalyticsClient> {
+    let mut builder = meetspace_analytics::AnalyticsClientBuilder::default();
     if cfg!(debug_assertions) {
         tracing::info!("analytics: dev mode, printing events as tracing");
     } else {
@@ -461,7 +461,7 @@ fn main() -> std::io::Result<()> {
 
     let _guard = sentry::init(sentry::ClientOptions {
         dsn: env.sentry_dsn.as_ref().and_then(|s| s.parse().ok()),
-        release: option_env!("APP_VERSION").map(|v| format!("hyprnote-api@{}", v).into()),
+        release: option_env!("APP_VERSION").map(|v| format!("meetspace-api@{}", v).into()),
         environment: Some(
             if cfg!(debug_assertions) {
                 "development"
@@ -481,13 +481,13 @@ fn main() -> std::io::Result<()> {
     });
 
     sentry::configure_scope(|scope| {
-        scope.set_tag("service.namespace", "hyprnote");
+        scope.set_tag("service.namespace", "meetspace");
         scope.set_tag("service.name", "api");
     });
 
     let observability = observability::init("api", &env.observability);
 
-    hypr_transcribe_proxy::ApiKeys::from(&env.stt.stt).log_configured_providers();
+    meetspace_transcribe_proxy::ApiKeys::from(&env.stt.stt).log_configured_providers();
 
     tokio::runtime::Builder::new_multi_thread()
         .enable_all()
@@ -528,22 +528,22 @@ async fn version() -> &'static str {
 }
 
 fn configure_sentry_trace_scope(span: &tracing::Span, env: &Env, request_started_at: SystemTime) {
-    let Some(trace_identifiers) = hypr_observability::span_identifiers(span) else {
+    let Some(trace_identifiers) = meetspace_observability::span_identifiers(span) else {
         return;
     };
 
     let trace_url = build_honeycomb_trace_url(env, &trace_identifiers, request_started_at);
     sentry::configure_scope(|scope| {
         scope.set_tag(
-            "hyprnote.honeycomb.trace_id",
+            "meetspace.honeycomb.trace_id",
             trace_identifiers.trace_id.as_str(),
         );
         scope.set_tag(
-            "hyprnote.honeycomb.span_id",
+            "meetspace.honeycomb.span_id",
             trace_identifiers.span_id.as_str(),
         );
         if let Some(trace_url) = trace_url.as_deref() {
-            scope.set_tag("hyprnote.honeycomb.trace_url", trace_url);
+            scope.set_tag("meetspace.honeycomb.trace_url", trace_url);
         }
 
         let mut context = std::collections::BTreeMap::new();
@@ -552,13 +552,13 @@ fn configure_sentry_trace_scope(span: &tracing::Span, env: &Env, request_started
         if let Some(trace_url) = trace_url {
             context.insert("trace_url".into(), Value::String(trace_url));
         }
-        scope.set_context("hyprnote.honeycomb", Context::Other(context));
+        scope.set_context("meetspace.honeycomb", Context::Other(context));
     });
 }
 
 fn build_honeycomb_trace_url(
     env: &Env,
-    trace_identifiers: &hypr_observability::TraceIdentifiers,
+    trace_identifiers: &meetspace_observability::TraceIdentifiers,
     request_started_at: SystemTime,
 ) -> Option<String> {
     let team = env.observability.honeycomb_ui_team.as_deref()?;

@@ -12,7 +12,7 @@ import {
 import type { ReactNode } from "react";
 
 import { env } from "~/env";
-import { AnarlogProviderIcon } from "~/settings/ai/shared";
+import { MeetspaceProviderIcon } from "~/settings/ai/shared";
 import { type ProviderRequirement } from "~/settings/ai/shared/eligibility";
 import { sortProviders } from "~/settings/ai/shared/sort-providers";
 
@@ -32,10 +32,10 @@ export type Provider = {
 
 const _PROVIDERS = [
   {
-    id: "hyprnote",
-    displayName: "Anarlog",
+    id: "meetspace",
+    displayName: "Meetspace",
     badge: "Recommended",
-    icon: <AnarlogProviderIcon />,
+    icon: <MeetspaceProviderIcon />,
     baseUrl: new URL("/llm", env.VITE_API_URL).toString(),
     requirements: [
       { kind: "requires_auth" },
@@ -57,7 +57,7 @@ const _PROVIDERS = [
       models: { label: "Available models", url: "https://lmstudio.ai/models" },
       setup: {
         label: "Setup guide",
-        url: "https://docs.anarlog.so/ai-setup#lm-studio",
+        url: "https://docs.meetspace.so/ai-setup#lm-studio",
       },
     },
   },
@@ -76,7 +76,7 @@ const _PROVIDERS = [
       models: { label: "Available models", url: "https://ollama.com/library" },
       setup: {
         label: "Setup guide",
-        url: "https://docs.anarlog.so/ai-setup#ollama",
+        url: "https://docs.meetspace.so/ai-setup#ollama",
       },
     },
   },

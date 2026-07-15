@@ -1,9 +1,9 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import { AlertCircleIcon, ArrowRightIcon, CheckIcon } from "lucide-react";
 
-import type { PermissionStatus } from "@hypr/plugin-permissions";
-import { Button } from "@hypr/ui/components/ui/button";
-import { cn } from "@hypr/utils";
+import type { PermissionStatus } from "@meetspace/plugin-permissions";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { cn } from "@meetspace/utils";
 
 import { usePermission } from "~/shared/hooks/usePermissions";
 
@@ -131,7 +131,7 @@ export function Permissions() {
       <PermissionGroup title={<Trans>Others</Trans>}>
         <PermissionRow
           title={t`Calendar`}
-          description={t`Required to sync Apple Calendar events into Anarlog`}
+          description={t`Required to sync Apple Calendar events into Meetspace`}
           status={calendar.status}
           isPending={calendar.isPending}
           onRequest={calendar.request}

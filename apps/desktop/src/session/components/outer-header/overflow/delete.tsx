@@ -2,9 +2,9 @@ import { Trans } from "@lingui/react/macro";
 import { Loader2Icon, TrashIcon } from "lucide-react";
 import { useCallback } from "react";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import { DropdownMenuItem } from "@hypr/ui/components/ui/dropdown-menu";
-import { cn } from "@hypr/utils";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { DropdownMenuItem } from "@meetspace/ui/components/ui/dropdown-menu";
+import { cn } from "@meetspace/utils";
 
 import { useAudioPlayer } from "~/audio-player";
 import { useDeleteSession } from "~/session/hooks/useDeleteSession";
