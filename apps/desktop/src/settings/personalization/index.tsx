@@ -3,7 +3,10 @@ import { useForm } from "@tanstack/react-form";
 import { BracesIcon, CircleMinusIcon, PlusIcon } from "lucide-react";
 import { useRef } from "react";
 
-import { PromptEditor, type PromptEditorHandle } from "@meetspace/editor/prompt";
+import {
+  PromptEditor,
+  type PromptEditorHandle,
+} from "@meetspace/editor/prompt";
 import { Button } from "@meetspace/ui/components/ui/button";
 import {
   InputGroup,

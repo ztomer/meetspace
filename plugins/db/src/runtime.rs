@@ -174,7 +174,8 @@ impl PluginDbRuntime {
 
     async fn claim_cloudsync_workspace(&self, account_user_id: String) -> Result<bool> {
         self.ensure_app_schema().await?;
-        match meetspace_db_app::cloudsync_workspace_is_claimed_by(self.db.pool(), &account_user_id).await
+        match meetspace_db_app::cloudsync_workspace_is_claimed_by(self.db.pool(), &account_user_id)
+            .await
         {
             Ok(true) => return Ok(true),
             Ok(false) => {}

@@ -20,6 +20,11 @@ import type { EnhanceImageContext } from "./enhance-images";
 import { createEnhanceValidator } from "./enhance-validator";
 
 import { deterministicGenerationSettings } from "~/ai/model-settings";
+import {
+  hasSummaryTemplateToken,
+  isDefaultSummaryPrompt,
+  renderSummaryPrompt,
+} from "~/shared/summary-prompt";
 import { normalizeBulletPoints } from "~/store/zustand/ai-task/shared/transform_impl";
 import { withEarlyValidationRetry } from "~/store/zustand/ai-task/shared/validate";
 import { assertCanonicalTemplateSections } from "~/templates/codec";
@@ -49,22 +54,25 @@ async function* executeWorkflow(params: {
 }) {
   const { model, args, onProgress, signal } = params;
 
-  const sections = await generateTemplateIfNeeded({
-    model,
-    args,
-    onProgress,
-    signal,
-  });
-
+  const usesTemplate = hasSummaryTemplateToken(args.customInstructions);
+  const sections = usesTemplate
+    ? await generateTemplateIfNeeded({
+        model,
+        args,
+        onProgress,
+        signal,
+      })
+    : null;
   const argsWithTemplate: TaskArgsMapTransformed["enhance"] = {
     ...args,
-    template: sections
-      ? {
-          title: args.template?.title ?? "",
-          description: args.template?.description ?? null,
-          sections,
-        }
-      : null,
+    template:
+      usesTemplate && sections
+        ? {
+            title: args.template?.title ?? "",
+            description: args.template?.description ?? null,
+            sections,
+          }
+        : null,
   };
 
   const system = await getSystemPrompt(argsWithTemplate);

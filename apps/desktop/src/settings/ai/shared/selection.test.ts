@@ -31,7 +31,11 @@ describe("getVisibleModelSelection", () => {
 
 describe("getConfiguredProviders", () => {
   test("returns only providers whose configuration is complete", () => {
-    const providers = [{ id: "meetspace" }, { id: "deepgram" }, { id: "openai" }];
+    const providers = [
+      { id: "meetspace" },
+      { id: "deepgram" },
+      { id: "openai" },
+    ];
 
     expect(
       getConfiguredProviders(providers, {
@@ -45,7 +49,11 @@ describe("getConfiguredProviders", () => {
 
 describe("getConfiguredProviderIds", () => {
   test("keeps the configured active provider first", () => {
-    const providers = [{ id: "meetspace" }, { id: "deepgram" }, { id: "openai" }];
+    const providers = [
+      { id: "meetspace" },
+      { id: "deepgram" },
+      { id: "openai" },
+    ];
 
     expect(
       getConfiguredProviderIds(
@@ -61,7 +69,11 @@ describe("getConfiguredProviderIds", () => {
   });
 
   test("falls back to configured provider order when the active provider is unavailable", () => {
-    const providers = [{ id: "meetspace" }, { id: "deepgram" }, { id: "openai" }];
+    const providers = [
+      { id: "meetspace" },
+      { id: "deepgram" },
+      { id: "openai" },
+    ];
 
     expect(
       getConfiguredProviderIds(

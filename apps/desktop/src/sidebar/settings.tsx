@@ -6,7 +6,6 @@ import {
   BellIcon,
   BookText,
   CalendarIcon,
-  Code2Icon,
   CogIcon,
   LockIcon,
   PlugIcon,
@@ -102,7 +101,7 @@ export function SettingsNav() {
         {
           id: "personalization",
           label: t`Personalization`,
-          icon: SmileIcon,
+          icon: SlidersHorizontalIcon,
         },
       ],
     },

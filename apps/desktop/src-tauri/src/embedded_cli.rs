@@ -36,7 +36,10 @@ pub struct EmbeddedCliStatus {
 pub fn check<R: tauri::Runtime, T: tauri::Manager<R>>(manager: &T) -> EmbeddedCliStatus {
     let command_name = command_name_from_identifier(manager.config().identifier.as_ref());
     let Some(install_path) = install_path_for_command(command_name) else {
-        return unavailable_status(command_name, "Meetspace could not find your home directory.");
+        return unavailable_status(
+            command_name,
+            "Meetspace could not find your home directory.",
+        );
     };
 
     #[cfg(not(target_os = "macos"))]
@@ -275,7 +278,9 @@ fn is_legacy_app_cli_target(target: &Path) -> bool {
     };
     if !matches!(
         file_name,
-        "meetspace-cli" | "meetspace-cli-aarch64-apple-darwin" | "meetspace-cli-x86_64-apple-darwin"
+        "meetspace-cli"
+            | "meetspace-cli-aarch64-apple-darwin"
+            | "meetspace-cli-x86_64-apple-darwin"
     ) {
         return false;
     }
@@ -586,7 +591,9 @@ mod tests {
     fn classifies_legacy_app_executable_symlink_as_missing() {
         let dir = tempfile::tempdir().unwrap();
         let managed_path = dir.path().join(".meetspace-cli/meetspace/1.2.0");
-        let app_executable_path = dir.path().join("Meetspace.app/Contents/MacOS/meetspace-cli");
+        let app_executable_path = dir
+            .path()
+            .join("Meetspace.app/Contents/MacOS/meetspace-cli");
         let install_path = dir.path().join("meetspace");
         std::fs::create_dir_all(app_executable_path.parent().unwrap()).unwrap();
         std::fs::write(&app_executable_path, "cli").unwrap();
@@ -604,7 +611,9 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let resource_path = dir.path().join("bundled-meetspace-cli");
         let managed_path = dir.path().join(".meetspace-cli/meetspace/1.2.0");
-        let app_executable_path = dir.path().join("Meetspace.app/Contents/MacOS/meetspace-cli");
+        let app_executable_path = dir
+            .path()
+            .join("Meetspace.app/Contents/MacOS/meetspace-cli");
         let install_path = dir.path().join("meetspace");
         std::fs::write(&resource_path, "new cli").unwrap();
         std::fs::create_dir_all(app_executable_path.parent().unwrap()).unwrap();
@@ -650,7 +659,9 @@ mod tests {
     #[test]
     fn installed_cli_survives_bundled_resource_move() {
         let dir = tempfile::tempdir().unwrap();
-        let resource_path = dir.path().join("Meetspace.app/Contents/MacOS/meetspace-cli");
+        let resource_path = dir
+            .path()
+            .join("Meetspace.app/Contents/MacOS/meetspace-cli");
         let install_path = dir.path().join("home/.local/bin/meetspace");
         let managed_path = managed_binary_path(&install_path, "meetspace", "1.2.0").unwrap();
         std::fs::create_dir_all(resource_path.parent().unwrap()).unwrap();

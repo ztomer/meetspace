@@ -963,9 +963,12 @@ async fn sync_cloudsync_connection(
     if connection.is_none() {
         *connection = Some(pool.acquire().await?);
     }
-    let result =
-        meetspace_cloudsync::network_sync(&mut **connection.as_mut().unwrap(), wait_ms, max_retries)
-            .await;
+    let result = meetspace_cloudsync::network_sync(
+        &mut **connection.as_mut().unwrap(),
+        wait_ms,
+        max_retries,
+    )
+    .await;
     if pool.options().get_max_connections() == 1 {
         connection.take();
     }

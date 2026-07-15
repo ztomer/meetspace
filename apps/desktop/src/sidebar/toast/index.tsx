@@ -116,8 +116,12 @@ export function ToastNotifications() {
   const registry = useMemo(
     () =>
       createToastRegistry({
+        isAuthenticated,
+        isAuthLoading,
         hasLLMConfigured,
         hasSttConfigured,
+        hasProSttConfigured,
+        hasProLlmConfigured,
         isAiTranscriptionTabActive,
         isAiIntelligenceTabActive,
         isBatchTranscribingInActiveTranscriptTab,
@@ -130,6 +134,7 @@ export function ToastNotifications() {
         activeDownloads,
         localSttStatus,
         isLocalSttModel,
+        onSignIn: handleSignIn,
         onOpenLLMSettings: handleOpenLLMSettings,
         onOpenSTTSettings: handleOpenSTTSettings,
       }),
