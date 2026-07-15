@@ -120,7 +120,6 @@ fn desktop_db_dir(identifier: &str) -> Option<std::path::PathBuf> {
         Some(default_dir)
     }
 }
-<<<<<<< HEAD
 
 #[cfg(test)]
 mod tests {
@@ -206,18 +205,4 @@ mod tests {
         assert!(config.is_none());
     }
 }
-||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn dev_uses_an_isolated_persistent_database() {
-        let db_dir = desktop_db_dir("com.meetspace.dev").unwrap();
-
-        assert!(db_dir.ends_with("com.meetspace.dev"));
-    }
-}
-=======
->>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
+|

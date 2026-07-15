@@ -49,42 +49,22 @@ async function* executeWorkflow(params: {
 }) {
   const { model, args, onProgress, signal } = params;
 
-<<<<<<< HEAD
-  const usesTemplate = hasSummaryTemplateToken(args.customInstructions);
-  const sections = usesTemplate
-    ? await generateTemplateIfNeeded({
-        model,
-        args,
-        onProgress,
-        signal,
-      })
-    : null;
-||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
-  const sections = await generateTemplateIfNeeded({
-    model,
-    args,
-    onProgress,
-    signal,
-    store,
-  });
-=======
   const sections = await generateTemplateIfNeeded({
     model,
     args,
     onProgress,
     signal,
   });
->>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
+
   const argsWithTemplate: TaskArgsMapTransformed["enhance"] = {
     ...args,
-    template:
-      usesTemplate && sections
-        ? {
-            title: args.template?.title ?? "",
-            description: args.template?.description ?? null,
-            sections,
-          }
-        : null,
+    template: sections
+      ? {
+          title: args.template?.title ?? "",
+          description: args.template?.description ?? null,
+          sections,
+        }
+      : null,
   };
 
   const system = await getSystemPrompt(argsWithTemplate);
