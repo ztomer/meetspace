@@ -90,11 +90,13 @@ export function NotificationSettingsView() {
   });
 
   const bundleIdToName = (bundleId: string) => {
-    return installedApps.find((a) => a.id === bundleId)?.name ?? bundleId;
+    return (
+      (installedApps ?? []).find((a) => a.id === bundleId)?.name ?? bundleId
+    );
   };
 
   const isDefaultIgnored = (bundleId: string) => {
-    return defaultIgnoredBundleIds.includes(bundleId);
+    return (defaultIgnoredBundleIds ?? []).includes(bundleId);
   };
 
   const setSettingValues = useSetSettingValues();
@@ -129,17 +131,17 @@ export function NotificationSettingsView() {
   const includedPlatforms = form.getFieldValue("included_platforms");
 
   const ignorableApps = getIgnorableApps({
-    installedApps,
+    installedApps: installedApps ?? [],
     ignoredPlatforms,
     includedPlatforms,
     inputValue: searchQuery,
-    defaultIgnoredBundleIds,
+    defaultIgnoredBundleIds: defaultIgnoredBundleIds ?? [],
   });
   const ignoredBundleIds = getIgnoredBundleIds({
-    installedApps: installedApps,
+    installedApps: installedApps ?? [],
     ignoredPlatforms,
     includedPlatforms,
-    defaultIgnoredBundleIds,
+    defaultIgnoredBundleIds: defaultIgnoredBundleIds ?? [],
   });
 
   const handleToggleIgnoredApp = (bundleId: string) => {
