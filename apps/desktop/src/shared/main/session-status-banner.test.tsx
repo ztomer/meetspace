@@ -1,8 +1,19 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+let hasUndoDeleteToast = false;
 
 vi.mock("./content-offset", () => ({
   useMainContentCenterOffset: () => 24,
+}));
+
+vi.mock("~/store/zustand/undo-delete", () => ({
+  useUndoDelete: (
+    selector: (state: { pendingDeletions: Record<string, unknown> }) => unknown,
+  ) =>
+    selector({
+      pendingDeletions: hasUndoDeleteToast ? { "session-1": {} } : {},
+    }),
 }));
 
 import {
@@ -19,6 +30,10 @@ function BannerPublisher({ skipReason }: { skipReason: string | null }) {
 }
 
 describe("MainSessionStatusBannerHost", () => {
+  beforeEach(() => {
+    hasUndoDeleteToast = false;
+  });
+
   it("does not render without a skip reason", () => {
     render(
       <SessionStatusBannerProvider>

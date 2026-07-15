@@ -1,4 +1,4 @@
-use crate::{AppExt, embedded_cli::EmbeddedCliStatus};
+use crate::AppExt;
 
 #[tauri::command]
 #[specta::specta]
