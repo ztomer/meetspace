@@ -611,7 +611,10 @@ mod tests {
             .iter()
             .find(|step| step.id == "20260714120000_search_index_queue")
             .unwrap();
-        assert_eq!(queue_step.scope, meetspace_db_migrate::MigrationScope::Plain);
+        assert_eq!(
+            queue_step.scope,
+            meetspace_db_migrate::MigrationScope::Plain
+        );
 
         for (id, table_name) in [
             ("20260714120100_search_index_sessions_triggers", "sessions"),

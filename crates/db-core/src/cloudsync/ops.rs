@@ -67,9 +67,11 @@ impl Db {
         connection_string: &str,
     ) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
-        let result =
-            meetspace_cloudsync::network_init(&mut **connection.as_mut().unwrap(), connection_string)
-                .await;
+        let result = meetspace_cloudsync::network_init(
+            &mut **connection.as_mut().unwrap(),
+            connection_string,
+        )
+        .await;
         self.release_single_pool_connection(&mut connection);
         result
     }
@@ -80,7 +82,8 @@ impl Db {
     ) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
         let result =
-            meetspace_cloudsync::network_set_apikey(&mut **connection.as_mut().unwrap(), api_key).await;
+            meetspace_cloudsync::network_set_apikey(&mut **connection.as_mut().unwrap(), api_key)
+                .await;
         self.release_single_pool_connection(&mut connection);
         result
     }
@@ -91,7 +94,8 @@ impl Db {
     ) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
         let result =
-            meetspace_cloudsync::network_set_token(&mut **connection.as_mut().unwrap(), token).await;
+            meetspace_cloudsync::network_set_token(&mut **connection.as_mut().unwrap(), token)
+                .await;
         self.release_single_pool_connection(&mut connection);
         result
     }
@@ -134,7 +138,8 @@ impl Db {
 
     pub async fn cloudsync_network_cleanup(&self) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
-        let result = meetspace_cloudsync::network_cleanup(&mut **connection.as_mut().unwrap()).await;
+        let result =
+            meetspace_cloudsync::network_cleanup(&mut **connection.as_mut().unwrap()).await;
         self.release_single_pool_connection(&mut connection);
         result
     }
@@ -144,7 +149,8 @@ impl Db {
     ) -> Result<bool, meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
         let result =
-            meetspace_cloudsync::network_has_unsent_changes(&mut **connection.as_mut().unwrap()).await;
+            meetspace_cloudsync::network_has_unsent_changes(&mut **connection.as_mut().unwrap())
+                .await;
         self.release_single_pool_connection(&mut connection);
         result
     }
@@ -199,9 +205,12 @@ impl Db {
         max_retries: Option<i64>,
     ) -> Result<meetspace_cloudsync::NetworkResult, meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
-        let result =
-            meetspace_cloudsync::network_sync(&mut **connection.as_mut().unwrap(), wait_ms, max_retries)
-                .await;
+        let result = meetspace_cloudsync::network_sync(
+            &mut **connection.as_mut().unwrap(),
+            wait_ms,
+            max_retries,
+        )
+        .await;
         self.release_single_pool_connection(&mut connection);
         result
     }

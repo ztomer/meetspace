@@ -68,10 +68,10 @@ vi.mock("~/shared/config", () => ({
 
 vi.mock("~/store/zustand/devtools-toast-preview", () => ({
   useDevtoolsToastPreview: (
-    selector: (state: { preview: any; clearPreview: () => void }) => unknown,
+    selector: (state: { preview: null; clearPreview: () => void }) => unknown,
   ) =>
     selector({
-      preview: { type: "language-model", key: "test-key" },
+      preview: null,
       clearPreview: mocks.clearDevtoolsPreview,
     }),
 }));
@@ -151,127 +151,14 @@ describe("ToastNotifications", () => {
 
     act(() => vi.advanceTimersByTime(500));
 
-    const toastContainer = screen
-      .getByText("Language model needed")
-      .closest(".fixed") as HTMLElement | null;
-
-    expect(toastContainer?.style.left).toBe("calc(50% + 0px)");
-    expect(toastContainer?.style.top).toBe("56px");
-  });
-
-  it("keeps default placement centered while anchoring vertically to the main surface", () => {
-    const mainSurface = document.createElement("div");
-    mainSurface.setAttribute("data-chat-floating-anchor", "");
-    vi.spyOn(mainSurface, "getBoundingClientRect").mockReturnValue({
-      bottom: 552,
-      height: 500,
-      left: 200,
-      right: 800,
-      top: 52,
-      width: 600,
-      x: 200,
-      y: 52,
-      toJSON: () => ({}),
-    });
-    document.body.appendChild(mainSurface);
-
-    render(<ToastArea />);
-
-    act(() => {
-      vi.advanceTimersByTime(500);
-    });
-
-    const toastContainer = screen
-      .getByText("Pro features available")
-      .closest(".fixed") as HTMLElement | null;
-
-    expect(toastContainer?.style.left).toBe("calc(50% + 0px)");
-    expect(toastContainer?.style.top).toBe("88px");
-  });
-
-  it("centers the left sidebar toast on the main content panel", () => {
-    const mainContentPanel = document.createElement("div");
-    mainContentPanel.setAttribute("data-main-content-panel", "");
-    vi.spyOn(mainContentPanel, "getBoundingClientRect").mockReturnValue({
-      bottom: 520,
-      height: 500,
-      left: 200,
-      right: 1_000,
-      top: 20,
-      width: 800,
-      x: 200,
-      y: 20,
-      toJSON: () => ({}),
-    });
-    document.body.appendChild(mainContentPanel);
-
-    const mainSurface = document.createElement("div");
-    mainSurface.setAttribute("data-chat-floating-anchor", "");
-    vi.spyOn(mainSurface, "getBoundingClientRect").mockReturnValue({
-      bottom: 520,
-      height: 500,
-      left: 300,
-      right: 700,
-      top: 20,
-      width: 400,
-      x: 300,
-      y: 20,
-      toJSON: () => ({}),
-    });
-    document.body.appendChild(mainSurface);
-
-    render(<ToastArea placement="left-sidebar" />);
-
-    act(() => {
-      vi.advanceTimersByTime(500);
-    });
-
-    const toastContainer = screen
-      .getByText("Language model needed")
-      .closest(".fixed") as HTMLElement | null;
-
-    expect(toastContainer?.style.left).toBe("600px");
-    expect(toastContainer?.style.top).toBe("56px");
-  });
-
-  it("centers anchored transient toasts on the main content panel", () => {
-    const mainContentPanel = document.createElement("div");
-    mainContentPanel.setAttribute("data-main-content-panel", "");
-    vi.spyOn(mainContentPanel, "getBoundingClientRect").mockReturnValue({
-      bottom: 520,
-      height: 500,
-      left: 200,
-      right: 1_000,
-      top: 20,
-      width: 800,
-      x: 200,
-      y: 20,
-      toJSON: () => ({}),
-    });
-    document.body.appendChild(mainContentPanel);
-
-    const mainSurface = document.createElement("div");
-    mainSurface.setAttribute("data-chat-floating-anchor", "");
-    vi.spyOn(mainSurface, "getBoundingClientRect").mockReturnValue({
-      bottom: 520,
-      height: 500,
-      left: 300,
-      right: 700,
-      top: 20,
-      width: 400,
-      x: 300,
-      y: 20,
-      toJSON: () => ({}),
-    });
-    document.body.appendChild(mainSurface);
-
-    showTransientToast(
-      {
-        id: "transcription-language-warning",
-        description: "Model doesn't support all languages.",
-        anchor: "main-content-panel",
-      },
-      { durationMs: null },
+    expect(mocks.message).toHaveBeenCalledWith(
+      "Pro features available",
+      expect.objectContaining({
+        id: "upgrade-to-pro",
+        duration: Infinity,
+        closeButton: true,
+        action: expect.objectContaining({ label: "Upgrade" }),
+      }),
     );
 
     const options = mocks.message.mock.calls[0][1];
@@ -287,24 +174,9 @@ describe("ToastNotifications", () => {
 
     act(() => vi.advanceTimersByTime(500));
 
-    render(<ToastArea placement="left-sidebar" />);
-
-    act(() => {
-      vi.advanceTimersByTime(500);
-    });
-
-    const toastContainer = screen
-      .getByText("Language model needed")
-      .closest(".fixed") as HTMLElement | null;
-
-    expect(toastContainer?.style.top).toBe("56px");
-
-    act(() => {
-      top = 52;
-      window.dispatchEvent(new Event("scroll"));
-    });
-
-    expect(toastContainer?.style.top).toBe("88px");
+    const options = mocks.message.mock.calls[0][1];
+    options.onDismiss();
+    expect(mocks.dismissToast).toHaveBeenCalledWith("upgrade-to-pro");
   });
 
   it("uses a Sonner loading toast for model downloads", () => {
@@ -328,9 +200,9 @@ describe("ToastNotifications", () => {
     );
   });
 
-    const toastContainer = screen
-      .getByText("Language model needed")
-      .closest(".fixed") as HTMLElement | null;
+  it("uses the latest registry action while a toast remains visible", () => {
+    mocks.config.current_llm_provider = null;
+    mocks.config.current_llm_model = null;
 
     const view = render(<ToastNotifications />);
 

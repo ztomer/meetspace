@@ -158,10 +158,7 @@ export async function populateRecurringMeetingNotes({
   }
 
   const factsBySessionId = new Map<string, string>(
-    PAST_NOTES.map((note) => [
-      namespacedId(workspaceId, note.sessionId),
-      note.facts.join("\n"),
-    ]),
+    PAST_NOTES.map((note) => [note.sessionId, note.facts.join("\n")]),
   );
   const { missing } = buildPastSessionNotes(
     data,
@@ -191,12 +188,11 @@ export async function populateRecurringMeetingNotes({
     await executeTransaction(statements);
   });
 
-  return currentSessionId;
+  return CURRENT_SESSION_ID;
 }
 
 function buildSessionStatements({
   ownerUserId,
-  workspaceId,
   sessionId,
   startedAt,
   rawMd,
@@ -204,7 +200,6 @@ function buildSessionStatements({
   eventJson,
 }: {
   ownerUserId: string;
-  workspaceId: string;
   sessionId: string;
   startedAt: Date;
   rawMd: string;
@@ -394,35 +389,8 @@ function buildSessionEvent(startedAt: Date): SessionEvent {
   };
 }
 
-async function loadCloudsyncWorkspaceId(): Promise<string> {
-  const [binding] = await liveQueryClient.execute<{
-    workspace_id: string | null;
-  }>(
-    `
-      SELECT NULLIF(json_extract(value_json, '$.workspace_id'), '') AS workspace_id
-      FROM app_settings
-      WHERE id = 'cloudsync_workspace_binding'
-      LIMIT 1
-    `,
-  );
-  if (!binding?.workspace_id) {
-    throw new Error("CloudSync workspace binding is missing");
-  }
-  return binding.workspace_id;
-}
-
-function normalizeUserId(
-  userId: string | null | undefined,
-  workspaceId: string,
-): string {
-  const normalized = userId?.trim();
-  return normalized && normalized !== DEFAULT_USER_ID
-    ? normalized
-    : workspaceId;
-}
-
-function namespacedId(workspaceId: string, value: string): string {
-  return `${workspaceId}:${value}`;
+function normalizeUserId(userId: string | null | undefined): string {
+  return userId?.trim() || DEFAULT_USER_ID;
 }
 
 function toDateId(date: Date): string {

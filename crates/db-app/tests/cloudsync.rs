@@ -781,10 +781,10 @@ async fn access_tokens_sync_two_clients_and_isolate_workspace() {
         .expect("MEETSPACE_CLOUDSYNC_WORKSPACE_B must be set");
     assert_ne!(workspace_a, workspace_b);
 
-    let token_a =
-        std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_A").expect("MEETSPACE_CLOUDSYNC_TOKEN_A must be set");
-    let token_b =
-        std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_B").expect("MEETSPACE_CLOUDSYNC_TOKEN_B must be set");
+    let token_a = std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_A")
+        .expect("MEETSPACE_CLOUDSYNC_TOKEN_A must be set");
+    let token_b = std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_B")
+        .expect("MEETSPACE_CLOUDSYNC_TOKEN_B must be set");
     let auth_a = || CloudsyncAuth::Token {
         token: token_a.clone(),
     };
@@ -1049,10 +1049,10 @@ async fn access_tokens_isolate_two_workspaces() {
         .expect("MEETSPACE_CLOUDSYNC_WORKSPACE_B must be set");
     assert_ne!(workspace_a, workspace_b);
 
-    let token_a =
-        std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_A").expect("MEETSPACE_CLOUDSYNC_TOKEN_A must be set");
-    let token_b =
-        std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_B").expect("MEETSPACE_CLOUDSYNC_TOKEN_B must be set");
+    let token_a = std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_A")
+        .expect("MEETSPACE_CLOUDSYNC_TOKEN_A must be set");
+    let token_b = std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_B")
+        .expect("MEETSPACE_CLOUDSYNC_TOKEN_B must be set");
     let db_a = setup_db(
         CloudsyncAuth::Token {
             token: token_a.clone(),

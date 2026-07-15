@@ -94,7 +94,9 @@ impl Db {
         }
 
         let (change_notifier, pool_options) = match (options.cloudsync_enabled, options.storage) {
-            (true, DbStorage::Local(_)) => meetspace_db_change::ChangeNotifier::new_with_cloudsync(),
+            (true, DbStorage::Local(_)) => {
+                meetspace_db_change::ChangeNotifier::new_with_cloudsync()
+            }
             (true, DbStorage::Memory) => meetspace_db_change::ChangeNotifier::disabled(),
             (false, _) => meetspace_db_change::ChangeNotifier::new(),
         };
@@ -114,7 +116,8 @@ impl Db {
             .create_if_missing(true)
             .pragma("journal_mode", "WAL");
         let (options, cloudsync_path) = meetspace_cloudsync::apply(options)?;
-        let (change_notifier, pool_options) = meetspace_db_change::ChangeNotifier::new_with_cloudsync();
+        let (change_notifier, pool_options) =
+            meetspace_db_change::ChangeNotifier::new_with_cloudsync();
         let pool = pool_options
             .connect_with(options)
             .await
@@ -530,7 +533,10 @@ mod tests {
         })
         .await
         .unwrap();
-        assert_eq!(first_change.kind, meetspace_db_change::TableChangeKind::Insert);
+        assert_eq!(
+            first_change.kind,
+            meetspace_db_change::TableChangeKind::Insert
+        );
         while changes.try_recv().is_ok() {}
 
         let mut transaction = db.pool().begin().await.unwrap();
@@ -565,7 +571,10 @@ mod tests {
             })
             .await
             .unwrap();
-        assert_eq!(sync_change.kind, meetspace_db_change::TableChangeKind::Update);
+        assert_eq!(
+            sync_change.kind,
+            meetspace_db_change::TableChangeKind::Update
+        );
         assert_eq!(sync_change.seq, other_change.seq);
         let second_version: i64 = sqlx::query_scalar("SELECT cloudsync_db_version()")
             .fetch_one(db.pool())
@@ -627,7 +636,10 @@ mod tests {
         })
         .await
         .unwrap();
-        assert_eq!(final_change.kind, meetspace_db_change::TableChangeKind::Update);
+        assert_eq!(
+            final_change.kind,
+            meetspace_db_change::TableChangeKind::Update
+        );
         let final_version: i64 = sqlx::query_scalar("SELECT cloudsync_db_version()")
             .fetch_one(db.pool())
             .await
