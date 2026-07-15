@@ -1,11 +1,11 @@
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error(transparent)]
-    HyprFileError(#[from] hypr_file::Error),
+    HyprFileError(#[from] meetspace_file::Error),
     #[error(transparent)]
     IoError(#[from] std::io::Error),
     #[error(transparent)]
-    LmStudioError(#[from] hypr_lmstudio::Error),
+    LmStudioError(#[from] meetspace_lmstudio::Error),
     #[error("Model not downloaded")]
     ModelNotDownloaded,
     #[error("Other error: {0}")]

@@ -2,18 +2,18 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { EllipsisVerticalIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 
-import { Button } from "@hypr/ui/components/ui/button";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   AppFloatingPanel,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@hypr/ui/components/ui/popover";
+} from "@meetspace/ui/components/ui/popover";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@hypr/ui/components/ui/tooltip";
+} from "@meetspace/ui/components/ui/tooltip";
 
 import { ActionableTooltipContent } from "./shared";
 

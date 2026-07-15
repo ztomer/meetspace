@@ -14,9 +14,9 @@ describe("getDefaultSttModel", () => {
     expect(getDefaultSttModel("soniox")).toBe("stt-rt-v5");
   });
 
-  test("does not invent a model for custom or Anarlog providers", () => {
+  test("does not invent a model for custom or Meetspace providers", () => {
     expect(getDefaultSttModel("custom")).toBeUndefined();
-    expect(getDefaultSttModel("hyprnote")).toBeUndefined();
+    expect(getDefaultSttModel("meetspace")).toBeUndefined();
   });
 });
 
@@ -143,8 +143,8 @@ describe("getDefaultSttSelection", () => {
 
   test("skips configured providers that have no available model", () => {
     expect(
-      getDefaultSttSelection(["hyprnote", "deepgram"], {
-        hyprnote: {
+      getDefaultSttSelection(["meetspace", "deepgram"], {
+        meetspace: {
           configured: true,
           models: [{ id: "cloud", isDownloaded: false }],
         },
@@ -158,8 +158,8 @@ describe("getDefaultSttSelection", () => {
 
   test("returns no selection when nothing is available", () => {
     expect(
-      getDefaultSttSelection(["hyprnote"], {
-        hyprnote: {
+      getDefaultSttSelection(["meetspace"], {
+        meetspace: {
           configured: true,
           models: [{ id: "cloud", isDownloaded: false }],
         },

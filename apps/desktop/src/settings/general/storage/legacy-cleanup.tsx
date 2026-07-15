@@ -89,7 +89,7 @@ export function LegacyMigrationCleanupRow() {
       return {
         state: "warning" as const,
         label: t`Migration status unavailable`,
-        description: t`Anarlog could not verify the migration status`,
+        description: t`Meetspace could not verify the migration status`,
       };
     }
 

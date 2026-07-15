@@ -201,7 +201,7 @@ function OnboardingScreenContent({
         ])}
       >
         <h1 className="font-hand text-foreground text-4xl leading-none font-semibold tracking-normal">
-          <Trans>Welcome to Anarlog</Trans>
+          <Trans>Welcome to Meetspace</Trans>
         </h1>
       </div>
 
@@ -213,13 +213,13 @@ function OnboardingScreenContent({
             description={
               currentPlatform === "macos" ? (
                 <Trans>
-                  Anarlog needs microphone and system audio to transcribe your
+                  Meetspace needs microphone and system audio to transcribe your
                   meetings, plus Accessibility to read meeting controls, visible
                   chat, and participant status.
                 </Trans>
               ) : (
                 <Trans>
-                  Anarlog needs access to your microphone and system audio to
+                  Meetspace needs access to your microphone and system audio to
                   record and transcribe your meetings
                 </Trans>
               )
@@ -269,7 +269,7 @@ function OnboardingScreenContent({
             title={<Trans>Connect calendar</Trans>}
             description={
               <Trans>
-                Anarlog will sync your calendar to get meeting reminders
+                Meetspace will sync your calendar to get meeting reminders
               </Trans>
             }
             completedTitle={<Trans>Calendar connected</Trans>}

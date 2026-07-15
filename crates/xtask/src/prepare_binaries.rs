@@ -41,7 +41,7 @@ pub(crate) fn prepare_binaries() -> Result<()> {
 
     cmd!(
         sh,
-        "{cargo} build --release --target {triple} -p anarlog-cli"
+        "{cargo} build --release --target {triple} -p meetspace-cli"
     )
     .run()?;
 
@@ -51,11 +51,11 @@ pub(crate) fn prepare_binaries() -> Result<()> {
         .join("target")
         .join(&triple)
         .join("release")
-        .join(format!("anarlog{ext}"));
-    let dst = embedded_cli_dir.join(format!("anarlog-cli-{triple}{ext}"));
+        .join(format!("meetspace{ext}"));
+    let dst = embedded_cli_dir.join(format!("meetspace-cli-{triple}{ext}"));
     fs::copy(&src, &dst).with_context(|| format!("copy {} -> {}", src.display(), dst.display()))?;
 
-    println!("prepare-binaries: resources/cli/anarlog-cli-{triple}{ext}");
+    println!("prepare-binaries: resources/cli/meetspace-cli-{triple}{ext}");
     Ok(())
 }
 

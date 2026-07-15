@@ -1,6 +1,6 @@
 import type { LanguageModel } from "ai";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 
 import { getEligibility } from "./eligibility";
 import {

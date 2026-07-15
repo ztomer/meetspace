@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 
-import { json2md, md2json } from "@hypr/editor/markdown";
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
-import type { EventParticipant, SessionEvent } from "@hypr/store";
+import { json2md, md2json } from "@meetspace/editor/markdown";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
+import type { EventParticipant, SessionEvent } from "@meetspace/store";
 
 import { executeTransaction, liveQueryClient, useLiveQuery } from "~/db";
 import { enqueueDatabaseWrite } from "~/db/write-queue";

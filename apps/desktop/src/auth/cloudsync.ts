@@ -481,7 +481,7 @@ async function activateCloudsync(
       method: "POST",
       headers: {
         Authorization: `Bearer ${session.access_token}`,
-        "X-Anarlog-E2EE-Key-Id": encryptionKeyId,
+        "X-Meetspace-E2EE-Key-Id": encryptionKeyId,
       },
       signal: controller.signal,
     });
@@ -534,7 +534,7 @@ async function activateCloudsync(
         await suspendCloudsyncAfterCredentialRejection(activeGeneration);
       }
       console.warn(
-        "[cloudsync] Anarlog Pro is required; sync remains disabled",
+        "[cloudsync] Meetspace Pro is required; sync remains disabled",
       );
       return "ok";
     }

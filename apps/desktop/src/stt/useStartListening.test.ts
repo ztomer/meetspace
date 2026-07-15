@@ -64,7 +64,7 @@ const {
   catalogLocalSessionAudioMock: vi.fn(),
 }));
 
-vi.mock("@hypr/plugin-transcription", () => ({
+vi.mock("@meetspace/plugin-transcription", () => ({
   commands: {
     isSupportedLanguagesLive: isSupportedLanguagesLiveMock,
   },
@@ -266,7 +266,7 @@ describe("useStartListening", () => {
     leftSidebarExpanded.value = true;
     useSTTConnectionMock.mockReturnValue({
       conn: {
-        provider: "hyprnote",
+        provider: "meetspace",
         model: "am-test",
         baseUrl: "http://localhost:8080",
         apiKey: "",
@@ -599,7 +599,7 @@ describe("useStartListening", () => {
   test("forces batch transcription for batch-only local models with realtime stored", async () => {
     useSTTConnectionMock.mockReturnValue({
       conn: {
-        provider: "hyprnote",
+        provider: "meetspace",
         model: "soniqo-qwen3-small",
         baseUrl: "http://localhost:8080",
         apiKey: "",
@@ -620,7 +620,7 @@ describe("useStartListening", () => {
   test("uses live transcription for realtime local models", async () => {
     useSTTConnectionMock.mockReturnValue({
       conn: {
-        provider: "hyprnote",
+        provider: "meetspace",
         model: "soniqo-parakeet-streaming",
         baseUrl: "http://localhost:8080",
         apiKey: "",
@@ -648,7 +648,7 @@ describe("useStartListening", () => {
     );
     useSTTConnectionMock.mockReturnValue({
       conn: {
-        provider: "hyprnote",
+        provider: "meetspace",
         model: "soniqo-parakeet-streaming",
         baseUrl: "http://localhost:8080",
         apiKey: "",
@@ -677,7 +677,7 @@ describe("useStartListening", () => {
     );
     useSTTConnectionMock.mockReturnValue({
       conn: {
-        provider: "hyprnote",
+        provider: "meetspace",
         model: "soniqo-parakeet-streaming",
         baseUrl: "http://localhost:8080",
         apiKey: "",

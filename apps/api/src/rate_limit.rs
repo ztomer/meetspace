@@ -19,7 +19,7 @@ use governor::{
     clock::{Clock, DefaultClock},
     state::keyed::DefaultKeyedStateStore,
 };
-use hypr_api_auth::AuthContext;
+use meetspace_api_auth::AuthContext;
 
 type KeyedLimiter = RateLimiter<String, DefaultKeyedStateStore<String>, DefaultClock>;
 type IpKeyedLimiter = RateLimiter<u16, DefaultKeyedStateStore<u16>, DefaultClock>;
@@ -199,7 +199,7 @@ mod tests {
         let state = RateLimitState::builder().pro(quota).free(quota).build();
         let auth = AuthContext {
             token: "token".to_string(),
-            claims: hypr_api_auth::Claims {
+            claims: meetspace_api_auth::Claims {
                 sub: "user-a".to_string(),
                 email: None,
                 entitlements: Vec::new(),

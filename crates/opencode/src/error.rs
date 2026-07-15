@@ -24,19 +24,19 @@ pub enum Error {
     Poisoned,
 }
 
-impl From<hypr_cli_process::ProcessError> for Error {
-    fn from(value: hypr_cli_process::ProcessError) -> Self {
+impl From<meetspace_cli_process::ProcessError> for Error {
+    fn from(value: meetspace_cli_process::ProcessError) -> Self {
         match value {
-            hypr_cli_process::ProcessError::MissingStdin => Self::MissingStdin,
-            hypr_cli_process::ProcessError::MissingStdout => Self::MissingStdout,
-            hypr_cli_process::ProcessError::StdinWrite(error) => Self::StdinWrite(error),
-            hypr_cli_process::ProcessError::StdoutRead(error) => Self::StdoutRead(error),
-            hypr_cli_process::ProcessError::Wait(error) => Self::Wait(error),
-            hypr_cli_process::ProcessError::Kill(error) => Self::Kill(error),
-            hypr_cli_process::ProcessError::ProcessFailed { detail } => {
+            meetspace_cli_process::ProcessError::MissingStdin => Self::MissingStdin,
+            meetspace_cli_process::ProcessError::MissingStdout => Self::MissingStdout,
+            meetspace_cli_process::ProcessError::StdinWrite(error) => Self::StdinWrite(error),
+            meetspace_cli_process::ProcessError::StdoutRead(error) => Self::StdoutRead(error),
+            meetspace_cli_process::ProcessError::Wait(error) => Self::Wait(error),
+            meetspace_cli_process::ProcessError::Kill(error) => Self::Kill(error),
+            meetspace_cli_process::ProcessError::ProcessFailed { detail } => {
                 Self::ProcessFailed { detail }
             }
-            hypr_cli_process::ProcessError::Cancelled => Self::Cancelled,
+            meetspace_cli_process::ProcessError::Cancelled => Self::Cancelled,
         }
     }
 }

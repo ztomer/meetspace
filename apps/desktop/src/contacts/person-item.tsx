@@ -1,7 +1,7 @@
 import { Pin } from "lucide-react";
 import React, { useCallback } from "react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { type HumanRecord, toggleContactPin } from "~/contacts/queries";
 import { ContactFacehash, getContactBgClass } from "~/contacts/shared";

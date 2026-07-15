@@ -19,7 +19,7 @@ Default permissions for the plugin
 <tr>
 <td>
 
-`hypr-tray:allow-set-tray-icon-visible`
+`meetspace-tray:allow-set-tray-icon-visible`
 
 </td>
 <td>
@@ -32,7 +32,7 @@ Enables the set_tray_icon_visible command without any pre-configured scope.
 <tr>
 <td>
 
-`hypr-tray:deny-set-tray-icon-visible`
+`meetspace-tray:deny-set-tray-icon-visible`
 
 </td>
 <td>

@@ -10,14 +10,14 @@ const mocks = vi.hoisted(() => ({
   ),
 }));
 
-vi.mock("@hypr/plugin-analytics", () => ({
+vi.mock("@meetspace/plugin-analytics", () => ({
   commands: {
     setDisabled: vi.fn(async () => undefined),
     setProperties: mocks.setProperties,
   },
 }));
 
-vi.mock("@hypr/plugin-detect", () => ({
+vi.mock("@meetspace/plugin-detect", () => ({
   commands: {
     getPreferredLanguages: mocks.getPreferredLanguages,
   },
@@ -213,7 +213,7 @@ describe("SQLite settings", () => {
     mocks.execute.mockResolvedValue([
       {
         id: "personalization_dictionary_terms",
-        value_json: JSON.stringify(JSON.stringify(["Anarlog"])),
+        value_json: JSON.stringify(JSON.stringify(["Meetspace"])),
       },
     ]);
 
@@ -222,7 +222,7 @@ describe("SQLite settings", () => {
       (current) => JSON.stringify([...JSON.parse(current ?? "[]"), "Erebor"]),
     );
 
-    expect(next).toBe(JSON.stringify(["Anarlog", "Erebor"]));
+    expect(next).toBe(JSON.stringify(["Meetspace", "Erebor"]));
     const statement = mocks.executeTransaction.mock.calls[0][0][0];
     expect(statement.params.slice(0, 2)).toEqual([
       "personalization_dictionary_terms",

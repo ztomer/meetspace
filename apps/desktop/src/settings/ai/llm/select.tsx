@@ -8,8 +8,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@hypr/ui/components/ui/select";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/select";
+import { cn } from "@meetspace/utils";
 
 import { useLlmSettings } from "./context";
 import { HealthStatusIndicator, useConnectionHealth } from "./health";
@@ -173,13 +173,13 @@ export function SelectProviderAndModel() {
   const alertDescription = !providerSettingsReady
     ? undefined
     : !isConfigured
-      ? t`Language model is needed to make Anarlog summarize and chat about your conversations.`
+      ? t`Language model is needed to make Meetspace summarize and chat about your conversations.`
       : hasError
         ? health.message
         : undefined;
 
   const handleProviderChange = (provider: string) => {
-    if (provider === "hyprnote" && !billing.isPaid) {
+    if (provider === "meetspace" && !billing.isPaid) {
       billing.upgradeToPro();
       return;
     }
@@ -377,7 +377,7 @@ export function getLlmProviderStatus({
     return { configured: false };
   }
 
-  if (provider.id === "hyprnote") {
+  if (provider.id === "meetspace") {
     const result: ListModelsResult = {
       models: ["Auto"],
       ignored: [],

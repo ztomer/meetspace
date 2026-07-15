@@ -45,7 +45,7 @@ vi.mock("@lingui/react/macro", () => ({
   }),
 }));
 
-vi.mock("@hypr/editor/prompt", async () => {
+vi.mock("@meetspace/editor/prompt", async () => {
   const React = await import("react");
 
   return {
@@ -286,7 +286,7 @@ describe("DictionarySettings", () => {
 
   it("adds entered terms and keeps them normalized", async () => {
     const onSave = vi.fn();
-    render(<DictionarySettings terms={["Anarlog"]} onSave={onSave} />);
+    render(<DictionarySettings terms={["Meetspace"]} onSave={onSave} />);
 
     fireEvent.change(screen.getByRole("textbox"), {
       target: { value: " FastConformer, Parakeet TDT " },
@@ -299,7 +299,7 @@ describe("DictionarySettings", () => {
 
     await waitFor(() =>
       expect(onSave).toHaveBeenCalledWith(
-        JSON.stringify(["Anarlog", "FastConformer", "Parakeet TDT"]),
+        JSON.stringify(["Meetspace", "FastConformer", "Parakeet TDT"]),
       ),
     );
   });
@@ -308,22 +308,22 @@ describe("DictionarySettings", () => {
     const onSave = vi.fn();
     render(
       <DictionarySettings
-        terms={["Anarlog", "Parakeet TDT"]}
+        terms={["Meetspace", "Parakeet TDT"]}
         onSave={onSave}
       />,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Remove Anarlog" }));
+    fireEvent.click(screen.getByRole("button", { name: "Remove Meetspace" }));
 
     expect(onSave).toHaveBeenCalledWith(JSON.stringify(["Parakeet TDT"]));
   });
 
   it("does not enable adding duplicate terms", async () => {
     const onSave = vi.fn();
-    render(<DictionarySettings terms={["Anarlog"]} onSave={onSave} />);
+    render(<DictionarySettings terms={["Meetspace"]} onSave={onSave} />);
 
     fireEvent.change(screen.getByRole("textbox"), {
-      target: { value: "anarlog" },
+      target: { value: "meetspace" },
     });
 
     const addButton = screen.getByRole("button", {
@@ -336,7 +336,7 @@ describe("DictionarySettings", () => {
   });
 
   it("uses an inverted add button while typing", async () => {
-    render(<DictionarySettings terms={["Anarlog"]} onSave={vi.fn()} />);
+    render(<DictionarySettings terms={["Meetspace"]} onSave={vi.fn()} />);
 
     const addButton = screen.getByRole("button", {
       name: "Add",
@@ -359,7 +359,7 @@ describe("DictionarySettings", () => {
   it("shows relevant saved terms while typing", async () => {
     render(
       <DictionarySettings
-        terms={["Anarlog", "FastConformer", "Parakeet TDT"]}
+        terms={["Meetspace", "FastConformer", "Parakeet TDT"]}
         onSave={vi.fn()}
       />,
     );
@@ -369,14 +369,14 @@ describe("DictionarySettings", () => {
     });
 
     await waitFor(() => expect(screen.getByText("FastConformer")).toBeTruthy());
-    expect(screen.queryByText("Anarlog")).toBeNull();
+    expect(screen.queryByText("Meetspace")).toBeNull();
     expect(screen.queryByText("Parakeet TDT")).toBeNull();
   });
 
   it("shows no match below the input when typed text has no saved match", async () => {
     render(
       <DictionarySettings
-        terms={["Anarlog", "FastConformer"]}
+        terms={["Meetspace", "FastConformer"]}
         onSave={vi.fn()}
       />,
     );
@@ -388,7 +388,7 @@ describe("DictionarySettings", () => {
     });
 
     await waitFor(() => expect(screen.getByText("No match")).toBeTruthy());
-    expect(screen.queryByText("Anarlog")).toBeNull();
+    expect(screen.queryByText("Meetspace")).toBeNull();
     expect(screen.queryByText("FastConformer")).toBeNull();
   });
 });

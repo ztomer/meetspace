@@ -114,7 +114,7 @@ async fn app() -> Router {
     let llm_config =
         hypr_llm_proxy::LlmProxyConfig::new(&env.llm).with_analytics(analytics.clone());
     let stt_config = hypr_transcribe_proxy::SttProxyConfig::new(&env.stt, &env.supabase)
-        .with_hyprnote_routing(hypr_transcribe_proxy::HyprnoteRoutingConfig::default())
+        .with_hyprnote_routing(hypr_transcribe_proxy::MeetspaceRoutingConfig::default())
         .with_analytics(analytics.clone());
 
     let stt_rate_limit = rate_limit::RateLimitState::builder()
@@ -178,7 +178,7 @@ async fn app() -> Router {
     let subscription_config =
         hypr_api_subscription::SubscriptionConfig::new(&env.supabase, &env.stripe, &env.loops)
             .with_analytics(analytics.clone())
-            .with_durable_cleanup_enabled(env.anarlog_attachment_backup_gc_enabled);
+            .with_durable_cleanup_enabled(env.meetspace_attachment_backup_gc_enabled);
     let support_config = hypr_api_support::SupportConfig::new(
         &env.github_app,
         &env.llm,
@@ -557,7 +557,7 @@ fn main() -> std::io::Result<()> {
             let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
             let app = app().await;
             let cancellation = CancellationToken::new();
-            let worker_task = env.anarlog_attachment_backup_gc_enabled.then(|| {
+            let worker_task = env.meetspace_attachment_backup_gc_enabled.then(|| {
                 let cloudsync_cleanup = hypr_api_subscription::CloudsyncCleanupConfig::new(
                     env.sync
                         .sqlitecloud_project_url
@@ -568,7 +568,7 @@ fn main() -> std::io::Result<()> {
                         .as_deref()
                         .unwrap_or_default(),
                     env.sync
-                        .anarlog_cloudsync_e2ee_database_id
+                        .meetspace_cloudsync_e2ee_database_id
                         .as_deref()
                         .unwrap_or_default(),
                     env.sqlitecloud_cloudsync_management_api_key

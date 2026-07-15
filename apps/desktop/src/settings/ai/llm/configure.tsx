@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/react/macro";
 
-import { Accordion } from "@hypr/ui/components/ui/accordion";
+import { Accordion } from "@meetspace/ui/components/ui/accordion";
 
 import { useLlmSettings } from "./context";
 import { ProviderId, PROVIDERS } from "./shared";
@@ -22,7 +22,7 @@ export function ConfigureProviders() {
         value={accordionValue}
         onValueChange={setAccordionValue}
       >
-        {PROVIDERS.filter((provider) => provider.id !== "hyprnote").map(
+        {PROVIDERS.filter((provider) => provider.id !== "meetspace").map(
           (provider) => (
             <NonHyprProviderCard
               key={provider.id}

@@ -17,7 +17,7 @@ const {
   useListenerMock: vi.fn(),
 }));
 
-vi.mock("@hypr/ui/components/ui/dropdown-menu", () => ({
+vi.mock("@meetspace/ui/components/ui/dropdown-menu", () => ({
   DropdownMenuItem: ({
     children,
     ...props

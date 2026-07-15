@@ -5,15 +5,15 @@ edition = "2024"
 
 [features]
 default = []
-local = ["hypr-audio-utils", "hypr-transcribe-soniqo"]
+local = ["meetspace-audio-utils", "meetspace-transcribe-soniqo"]
 
 [dependencies]
-hypr-am = { workspace = true }
-hypr-audio-utils = { workspace = true, optional = true }
-hypr-language = { workspace = true }
-hypr-observability = { workspace = true }
-hypr-transcribe-soniqo = { workspace = true, optional = true }
-hypr-ws-client = { workspace = true }
+meetspace-am = { workspace = true }
+meetspace-audio-utils = { workspace = true, optional = true }
+meetspace-language = { workspace = true }
+meetspace-observability = { workspace = true }
+meetspace-transcribe-soniqo = { workspace = true, optional = true }
+meetspace-ws-client = { workspace = true }
 soniox = { workspace = true }
 
 openai-transcription = { workspace = true }
@@ -37,8 +37,8 @@ tracing = { workspace = true }
 url = { workspace = true }
 
 [dev-dependencies]
-hypr-audio-utils = { workspace = true }
-hypr-data = { workspace = true }
+meetspace-audio-utils = { workspace = true }
+meetspace-data = { workspace = true }
 
 deepgram = { workspace = true, features = ["listen"] }
 rodio = { workspace = true }

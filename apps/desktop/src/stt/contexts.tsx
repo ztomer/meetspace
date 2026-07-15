@@ -6,11 +6,11 @@ import { useShallow } from "zustand/shallow";
 import {
   commands as detectCommands,
   events as detectEvents,
-} from "@hypr/plugin-detect";
+} from "@meetspace/plugin-detect";
 import {
   commands as notificationCommands,
   type NotificationIcon,
-} from "@hypr/plugin-notification";
+} from "@meetspace/plugin-notification";
 
 import {
   AUTO_STOP_CONFIRM_TIMEOUT_SECONDS,
@@ -809,7 +809,7 @@ async function showMeetingEndedPrompt({
   await notificationCommands.showNotification({
     key: createAutoStopEndedNotificationKey(sessionId),
     title: "Did your meeting end?",
-    message: `Anarlog will stop listening in ${AUTO_STOP_CONFIRM_TIMEOUT_SECONDS} seconds.`,
+    message: `Meetspace will stop listening in ${AUTO_STOP_CONFIRM_TIMEOUT_SECONDS} seconds.`,
     timeout: { secs: AUTO_STOP_CONFIRM_TIMEOUT_SECONDS, nanos: 0 },
     source: null,
     start_time: null,
