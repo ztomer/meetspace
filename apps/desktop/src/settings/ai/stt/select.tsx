@@ -49,44 +49,8 @@ import {
 
 import { useBillingAccess } from "~/auth/billing-context";
 import { useNotifications } from "~/contexts/notifications";
-<<<<<<< HEAD
-import { providerRowId, ProviderIconSlot } from "~/settings/ai/shared";
-import {
-  getProviderSelectionBlockers,
-  requiresEntitlement,
-} from "~/settings/ai/shared/eligibility";
-import { PersistAiSelection } from "~/settings/ai/shared/persist-selection";
-import {
-  getConfiguredProviderIds,
-  getConfiguredProviders,
-  getVisibleModelSelection,
-} from "~/settings/ai/shared/selection";
-import { getBaseLanguageDisplayName } from "~/settings/general/language";
-import { useAiProvidersState } from "~/settings/providers";
-import { useSetSettingValues } from "~/settings/queries";
-||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
-=======
 import { useSetSettingValue } from "~/settings/queries";
->>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
 import { useConfigValues } from "~/shared/config";
-<<<<<<< HEAD
-import { useMountEffect } from "~/shared/hooks/useMountEffect";
-import { SettingsAlertToast } from "~/shared/ui/settings-alert";
-import {
-  isConfiguredSttModel,
-  isMeetspaceLocalSttModel,
-  isLiveTranscriptionSupported,
-  isRealtimeLocalModel,
-  isSupportedLanguagesBatch,
-  isSupportedLanguagesLive,
-  isSupportedLocalSttModel,
-} from "~/stt/capabilities";
-import {
-  getDefaultSttModel,
-  getPreferredProviderModel,
-} from "~/stt/model-selection";
-||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
-import * as settings from "~/store/tinybase/store/settings";
 import { isRealtimeLocalModel } from "~/stt/capabilities";
 
 type ModelEntry = {
@@ -96,17 +60,6 @@ type ModelEntry = {
   sizeBytes?: number | null;
   mode?: "realtime" | "batch";
 };
-=======
-import { isRealtimeLocalModel } from "~/stt/capabilities";
-
-type ModelEntry = {
-  id: string;
-  isDownloaded: boolean;
-  displayName?: string;
-  sizeBytes?: number | null;
-  mode?: "realtime" | "batch";
-};
->>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
 
 export function SelectProviderAndModel() {
   const { current_stt_provider, current_stt_model } = useConfigValues([
@@ -118,94 +71,10 @@ export function SelectProviderAndModel() {
     useConfiguredMapping();
   const { startDownload, startTrial } = useSttSettings();
   const health = useConnectionHealth();
-<<<<<<< HEAD
-  const [pendingProvider, setPendingProvider] = useState<ProviderId | null>(
-    null,
-  );
-
-  const selectedSttModel = isConfiguredSttModel(
-    current_stt_provider,
-    current_stt_model,
-  )
-    ? current_stt_model
-    : undefined;
-  const selectedProvider = current_stt_provider as ProviderId | undefined;
-  const selectedProviderConfigured = selectedProvider
-    ? (configuredProviders[selectedProvider]?.configured ?? false)
-    : false;
-  const visibleSelection = getVisibleModelSelection(
-    selectedProvider,
-    selectedSttModel,
-    selectedProviderConfigured,
-  );
-  const selectableProviders = PROVIDERS.filter(({ disabled }) => !disabled);
-  const configuredProviderIds = getConfiguredProviderIds(
-    selectableProviders,
-    configuredProviders,
-    selectedProvider,
-  );
-  const defaultSelection =
-    providerSettingsReady && !visibleSelection.model
-      ? getDefaultSttSelection(
-          configuredProviderIds,
-          configuredProviders,
-          selectedProvider,
-          current_stt_model,
-        )
-      : null;
-  const effectiveSelection = pendingProvider
-    ? { provider: pendingProvider, model: "" }
-    : (defaultSelection ?? visibleSelection);
-  const visibleProvider = effectiveSelection.provider as ProviderId | "";
-  const isConfigured = !!(visibleProvider && effectiveSelection.model);
-  const hasError = isConfigured && health.status === "error";
-  const alertDescription = !providerSettingsReady
-    ? undefined
-    : !isConfigured
-      ? t`Transcription model is needed to make Meetspace listen to your conversations.`
-      : hasError
-        ? health.message
-        : undefined;
-  const selectedModels = visibleProvider
-    ? (configuredProviders[visibleProvider]?.models ?? [])
-    : [];
-  const displayedSttModel =
-    visibleProvider === "custom"
-      ? effectiveSelection.model
-      : effectiveSelection.model
-        ? getPreferredProviderModel(effectiveSelection.model, selectedModels, {
-            keepUnavailableSavedModel: true,
-          })
-        : undefined;
-  const selectedModel = selectedModels.find(
-    (model) => model.id === displayedSttModel,
-  );
-  const providerOptions = getConfiguredProviders(
-    selectableProviders,
-    configuredProviders,
-  );
-||||||| parent of 9ff709349 (chore: sync local-first fork changes before rebase)
-  const models = useLocalModels();
-
-  const setProvider = settings.UI.useSetValueCallback(
-    "current_stt_provider",
-    (provider: string) => provider,
-    [],
-    settings.STORE_ID,
-  );
-
-  const setModel = settings.UI.useSetValueCallback(
-    "current_stt_model",
-    (model: string) => model,
-    [],
-    settings.STORE_ID,
-  );
-=======
   const models = useLocalModels();
 
   const setProvider = useSetSettingValue("current_stt_provider");
   const setModel = useSetSettingValue("current_stt_model");
->>>>>>> 9ff709349 (chore: sync local-first fork changes before rebase)
 
   const setSelection = useSetSettingValues();
   const lastSelectedModelsRef = useRef<Record<string, string>>(
