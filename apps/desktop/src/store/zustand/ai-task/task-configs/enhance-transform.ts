@@ -3,8 +3,8 @@ import type {
   Segment,
   Session,
   Transcript,
-} from "@hypr/plugin-template";
-import { sessionEventSchema } from "@hypr/store";
+} from "@meetspace/plugin-template";
+import { sessionEventSchema } from "@meetspace/store";
 
 import type { TaskArgsMap, TaskArgsMapTransformed, TaskConfig } from ".";
 import { collectEnhanceImageContext } from "./enhance-images";

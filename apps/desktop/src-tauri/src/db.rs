@@ -26,7 +26,7 @@ pub fn cloudsync_runtime_config_from_env()
 fn cloudsync_runtime_config(
     get: impl Fn(&str) -> Option<String>,
 ) -> Result<Option<hypr_db_core::CloudsyncRuntimeConfig>, String> {
-    let allow_static_auth = get("ANARLOG_CLOUDSYNC_ALLOW_STATIC_AUTH")
+    let allow_static_auth = get("MEETSPACE_CLOUDSYNC_ALLOW_STATIC_AUTH")
         .and_then(nonempty)
         .map(parse_env_flag)
         .transpose()?
@@ -35,16 +35,16 @@ fn cloudsync_runtime_config(
         return Ok(None);
     }
 
-    let database_id = get("ANARLOG_CLOUDSYNC_E2EE_DATABASE_ID").and_then(nonempty);
-    let api_key = get("ANARLOG_CLOUDSYNC_API_KEY").and_then(nonempty);
-    let token = get("ANARLOG_CLOUDSYNC_TOKEN").and_then(nonempty);
+    let database_id = get("MEETSPACE_CLOUDSYNC_E2EE_DATABASE_ID").and_then(nonempty);
+    let api_key = get("MEETSPACE_CLOUDSYNC_API_KEY").and_then(nonempty);
+    let token = get("MEETSPACE_CLOUDSYNC_TOKEN").and_then(nonempty);
 
     if database_id.is_none() && api_key.is_none() && token.is_none() {
         return Ok(None);
     }
 
     let database_id = database_id.ok_or_else(|| {
-        "ANARLOG_CLOUDSYNC_E2EE_DATABASE_ID is required when CloudSync auth is configured"
+        "MEETSPACE_CLOUDSYNC_E2EE_DATABASE_ID is required when CloudSync auth is configured"
             .to_string()
     })?;
     let auth = match (api_key, token) {
@@ -52,17 +52,17 @@ fn cloudsync_runtime_config(
         (None, Some(token)) => hypr_db_core::CloudsyncAuth::Token { token },
         (None, None) => {
             return Err(
-                "ANARLOG_CLOUDSYNC_API_KEY or ANARLOG_CLOUDSYNC_TOKEN is required".to_string(),
+                "MEETSPACE_CLOUDSYNC_API_KEY or MEETSPACE_CLOUDSYNC_TOKEN is required".to_string(),
             );
         }
         (Some(_), Some(_)) => {
             return Err(
-                "configure only one of ANARLOG_CLOUDSYNC_API_KEY or ANARLOG_CLOUDSYNC_TOKEN"
+                "configure only one of MEETSPACE_CLOUDSYNC_API_KEY or MEETSPACE_CLOUDSYNC_TOKEN"
                     .to_string(),
             );
         }
     };
-    let sync_interval_ms = get("ANARLOG_CLOUDSYNC_INTERVAL_MS")
+    let sync_interval_ms = get("MEETSPACE_CLOUDSYNC_INTERVAL_MS")
         .and_then(nonempty)
         .map(|value| {
             value
@@ -70,7 +70,7 @@ fn cloudsync_runtime_config(
                 .ok()
                 .filter(|value| *value > 0)
                 .ok_or_else(|| {
-                    "ANARLOG_CLOUDSYNC_INTERVAL_MS must be a positive integer".to_string()
+                    "MEETSPACE_CLOUDSYNC_INTERVAL_MS must be a positive integer".to_string()
                 })
         })
         .transpose()?
@@ -95,7 +95,7 @@ fn parse_env_flag(value: String) -> Result<bool, String> {
     match value.to_ascii_lowercase().as_str() {
         "1" | "true" => Ok(true),
         "0" | "false" => Ok(false),
-        _ => Err("ANARLOG_CLOUDSYNC_ALLOW_STATIC_AUTH must be true, false, 1, or 0".to_string()),
+        _ => Err("MEETSPACE_CLOUDSYNC_ALLOW_STATIC_AUTH must be true, false, 1, or 0".to_string()),
     }
 }
 
@@ -134,13 +134,13 @@ mod tests {
     #[test]
     fn cloudsync_environment_config_enables_only_core_tables() {
         let values = HashMap::from([
-            ("ANARLOG_CLOUDSYNC_ALLOW_STATIC_AUTH", "true".to_string()),
+            ("MEETSPACE_CLOUDSYNC_ALLOW_STATIC_AUTH", "true".to_string()),
             (
-                "ANARLOG_CLOUDSYNC_E2EE_DATABASE_ID",
+                "MEETSPACE_CLOUDSYNC_E2EE_DATABASE_ID",
                 "managed-database-id".to_string(),
             ),
-            ("ANARLOG_CLOUDSYNC_TOKEN", "token".to_string()),
-            ("ANARLOG_CLOUDSYNC_INTERVAL_MS", "15000".to_string()),
+            ("MEETSPACE_CLOUDSYNC_TOKEN", "token".to_string()),
+            ("MEETSPACE_CLOUDSYNC_INTERVAL_MS", "15000".to_string()),
         ]);
 
         let config = cloudsync_runtime_config(|key| values.get(key).cloned())
@@ -167,13 +167,13 @@ mod tests {
     #[test]
     fn cloudsync_environment_rejects_multiple_credentials() {
         let values = HashMap::from([
-            ("ANARLOG_CLOUDSYNC_ALLOW_STATIC_AUTH", "true".to_string()),
+            ("MEETSPACE_CLOUDSYNC_ALLOW_STATIC_AUTH", "true".to_string()),
             (
-                "ANARLOG_CLOUDSYNC_E2EE_DATABASE_ID",
+                "MEETSPACE_CLOUDSYNC_E2EE_DATABASE_ID",
                 "managed-database-id".to_string(),
             ),
-            ("ANARLOG_CLOUDSYNC_API_KEY", "api-key".to_string()),
-            ("ANARLOG_CLOUDSYNC_TOKEN", "token".to_string()),
+            ("MEETSPACE_CLOUDSYNC_API_KEY", "api-key".to_string()),
+            ("MEETSPACE_CLOUDSYNC_TOKEN", "token".to_string()),
         ]);
 
         let error = cloudsync_runtime_config(|key| values.get(key).cloned()).unwrap_err();
@@ -185,10 +185,10 @@ mod tests {
     fn cloudsync_static_auth_requires_explicit_opt_in() {
         let values = HashMap::from([
             (
-                "ANARLOG_CLOUDSYNC_E2EE_DATABASE_ID",
+                "MEETSPACE_CLOUDSYNC_E2EE_DATABASE_ID",
                 "managed-database-id".to_string(),
             ),
-            ("ANARLOG_CLOUDSYNC_API_KEY", "api-key".to_string()),
+            ("MEETSPACE_CLOUDSYNC_API_KEY", "api-key".to_string()),
         ]);
 
         let config = cloudsync_runtime_config(|key| values.get(key).cloned()).unwrap();

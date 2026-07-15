@@ -4,12 +4,12 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use chrono::Utc;
-use hypr_analytics::{AnalyticsPayload, PropertiesPayload, ToAnalyticsPayload};
+use meetspace_analytics::{AnalyticsPayload, PropertiesPayload, ToAnalyticsPayload};
 use serde::{Deserialize, Serialize};
 use std::sync::LazyLock;
 use utoipa::{IntoParams, ToSchema};
 
-use hypr_api_error::error_response;
+use meetspace_api_error::error_response;
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]

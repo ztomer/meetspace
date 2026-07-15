@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { schema } from "@hypr/editor/note";
+import { schema } from "@meetspace/editor/note";
 
 import {
   documentTitlePlaceholder,

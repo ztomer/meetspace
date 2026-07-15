@@ -40,7 +40,7 @@ const mocks = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("@hypr/ui/components/ui/toast", () => ({
+vi.mock("@meetspace/ui/components/ui/toast", () => ({
   sonnerToast: {
     message: mocks.message,
     error: mocks.error,
@@ -99,7 +99,7 @@ vi.mock("~/store/zustand/toast-action", () => ({
 
 vi.mock("~/stt/capabilities", () => ({
   isConfiguredSttModel: () => true,
-  isHyprnoteCloudSttModel: () => false,
+  isMeetspaceCloudSttModel: () => false,
 }));
 
 vi.mock("~/stt/contexts", () => ({

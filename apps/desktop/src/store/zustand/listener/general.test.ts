@@ -31,31 +31,31 @@ vi.mock("@tauri-apps/api/app", () => ({
   getIdentifier: getIdentifierMock,
 }));
 
-vi.mock("@hypr/plugin-detect", () => ({
+vi.mock("@meetspace/plugin-detect", () => ({
   commands: {
     listMicUsingApplications: listMicUsingApplicationsMock,
   },
 }));
 
-vi.mock("@hypr/plugin-hooks", () => ({
+vi.mock("@meetspace/plugin-hooks", () => ({
   commands: {
     runEventHooks: runEventHooksMock,
   },
 }));
 
-vi.mock("@hypr/plugin-icon", () => ({
+vi.mock("@meetspace/plugin-icon", () => ({
   commands: {
     setRecordingIndicator: setRecordingIndicatorMock,
   },
 }));
 
-vi.mock("@hypr/plugin-settings", () => ({
+vi.mock("@meetspace/plugin-settings", () => ({
   commands: {
     vaultBase: vaultBaseMock,
   },
 }));
 
-vi.mock("@hypr/plugin-transcription", () => ({
+vi.mock("@meetspace/plugin-transcription", () => ({
   commands: {
     getCaptureSnapshot: getCaptureSnapshotMock,
     setMicMuted: vi.fn(),
@@ -94,7 +94,7 @@ describe("General Listener Slice", () => {
   beforeEach(() => {
     store = createListenerStore();
     vi.clearAllMocks();
-    getIdentifierMock.mockResolvedValue("com.hyprnote.stable");
+    getIdentifierMock.mockResolvedValue("com.meetspace.stable");
     getCaptureSnapshotMock.mockResolvedValue({
       status: "ok",
       data: {
@@ -113,7 +113,7 @@ describe("General Listener Slice", () => {
     setRecordingIndicatorMock.mockResolvedValue({ status: "ok", data: null });
     startCaptureMock.mockResolvedValue({ status: "ok", data: null });
     stopCaptureMock.mockResolvedValue({ status: "ok", data: null });
-    vaultBaseMock.mockResolvedValue({ status: "ok", data: "/tmp/anarlog" });
+    vaultBaseMock.mockResolvedValue({ status: "ok", data: "/tmp/meetspace" });
   });
 
   describe("Initial State", () => {
@@ -1084,7 +1084,7 @@ describe("General Listener Slice", () => {
       await expect(
         store.getState().startTranscription({
           session_id: sessionId,
-          provider: "hyprnote",
+          provider: "meetspace",
           file_path: "/tmp/session.wav",
           base_url: "",
           api_key: "",

@@ -10,7 +10,7 @@ const mocks = vi.hoisted(() => ({
   getRecurringMeetingHistory: vi.fn(),
 }));
 
-vi.mock("@hypr/plugin-db", () => mocks);
+vi.mock("@meetspace/plugin-db", () => mocks);
 
 import {
   buildGetMeetingTool,
@@ -85,7 +85,7 @@ describe("canonical meeting chat tools", () => {
     const snapshot = readFileSync(
       resolve(
         repositoryRoot,
-        "apps/cli/src/snapshots/anarlog_cli__mcp__tests__mcp_contract.snap",
+        "apps/cli/src/snapshots/meetspace_cli__mcp__tests__mcp_contract.snap",
       ),
       "utf8",
     );

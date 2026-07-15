@@ -3,11 +3,11 @@ import type { App, Image } from "modal";
 import { env } from "../env";
 import { getModalClient } from "./client";
 
-const APP_NAME = "hypr-slack-internal";
+const APP_NAME = "meetspace-slack-internal";
 const DEFAULT_TIMEOUT_MS = 5 * 60 * 1000;
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 1000;
-export const REPO_PATH = "/root/hyprnote";
+export const REPO_PATH = "/root/meetspace";
 
 export type BunSandbox = Awaited<ReturnType<typeof createBunSandbox>>;
 
@@ -32,7 +32,7 @@ async function getAppAndImage(): Promise<{
       "RUN npm install -g @anthropic-ai/claude-code",
       "WORKDIR /app",
       "RUN bun add stripe @supabase/supabase-js loops pg posthog-node",
-      `RUN git clone --depth 1 https://github.com/fastrepl/hyprnote.git ${REPO_PATH}`,
+      `RUN git clone --depth 1 https://github.com/fastrepl/meetspace.git ${REPO_PATH}`,
     ]);
 
   return { app: cachedApp, image };

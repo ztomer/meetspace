@@ -13,12 +13,12 @@ pub enum Error {
     UnsupportedVersion(u8),
 }
 
-impl From<hypr_hooks::Error> for Error {
-    fn from(e: hypr_hooks::Error) -> Self {
+impl From<meetspace_hooks::Error> for Error {
+    fn from(e: meetspace_hooks::Error) -> Self {
         match e {
-            hypr_hooks::Error::ConfigLoad(s) => Error::ConfigLoad(s),
-            hypr_hooks::Error::ConfigParse(s) => Error::ConfigParse(s),
-            hypr_hooks::Error::UnsupportedVersion(v) => Error::UnsupportedVersion(v),
+            meetspace_hooks::Error::ConfigLoad(s) => Error::ConfigLoad(s),
+            meetspace_hooks::Error::ConfigParse(s) => Error::ConfigParse(s),
+            meetspace_hooks::Error::UnsupportedVersion(v) => Error::UnsupportedVersion(v),
         }
     }
 }

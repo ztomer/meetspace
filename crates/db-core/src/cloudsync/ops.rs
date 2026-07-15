@@ -8,7 +8,7 @@ use crate::Db;
 impl Db {
     async fn lock_cloudsync_connection(
         &self,
-    ) -> Result<MutexGuard<'_, Option<PoolConnection<Sqlite>>>, hypr_cloudsync::Error> {
+    ) -> Result<MutexGuard<'_, Option<PoolConnection<Sqlite>>>, meetspace_cloudsync::Error> {
         let mut connection = self.cloudsync_connection.lock().await;
         if connection.is_none() {
             *connection = Some(self.pool.acquire().await?);
@@ -37,9 +37,9 @@ impl Db {
         self.cloudsync_path.as_deref()
     }
 
-    pub async fn cloudsync_version(&self) -> Result<String, hypr_cloudsync::Error> {
+    pub async fn cloudsync_version(&self) -> Result<String, meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
-        let result = hypr_cloudsync::version(&mut **connection.as_mut().unwrap()).await;
+        let result = meetspace_cloudsync::version(&mut **connection.as_mut().unwrap()).await;
         self.release_single_pool_connection(&mut connection);
         result
     }
@@ -49,9 +49,9 @@ impl Db {
         table_name: &str,
         crdt_algo: Option<&str>,
         init_flags: Option<i64>,
-    ) -> Result<(), hypr_cloudsync::Error> {
+    ) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
-        let result = hypr_cloudsync::init(
+        let result = meetspace_cloudsync::init(
             &mut **connection.as_mut().unwrap(),
             table_name,
             crdt_algo,
@@ -133,10 +133,10 @@ impl Db {
     pub async fn cloudsync_network_init(
         &self,
         connection_string: &str,
-    ) -> Result<(), hypr_cloudsync::Error> {
+    ) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
         let result =
-            hypr_cloudsync::network_init(&mut **connection.as_mut().unwrap(), connection_string)
+            meetspace_cloudsync::network_init(&mut **connection.as_mut().unwrap(), connection_string)
                 .await;
         self.release_single_pool_connection(&mut connection);
         result
@@ -145,10 +145,10 @@ impl Db {
     pub async fn cloudsync_network_set_apikey(
         &self,
         api_key: &str,
-    ) -> Result<(), hypr_cloudsync::Error> {
+    ) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
         let result =
-            hypr_cloudsync::network_set_apikey(&mut **connection.as_mut().unwrap(), api_key).await;
+            meetspace_cloudsync::network_set_apikey(&mut **connection.as_mut().unwrap(), api_key).await;
         self.release_single_pool_connection(&mut connection);
         result
     }
@@ -156,10 +156,10 @@ impl Db {
     pub async fn cloudsync_network_set_token(
         &self,
         token: &str,
-    ) -> Result<(), hypr_cloudsync::Error> {
+    ) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
         let result =
-            hypr_cloudsync::network_set_token(&mut **connection.as_mut().unwrap(), token).await;
+            meetspace_cloudsync::network_set_token(&mut **connection.as_mut().unwrap(), token).await;
         self.release_single_pool_connection(&mut connection);
         result
     }
@@ -167,7 +167,7 @@ impl Db {
     pub async fn cloudsync_begin_alter(
         &self,
         table_name: &str,
-    ) -> Result<(), hypr_cloudsync::Error> {
+    ) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
         let result =
             cloudsync_begin_alter_on(&mut **connection.as_mut().unwrap(), table_name).await;
@@ -178,7 +178,7 @@ impl Db {
     pub async fn cloudsync_commit_alter(
         &self,
         table_name: &str,
-    ) -> Result<(), hypr_cloudsync::Error> {
+    ) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
         let result =
             cloudsync_commit_alter_on(&mut **connection.as_mut().unwrap(), table_name).await;
@@ -186,21 +186,21 @@ impl Db {
         result
     }
 
-    pub async fn cloudsync_cleanup(&self, table_name: &str) -> Result<(), hypr_cloudsync::Error> {
+    pub async fn cloudsync_cleanup(&self, table_name: &str) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
-        let result = hypr_cloudsync::cleanup(&mut **connection.as_mut().unwrap(), table_name).await;
+        let result = meetspace_cloudsync::cleanup(&mut **connection.as_mut().unwrap(), table_name).await;
         self.release_single_pool_connection(&mut connection);
         result
     }
 
-    pub async fn cloudsync_terminate(&self) -> Result<(), hypr_cloudsync::Error> {
+    pub async fn cloudsync_terminate(&self) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
-        let result = hypr_cloudsync::terminate(&mut **connection.as_mut().unwrap()).await;
+        let result = meetspace_cloudsync::terminate(&mut **connection.as_mut().unwrap()).await;
         self.release_single_pool_connection(&mut connection);
         result
     }
 
-    pub(crate) async fn cloudsync_terminate_and_close(&self) -> Result<(), hypr_cloudsync::Error> {
+    pub(crate) async fn cloudsync_terminate_and_close(&self) -> Result<(), meetspace_cloudsync::Error> {
         self.cloudsync_initializer.clear();
         let mut pinned = self.lock_cloudsync_connection().await?;
         let mut connections = Vec::new();
@@ -219,11 +219,11 @@ impl Db {
         }
 
         let mut terminate_error = None;
-        if let Err(error) = hypr_cloudsync::terminate(&mut **pinned.as_mut().unwrap()).await {
+        if let Err(error) = meetspace_cloudsync::terminate(&mut **pinned.as_mut().unwrap()).await {
             terminate_error = Some(error);
         }
         for connection in &mut connections {
-            if let Err(error) = hypr_cloudsync::terminate(&mut **connection).await
+            if let Err(error) = meetspace_cloudsync::terminate(&mut **connection).await
                 && terminate_error.is_none()
             {
                 terminate_error = Some(error);
@@ -240,40 +240,40 @@ impl Db {
         close_result
     }
 
-    pub(crate) async fn cloudsync_close_connection(&self) -> Result<(), hypr_cloudsync::Error> {
+    pub(crate) async fn cloudsync_close_connection(&self) -> Result<(), meetspace_cloudsync::Error> {
         let connection = self.cloudsync_connection.lock().await.take();
         match connection {
             Some(connection) => connection
                 .close()
                 .await
-                .map_err(hypr_cloudsync::Error::from),
+                .map_err(meetspace_cloudsync::Error::from),
             None => Ok(()),
         }
     }
 
-    pub async fn cloudsync_network_cleanup(&self) -> Result<(), hypr_cloudsync::Error> {
+    pub async fn cloudsync_network_cleanup(&self) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
-        let result = hypr_cloudsync::network_cleanup(&mut **connection.as_mut().unwrap()).await;
+        let result = meetspace_cloudsync::network_cleanup(&mut **connection.as_mut().unwrap()).await;
         self.release_single_pool_connection(&mut connection);
         result
     }
 
     pub async fn cloudsync_network_has_unsent_changes(
         &self,
-    ) -> Result<bool, hypr_cloudsync::Error> {
+    ) -> Result<bool, meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
         let result =
-            hypr_cloudsync::network_has_unsent_changes(&mut **connection.as_mut().unwrap()).await;
+            meetspace_cloudsync::network_has_unsent_changes(&mut **connection.as_mut().unwrap()).await;
         self.release_single_pool_connection(&mut connection);
         result
     }
 
     pub async fn cloudsync_network_send_changes(
         &self,
-    ) -> Result<hypr_cloudsync::NetworkResult, hypr_cloudsync::Error> {
+    ) -> Result<meetspace_cloudsync::NetworkResult, meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
         let result =
-            hypr_cloudsync::network_send_changes(&mut **connection.as_mut().unwrap()).await;
+            meetspace_cloudsync::network_send_changes(&mut **connection.as_mut().unwrap()).await;
         self.release_single_pool_connection(&mut connection);
         result
     }
@@ -281,9 +281,9 @@ impl Db {
     pub async fn cloudsync_network_receive_changes(
         &self,
         max_chunks: Option<i64>,
-    ) -> Result<hypr_cloudsync::NetworkResult, hypr_cloudsync::Error> {
+    ) -> Result<meetspace_cloudsync::NetworkResult, meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
-        let result = hypr_cloudsync::network_receive_changes(
+        let result = meetspace_cloudsync::network_receive_changes(
             &mut **connection.as_mut().unwrap(),
             max_chunks,
         )
@@ -295,21 +295,21 @@ impl Db {
     pub async fn cloudsync_network_check_changes(
         &self,
         max_chunks: Option<i64>,
-    ) -> Result<hypr_cloudsync::NetworkResult, hypr_cloudsync::Error> {
+    ) -> Result<meetspace_cloudsync::NetworkResult, meetspace_cloudsync::Error> {
         self.cloudsync_network_receive_changes(max_chunks).await
     }
 
-    pub async fn cloudsync_network_reset_sync_version(&self) -> Result<(), hypr_cloudsync::Error> {
+    pub async fn cloudsync_network_reset_sync_version(&self) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
         let result =
-            hypr_cloudsync::network_reset_sync_version(&mut **connection.as_mut().unwrap()).await;
+            meetspace_cloudsync::network_reset_sync_version(&mut **connection.as_mut().unwrap()).await;
         self.release_single_pool_connection(&mut connection);
         result
     }
 
-    pub async fn cloudsync_network_logout(&self) -> Result<(), hypr_cloudsync::Error> {
+    pub async fn cloudsync_network_logout(&self) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
-        let result = hypr_cloudsync::network_logout(&mut **connection.as_mut().unwrap()).await;
+        let result = meetspace_cloudsync::network_logout(&mut **connection.as_mut().unwrap()).await;
         self.release_single_pool_connection(&mut connection);
         result
     }
@@ -318,10 +318,10 @@ impl Db {
         &self,
         wait_ms: Option<i64>,
         max_retries: Option<i64>,
-    ) -> Result<hypr_cloudsync::NetworkResult, hypr_cloudsync::Error> {
+    ) -> Result<meetspace_cloudsync::NetworkResult, meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
         let result =
-            hypr_cloudsync::network_sync(&mut **connection.as_mut().unwrap(), wait_ms, max_retries)
+            meetspace_cloudsync::network_sync(&mut **connection.as_mut().unwrap(), wait_ms, max_retries)
                 .await;
         self.release_single_pool_connection(&mut connection);
         result
@@ -330,7 +330,7 @@ impl Db {
     pub(crate) async fn apply_cloudsync_auth(
         &self,
         auth: &CloudsyncAuth,
-    ) -> Result<(), hypr_cloudsync::Error> {
+    ) -> Result<(), meetspace_cloudsync::Error> {
         match auth {
             CloudsyncAuth::None => Ok(()),
             CloudsyncAuth::ApiKey { api_key } => self.cloudsync_network_set_apikey(api_key).await,
@@ -359,31 +359,31 @@ async fn init_enabled_tables(
 pub async fn cloudsync_begin_alter_on<'e, E>(
     executor: E,
     table_name: &str,
-) -> Result<(), hypr_cloudsync::Error>
+) -> Result<(), meetspace_cloudsync::Error>
 where
     E: Executor<'e, Database = Sqlite>,
 {
-    hypr_cloudsync::begin_alter(executor, table_name).await
+    meetspace_cloudsync::begin_alter(executor, table_name).await
 }
 
 pub async fn cloudsync_is_enabled_on<'e, E>(
     executor: E,
     table_name: &str,
-) -> Result<bool, hypr_cloudsync::Error>
+) -> Result<bool, meetspace_cloudsync::Error>
 where
     E: Executor<'e, Database = Sqlite>,
 {
-    hypr_cloudsync::is_enabled(executor, table_name).await
+    meetspace_cloudsync::is_enabled(executor, table_name).await
 }
 
 pub async fn cloudsync_commit_alter_on<'e, E>(
     executor: E,
     table_name: &str,
-) -> Result<(), hypr_cloudsync::Error>
+) -> Result<(), meetspace_cloudsync::Error>
 where
     E: Executor<'e, Database = Sqlite>,
 {
-    hypr_cloudsync::commit_alter(executor, table_name).await
+    meetspace_cloudsync::commit_alter(executor, table_name).await
 }
 
 async fn close_pool_connections(

@@ -23,7 +23,7 @@ import {
 } from "~/settings/schema";
 import {
   isConfiguredSttModel,
-  isHyprnoteLocalSttModel,
+  isMeetspaceLocalSttModel,
 } from "~/stt/capabilities";
 import {
   getDefaultSttModel,
@@ -468,7 +468,7 @@ async function syncLocalSttServer(): Promise<void> {
     ]);
   }
 
-  if (isHyprnoteLocalSttModel(provider, model)) {
+  if (isMeetspaceLocalSttModel(provider, model)) {
     await localSttCommands.startServer(model);
   } else {
     await localSttCommands.stopServer(null);

@@ -231,7 +231,7 @@ describe("CloudSync auth lifecycle", () => {
         method: "POST",
         headers: {
           Authorization: "Bearer supabase-token",
-          "X-Anarlog-E2EE-Key-Id": E2EE_KEY_ID,
+          "X-Meetspace-E2EE-Key-Id": E2EE_KEY_ID,
         },
       }),
     );
@@ -508,7 +508,7 @@ describe("CloudSync auth lifecycle", () => {
           JSON.stringify({
             error: {
               code: "subscription_required",
-              message: "Anarlog Pro is required for CloudSync",
+              message: "Meetspace Pro is required for CloudSync",
             },
           }),
           { status: 403, headers: { "Content-Type": "application/json" } },
@@ -525,7 +525,7 @@ describe("CloudSync auth lifecycle", () => {
     expect(configureCloudsyncToken).not.toHaveBeenCalled();
     expect(suspendCloudsync).toHaveBeenCalledTimes(1);
     expect(warn).toHaveBeenCalledWith(
-      "[cloudsync] Anarlog Pro is required; sync remains disabled",
+      "[cloudsync] Meetspace Pro is required; sync remains disabled",
     );
   });
 

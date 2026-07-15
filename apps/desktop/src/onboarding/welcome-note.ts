@@ -9,15 +9,15 @@ import {
 import { createSession } from "~/session/queries";
 import { DEFAULT_USER_ID } from "~/shared/utils";
 
-const PENDING_WELCOME_SESSION_KEY = "anarlog.pending-welcome-session";
+const PENDING_WELCOME_SESSION_KEY = "meetspace.pending-welcome-session";
 
-const WELCOME_NOTE = `Welcome to Anarlog 👋
-
-
-This note is a quick way to see how Anarlog works.
+const WELCOME_NOTE = `Welcome to Meetspace 👋
 
 
-Click **Join & record** in the top-right corner. It will open a private, prerecorded demo meeting, so you don't have to worry about your camera or microphone. Anarlog will listen, transcribe the conversation, and turn it into notes just like a real meeting.
+This note is a quick way to see how Meetspace works.
+
+
+Click **Join & record** in the top-right corner. It will open a private, prerecorded demo meeting, so you don't have to worry about your camera or microphone. Meetspace will listen, transcribe the conversation, and turn it into notes just like a real meeting.
 
 
 When the video ends, come back here to review the transcript and notes.`;
@@ -68,16 +68,16 @@ async function findOrCreateWelcomeSession(): Promise<string> {
   const event: SessionEvent = {
     tracking_id: WELCOME_NOTE_TRACKING_ID,
     calendar_id: "",
-    title: "Welcome to Anarlog",
+    title: "Welcome to Meetspace",
     started_at: now,
     ended_at: "",
     is_all_day: false,
     has_recurrence_rules: false,
     meeting_link: WELCOME_NOTE_DEMO_URL,
-    description: "A private, prerecorded introduction to Anarlog.",
+    description: "A private, prerecorded introduction to Meetspace.",
   };
 
-  return createSession("Welcome to Anarlog", DEFAULT_USER_ID, {
+  return createSession("Welcome to Meetspace", DEFAULT_USER_ID, {
     event_json: JSON.stringify(event),
     raw_md: JSON.stringify(md2json(WELCOME_NOTE)),
   });

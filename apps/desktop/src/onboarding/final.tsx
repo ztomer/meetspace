@@ -22,7 +22,7 @@ const SOCIALS = [
   {
     label: "Discord",
     icon: "simple-icons:discord",
-    url: "https://anarlog.so/discord",
+    url: "https://meetspace.so/discord",
   },
   {
     label: "GitHub",
@@ -102,17 +102,17 @@ export function FinalSection({
         {status === "loading" ? (
           <span className="flex items-center gap-2">
             <Loader2Icon className="size-4 animate-spin" />
-            <Trans>Open Anarlog</Trans>
+            <Trans>Open Meetspace</Trans>
           </span>
         ) : (
-          <Trans>Open Anarlog</Trans>
+          <Trans>Open Meetspace</Trans>
         )}
       </OnboardingButton>
       {status === "error" && (
         <p className="text-sm text-red-500" role="alert">
           {translate({
             id: "onboarding.finish-error",
-            message: "Couldn't open Anarlog. Please try again.",
+            message: "Couldn't open Meetspace. Please try again.",
           })}
         </p>
       )}

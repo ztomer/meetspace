@@ -15,7 +15,7 @@ pub fn is_model_downloaded(model: &SupportedModel, models_dir: &Path) -> Result<
         return Ok(false);
     }
 
-    let actual = hypr_file::file_size(&path)?;
+    let actual = meetspace_file::file_size(&path)?;
     if actual != model.model_size() {
         return Ok(false);
     }
@@ -58,14 +58,14 @@ pub fn list_custom_models() -> Result<Vec<CustomModelInfo>, Error> {
     {
         let app_data_dir = dirs::data_dir()
             .ok_or_else(|| Error::Other("application data directory is unavailable".to_string()))?;
-        let gguf_files = hypr_lmstudio::list_models(app_data_dir)?;
+        let gguf_files = meetspace_lmstudio::list_models(app_data_dir)?;
 
         let mut custom_models = Vec::new();
         for path_str in gguf_files {
             let path = std::path::Path::new(&path_str);
             if path.exists() {
                 let name = {
-                    use hypr_gguf::GgufExt;
+                    use meetspace_gguf::GgufExt;
                     path.model_name()
                 };
 

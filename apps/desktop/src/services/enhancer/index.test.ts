@@ -13,7 +13,7 @@ const mocks = vi.hoisted(() => ({
   listenerSubscribe: vi.fn(),
 }));
 
-vi.mock("@hypr/plugin-analytics", () => ({
+vi.mock("@meetspace/plugin-analytics", () => ({
   commands: { event: mocks.analyticsEvent },
 }));
 

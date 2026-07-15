@@ -22,7 +22,7 @@ use crate::menu_items::{
 };
 use tauri_plugin_store2::Store2PluginExt;
 
-const TRAY_ID: &str = "hypr-tray";
+const TRAY_ID: &str = "meetspace-tray";
 
 static IS_RECORDING: AtomicBool = AtomicBool::new(false);
 static IS_DEGRADED: AtomicBool = AtomicBool::new(false);

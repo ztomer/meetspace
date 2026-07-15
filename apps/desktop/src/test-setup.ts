@@ -50,7 +50,7 @@ vi.mock("@tauri-apps/api/path", () => ({
   sep: vi.fn().mockReturnValue("/"),
 }));
 
-vi.mock("@hypr/plugin-db", () => ({
+vi.mock("@meetspace/plugin-db", () => ({
   bindCloudsyncAccount: vi.fn().mockResolvedValue(true),
   configureCloudsyncToken: vi.fn().mockResolvedValue("configured"),
   execute: vi.fn().mockResolvedValue([]),
@@ -160,7 +160,7 @@ vi.mock("@lingui/react", () => ({
   }),
 }));
 
-vi.mock("@hypr/plugin-analytics", () => ({
+vi.mock("@meetspace/plugin-analytics", () => ({
   commands: {
     event: vi.fn().mockResolvedValue({ status: "ok", data: null }),
     setProperties: vi.fn().mockResolvedValue({ status: "ok", data: null }),

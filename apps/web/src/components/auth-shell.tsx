@@ -1,4 +1,4 @@
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 export const authInputClassName = cn([
   "h-12 w-full rounded-xl border border-[#d9d1c5] bg-white px-4",
@@ -56,7 +56,7 @@ export function AuthShell({
               </mark>
             </h2>
             <p className="mt-7 max-w-xl text-lg leading-8 text-[#4f4940]">
-              Jot notes during the call. Anarlog turns them into an editable
+              Jot notes during the call. Meetspace turns them into an editable
               summary while your work stays in your hands.
             </p>
 

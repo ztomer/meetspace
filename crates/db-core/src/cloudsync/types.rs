@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-pub use hypr_cloudsync::CloudsyncTableSpec;
-pub use hypr_cloudsync::NetworkResult as CloudsyncNetworkResult;
+pub use meetspace_cloudsync::CloudsyncTableSpec;
+pub use meetspace_cloudsync::NetworkResult as CloudsyncNetworkResult;
 
 #[derive(Clone, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
@@ -88,15 +88,15 @@ pub enum CloudsyncRuntimeError {
     #[error("cloudsync has unsent local changes; sync first or explicitly discard them")]
     UnsentChanges,
     #[error(transparent)]
-    Cloudsync(#[from] hypr_cloudsync::Error),
+    Cloudsync(#[from] meetspace_cloudsync::Error),
 }
 
-impl From<hypr_cloudsync::ErrorKind> for CloudsyncErrorKind {
-    fn from(kind: hypr_cloudsync::ErrorKind) -> Self {
+impl From<meetspace_cloudsync::ErrorKind> for CloudsyncErrorKind {
+    fn from(kind: meetspace_cloudsync::ErrorKind) -> Self {
         match kind {
-            hypr_cloudsync::ErrorKind::Transient => Self::Transient,
-            hypr_cloudsync::ErrorKind::Auth => Self::Auth,
-            hypr_cloudsync::ErrorKind::Fatal => Self::Fatal,
+            meetspace_cloudsync::ErrorKind::Transient => Self::Transient,
+            meetspace_cloudsync::ErrorKind::Auth => Self::Auth,
+            meetspace_cloudsync::ErrorKind::Fatal => Self::Fatal,
         }
     }
 }

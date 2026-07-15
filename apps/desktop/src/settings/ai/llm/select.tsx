@@ -232,7 +232,7 @@ export function SelectProviderAndModel() {
     settingsReady,
   });
   const alertDescription = showMissingModelWarning
-    ? t`Language model is needed to make Anarlog summarize and chat about your conversations.`
+    ? t`Language model is needed to make Meetspace summarize and chat about your conversations.`
     : providerSettingsReady &&
         settingsReady &&
         !isResolvingSelection &&

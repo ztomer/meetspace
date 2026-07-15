@@ -9,22 +9,22 @@ description = ""
 
 [features]
 default = []
-whisper-cpp = ["dep:hypr-transcribe-whisper-local", "dep:hypr-whisper-local"]
-coreml = ["whisper-cpp", "hypr-transcribe-whisper-local/coreml"]
-directml = ["whisper-cpp", "hypr-transcribe-whisper-local/directml"]
-cuda = ["whisper-cpp", "hypr-transcribe-whisper-local/cuda"]
-hipblas = ["whisper-cpp", "hypr-transcribe-whisper-local/hipblas"]
-openblas = ["whisper-cpp", "hypr-transcribe-whisper-local/openblas"]
-metal = ["whisper-cpp", "hypr-transcribe-whisper-local/metal"]
-vulkan = ["whisper-cpp", "hypr-transcribe-whisper-local/vulkan"]
-openmp = ["whisper-cpp", "hypr-transcribe-whisper-local/openmp"]
+whisper-cpp = ["dep:meetspace-transcribe-whisper-local", "dep:meetspace-whisper-local"]
+coreml = ["whisper-cpp", "meetspace-transcribe-whisper-local/coreml"]
+directml = ["whisper-cpp", "meetspace-transcribe-whisper-local/directml"]
+cuda = ["whisper-cpp", "meetspace-transcribe-whisper-local/cuda"]
+hipblas = ["whisper-cpp", "meetspace-transcribe-whisper-local/hipblas"]
+openblas = ["whisper-cpp", "meetspace-transcribe-whisper-local/openblas"]
+metal = ["whisper-cpp", "meetspace-transcribe-whisper-local/metal"]
+vulkan = ["whisper-cpp", "meetspace-transcribe-whisper-local/vulkan"]
+openmp = ["whisper-cpp", "meetspace-transcribe-whisper-local/openmp"]
 [build-dependencies]
 tauri-plugin = { workspace = true, features = ["build"] }
 
 [dev-dependencies]
-hypr-audio-utils = { workspace = true }
-hypr-data = { workspace = true }
-hypr-language = { workspace = true, features = ["whisper"] }
+meetspace-audio-utils = { workspace = true }
+meetspace-data = { workspace = true }
+meetspace-language = { workspace = true, features = ["whisper"] }
 
 dirs = { workspace = true }
 reqwest = { workspace = true }
@@ -35,19 +35,19 @@ tokio-tungstenite = { workspace = true }
 tower = { workspace = true }
 
 [dependencies]
-hypr-am = { workspace = true }
-hypr-audio-utils = { workspace = true }
-hypr-download-interface = { workspace = true }
-hypr-file = { workspace = true }
-hypr-host = { workspace = true }
-hypr-language = { workspace = true, features = ["whisper"] }
-hypr-local-model = { workspace = true }
-hypr-local-stt-core = { workspace = true, features = ["specta"] }
-hypr-model-downloader = { workspace = true, features = ["specta"] }
-hypr-transcribe-soniqo = { workspace = true }
-hypr-transcribe-whisper-local = { workspace = true, optional = true }
-hypr-whisper-local = { workspace = true, optional = true }
-hypr-whisper-local-model = { workspace = true }
+meetspace-am = { workspace = true }
+meetspace-audio-utils = { workspace = true }
+meetspace-download-interface = { workspace = true }
+meetspace-file = { workspace = true }
+meetspace-host = { workspace = true }
+meetspace-language = { workspace = true, features = ["whisper"] }
+meetspace-local-model = { workspace = true }
+meetspace-local-stt-core = { workspace = true, features = ["specta"] }
+meetspace-model-downloader = { workspace = true, features = ["specta"] }
+meetspace-transcribe-soniqo = { workspace = true }
+meetspace-transcribe-whisper-local = { workspace = true, optional = true }
+meetspace-whisper-local = { workspace = true, optional = true }
+meetspace-whisper-local-model = { workspace = true }
 
 owhisper-client = { workspace = true }
 owhisper-interface = { workspace = true }
@@ -79,7 +79,7 @@ tokio = { workspace = true, features = ["rt", "macros"] }
 tokio-util = { workspace = true }
 tracing = { workspace = true }
 
-hypr-supervisor = { workspace = true }
+meetspace-supervisor = { workspace = true }
 ractor = { workspace = true, features = ["async-trait"] }
 
 port-killer = "0.1.0"

@@ -8,10 +8,10 @@ import {
 import { useEffect, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { ChatEditor, type ChatEditorHandle } from "@hypr/editor/chat";
-import type { PlaceholderFunction } from "@hypr/editor/plugins";
-import { commands as windowsCommands } from "@hypr/plugin-windows";
-import { cn } from "@hypr/utils";
+import { ChatEditor, type ChatEditorHandle } from "@meetspace/editor/chat";
+import type { PlaceholderFunction } from "@meetspace/editor/plugins";
+import { commands as windowsCommands } from "@meetspace/plugin-windows";
+import { cn } from "@meetspace/utils";
 
 import { useLanguageModel } from "~/ai/hooks";
 import {
@@ -95,7 +95,7 @@ export function ComposerScreen() {
               }
               onStop={sessionProps.stop}
               onSendMessage={sendMessage}
-              title={currentChatGroup?.title || "Ask Anarlog AI anything"}
+              title={currentChatGroup?.title || "Ask Meetspace AI anything"}
             />
           ) : (
             <ComposerSettingsCard />
@@ -220,7 +220,7 @@ function ComposerInput({
             ])}
           >
             <ArrowUpRightIcon className="size-3.5" />
-            Open Anarlog
+            Open Meetspace
           </button>
           <button
             type="button"
@@ -300,7 +300,7 @@ function ComposerInput({
 
 const composerPlaceholder: PlaceholderFunction = ({ node, pos }) => {
   if (node.type.name === "paragraph" && pos === 0) {
-    return "Message Anarlog AI";
+    return "Message Meetspace AI";
   }
 
   return "";

@@ -1,4 +1,4 @@
-import type { EventParticipant } from "@hypr/store";
+import type { EventParticipant } from "@meetspace/store";
 
 import { executeTransaction, liveQueryClient, useLiveQuery } from "~/db";
 import { enqueueDatabaseWrite } from "~/db/write-queue";

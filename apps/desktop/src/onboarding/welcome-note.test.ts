@@ -35,7 +35,7 @@ it("reuses an existing onboarding welcome note", async () => {
   await expect(getOrCreateWelcomeSession()).resolves.toBe("welcome-session");
   expect(mocks.createSession).not.toHaveBeenCalled();
   expect(mocks.execute).toHaveBeenCalledWith(expect.any(String), [
-    "anarlog-onboarding-demo-v1",
+    "meetspace-onboarding-demo-v1",
   ]);
 });
 
@@ -47,9 +47,9 @@ it("creates a prerecorded demo note with normal meeting metadata", async () => {
 
   const [title, , initial] = mocks.createSession.mock.calls[0];
   const event = JSON.parse(initial.event_json);
-  expect(title).toBe("Welcome to Anarlog");
-  expect(event.meeting_link).toBe("https://anarlog.so/onboarding-demo/");
-  expect(event.tracking_id).toBe("anarlog-onboarding-demo-v1");
+  expect(title).toBe("Welcome to Meetspace");
+  expect(event.meeting_link).toBe("https://meetspace.so/onboarding-demo/");
+  expect(event.tracking_id).toBe("meetspace-onboarding-demo-v1");
   expect(initial.raw_md).toContain("prerecorded demo meeting");
   expect(initial.raw_md).toContain("Join & record");
 
