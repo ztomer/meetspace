@@ -1558,34 +1558,6 @@ msgstr ""
 msgid "You can"
 msgstr ""
 
-#: src/session/components/note-input/enhanced/config-error.tsx
-msgid "You need to configure a language model to summarize this meeting"
-msgstr ""
-
-#: src/session/components/note-input/enhanced/config-error.tsx
-msgid "You need to configure the API key and base URL for your language model provider"
-msgstr ""
-
-#: src/session/components/note-input/enhanced/config-error.tsx
-msgid "You need to configure the API key for your language model provider"
-msgstr ""
-
-#: src/session/components/note-input/enhanced/config-error.tsx
-msgid "You need to configure the base URL for your language model provider"
-msgstr ""
-
-#: src/session/components/note-input/enhanced/config-error.tsx
-msgid "You need to select a model to summarize this meeting"
-msgstr ""
-
-#: src/session/components/note-input/enhanced/config-error.tsx
-msgid "You need to sign in to use Meetspace's language model"
-msgstr ""
-
-#: src/session/components/note-input/enhanced/config-error.tsx
-msgid "Your Meetspace plan has expired. Configure another language model or renew your plan"
-msgstr ""
-
 #: src/templates/template-sidebar.tsx
 msgid "Z to A"
 msgstr ""
