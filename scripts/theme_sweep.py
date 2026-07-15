@@ -47,12 +47,13 @@ def print_ok(message):
 # so overlapping patterns should be avoided.
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class Rule:
     pattern: str
     replacement: str
     note: str
-    safe: bool = True          # safe=False → only applied when not @theme-partial-keep
+    safe: bool = True  # safe=False → only applied when not @theme-partial-keep
     compiled: re.Pattern = None
 
     def __post_init__(self):
@@ -65,141 +66,252 @@ RULES: list[Rule] = [
     # These only fire when paired with dark: overrides in same class string.
     # Use @theme-keep to suppress on intentional inverse-colour patterns.
     # -----------------------------------------------------------------------
-    Rule(r"bg-white", "bg-popover",
-         "bg-white inside card/popover should use semantic bg-popover",
-         safe=False),
-
+    Rule(
+        r"bg-white",
+        "bg-popover",
+        "bg-white inside card/popover should use semantic bg-popover",
+        safe=False,
+    ),
     # -----------------------------------------------------------------------
     # GRADIENT stones (update button)
     # -----------------------------------------------------------------------
-    Rule(r"from-stone-600", "from-primary/80",
-         "stone-600 gradient start → primary"),
-    Rule(r"to-stone-500", "to-primary/70",
-         "stone-500 gradient end → primary"),
-    Rule(r"hover:from-stone-500", "hover:from-primary/70",
-         "stone-500 hover gradient start"),
-    Rule(r"hover:to-stone-400", "hover:to-primary/60",
-         "stone-400 hover gradient end"),
-
+    Rule(r"from-stone-600", "from-primary/80", "stone-600 gradient start → primary"),
+    Rule(r"to-stone-500", "to-primary/70", "stone-500 gradient end → primary"),
+    Rule(
+        r"hover:from-stone-500",
+        "hover:from-primary/70",
+        "stone-500 hover gradient start",
+    ),
+    Rule(r"hover:to-stone-400", "hover:to-primary/60", "stone-400 hover gradient end"),
     # -----------------------------------------------------------------------
     # BORDERS
     # -----------------------------------------------------------------------
-    Rule(r"border-neutral-200", "border-border",
-         "neutral-200 is the default border colour in light mode"),
-    Rule(r"border-stone-200", "border-border",
-         "stone-200 is the default border colour in light mode"),
-    Rule(r"dark:border-stone-800", "dark:border-border",
-         "stone-800 matches --border in dark mode"),
-    Rule(r"dark:border-stone-850", "dark:border-border",
-         "stone-850 (custom) is effectively --border in dark mode"),
-    Rule(r"border-stone-400", "border-border",
-         "stone-400 used as a mid-weight border"),
-
+    Rule(
+        r"border-neutral-200",
+        "border-border",
+        "neutral-200 is the default border colour in light mode",
+    ),
+    Rule(
+        r"border-stone-200",
+        "border-border",
+        "stone-200 is the default border colour in light mode",
+    ),
+    Rule(
+        r"dark:border-stone-800",
+        "dark:border-border",
+        "stone-800 matches --border in dark mode",
+    ),
+    Rule(
+        r"dark:border-stone-850",
+        "dark:border-border",
+        "stone-850 (custom) is effectively --border in dark mode",
+    ),
+    Rule(r"border-stone-400", "border-border", "stone-400 used as a mid-weight border"),
     # -----------------------------------------------------------------------
     # TEXT — foreground / body copy
     # -----------------------------------------------------------------------
-    Rule(r"text-neutral-900", "text-foreground",
-         "neutral-900 is highest-contrast body text ≈ --foreground"),
-    Rule(r"text-stone-900", "text-foreground",
-         "stone-900 is highest-contrast body text ≈ --foreground"),
-    Rule(r"text-neutral-800", "text-foreground",
-         "neutral-800 is near-highest contrast body text"),
-    Rule(r"text-neutral-700", "text-foreground",
-         "neutral-700 is standard body text weight"),
-    Rule(r"text-stone-700", "text-foreground",
-         "stone-700 is standard body text weight"),
-
+    Rule(
+        r"text-neutral-900",
+        "text-foreground",
+        "neutral-900 is highest-contrast body text ≈ --foreground",
+    ),
+    Rule(
+        r"text-stone-900",
+        "text-foreground",
+        "stone-900 is highest-contrast body text ≈ --foreground",
+    ),
+    Rule(
+        r"text-neutral-800",
+        "text-foreground",
+        "neutral-800 is near-highest contrast body text",
+    ),
+    Rule(
+        r"text-neutral-700",
+        "text-foreground",
+        "neutral-700 is standard body text weight",
+    ),
+    Rule(
+        r"text-stone-700", "text-foreground", "stone-700 is standard body text weight"
+    ),
     # -----------------------------------------------------------------------
     # TEXT — muted / secondary
     # -----------------------------------------------------------------------
-    Rule(r"text-neutral-600", "text-muted-foreground",
-         "neutral-600 is a muted/secondary text level"),
-    Rule(r"text-stone-600", "text-muted-foreground",
-         "stone-600 is a muted/secondary text level"),
-    Rule(r"text-neutral-500", "text-muted-foreground",
-         "neutral-500 is the canonical muted foreground"),
-    Rule(r"text-stone-500", "text-muted-foreground",
-         "stone-500 is the canonical muted foreground"),
-    Rule(r"text-neutral-400", "text-muted-foreground",
-         "neutral-400 is a dim/placeholder level"),
-    Rule(r"text-stone-400", "text-muted-foreground",
-         "stone-400 is a dim/placeholder level"),
-    Rule(r"text-neutral-300", "text-muted-foreground/70",
-         "neutral-300 is very dim, add opacity modifier"),
-    Rule(r"text-neutral-200", "text-muted-foreground/50",
-         "neutral-200 is very dim, add opacity modifier"),
-
+    Rule(
+        r"text-neutral-600",
+        "text-muted-foreground",
+        "neutral-600 is a muted/secondary text level",
+    ),
+    Rule(
+        r"text-stone-600",
+        "text-muted-foreground",
+        "stone-600 is a muted/secondary text level",
+    ),
+    Rule(
+        r"text-neutral-500",
+        "text-muted-foreground",
+        "neutral-500 is the canonical muted foreground",
+    ),
+    Rule(
+        r"text-stone-500",
+        "text-muted-foreground",
+        "stone-500 is the canonical muted foreground",
+    ),
+    Rule(
+        r"text-neutral-400",
+        "text-muted-foreground",
+        "neutral-400 is a dim/placeholder level",
+    ),
+    Rule(
+        r"text-stone-400",
+        "text-muted-foreground",
+        "stone-400 is a dim/placeholder level",
+    ),
+    Rule(
+        r"text-neutral-300",
+        "text-muted-foreground/70",
+        "neutral-300 is very dim, add opacity modifier",
+    ),
+    Rule(
+        r"text-neutral-200",
+        "text-muted-foreground/50",
+        "neutral-200 is very dim, add opacity modifier",
+    ),
     # hover variants for text
-    Rule(r"hover:text-neutral-900", "hover:text-foreground",
-         "hover target: primary text colour"),
-    Rule(r"hover:text-neutral-700", "hover:text-foreground",
-         "hover target: primary text colour"),
-    Rule(r"hover:text-neutral-600", "hover:text-muted-foreground",
-         "hover target: muted text colour"),
-
+    Rule(
+        r"hover:text-neutral-900",
+        "hover:text-foreground",
+        "hover target: primary text colour",
+    ),
+    Rule(
+        r"hover:text-neutral-700",
+        "hover:text-foreground",
+        "hover target: primary text colour",
+    ),
+    Rule(
+        r"hover:text-neutral-600",
+        "hover:text-muted-foreground",
+        "hover target: muted text colour",
+    ),
     # dark-mode text overrides that already correctly invert
-    Rule(r"dark:text-neutral-200", "dark:text-foreground",
-         "dark:neutral-200 ≈ --foreground in dark mode"),
-
+    Rule(
+        r"dark:text-neutral-200",
+        "dark:text-foreground",
+        "dark:neutral-200 ≈ --foreground in dark mode",
+    ),
     # -----------------------------------------------------------------------
     # BACKGROUNDS — base panels
     # -----------------------------------------------------------------------
-    Rule(r"bg-neutral-50", "bg-muted",
-         "neutral-50 is the light-mode panel / muted surface"),
-    Rule(r"bg-stone-50", "bg-muted",
-         "stone-50 is the light-mode panel / muted surface"),
-    Rule(r"bg-neutral-100", "bg-accent",
-         "neutral-100 is the light-mode accent/hover surface"),
-    Rule(r"bg-stone-100", "bg-accent",
-         "stone-100 is the light-mode accent/hover surface"),
-
+    Rule(
+        r"bg-neutral-50",
+        "bg-muted",
+        "neutral-50 is the light-mode panel / muted surface",
+    ),
+    Rule(
+        r"bg-stone-50", "bg-muted", "stone-50 is the light-mode panel / muted surface"
+    ),
+    Rule(
+        r"bg-neutral-100",
+        "bg-accent",
+        "neutral-100 is the light-mode accent/hover surface",
+    ),
+    Rule(
+        r"bg-stone-100", "bg-accent", "stone-100 is the light-mode accent/hover surface"
+    ),
     # with opacity modifiers
-    Rule(r"bg-neutral-200/50", "bg-secondary/50",
-         "neutral-200/50 is a secondary panel with opacity"),
-    Rule(r"bg-stone-200/50", "bg-secondary/50",
-         "stone-200/50 is a secondary panel with opacity"),
-    Rule(r"bg-neutral-200/70", "bg-secondary/70",
-         "neutral-200/70 is a secondary panel with opacity"),
-    Rule(r"bg-stone-200/70", "bg-secondary/70",
-         "stone-200/70 is a secondary panel with opacity"),
-
+    Rule(
+        r"bg-neutral-200/50",
+        "bg-secondary/50",
+        "neutral-200/50 is a secondary panel with opacity",
+    ),
+    Rule(
+        r"bg-stone-200/50",
+        "bg-secondary/50",
+        "stone-200/50 is a secondary panel with opacity",
+    ),
+    Rule(
+        r"bg-neutral-200/70",
+        "bg-secondary/70",
+        "neutral-200/70 is a secondary panel with opacity",
+    ),
+    Rule(
+        r"bg-stone-200/70",
+        "bg-secondary/70",
+        "stone-200/70 is a secondary panel with opacity",
+    ),
     # hover backgrounds
-    Rule(r"hover:bg-neutral-100", "hover:bg-accent",
-         "hover:neutral-100 is the standard row hover"),
-    Rule(r"hover:bg-stone-100", "hover:bg-accent",
-         "hover:stone-100 is the standard row hover"),
-    Rule(r"hover:bg-neutral-200", "hover:bg-secondary",
-         "hover:neutral-200 is a secondary hover"),
-    Rule(r"hover:bg-stone-200", "hover:bg-secondary",
-         "hover:stone-200 is a secondary hover"),
-
+    Rule(
+        r"hover:bg-neutral-100",
+        "hover:bg-accent",
+        "hover:neutral-100 is the standard row hover",
+    ),
+    Rule(
+        r"hover:bg-stone-100",
+        "hover:bg-accent",
+        "hover:stone-100 is the standard row hover",
+    ),
+    Rule(
+        r"hover:bg-neutral-200",
+        "hover:bg-secondary",
+        "hover:neutral-200 is a secondary hover",
+    ),
+    Rule(
+        r"hover:bg-stone-200",
+        "hover:bg-secondary",
+        "hover:stone-200 is a secondary hover",
+    ),
     # dark-mode background overrides
-    Rule(r"dark:bg-stone-900/50", "dark:bg-card/50",
-         "dark:stone-900/50 ≈ --card in dark mode with opacity"),
-    Rule(r"dark:bg-stone-900/70", "dark:bg-card/70",
-         "dark:stone-900/70 ≈ --card in dark mode with opacity"),
-    Rule(r"dark:bg-stone-900\b", "dark:bg-card",
-         "dark:stone-900 ≈ --card in dark mode"),
-    Rule(r"dark:hover:bg-stone-900/70", "dark:hover:bg-card/70",
-         "dark hover on stone-900/70 → card"),
-    Rule(r"dark:hover:bg-stone-800", "dark:hover:bg-accent",
-         "dark hover on stone-800 → accent"),
-    Rule(r"dark:hover:border-stone-800", "dark:hover:border-border",
-         "dark hover border stone-800 → border token"),
-    Rule(r"dark:border-stone-800", "dark:border-border",
-         "dark:stone-800 border ≈ --border"),
-    Rule(r"dark:focus:bg-stone-850", "dark:focus:bg-secondary",
-         "dark focus bg on stone-850 → secondary"),
-
+    Rule(
+        r"dark:bg-stone-900/50",
+        "dark:bg-card/50",
+        "dark:stone-900/50 ≈ --card in dark mode with opacity",
+    ),
+    Rule(
+        r"dark:bg-stone-900/70",
+        "dark:bg-card/70",
+        "dark:stone-900/70 ≈ --card in dark mode with opacity",
+    ),
+    Rule(
+        r"dark:bg-stone-900\b", "dark:bg-card", "dark:stone-900 ≈ --card in dark mode"
+    ),
+    Rule(
+        r"dark:hover:bg-stone-900/70",
+        "dark:hover:bg-card/70",
+        "dark hover on stone-900/70 → card",
+    ),
+    Rule(
+        r"dark:hover:bg-stone-800",
+        "dark:hover:bg-accent",
+        "dark hover on stone-800 → accent",
+    ),
+    Rule(
+        r"dark:hover:border-stone-800",
+        "dark:hover:border-border",
+        "dark hover border stone-800 → border token",
+    ),
+    Rule(
+        r"dark:border-stone-800",
+        "dark:border-border",
+        "dark:stone-800 border ≈ --border",
+    ),
+    Rule(
+        r"dark:focus:bg-stone-850",
+        "dark:focus:bg-secondary",
+        "dark focus bg on stone-850 → secondary",
+    ),
     # focus backgrounds
-    Rule(r"focus:bg-neutral-200", "focus:bg-secondary",
-         "focus:neutral-200 ≈ secondary surface"),
-
+    Rule(
+        r"focus:bg-neutral-200",
+        "focus:bg-secondary",
+        "focus:neutral-200 ≈ secondary surface",
+    ),
     # -----------------------------------------------------------------------
     # placeholder text
     # -----------------------------------------------------------------------
-    Rule(r"placeholder:text-neutral-400", "placeholder:text-muted-foreground",
-         "placeholder uses muted-foreground"),
+    Rule(
+        r"placeholder:text-neutral-400",
+        "placeholder:text-muted-foreground",
+        "placeholder uses muted-foreground",
+    ),
 ]
 
 # ---------------------------------------------------------------------------
@@ -258,20 +370,28 @@ def process_file(file_path: str, dry_run: bool) -> int:
 
     new_lines = []
     total_replacements = 0
-    prev_line_keep = False      # carry keep guard from comment lines above JSX attrs
+    prev_line_keep = False  # carry keep guard from comment lines above JSX attrs
     prev_line_partial = False
 
     for line in lines:
         stripped = line.rstrip()
 
         # Inherit keep from previous comment line (e.g. // @theme-keep above a JSX attr)
-        is_keep = ("@theme-keep" in stripped and "@theme-partial-keep" not in stripped) or prev_line_keep
+        is_keep = (
+            "@theme-keep" in stripped and "@theme-partial-keep" not in stripped
+        ) or prev_line_keep
         is_partial = "@theme-partial-keep" in stripped or prev_line_partial
 
         # Track whether THIS line is a standalone comment (carry to next line only)
-        is_comment_line = stripped.lstrip().startswith("//") or stripped.lstrip().startswith("#")
-        if is_comment_line and ("@theme-keep" in stripped or "@theme-partial-keep" in stripped):
-            prev_line_keep = "@theme-keep" in stripped and "@theme-partial-keep" not in stripped
+        is_comment_line = stripped.lstrip().startswith(
+            "//"
+        ) or stripped.lstrip().startswith("#")
+        if is_comment_line and (
+            "@theme-keep" in stripped or "@theme-partial-keep" in stripped
+        ):
+            prev_line_keep = (
+                "@theme-keep" in stripped and "@theme-partial-keep" not in stripped
+            )
             prev_line_partial = "@theme-partial-keep" in stripped
         else:
             prev_line_keep = False
@@ -297,7 +417,6 @@ def process_file(file_path: str, dry_run: bool) -> int:
             return 0
 
     return total_replacements
-
 
 
 def run_sweep(root: str, dry_run: bool = True) -> None:
