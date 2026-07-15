@@ -2,8 +2,8 @@ import { z } from "zod";
 
 export const DESKTOP_SCHEMES = [
   "hypr",
-  "hyprnote",
-  "hyprnote-staging",
+  "meetspace",
+  "meetspace-staging",
   "char",
   "char-staging",
 ] as const;

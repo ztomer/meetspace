@@ -12,22 +12,22 @@ const ALLOWED_PATH_PREFIXES: &[&str] = &[
 const TYPE_REPLACEMENTS: &[(&str, &str)] = &[
     (
         "GoogleListCalendarsResponse",
-        "hypr_google_calendar::ListCalendarsResponse",
+        "meetspace_google_calendar::ListCalendarsResponse",
     ),
     (
         "GoogleListEventsResponse",
-        "hypr_google_calendar::ListEventsResponse",
+        "meetspace_google_calendar::ListEventsResponse",
     ),
     (
         "OutlookListCalendarsResponse",
-        "hypr_outlook_calendar::ListCalendarsResponse",
+        "meetspace_outlook_calendar::ListCalendarsResponse",
     ),
     (
         "OutlookListEventsResponse",
-        "hypr_outlook_calendar::ListEventsResponse",
+        "meetspace_outlook_calendar::ListEventsResponse",
     ),
-    ("CollectionPage", "hypr_ticket_interface::CollectionPage"),
-    ("TicketPage", "hypr_ticket_interface::TicketPage"),
+    ("CollectionPage", "meetspace_ticket_interface::CollectionPage"),
+    ("TicketPage", "meetspace_ticket_interface::TicketPage"),
 ];
 
 fn main() {

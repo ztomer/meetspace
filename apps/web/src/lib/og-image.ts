@@ -97,7 +97,7 @@ function createBlogOgSvg(input: BlogOgImageInput) {
       return `<path d="M86 ${y} H1114" stroke="#c5bbb0" stroke-width="1"/>`;
     }).join("")}
   </g>
-  <text x="86" y="100" fill="#57534e" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700">Anarlog</text>
+  <text x="86" y="100" fill="#57534e" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700">Meetspace</text>
   <text x="1114" y="100" fill="#756b5d" font-family="Arial, Helvetica, sans-serif" font-size="24" text-anchor="end">Blog</text>
   ${title
     .map(
@@ -111,7 +111,7 @@ function createBlogOgSvg(input: BlogOgImageInput) {
         `<text x="90" y="${descriptionStartY + index * 42}" fill="#57534e" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="500">${escapeXml(line)}</text>`,
     )
     .join("")}
-  <text x="86" y="552" fill="#756b5d" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="600">${escapeXml(meta || "anarlog.so")}</text>
+  <text x="86" y="552" fill="#756b5d" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="600">${escapeXml(meta || "meetspace.so")}</text>
 </svg>`;
 }
 

@@ -9,22 +9,22 @@ specta = ["dep:specta"]
 tauri-event = ["specta", "dep:tauri-specta"]
 
 [dependencies]
-hypr-audio = { workspace = true }
-hypr-audio-utils = { workspace = true }
-hypr-device-monitor = { workspace = true }
-hypr-host = { workspace = true }
-hypr-language = { workspace = true }
-hypr-storage = { workspace = true }
-hypr-supervisor = { workspace = true }
-hypr-transcribe-soniqo = { workspace = true }
-hypr-transcript = { workspace = true }
-hypr-vad-masking = { workspace = true }
+meetspace-audio = { workspace = true }
+meetspace-audio-utils = { workspace = true }
+meetspace-device-monitor = { workspace = true }
+meetspace-host = { workspace = true }
+meetspace-language = { workspace = true }
+meetspace-storage = { workspace = true }
+meetspace-supervisor = { workspace = true }
+meetspace-transcribe-soniqo = { workspace = true }
+meetspace-transcript = { workspace = true }
+meetspace-vad-masking = { workspace = true }
 
 owhisper-client = { workspace = true, features = ["local"] }
 owhisper-interface = { workspace = true }
 
 hound = { workspace = true }
-hypr-mp3 = { workspace = true }
+meetspace-mp3 = { workspace = true }
 vorbis_rs = { workspace = true }
 
 ractor = { workspace = true, features = ["async-trait"] }
@@ -45,6 +45,6 @@ uuid = { workspace = true }
 sentry = { workspace = true }
 
 [dev-dependencies]
-hypr-data = { workspace = true }
+meetspace-data = { workspace = true }
 tempfile = { workspace = true }
 tracing-subscriber = { workspace = true }

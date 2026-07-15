@@ -35,8 +35,8 @@ export function deriveBillingInfo(
     subscriptionStatus === "trialing" &&
     (trialDaysRemaining === null || trialDaysRemaining > 0);
 
-  const hasProEntitlement = entitlements.includes("hyprnote_pro");
-  const hasLiteEntitlement = entitlements.includes("hyprnote_lite");
+  const hasProEntitlement = entitlements.includes("meetspace_pro");
+  const hasLiteEntitlement = entitlements.includes("meetspace_lite");
   const hasPaidEntitlement = hasProEntitlement || hasLiteEntitlement;
 
   const isPro = hasPaidEntitlement || isTrialing;

@@ -13,12 +13,12 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { version as osVersion, platform } from "@tauri-apps/plugin-os";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import { commands as authPluginCommands } from "@hypr/plugin-auth";
-import { commands as miscCommands } from "@hypr/plugin-misc";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { openUrlWithInstruction } from "@hypr/plugin-windows";
-import { deriveBillingInfo } from "@hypr/supabase";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as authPluginCommands } from "@meetspace/plugin-auth";
+import { commands as miscCommands } from "@meetspace/plugin-misc";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { openUrlWithInstruction } from "@meetspace/plugin-windows";
+import { deriveBillingInfo } from "@meetspace/supabase";
 
 import { AuthContext } from "./auth-context";
 import { persistAuthSession, supabase } from "./client";

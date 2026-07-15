@@ -1,7 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import { useEffect } from "react";
 
-import { Input } from "@hypr/ui/components/ui/input";
+import { Input } from "@meetspace/ui/components/ui/input";
 
 import { useSetSettingValue } from "~/settings/queries";
 import { useConfigValue } from "~/shared/config";

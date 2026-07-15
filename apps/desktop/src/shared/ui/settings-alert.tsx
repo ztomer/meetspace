@@ -1,4 +1,4 @@
-import { sonnerToast } from "@hypr/ui/components/ui/toast";
+import { sonnerToast } from "@meetspace/ui/components/ui/toast";
 
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 

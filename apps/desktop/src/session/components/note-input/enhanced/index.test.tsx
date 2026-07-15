@@ -27,7 +27,7 @@ const hoisted = vi.hoisted(() => ({
     | undefined,
   llmStatus: {
     status: "success",
-    providerId: "hyprnote",
+    providerId: "meetspace",
     isHosted: true,
   } as LLMConnectionStatus,
   content: "",
@@ -36,7 +36,7 @@ const hoisted = vi.hoisted(() => ({
   enhancedEditorMountCount: 0,
 }));
 
-vi.mock("@hypr/ui/components/ui/spinner", () => ({
+vi.mock("@meetspace/ui/components/ui/spinner", () => ({
   Spinner: () => <span data-testid="spinner" />,
 }));
 
@@ -143,7 +143,7 @@ describe("Enhanced", () => {
     hoisted.titleTask = undefined;
     hoisted.llmStatus = {
       status: "success",
-      providerId: "hyprnote",
+      providerId: "meetspace",
       isHosted: true,
     };
     hoisted.content = "";
@@ -176,7 +176,7 @@ describe("Enhanced", () => {
     expect(screen.getByRole("status")).not.toBeNull();
     expect(screen.getByText("Analyzing structure...")).not.toBeNull();
     expect(
-      screen.getByText("Tip: The Anarlog team loves our users!"),
+      screen.getByText("Tip: The Meetspace team loves our users!"),
     ).not.toBeNull();
   });
 
@@ -336,7 +336,7 @@ describe("Enhanced", () => {
     hoisted.llmStatus = {
       status: "error",
       reason: "not_pro",
-      providerId: "hyprnote",
+      providerId: "meetspace",
     };
 
     render(<Enhanced sessionId="session-1" enhancedNoteId="note-1" />);
@@ -349,7 +349,7 @@ describe("Enhanced", () => {
     hoisted.llmStatus = {
       status: "error",
       reason: "unauthenticated",
-      providerId: "hyprnote",
+      providerId: "meetspace",
     };
 
     render(<Enhanced sessionId="session-1" enhancedNoteId="note-1" />);

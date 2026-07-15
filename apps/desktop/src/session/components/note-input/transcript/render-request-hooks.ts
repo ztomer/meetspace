@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import type { RenderTranscriptRequest } from "@hypr/plugin-transcription";
+import type { RenderTranscriptRequest } from "@meetspace/plugin-transcription";
 
 import {
   type TranscriptRecord,

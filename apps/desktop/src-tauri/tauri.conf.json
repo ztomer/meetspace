@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Anarlog Dev",
-  "mainBinaryName": "anarlog-dev",
-  "identifier": "com.hyprnote.dev",
+  "productName": "Meetspace Dev",
+  "mainBinaryName": "meetspace-dev",
+  "identifier": "com.meetspace.dev",
   "build": {
     "beforeDevCommand": "pnpm -F desktop dev",
     "devUrl": "http://localhost:1422",
@@ -74,7 +74,7 @@
     "deep-link": {
       "desktop": {
         "schemes": [
-          "hyprnote",
+          "meetspace",
           "char"
         ]
       }

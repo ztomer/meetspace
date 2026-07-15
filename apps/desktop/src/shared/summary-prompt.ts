@@ -1,4 +1,4 @@
-import type { EnhanceTemplate } from "@hypr/plugin-template";
+import type { EnhanceTemplate } from "@meetspace/plugin-template";
 
 export const SUMMARY_TEMPLATE_TOKEN = "{{ template }}";
 

@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-import type { BillingInfo } from "@hypr/supabase";
+import type { BillingInfo } from "@meetspace/supabase";
 
 export type BillingAccess = BillingInfo & {
   isReady: boolean;

@@ -31,7 +31,7 @@ import {
 } from "react";
 import { useDebounceCallback } from "usehooks-ts";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import { EditorErrorBoundary } from "../editor-error-boundary";
 import {

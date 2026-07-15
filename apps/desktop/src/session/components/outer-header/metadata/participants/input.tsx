@@ -10,7 +10,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { useCallback, useMemo, useRef, useState } from "react";
 
-import { sonnerToast } from "@hypr/ui/components/ui/toast";
+import { sonnerToast } from "@meetspace/ui/components/ui/toast";
 
 import { ParticipantChip } from "./chip";
 import { ParticipantDropdown } from "./dropdown";

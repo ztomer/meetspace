@@ -236,7 +236,7 @@ pub async fn list_recurring_sessions(
 
 #[cfg(test)]
 mod tests {
-    use hypr_db_core::Db;
+    use meetspace_db_core::Db;
 
     use super::*;
 

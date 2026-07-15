@@ -8,13 +8,13 @@ import {
   useState,
 } from "react";
 
-import { canStartTrial as canStartTrialApi } from "@hypr/api-client";
-import { createClient } from "@hypr/api-client/client";
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import { commands as authCommands } from "@hypr/plugin-auth";
-import { commands as openerCommands } from "@hypr/plugin-opener2";
-import { openUrlWithInstruction } from "@hypr/plugin-windows";
-import { deriveBillingInfo, type SupabaseJwtPayload } from "@hypr/supabase";
+import { canStartTrial as canStartTrialApi } from "@meetspace/api-client";
+import { createClient } from "@meetspace/api-client/client";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as authCommands } from "@meetspace/plugin-auth";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
+import { openUrlWithInstruction } from "@meetspace/plugin-windows";
+import { deriveBillingInfo, type SupabaseJwtPayload } from "@meetspace/supabase";
 
 import { TrialEndedDialog } from "../billing/trial-ended-dialog";
 import { TrialPaymentReminderDialog } from "../billing/trial-payment-reminder-dialog";
@@ -45,10 +45,10 @@ async function getClaimsFromToken(
   };
 }
 
-const TRIAL_STARTED_SEEN_PREFIX = "anarlog:trial_started_seen:";
-const TRIAL_ENDED_SEEN_PREFIX = "anarlog:trial_ended_seen:";
+const TRIAL_STARTED_SEEN_PREFIX = "meetspace:trial_started_seen:";
+const TRIAL_ENDED_SEEN_PREFIX = "meetspace:trial_ended_seen:";
 const TRIAL_PAYMENT_REMINDER_SEEN_PREFIX =
-  "anarlog:trial_payment_reminder_seen:";
+  "meetspace:trial_payment_reminder_seen:";
 
 function readSeen(key: string): boolean {
   try {
@@ -150,7 +150,7 @@ export function BillingProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    if (currentLlmProvider !== "hyprnote") {
+    if (currentLlmProvider !== "meetspace") {
       return;
     }
 

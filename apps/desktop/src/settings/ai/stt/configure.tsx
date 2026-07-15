@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/react/macro";
 
-import { Accordion } from "@hypr/ui/components/ui/accordion";
+import { Accordion } from "@meetspace/ui/components/ui/accordion";
 
 import { useSttSettings } from "./context";
 import { ProviderId, PROVIDERS } from "./shared";
@@ -12,17 +12,14 @@ export function ConfigureProviders() {
 
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="text-md font-sans font-semibold">
-        <Trans>Configure Providers</Trans>
-      </h3>
-      <Accordion
+            <Accordion
         type="single"
         collapsible
         className="flex flex-col gap-3"
         value={accordionValue}
         onValueChange={setAccordionValue}
       >
-        {PROVIDERS.filter((provider) => provider.id !== "hyprnote").map(
+        {PROVIDERS.filter((provider) => provider.id !== "meetspace").map(
           (provider) => (
             <NonHyprProviderCard
               key={provider.id}
@@ -40,8 +37,8 @@ export function ConfigureProviders() {
 
 function ProviderContext({ providerId }: { providerId: ProviderId }) {
   const content =
-    providerId === "hyprnote"
-      ? "**Anarlog Cloud** routes request to the **best available model** for highest accuracy and performance."
+    providerId === "meetspace"
+      ? "**Meetspace Cloud** routes request to the **best available model** for highest accuracy and performance."
       : providerId === "deepgram"
         ? `Use [Deepgram](https://deepgram.com) for transcriptions. \
     If you want to use a [Dedicated](https://developers.deepgram.com/reference/custom-endpoints#deepgram-dedicated-endpoints)

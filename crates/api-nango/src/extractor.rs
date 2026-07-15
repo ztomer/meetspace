@@ -5,8 +5,8 @@ use axum::{
     http::{StatusCode, request::Parts},
     response::{IntoResponse, Response},
 };
-use hypr_api_auth::AuthContext;
-use hypr_nango::{NangoClient, OwnedNangoHttpClient, OwnedNangoProxy};
+use meetspace_api_auth::AuthContext;
+use meetspace_nango::{NangoClient, OwnedNangoHttpClient, OwnedNangoProxy};
 
 use crate::integrations::NangoIntegrationId;
 
@@ -212,7 +212,7 @@ impl IntoResponse for NangoConnectionError {
             ),
         };
 
-        hypr_api_error::error_response(status, code, &message)
+        meetspace_api_error::error_response(status, code, &message)
     }
 }
 

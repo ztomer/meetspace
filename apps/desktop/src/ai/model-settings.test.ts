@@ -33,7 +33,7 @@ describe("deterministicGenerationSettings", () => {
     ).toEqual({});
     expect(
       deterministicGenerationSettings(
-        model("hyprnote", "anthropic/claude-opus-4-8"),
+        model("meetspace", "anthropic/claude-opus-4-8"),
       ),
     ).toEqual({});
   });

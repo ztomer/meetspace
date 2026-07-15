@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
-import { sonnerToast } from "@hypr/ui/components/ui/toast";
+import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
+import { sonnerToast } from "@meetspace/ui/components/ui/toast";
 
 import { getEnhancerService } from "~/services/enhancer";
 import { useListener } from "~/stt/contexts";

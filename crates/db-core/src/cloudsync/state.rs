@@ -12,7 +12,7 @@ pub(crate) struct CloudsyncRuntimeState {
     pub(crate) last_sync: Option<CloudsyncNetworkResult>,
     pub(crate) last_sync_at_ms: Option<u64>,
     pub(crate) last_error: Option<String>,
-    pub(crate) last_error_kind: Option<hypr_cloudsync::ErrorKind>,
+    pub(crate) last_error_kind: Option<meetspace_cloudsync::ErrorKind>,
     pub(crate) consecutive_failures: u32,
 }
 

@@ -5,7 +5,7 @@ import {
   configureCloudsyncToken,
   getCloudsyncStatus,
   suspendCloudsync,
-} from "@hypr/plugin-db";
+} from "@meetspace/plugin-db";
 
 import {
   startCloudsyncInitialSyncProgress,
@@ -271,7 +271,7 @@ async function activateCloudsync(
         await suspendCloudsyncAfterCredentialRejection(activeGeneration);
       }
       console.warn(
-        "[cloudsync] Anarlog Pro is required; sync remains disabled",
+        "[cloudsync] Meetspace Pro is required; sync remains disabled",
       );
       return "ok";
     }

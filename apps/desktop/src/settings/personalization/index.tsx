@@ -3,15 +3,15 @@ import { useForm } from "@tanstack/react-form";
 import { BracesIcon, CircleMinusIcon, PlusIcon } from "lucide-react";
 import { useRef } from "react";
 
-import { PromptEditor, type PromptEditorHandle } from "@hypr/editor/prompt";
-import { Button } from "@hypr/ui/components/ui/button";
+import { PromptEditor, type PromptEditorHandle } from "@meetspace/editor/prompt";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from "@hypr/ui/components/ui/input-group";
-import { cn } from "@hypr/utils";
+} from "@meetspace/ui/components/ui/input-group";
+import { cn } from "@meetspace/utils";
 
 import { SettingsPageTitle } from "~/settings/page-title";
 import { useSetSettingValue, useSetSettingValues } from "~/settings/queries";

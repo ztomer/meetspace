@@ -11,7 +11,7 @@ pub enum SyncError {
     #[error("Invalid request: {0}")]
     BadRequest(String),
 
-    #[error("Anarlog Pro is required for CloudSync")]
+    #[error("Meetspace Pro is required for CloudSync")]
     ProPlanRequired,
 
     #[error("CloudSync credential service is unavailable")]
@@ -28,7 +28,7 @@ impl IntoResponse for SyncError {
             Self::ProPlanRequired => (
                 StatusCode::FORBIDDEN,
                 "subscription_required",
-                "Anarlog Pro is required for CloudSync".to_string(),
+                "Meetspace Pro is required for CloudSync".to_string(),
             ),
             Self::Upstream => (
                 StatusCode::BAD_GATEWAY,
@@ -42,6 +42,6 @@ impl IntoResponse for SyncError {
             ),
         };
 
-        hypr_api_error::error_response(status, code, &message)
+        meetspace_api_error::error_response(status, code, &message)
     }
 }

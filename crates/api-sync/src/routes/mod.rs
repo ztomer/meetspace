@@ -5,7 +5,7 @@ use axum::{
     routing::post,
 };
 use chrono::{SecondsFormat, TimeDelta, Utc};
-use hypr_api_auth::AuthContext;
+use meetspace_api_auth::AuthContext;
 use serde::{Deserialize, Serialize};
 use utoipa::OpenApi;
 
@@ -60,7 +60,7 @@ pub fn router(state: AppState) -> Router {
     responses(
         (status = 200, description = "Short-lived CloudSync credentials", body = CloudsyncCredentials),
         (status = 401, description = "Authentication required"),
-        (status = 403, description = "Anarlog Pro subscription required"),
+        (status = 403, description = "Meetspace Pro subscription required"),
         (status = 502, description = "Credential issuer unavailable")
     )
 )]
@@ -88,7 +88,7 @@ async fn create_credentials(
         .post(format!("{}/v2/tokens", state.config.project_url))
         .bearer_auth(&state.config.token_issuer_api_key)
         .json(&CreateTokenRequest {
-            name: "anarlog-cloudsync",
+            name: "meetspace-cloudsync",
             user_id: &auth.claims.sub,
             expires_at: &expires_at,
         })
@@ -124,7 +124,7 @@ async fn create_credentials(
 #[cfg(test)]
 mod tests {
     use axum::{Extension, body::Body, body::to_bytes, http::Request, http::StatusCode};
-    use hypr_api_auth::{AuthContext, Claims};
+    use meetspace_api_auth::{AuthContext, Claims};
     use serde_json::{Value, json};
     use tower::ServiceExt;
     use wiremock::{
@@ -170,7 +170,7 @@ mod tests {
             .and(path("/v2/tokens"))
             .and(header("authorization", "Bearer issuer-key"))
             .and(body_partial_json(json!({
-                "name": "anarlog-cloudsync",
+                "name": "meetspace-cloudsync",
                 "userId": "user-123"
             })))
             .respond_with(ResponseTemplate::new(200).set_body_json(json!({
@@ -179,7 +179,7 @@ mod tests {
             .mount(&server)
             .await;
 
-        let response = test_router(&server, "issuer-key", &["hyprnote_pro"])
+        let response = test_router(&server, "issuer-key", &["meetspace_pro"])
             .oneshot(Request::post("/token").body(Body::empty()).unwrap())
             .await
             .unwrap();
@@ -194,7 +194,7 @@ mod tests {
 
     #[tokio::test]
     async fn rejects_users_without_pro_entitlement() {
-        let cases: &[&[&str]] = &[&[], &["hyprnote_lite"]];
+        let cases: &[&[&str]] = &[&[], &["meetspace_lite"]];
 
         for entitlements in cases {
             let server = MockServer::start().await;
@@ -219,7 +219,7 @@ mod tests {
             .mount(&server)
             .await;
 
-        let response = test_router(&server, "issuer-secret", &["hyprnote_pro"])
+        let response = test_router(&server, "issuer-secret", &["meetspace_pro"])
             .oneshot(Request::post("/token").body(Body::empty()).unwrap())
             .await
             .unwrap();

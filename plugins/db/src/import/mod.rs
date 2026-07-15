@@ -42,7 +42,7 @@ async fn legacy_import_required(pool: &SqlitePool) -> Result<bool, sqlx::Error> 
              AND parity_verified = 1
          )",
     )
-    .bind(hypr_db_app::LEGACY_IMPORTER_VERSION)
+    .bind(meetspace_db_app::LEGACY_IMPORTER_VERSION)
     .fetch_one(pool)
     .await?;
 
@@ -141,11 +141,11 @@ fn resolve_startup_vault_base<R: tauri::Runtime>(
     app: &tauri::AppHandle<R>,
 ) -> crate::Result<PathBuf> {
     let bundle_id: &str = app.config().identifier.as_ref();
-    let settings_base = hypr_storage::global::compute_default_base(bundle_id)
+    let settings_base = meetspace_storage::global::compute_default_base(bundle_id)
         .ok_or(std::io::Error::other("settings base unavailable"))?;
     std::fs::create_dir_all(&settings_base)?;
 
-    Ok(hypr_storage::vault::resolve_base(
+    Ok(meetspace_storage::vault::resolve_base(
         &settings_base,
         &settings_base,
     ))
@@ -157,8 +157,8 @@ mod tests {
 
     #[tokio::test]
     async fn verified_current_import_is_not_repeated_at_startup() {
-        let db = hypr_db_core::Db::connect_memory_plain().await.unwrap();
-        hypr_db_app::prepare_schema(&db).await.unwrap();
+        let db = meetspace_db_core::Db::connect_memory_plain().await.unwrap();
+        meetspace_db_app::prepare_schema(&db).await.unwrap();
 
         assert!(legacy_import_required(db.pool()).await.unwrap());
 
@@ -167,7 +167,7 @@ mod tests {
              SET importer_version = ?, parity_verified = 1
              WHERE id = 'legacy_v1'",
         )
-        .bind(hypr_db_app::LEGACY_IMPORTER_VERSION)
+        .bind(meetspace_db_app::LEGACY_IMPORTER_VERSION)
         .execute(db.pool())
         .await
         .unwrap();
@@ -191,8 +191,8 @@ mod tests {
 
     #[tokio::test]
     async fn incomplete_import_prevents_cutover() {
-        let db = hypr_db_core::Db::connect_memory_plain().await.unwrap();
-        hypr_db_app::prepare_schema(&db).await.unwrap();
+        let db = meetspace_db_core::Db::connect_memory_plain().await.unwrap();
+        meetspace_db_app::prepare_schema(&db).await.unwrap();
 
         let error = require_verified_import(db.pool(), "run-with-errors")
             .await
@@ -212,8 +212,8 @@ mod tests {
 
     #[tokio::test]
     async fn stale_snapshots_for_preexisting_sqlite_domains_do_not_block_cutover() {
-        let db = hypr_db_core::Db::connect_memory_plain().await.unwrap();
-        hypr_db_app::prepare_schema(&db).await.unwrap();
+        let db = meetspace_db_core::Db::connect_memory_plain().await.unwrap();
+        meetspace_db_app::prepare_schema(&db).await.unwrap();
         sqlx::query(
             "INSERT INTO calendars \
              (id, tracking_id_calendar, name, enabled, provider, source, color, connection_id) \

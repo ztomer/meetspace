@@ -38,7 +38,7 @@ pub enum DbOpenError {
     #[error(transparent)]
     Sqlx(#[from] sqlx::Error),
     #[error(transparent)]
-    Cloudsync(#[from] hypr_cloudsync::Error),
+    Cloudsync(#[from] meetspace_cloudsync::Error),
 }
 
 pub type ManagedDb = std::sync::Arc<Db>;
@@ -52,7 +52,7 @@ pub struct Db {
     pub(crate) cloudsync_lifecycle: Arc<tokio::sync::Mutex<()>>,
     pub(crate) cloudsync_runtime: Arc<Mutex<CloudsyncRuntimeState>>,
     pub(crate) pool: SqlitePool,
-    change_notifier: hypr_db_change::ChangeNotifier,
+    change_notifier: meetspace_db_change::ChangeNotifier,
 }
 
 impl std::fmt::Debug for Db {
@@ -90,22 +90,22 @@ impl Db {
             && matches!(options.storage, DbStorage::Local(_))
             && !options.journal_mode_wal
         {
-            return Err(hypr_cloudsync::Error::WalRequired.into());
+            return Err(meetspace_cloudsync::Error::WalRequired.into());
         }
 
         let (change_notifier, pool_options) = match (options.cloudsync_enabled, options.storage) {
-            (true, DbStorage::Local(_)) => hypr_db_change::ChangeNotifier::new_with_cloudsync(),
-            (true, DbStorage::Memory) => hypr_db_change::ChangeNotifier::disabled(),
-            (false, _) => hypr_db_change::ChangeNotifier::new(),
+            (true, DbStorage::Local(_)) => meetspace_db_change::ChangeNotifier::new_with_cloudsync(),
+            (true, DbStorage::Memory) => meetspace_db_change::ChangeNotifier::disabled(),
+            (false, _) => meetspace_db_change::ChangeNotifier::new(),
         };
         connect_with_options(&options, pool_options, change_notifier).await
     }
 
-    pub fn change_notifier(&self) -> &hypr_db_change::ChangeNotifier {
+    pub fn change_notifier(&self) -> &meetspace_db_change::ChangeNotifier {
         &self.change_notifier
     }
 
-    pub async fn connect_local(path: impl AsRef<Path>) -> Result<Self, hypr_cloudsync::Error> {
+    pub async fn connect_local(path: impl AsRef<Path>) -> Result<Self, meetspace_cloudsync::Error> {
         if let Some(parent) = path.as_ref().parent() {
             std::fs::create_dir_all(parent)?;
         }
@@ -113,12 +113,12 @@ impl Db {
             .filename(path)
             .create_if_missing(true)
             .pragma("journal_mode", "WAL");
-        let (options, cloudsync_path) = hypr_cloudsync::apply(options)?;
-        let (change_notifier, pool_options) = hypr_db_change::ChangeNotifier::new_with_cloudsync();
+        let (options, cloudsync_path) = meetspace_cloudsync::apply(options)?;
+        let (change_notifier, pool_options) = meetspace_db_change::ChangeNotifier::new_with_cloudsync();
         let pool = pool_options
             .connect_with(options)
             .await
-            .map_err(hypr_cloudsync::Error::from)?;
+            .map_err(meetspace_cloudsync::Error::from)?;
         ensure_cloudsync_wal(&pool).await?;
 
         Ok(Self {
@@ -132,16 +132,16 @@ impl Db {
         })
     }
 
-    pub async fn connect_memory() -> Result<Self, hypr_cloudsync::Error> {
+    pub async fn connect_memory() -> Result<Self, meetspace_cloudsync::Error> {
         let options =
             apply_internal_connect_policy(SqliteConnectOptions::from_str("sqlite::memory:")?);
-        let (options, cloudsync_path) = hypr_cloudsync::apply(options)?;
-        let (change_notifier, pool_options) = hypr_db_change::ChangeNotifier::disabled();
+        let (options, cloudsync_path) = meetspace_cloudsync::apply(options)?;
+        let (change_notifier, pool_options) = meetspace_db_change::ChangeNotifier::disabled();
         let pool = pool_options
             .max_connections(1)
             .connect_with(options)
             .await
-            .map_err(hypr_cloudsync::Error::from)?;
+            .map_err(meetspace_cloudsync::Error::from)?;
 
         Ok(Self {
             cloudsync_enabled: true,
@@ -162,7 +162,7 @@ impl Db {
             .filename(path)
             .create_if_missing(true)
             .pragma("foreign_keys", "ON");
-        let (change_notifier, pool_options) = hypr_db_change::ChangeNotifier::new();
+        let (change_notifier, pool_options) = meetspace_db_change::ChangeNotifier::new();
         let pool = pool_options.connect_with(options).await?;
 
         Ok(Self {
@@ -182,7 +182,7 @@ impl Db {
             .read_only(true)
             .pragma("foreign_keys", "ON")
             .pragma("query_only", "ON");
-        let (change_notifier, pool_options) = hypr_db_change::ChangeNotifier::new();
+        let (change_notifier, pool_options) = meetspace_db_change::ChangeNotifier::new();
         let pool = pool_options.connect_with(options).await?;
 
         Ok(Self {
@@ -200,7 +200,7 @@ impl Db {
         let options =
             apply_internal_connect_policy(SqliteConnectOptions::from_str("sqlite::memory:")?)
                 .pragma("foreign_keys", "ON");
-        let (change_notifier, pool_options) = hypr_db_change::ChangeNotifier::new();
+        let (change_notifier, pool_options) = meetspace_db_change::ChangeNotifier::new();
         let pool = pool_options
             .max_connections(1)
             .connect_with(options)
@@ -225,7 +225,7 @@ impl Db {
 async fn connect_with_options(
     options: &DbOpenOptions<'_>,
     pool_options: SqlitePoolOptions,
-    change_notifier: hypr_db_change::ChangeNotifier,
+    change_notifier: meetspace_db_change::ChangeNotifier,
 ) -> Result<Db, DbOpenError> {
     let mut connect_options = match options.storage {
         DbStorage::Local(path) => {
@@ -249,7 +249,7 @@ async fn connect_with_options(
     }
 
     let (connect_options, cloudsync_path) = if options.cloudsync_enabled {
-        let (connect_options, cloudsync_path) = hypr_cloudsync::apply(connect_options)?;
+        let (connect_options, cloudsync_path) = meetspace_cloudsync::apply(connect_options)?;
         (connect_options, Some(cloudsync_path))
     } else {
         (connect_options, None)
@@ -286,14 +286,14 @@ fn apply_internal_connect_policy(connect_options: SqliteConnectOptions) -> Sqlit
     connect_options.busy_timeout(SQLITE_BUSY_TIMEOUT)
 }
 
-async fn ensure_cloudsync_wal(pool: &SqlitePool) -> Result<(), hypr_cloudsync::Error> {
+async fn ensure_cloudsync_wal(pool: &SqlitePool) -> Result<(), meetspace_cloudsync::Error> {
     let journal_mode: String = sqlx::query_scalar("PRAGMA journal_mode")
         .fetch_one(pool)
         .await?;
     if journal_mode.eq_ignore_ascii_case("wal") {
         Ok(())
     } else {
-        Err(hypr_cloudsync::Error::WalRequired)
+        Err(meetspace_cloudsync::Error::WalRequired)
     }
 }
 
@@ -530,7 +530,7 @@ mod tests {
         })
         .await
         .unwrap();
-        assert_eq!(first_change.kind, hypr_db_change::TableChangeKind::Insert);
+        assert_eq!(first_change.kind, meetspace_db_change::TableChangeKind::Insert);
         while changes.try_recv().is_ok() {}
 
         let mut transaction = db.pool().begin().await.unwrap();
@@ -565,7 +565,7 @@ mod tests {
             })
             .await
             .unwrap();
-        assert_eq!(sync_change.kind, hypr_db_change::TableChangeKind::Update);
+        assert_eq!(sync_change.kind, meetspace_db_change::TableChangeKind::Update);
         assert_eq!(sync_change.seq, other_change.seq);
         let second_version: i64 = sqlx::query_scalar("SELECT cloudsync_db_version()")
             .fetch_one(db.pool())
@@ -627,7 +627,7 @@ mod tests {
         })
         .await
         .unwrap();
-        assert_eq!(final_change.kind, hypr_db_change::TableChangeKind::Update);
+        assert_eq!(final_change.kind, meetspace_db_change::TableChangeKind::Update);
         let final_version: i64 = sqlx::query_scalar("SELECT cloudsync_db_version()")
             .fetch_one(db.pool())
             .await
@@ -663,7 +663,7 @@ mod tests {
 
         assert!(matches!(
             error,
-            DbOpenError::Cloudsync(hypr_cloudsync::Error::WalRequired)
+            DbOpenError::Cloudsync(meetspace_cloudsync::Error::WalRequired)
         ));
     }
 
@@ -841,7 +841,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(change.table, "test_events");
-        assert_eq!(change.kind, hypr_db_change::TableChangeKind::Insert);
+        assert_eq!(change.kind, meetspace_db_change::TableChangeKind::Insert);
         assert!(change.seq > before);
         assert_eq!(notifier.current_seq(), change.seq);
         assert_eq!(notifier.latest_table_seq("test_events"), Some(change.seq));
@@ -877,7 +877,7 @@ mod tests {
             .unwrap()
             .unwrap();
         assert_eq!(change.table, "test_events");
-        assert_eq!(change.kind, hypr_db_change::TableChangeKind::Insert);
+        assert_eq!(change.kind, meetspace_db_change::TableChangeKind::Insert);
         assert_eq!(notifier.latest_table_seq("test_events"), Some(change.seq));
     }
 
@@ -935,7 +935,7 @@ mod tests {
             .unwrap()
             .unwrap();
         assert_eq!(change.table, "test_events");
-        assert_eq!(change.kind, hypr_db_change::TableChangeKind::Update);
+        assert_eq!(change.kind, meetspace_db_change::TableChangeKind::Update);
         assert_eq!(notifier.latest_table_seq("test_events"), Some(change.seq));
         assert!(
             tokio::time::timeout(std::time::Duration::from_millis(100), changes.recv())
@@ -978,9 +978,9 @@ mod tests {
             .unwrap();
 
         assert_eq!(update.table, "test_events");
-        assert_eq!(update.kind, hypr_db_change::TableChangeKind::Update);
+        assert_eq!(update.kind, meetspace_db_change::TableChangeKind::Update);
         assert_eq!(delete.table, "test_events");
-        assert_eq!(delete.kind, hypr_db_change::TableChangeKind::Delete);
+        assert_eq!(delete.kind, meetspace_db_change::TableChangeKind::Delete);
         assert!(delete.seq > update.seq);
         assert_eq!(notifier.latest_table_seq("test_events"), Some(delete.seq));
     }
@@ -1108,7 +1108,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(change.table, "retained_events");
-        assert_eq!(change.kind, hypr_db_change::TableChangeKind::Insert);
+        assert_eq!(change.kind, meetspace_db_change::TableChangeKind::Insert);
         assert_eq!(
             notifier.latest_table_seq("retained_events"),
             Some(change.seq)

@@ -1,8 +1,8 @@
 use std::path::Path;
 
-use hypr_db_core::{Db, DbOpenError, DbOpenOptions, DbStorage};
-use hypr_db_execute::{DbExecutor, ProxyQueryMethod, ProxyQueryResult};
-use hypr_db_reactive::{LiveQueryRuntime, QueryEventSink, SubscriptionRegistration};
+use meetspace_db_core::{Db, DbOpenError, DbOpenOptions, DbStorage};
+use meetspace_db_execute::{DbExecutor, ProxyQueryMethod, ProxyQueryResult};
+use meetspace_db_reactive::{LiveQueryRuntime, QueryEventSink, SubscriptionRegistration};
 use tauri::ipc::Channel;
 
 use crate::{QueryEvent, Result, TransactionStatement};
@@ -55,7 +55,7 @@ impl PluginDbRuntime {
 
     async fn ensure_app_schema(&self) -> Result<()> {
         self.schema_ready
-            .get_or_try_init(|| async { hypr_db_app::prepare_schema(self.db.as_ref()).await })
+            .get_or_try_init(|| async { meetspace_db_app::prepare_schema(self.db.as_ref()).await })
             .await?;
         Ok(())
     }
@@ -121,7 +121,7 @@ impl PluginDbRuntime {
         Ok(self.live_query_runtime.subscribe(sql, params, sink).await?)
     }
 
-    pub async fn unsubscribe(&self, subscription_id: &str) -> hypr_db_reactive::Result<()> {
+    pub async fn unsubscribe(&self, subscription_id: &str) -> meetspace_db_reactive::Result<()> {
         self.live_query_runtime.unsubscribe(subscription_id).await
     }
 
@@ -138,17 +138,17 @@ impl PluginDbRuntime {
         workspace_id: String,
     ) -> Result<crate::CloudsyncTokenConfigurationResult> {
         if !self.db.cloudsync_enabled() {
-            return Err(hypr_db_core::CloudsyncRuntimeError::Unavailable.into());
+            return Err(meetspace_db_core::CloudsyncRuntimeError::Unavailable.into());
         }
 
         if !self.claim_cloudsync_workspace(workspace_id).await? {
             return Ok(crate::CloudsyncTokenConfigurationResult::AccountMismatch);
         }
 
-        self.apply_cloudsync_config_fail_closed(hypr_db_core::CloudsyncRuntimeConfig {
+        self.apply_cloudsync_config_fail_closed(meetspace_db_core::CloudsyncRuntimeConfig {
             connection_string: database_id,
-            auth: hypr_db_core::CloudsyncAuth::Token { token },
-            tables: hypr_db_app::cloudsync_table_registry().to_vec(),
+            auth: meetspace_db_core::CloudsyncAuth::Token { token },
+            tables: meetspace_db_app::cloudsync_table_registry().to_vec(),
             sync_interval_ms: DEFAULT_CLOUDSYNC_INTERVAL_MS,
             wait_ms: Some(5_000),
             max_retries: Some(3),
@@ -159,9 +159,9 @@ impl PluginDbRuntime {
 
     pub async fn bind_cloudsync_account(&self, account_user_id: String) -> Result<bool> {
         self.ensure_app_schema().await?;
-        match hypr_db_app::bind_cloudsync_account(self.db.pool(), &account_user_id).await {
+        match meetspace_db_app::bind_cloudsync_account(self.db.pool(), &account_user_id).await {
             Ok(()) => Ok(true),
-            Err(hypr_db_app::CloudsyncWorkspaceError::AccountMismatch) => {
+            Err(meetspace_db_app::CloudsyncWorkspaceError::AccountMismatch) => {
                 self.db.cloudsync_suspend().await?;
                 Ok(false)
             }
@@ -174,7 +174,7 @@ impl PluginDbRuntime {
 
     async fn claim_cloudsync_workspace(&self, account_user_id: String) -> Result<bool> {
         self.ensure_app_schema().await?;
-        match hypr_db_app::cloudsync_workspace_is_claimed_by(self.db.pool(), &account_user_id).await
+        match meetspace_db_app::cloudsync_workspace_is_claimed_by(self.db.pool(), &account_user_id).await
         {
             Ok(true) => return Ok(true),
             Ok(false) => {}
@@ -188,7 +188,7 @@ impl PluginDbRuntime {
         }
 
         self.db.cloudsync_suspend().await?;
-        match hypr_db_app::claim_cloudsync_workspace(self.db.pool(), &account_user_id).await {
+        match meetspace_db_app::claim_cloudsync_workspace(self.db.pool(), &account_user_id).await {
             Ok(()) => Ok(true),
             Err(error) if is_permanent_cloudsync_workspace_rejection(&error) => Ok(false),
             Err(error) => Err(error.into()),
@@ -197,7 +197,7 @@ impl PluginDbRuntime {
 
     async fn apply_cloudsync_config_fail_closed(
         &self,
-        config: hypr_db_core::CloudsyncRuntimeConfig,
+        config: meetspace_db_core::CloudsyncRuntimeConfig,
     ) -> Result<()> {
         let result = async {
             self.db.cloudsync_reconfigure(config).await?;
@@ -246,14 +246,14 @@ impl PluginDbRuntime {
 }
 
 fn is_permanent_cloudsync_workspace_rejection(
-    error: &hypr_db_app::CloudsyncWorkspaceError,
+    error: &meetspace_db_app::CloudsyncWorkspaceError,
 ) -> bool {
     matches!(
         error,
-        hypr_db_app::CloudsyncWorkspaceError::InvalidWorkspaceId
-            | hypr_db_app::CloudsyncWorkspaceError::InvalidBinding
-            | hypr_db_app::CloudsyncWorkspaceError::AccountMismatch
-            | hypr_db_app::CloudsyncWorkspaceError::ForeignWorkspace { .. }
+        meetspace_db_app::CloudsyncWorkspaceError::InvalidWorkspaceId
+            | meetspace_db_app::CloudsyncWorkspaceError::InvalidBinding
+            | meetspace_db_app::CloudsyncWorkspaceError::AccountMismatch
+            | meetspace_db_app::CloudsyncWorkspaceError::ForeignWorkspace { .. }
     )
 }
 
@@ -288,7 +288,7 @@ pub async fn open_app_db(db_path: Option<&Path>) -> Result<Db> {
 
     match Db::open(app_db_open_options(storage, true)).await {
         Ok(db) => {
-            hypr_db_app::prepare_schema(&db).await?;
+            meetspace_db_app::prepare_schema(&db).await?;
             Ok(db)
         }
         Err(cloudsync_error) => {
@@ -333,7 +333,7 @@ async fn open_app_db_without_cloudsync(
         return Err(cloudsync_error.into());
     }
 
-    if let Err(error) = hypr_db_app::prepare_schema(&db).await {
+    if let Err(error) = meetspace_db_app::prepare_schema(&db).await {
         db.pool().close().await;
         return Err(error.into());
     }
@@ -496,7 +496,7 @@ mod tests {
         let db = Db::open(app_db_open_options(DbStorage::Local(&db_path), false))
             .await
             .unwrap();
-        hypr_db_app::prepare_schema(&db).await.unwrap();
+        meetspace_db_app::prepare_schema(&db).await.unwrap();
         sqlx::query(
             "UPDATE app_settings
              SET value_json = 'not-json'
@@ -518,8 +518,8 @@ mod tests {
 
         assert!(matches!(
             error,
-            crate::Error::AppSchema(hypr_db_app::AppSchemaError::CloudsyncWorkspace(
-                hypr_db_app::CloudsyncWorkspaceError::InvalidBinding
+            crate::Error::AppSchema(meetspace_db_app::AppSchemaError::CloudsyncWorkspace(
+                meetspace_db_app::CloudsyncWorkspaceError::InvalidBinding
             ))
         ));
     }
@@ -537,16 +537,16 @@ mod tests {
         })
         .await
         .unwrap();
-        hypr_db_app::prepare_schema(&db).await.unwrap();
+        meetspace_db_app::prepare_schema(&db).await.unwrap();
         let runtime = PluginDbRuntime::new(std::sync::Arc::new(db));
 
         runtime
-            .apply_cloudsync_config_fail_closed(hypr_db_core::CloudsyncRuntimeConfig {
+            .apply_cloudsync_config_fail_closed(meetspace_db_core::CloudsyncRuntimeConfig {
                 connection_string: "managed-database-id".to_string(),
-                auth: hypr_db_core::CloudsyncAuth::Token {
+                auth: meetspace_db_core::CloudsyncAuth::Token {
                     token: "secret-token".to_string(),
                 },
-                tables: vec![hypr_db_core::CloudsyncTableSpec {
+                tables: vec![meetspace_db_core::CloudsyncTableSpec {
                     table_name: "missing_table".to_string(),
                     crdt_algo: None,
                     init_flags: None,

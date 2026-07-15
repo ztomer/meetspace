@@ -7,7 +7,7 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use backon::{ExponentialBuilder, Retryable};
-use hypr_api_auth::AuthContext;
+use meetspace_api_auth::AuthContext;
 use serde::Serialize;
 use stripe_core::customer::DeleteCustomer;
 use utoipa::ToSchema;
@@ -130,7 +130,7 @@ async fn try_delete_stripe_customer(state: &AppState, user_id: &str) -> Result<(
         Ok(_) => {
             tracing::info!(
                 enduser.id = %user_id,
-                hyprnote.billing.customer.id = %customer_id,
+                meetspace.billing.customer.id = %customer_id,
                 "stripe_customer_deleted"
             );
             Ok(())
@@ -138,7 +138,7 @@ async fn try_delete_stripe_customer(state: &AppState, user_id: &str) -> Result<(
         Err(e) => {
             tracing::error!(
                 enduser.id = %user_id,
-                hyprnote.billing.customer.id = %customer_id,
+                meetspace.billing.customer.id = %customer_id,
                 error = %e,
                 "stripe_customer_deletion_failed"
             );

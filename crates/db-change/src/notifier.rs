@@ -67,7 +67,7 @@ impl ChangeNotifier {
 
                 let commit_state = Arc::clone(&hook_state);
                 if cloudsync_enabled {
-                    hypr_cloudsync::install_transaction_observer(
+                    meetspace_cloudsync::install_transaction_observer(
                         &mut handle,
                         move || commit_state.flush(),
                         move || hook_state.clear(),

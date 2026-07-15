@@ -1,4 +1,4 @@
-import type { TaskStatus } from "@hypr/store";
+import type { TaskStatus } from "@meetspace/store";
 
 import type { JSONContent } from "./note";
 
@@ -9,7 +9,7 @@ export interface TaskSource {
   id: string;
 }
 
-export type { TaskStatus } from "@hypr/store";
+export type { TaskStatus } from "@meetspace/store";
 
 export interface TaskRecord {
   taskId: string;

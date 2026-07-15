@@ -1,5 +1,5 @@
 {
-  "name": "@hypr/supabase",
+  "name": "@meetspace/supabase",
   "exports": {
     ".": "./src/index.ts",
     "./middleware": "./src/middleware.ts",

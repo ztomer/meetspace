@@ -5,22 +5,22 @@ pub struct Agent<'a, R: tauri::Runtime, M: tauri::Manager<R>> {
 }
 
 impl<R: tauri::Runtime, M: tauri::Manager<R>> Agent<'_, R, M> {
-    pub fn health_check(&self) -> hypr_agent_core::HealthCheckResponse {
-        hypr_agent_core::health_check()
+    pub fn health_check(&self) -> meetspace_agent_core::HealthCheckResponse {
+        meetspace_agent_core::health_check()
     }
 
     pub fn install_cli(
         &self,
-        payload: hypr_agent_core::InstallCliRequest,
-    ) -> Result<hypr_agent_core::InstallCliResponse, String> {
-        hypr_agent_core::install_cli(payload)
+        payload: meetspace_agent_core::InstallCliRequest,
+    ) -> Result<meetspace_agent_core::InstallCliResponse, String> {
+        meetspace_agent_core::install_cli(payload)
     }
 
     pub fn uninstall_cli(
         &self,
-        payload: hypr_agent_core::UninstallCliRequest,
-    ) -> Result<hypr_agent_core::UninstallCliResponse, String> {
-        hypr_agent_core::uninstall_cli(payload)
+        payload: meetspace_agent_core::UninstallCliRequest,
+    ) -> Result<meetspace_agent_core::UninstallCliResponse, String> {
+        meetspace_agent_core::uninstall_cli(payload)
     }
 }
 

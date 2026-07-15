@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 
 import { useListener } from "./contexts";
 import { getSessionKeywords } from "./useKeywords";
