@@ -162,7 +162,7 @@ pub fn init<R: tauri::Runtime>(
 
 pub fn init_with_cloudsync<R: tauri::Runtime>(
     db: std::sync::Arc<meetspace_db_core::Db>,
-    startup_config: Option<meetspace_db_core::CloudsyncRuntimeConfig>,
+    _startup_config: Option<meetspace_db_core::CloudsyncRuntimeConfig>,
 ) -> tauri::plugin::TauriPlugin<R> {
     let specta_builder = make_specta_builder();
 
