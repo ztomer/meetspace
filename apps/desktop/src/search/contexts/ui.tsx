@@ -166,7 +166,8 @@ export function groupSearchResults(
 const SearchUIContext = createContext<SearchUIContextValue | null>(null);
 
 export function SearchUIProvider({ children }: { children: React.ReactNode }) {
-  const { search, isIndexing } = useSearchEngine();
+  const { search } = useSearchEngine();
+  const isIndexing = false;
 
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<SearchFilters | null>(null);

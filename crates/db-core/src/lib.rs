@@ -560,7 +560,10 @@ mod tests {
         })
         .await
         .unwrap();
-        assert_eq!(first_change.kind, meetspace_db_change::TableChangeKind::Insert);
+        assert_eq!(
+            first_change.kind,
+            meetspace_db_change::TableChangeKind::Insert
+        );
         while changes.try_recv().is_ok() {}
 
         let mut transaction = db.pool().begin().await.unwrap();
@@ -595,7 +598,10 @@ mod tests {
             })
             .await
             .unwrap();
-        assert_eq!(sync_change.kind, meetspace_db_change::TableChangeKind::Update);
+        assert_eq!(
+            sync_change.kind,
+            meetspace_db_change::TableChangeKind::Update
+        );
         assert_eq!(sync_change.seq, other_change.seq);
         let second_version: i64 = sqlx::query_scalar("SELECT cloudsync_db_version()")
             .fetch_one(db.pool())
@@ -657,7 +663,10 @@ mod tests {
         })
         .await
         .unwrap();
-        assert_eq!(final_change.kind, meetspace_db_change::TableChangeKind::Update);
+        assert_eq!(
+            final_change.kind,
+            meetspace_db_change::TableChangeKind::Update
+        );
         let final_version: i64 = sqlx::query_scalar("SELECT cloudsync_db_version()")
             .fetch_one(db.pool())
             .await
