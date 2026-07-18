@@ -4753,7 +4753,7 @@ dependencies = [
 
 [[package]]
 name = "desktop"
-version = "1.2.0-meet2"
+version = "1.2.2-meet1"
 dependencies = [
  "audio-actual",
  "audio-mock",
