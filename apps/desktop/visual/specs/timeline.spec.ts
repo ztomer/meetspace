@@ -25,6 +25,8 @@ test("timeline — populated", async ({ page }) => {
   await expect(page.getByText("Q2 Planning Sync")).toBeVisible({
     timeout: 15_000,
   });
+  await expect(page.getByText("Design Review")).toBeVisible();
+  await expect(page.getByText("1:1 with Alex")).toBeVisible();
   await expect(page).toHaveScreenshot("timeline-populated.png", {
     fullPage: true,
   });

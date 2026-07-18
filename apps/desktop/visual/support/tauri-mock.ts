@@ -21,24 +21,44 @@ export function installTauriMock() {
     "plugin:event|unlisten": noop,
     // db / store live queries: empty result sets
     "plugin:db|execute": [],
-    "plugin:db|subscribe": () => ({
-      id: `sub-${++callbackId}`,
-      analysis: { kind: "non_reactive", data: { reason: "mocked backend" } },
-    }),
-    "plugin:store2|get": null,
-    // filesystem: vault root + directory scans. Session files come from the
-    // per-test seed (seedSessions) and only for the sessions dir, so other
-    // persisters (chat/events/…) get an empty scan rather than mis-parsing.
-    "plugin:settings|vault_base": "/data",
-    "plugin:fs-sync|scan_and_read": (args: unknown) => {
+    "plugin:db|subscribe": (args: unknown) => {
+      const { sql, onEvent } =
+        (args as {
+          sql?: string;
+          onEvent?: { onmessage?: (m: unknown) => void };
+        }) ?? {};
+
       const seed =
         ((window as unknown as Record<string, unknown>).__VISUAL_SEED__ as {
-          sessionFiles?: Record<string, string>;
+          sessionRows?: unknown[];
         }) ?? {};
-      const dir = (args as { scanDir?: string })?.scanDir ?? "";
-      const files = dir.endsWith("sessions") ? (seed.sessionFiles ?? {}) : {};
-      return { files };
+      // Only the seeded timeline sessions live query (selects
+      // `folder_path AS folder_id` from sessions) gets a result delivered.
+      // Every other subscription stays pending, exactly as before seeding
+      // existed — delivering empty results to all of them would push unrelated
+      // components into render paths the mock isn't set up for.
+      const isTimelineSessionsQuery =
+        /from\s+sessions\b/i.test(sql ?? "") &&
+        /folder_path\s+as\s+folder_id/i.test(sql ?? "");
+
+      if (isTimelineSessionsQuery && seed.sessionRows && onEvent?.onmessage) {
+        // Deliver after invoke resolves, so plugin-db's subscribe() has wired
+        // channel.onmessage.
+        Promise.resolve().then(() => {
+          onEvent.onmessage?.({ event: "result", data: seed.sessionRows });
+        });
+      }
+
+      return {
+        id: `sub-${++callbackId}`,
+        analysis: { kind: "non_reactive", data: { reason: "mocked backend" } },
+      };
     },
+    "plugin:store2|get": null,
+    // filesystem: vault root + directory scans. Persisters (chat/events/…) get
+    // an empty scan; sessions come from the SQLite live-query seed instead.
+    "plugin:settings|vault_base": "/data",
+    "plugin:fs-sync|scan_and_read": () => ({ files: {} }),
     // os / detect
     "plugin:os|platform": "macos",
     "plugin:os|arch": "aarch64",
