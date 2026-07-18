@@ -4,7 +4,7 @@ use axum::{
     http::{HeaderValue, header},
     routing::get,
 };
-use hypr_api_auth::AuthContext;
+use meetspace_api_auth::AuthContext;
 use reqwest::StatusCode as HttpStatusCode;
 use serde::{Deserialize, Serialize};
 use utoipa::OpenApi;
@@ -463,7 +463,7 @@ mod tests {
         body::{Body, to_bytes},
         http::{Method, Request, StatusCode},
     };
-    use hypr_api_auth::Claims;
+    use meetspace_api_auth::Claims;
     use serde_json::{Value, json};
     use tower::ServiceExt;
     use wiremock::{
@@ -497,7 +497,7 @@ mod tests {
                 claims: Claims {
                     sub: OWNER.to_string(),
                     email: None,
-                    entitlements: ["hyprnote_pro".to_string()].into_iter().collect(),
+                    entitlements: ["meetspace_pro".to_string()].into_iter().collect(),
                     subscription_status: None,
                     trial_end: None,
                     has_payment_method: None,

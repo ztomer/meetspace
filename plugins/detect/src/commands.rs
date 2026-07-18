@@ -2,7 +2,7 @@ use crate::DetectPluginExt;
 
 fn intersect_mic_active_bundle_ids(
     requested_bundle_ids: &[String],
-    current_mic_apps: &[hypr_detect::InstalledApp],
+    current_mic_apps: &[meetspace_detect::InstalledApp],
 ) -> Vec<String> {
     let requested = requested_bundle_ids
         .iter()
@@ -50,8 +50,8 @@ pub(crate) async fn list_default_ignored_bundle_ids<R: tauri::Runtime>(
 #[specta::specta]
 pub(crate) async fn inspect_meeting_accessibility<R: tauri::Runtime>(
     _app: tauri::AppHandle<R>,
-) -> Result<Vec<hypr_detect::MeetingAccessibilityInspection>, String> {
-    Ok(hypr_detect::inspect_meeting_accessibility())
+) -> Result<Vec<meetspace_detect::MeetingAccessibilityInspection>, String> {
+    Ok(meetspace_detect::inspect_meeting_accessibility())
 }
 
 #[tauri::command]
@@ -60,7 +60,7 @@ pub(crate) async fn send_meeting_chat_message<R: tauri::Runtime>(
     app: tauri::AppHandle<R>,
     message: String,
     mic_active_bundle_ids: Vec<String>,
-) -> Result<hypr_detect::MeetingChatSendResult, String> {
+) -> Result<meetspace_detect::MeetingChatSendResult, String> {
     let current_mic_apps = app
         .detect()
         .list_mic_using_applications()
@@ -68,7 +68,7 @@ pub(crate) async fn send_meeting_chat_message<R: tauri::Runtime>(
     let verified_bundle_ids =
         intersect_mic_active_bundle_ids(&mic_active_bundle_ids, &current_mic_apps);
 
-    Ok(hypr_detect::send_meeting_chat_message(
+    Ok(meetspace_detect::send_meeting_chat_message(
         message,
         verified_bundle_ids,
     ))
@@ -79,14 +79,14 @@ pub(crate) async fn send_meeting_chat_message<R: tauri::Runtime>(
 pub(crate) async fn capture_meeting_chat_messages<R: tauri::Runtime>(
     app: tauri::AppHandle<R>,
     bundle_ids: Vec<String>,
-) -> Result<hypr_detect::MeetingChatCaptureResult, String> {
+) -> Result<meetspace_detect::MeetingChatCaptureResult, String> {
     let current_mic_apps = app
         .detect()
         .list_mic_using_applications()
         .map_err(|error| error.to_string())?;
     let verified_bundle_ids = intersect_mic_active_bundle_ids(&bundle_ids, &current_mic_apps);
 
-    Ok(hypr_detect::capture_meeting_chat_messages(
+    Ok(meetspace_detect::capture_meeting_chat_messages(
         verified_bundle_ids,
     ))
 }
@@ -96,7 +96,7 @@ pub(crate) async fn capture_meeting_chat_messages<R: tauri::Runtime>(
 #[specta::specta]
 pub(crate) async fn inspect_meeting_accessibility<R: tauri::Runtime>(
     _app: tauri::AppHandle<R>,
-) -> Result<Vec<hypr_detect::MeetingAccessibilityInspection>, String> {
+) -> Result<Vec<meetspace_detect::MeetingAccessibilityInspection>, String> {
     Ok(Vec::new())
 }
 
@@ -183,8 +183,8 @@ pub(crate) async fn get_current_locale_identifier<R: tauri::Runtime>(
 mod tests {
     use super::*;
 
-    fn app(id: &str) -> hypr_detect::InstalledApp {
-        hypr_detect::InstalledApp {
+    fn app(id: &str) -> meetspace_detect::InstalledApp {
+        meetspace_detect::InstalledApp {
             id: id.to_string(),
             name: id.to_string(),
         }

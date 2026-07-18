@@ -14,7 +14,7 @@ pub enum SyncError {
     #[error("Meetspace Pro is required for CloudSync")]
     ProPlanRequired,
 
-    #[error("A newer Anarlog version is required for encrypted CloudSync")]
+    #[error("A newer Meetspace version is required for encrypted CloudSync")]
     CloudsyncUpgradeRequired,
 
     #[error("This account is protected by a different E2EE recovery key")]
@@ -105,7 +105,7 @@ impl IntoResponse for SyncError {
             Self::CloudsyncUpgradeRequired => (
                 StatusCode::UPGRADE_REQUIRED,
                 "cloudsync_upgrade_required",
-                "Update Anarlog to continue using encrypted CloudSync".to_string(),
+                "Update Meetspace to continue using encrypted CloudSync".to_string(),
             ),
             Self::E2eeKeyMismatch => (
                 StatusCode::CONFLICT,
@@ -136,7 +136,7 @@ impl IntoResponse for SyncError {
             Self::SnapshotChanged => (
                 StatusCode::CONFLICT,
                 "snapshot_conflict",
-                "Shared note changed; update Anarlog and reload before publishing again"
+                "Shared note changed; update Meetspace and reload before publishing again"
                     .to_string(),
             ),
             Self::SnapshotServiceUnavailable => (

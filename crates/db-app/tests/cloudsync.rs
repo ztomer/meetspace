@@ -5,8 +5,8 @@ use db_app::{
     apply_e2ee_replica_changes, claim_cloudsync_workspace, cloudsync_table_registry,
     encrypt_e2ee_replica_changes, prepare_schema,
 };
-use hypr_db_core::{CloudsyncAuth, CloudsyncRuntimeConfig, Db, DbOpenOptions, DbStorage};
-use hypr_e2ee::{RecoveryKey, WorkspaceKey};
+use meetspace_db_core::{CloudsyncAuth, CloudsyncRuntimeConfig, Db, DbOpenOptions, DbStorage};
+use meetspace_e2ee::{RecoveryKey, WorkspaceKey};
 
 const SYNC_TIMEOUT: Duration = Duration::from_secs(90);
 const SYNC_ATTEMPTS: usize = 3;
@@ -380,8 +380,8 @@ fn cloudsync_enables_only_the_encrypted_replica() {
 async fn same_personal_workspace_syncs_and_decrypts_a_real_note() {
     let workspace_id = std::env::var("MEETSPACE_CLOUDSYNC_WORKSPACE_A")
         .expect("MEETSPACE_CLOUDSYNC_WORKSPACE_A must be set");
-    let token =
-        std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_A").expect("MEETSPACE_CLOUDSYNC_TOKEN_A must be set");
+    let token = std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_A")
+        .expect("MEETSPACE_CLOUDSYNC_TOKEN_A must be set");
     let keys = workspace_keys(&workspace_id, "MEETSPACE_CLOUDSYNC_RECOVERY_KEY_A");
     let marker = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -456,10 +456,10 @@ async fn personal_workspace_tokens_block_foreign_encrypted_writes() {
     let workspace_b = std::env::var("MEETSPACE_CLOUDSYNC_WORKSPACE_B")
         .expect("MEETSPACE_CLOUDSYNC_WORKSPACE_B must be set");
     assert_ne!(workspace_a, workspace_b);
-    let token_a =
-        std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_A").expect("MEETSPACE_CLOUDSYNC_TOKEN_A must be set");
-    let token_b =
-        std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_B").expect("MEETSPACE_CLOUDSYNC_TOKEN_B must be set");
+    let token_a = std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_A")
+        .expect("MEETSPACE_CLOUDSYNC_TOKEN_A must be set");
+    let token_b = std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_B")
+        .expect("MEETSPACE_CLOUDSYNC_TOKEN_B must be set");
     let keys_b = workspace_keys(&workspace_b, "MEETSPACE_CLOUDSYNC_RECOVERY_KEY_B");
     let marker = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -725,10 +725,10 @@ async fn cleanup_e2ee_verification_workspaces() {
         workspace_b.starts_with("deploy-e2ee-b-"),
         "cleanup is restricted to deploy-e2ee-b-* workspaces"
     );
-    let token_a =
-        std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_A").expect("MEETSPACE_CLOUDSYNC_TOKEN_A must be set");
-    let token_b =
-        std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_B").expect("MEETSPACE_CLOUDSYNC_TOKEN_B must be set");
+    let token_a = std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_A")
+        .expect("MEETSPACE_CLOUDSYNC_TOKEN_A must be set");
+    let token_b = std::env::var("MEETSPACE_CLOUDSYNC_TOKEN_B")
+        .expect("MEETSPACE_CLOUDSYNC_TOKEN_B must be set");
 
     let cleanup_a = tokio::spawn(async move {
         cleanup_verification_workspace(&token_a, &workspace_a, "workspace A verification").await;

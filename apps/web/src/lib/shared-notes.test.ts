@@ -43,30 +43,30 @@ test("builds shared-note desktop links with only the supported schemes", () => {
 
   assert.equal(
     buildAccountShareDeepLink(shareId),
-    `hyprnote://share/open?mode=account&share_id=${shareId}`,
+    `meetspace://share/open?mode=account&share_id=${shareId}`,
   );
   assert.equal(
-    buildAccountShareDeepLink(shareId, "hyprnote-staging"),
-    `hyprnote-staging://share/open?mode=account&share_id=${shareId}`,
+    buildAccountShareDeepLink(shareId, "meetspace-staging"),
+    `meetspace-staging://share/open?mode=account&share_id=${shareId}`,
   );
   assert.equal(
-    buildShareHandoffDeepLink(requestId, "hyprnote-staging"),
-    `hyprnote-staging://share/open?mode=handoff&request_id=${requestId}`,
+    buildShareHandoffDeepLink(requestId, "meetspace-staging"),
+    `meetspace-staging://share/open?mode=handoff&request_id=${requestId}`,
   );
   assert.equal(
-    buildShareHandoffDeepLink(requestId, "char" as "hyprnote"),
-    `hyprnote://share/open?mode=handoff&request_id=${requestId}`,
+    buildShareHandoffDeepLink(requestId, "char" as "meetspace"),
+    `meetspace://share/open?mode=handoff&request_id=${requestId}`,
   );
 });
 
 test("preserves only the staging scheme in shared-note web paths", () => {
   assert.equal(buildSharedNoteWebPath("/share/example/"), "/share/example/");
   assert.equal(
-    buildSharedNoteWebPath("/share/example/", "hyprnote-staging"),
-    "/share/example/?scheme=hyprnote-staging",
+    buildSharedNoteWebPath("/share/example/", "meetspace-staging"),
+    "/share/example/?scheme=meetspace-staging",
   );
   assert.equal(
-    buildSharedNoteWebPath("/share/example/", "char" as "hyprnote"),
+    buildSharedNoteWebPath("/share/example/", "char" as "meetspace"),
     "/share/example/",
   );
 });

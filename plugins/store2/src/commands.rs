@@ -438,14 +438,14 @@ mod tests {
     #[test]
     fn migrates_all_previous_dev_secret_locations() {
         assert_eq!(
-            legacy_secret_locations("com.hyprnote.dev", "provider", "deepgram"),
+            legacy_secret_locations("com.meetspace.dev", "provider", "deepgram"),
             vec![
                 (
-                    "com.anarlog.dev.secure-store".to_string(),
+                    "com.meetspace.dev.secure-store".to_string(),
                     "provider:deepgram".to_string(),
                 ),
                 (
-                    "com.hyprnote.dev.secure-store".to_string(),
+                    "com.meetspace.dev.secure-store".to_string(),
                     "provider:deepgram".to_string(),
                 ),
             ]

@@ -1,8 +1,8 @@
 import { useCallback, useRef } from "react";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import { commands as detectCommands } from "@hypr/plugin-detect";
-import { sonnerToast } from "@hypr/ui/components/ui/toast";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as detectCommands } from "@meetspace/plugin-detect";
+import { sonnerToast } from "@meetspace/ui/components/ui/toast";
 
 import { useListener } from "./contexts";
 import { startMeetingChatCapture } from "./meeting-chat-capture";

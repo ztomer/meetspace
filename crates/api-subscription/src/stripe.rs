@@ -125,7 +125,7 @@ async fn delete_unassigned_customer(stripe: &stripe::Client, customer_id: &str) 
         Err(error) => {
             tracing::error!(
                 error = %error,
-                hyprnote.billing.customer.id = %customer_id,
+                meetspace.billing.customer.id = %customer_id,
                 "unassigned_stripe_customer_deletion_failed"
             );
         }

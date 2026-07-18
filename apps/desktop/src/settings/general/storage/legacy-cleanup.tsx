@@ -14,8 +14,8 @@ import {
   getLegacyCleanupStatus,
   getLegacyImportReport,
   runLegacyImport,
-} from "@hypr/plugin-db";
-import { Button } from "@hypr/ui/components/ui/button";
+} from "@meetspace/plugin-db";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +23,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@hypr/ui/components/ui/dialog";
+} from "@meetspace/ui/components/ui/dialog";
 
 const QUERY_KEY = ["legacy-migration"] as const;
 

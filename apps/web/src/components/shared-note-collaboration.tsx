@@ -16,7 +16,7 @@ import {
   XIcon,
 } from "lucide-react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
 import {
   sharedPrimaryButtonClassName,

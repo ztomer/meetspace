@@ -123,7 +123,7 @@ function SharedNoteActionButtons({
         onClick={onOpen}
       >
         <ExternalLinkIcon className="mr-2 size-4" aria-hidden="true" />
-        {isPending ? "Opening…" : "Open in Anarlog"}
+        {isPending ? "Opening…" : "Open in Meetspace"}
       </button>
       {showAccountCreation && (
         <a href="/auth/?flow=web" className={sharedSecondaryButtonClassName}>
@@ -141,7 +141,7 @@ function SharedNoteActionButtons({
           className="text-color-muted basis-full text-right text-xs"
           role="status"
         >
-          Anarlog couldn’t be opened. Try again.
+          Meetspace couldn’t be opened. Try again.
         </p>
       )}
     </>

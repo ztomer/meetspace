@@ -6,39 +6,26 @@ import { Switch } from "@meetspace/ui/components/ui/switch";
 interface SettingItem {
   value: boolean;
   onChange: (value: boolean) => void;
-  disabled?: boolean;
-}
-
-interface CloudSyncSettingItem extends SettingItem {
-  available: boolean;
 }
 
 interface AppSettingsViewProps {
   autostart: SettingItem;
-  autoJoinScheduledMeetings: SettingItem;
   autoStartScheduledMeetings: SettingItem;
   autoStopMeetings: SettingItem;
   floatingBar: SettingItem;
   showAppInDock: SettingItem;
   showTrayIcon: SettingItem;
   telemetryConsent: SettingItem;
-  cloudSync: CloudSyncSettingItem;
-  meetingDisclosureAutoPost: SettingItem;
-  captureMeetingChat: SettingItem;
 }
 
 export function AppSettingsView({
   autostart,
-  autoJoinScheduledMeetings,
   autoStartScheduledMeetings,
   autoStopMeetings,
   floatingBar,
   showAppInDock,
   showTrayIcon,
   telemetryConsent,
-  cloudSync,
-  meetingDisclosureAutoPost,
-  captureMeetingChat,
 }: AppSettingsViewProps) {
   return (
     <div className="flex flex-col gap-8">
@@ -78,22 +65,6 @@ export function AppSettingsView({
             checked={showTrayIcon.value}
             onChange={showTrayIcon.onChange}
           />
-          <SettingRow
-            title={<Trans>Cloud sync</Trans>}
-            description={
-              cloudSync.available ? (
-                <Trans>
-                  End-to-end encrypted across your signed-in devices. Meetspace
-                  cannot read your synced notes.
-                </Trans>
-              ) : (
-                <Trans>Available with Meetspace Pro.</Trans>
-              )
-            }
-            checked={cloudSync.available && cloudSync.value}
-            onChange={cloudSync.onChange}
-            disabled={cloudSync.disabled}
-          />
         </div>
       </section>
 
@@ -114,18 +85,6 @@ export function AppSettingsView({
             onChange={autoStartScheduledMeetings.onChange}
           />
           <SettingRow
-            title={<Trans>Join scheduled meetings</Trans>}
-            description={
-              <Trans>
-                Automatically open the meeting link when scheduled listening
-                starts.
-              </Trans>
-            }
-            checked={autoJoinScheduledMeetings.value}
-            onChange={autoJoinScheduledMeetings.onChange}
-            disabled={!autoStartScheduledMeetings.value}
-          />
-          <SettingRow
             title={<Trans>Stop when meeting ends</Trans>}
             description={
               <Trans>
@@ -135,31 +94,6 @@ export function AppSettingsView({
             }
             checked={autoStopMeetings.value}
             onChange={autoStopMeetings.onChange}
-          />
-          <SettingRow
-            title={<Trans>Post recording disclosure in meeting chat</Trans>}
-            description={
-              <Trans>
-                Automatically post a disclosure after listening starts when the
-                active meeting chat supports safe posting. Posting failure does
-                not stop listening. A disclosure does not confirm participant
-                consent.
-              </Trans>
-            }
-            checked={meetingDisclosureAutoPost.value}
-            onChange={meetingDisclosureAutoPost.onChange}
-          />
-          <SettingRow
-            title={<Trans>Capture meeting chat in Memos</Trans>}
-            description={
-              <Trans>
-                While listening, use Accessibility access to copy visible chat
-                from supported meeting apps and browser meetings into the active
-                note.
-              </Trans>
-            }
-            checked={captureMeetingChat.value}
-            onChange={captureMeetingChat.onChange}
           />
           <SettingRow
             title={<Trans>Show floating bar</Trans>}
@@ -180,13 +114,11 @@ function SettingRow({
   description,
   checked,
   onChange,
-  disabled = false,
 }: {
   title: ReactNode;
   description: ReactNode;
   checked: boolean;
   onChange: (checked: boolean) => void;
-  disabled?: boolean;
 }) {
   const titleId = useId();
   const descriptionId = useId();
@@ -204,7 +136,6 @@ function SettingRow({
       <Switch
         checked={checked}
         onCheckedChange={onChange}
-        disabled={disabled}
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
       />

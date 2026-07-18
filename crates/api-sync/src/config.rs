@@ -210,7 +210,9 @@ fn validate_protocol_databases(
         );
     }
     if protocol_mode == CloudsyncProtocolMode::Dual && legacy_database_id.is_none() {
-        return Err("MEETSPACE_CLOUDSYNC_DATABASE_ID is required in dual protocol mode".to_string());
+        return Err(
+            "MEETSPACE_CLOUDSYNC_DATABASE_ID is required in dual protocol mode".to_string(),
+        );
     }
     Ok(())
 }

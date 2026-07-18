@@ -328,7 +328,7 @@ impl Db {
             run_before_sync_hook(&self.cloudsync_sync_hook, &self.pool).await?;
             let result = self.cloudsync_network_sync(wait_ms, max_retries).await?;
             run_after_sync_hook(&self.cloudsync_sync_hook, &self.pool).await?;
-            Ok::<_, hypr_cloudsync::Error>(result)
+            Ok::<_, meetspace_cloudsync::Error>(result)
         }
         .await;
 
@@ -384,12 +384,12 @@ impl Db {
 async fn authenticate_cloudsync_network<A, AF, C, CF>(
     authenticate: A,
     cleanup: C,
-) -> Result<(), hypr_cloudsync::Error>
+) -> Result<(), meetspace_cloudsync::Error>
 where
     A: FnOnce() -> AF,
-    AF: Future<Output = Result<(), hypr_cloudsync::Error>>,
+    AF: Future<Output = Result<(), meetspace_cloudsync::Error>>,
     C: FnOnce() -> CF,
-    CF: Future<Output = Result<(), hypr_cloudsync::Error>>,
+    CF: Future<Output = Result<(), meetspace_cloudsync::Error>>,
 {
     if let Err(auth_error) = authenticate().await {
         if let Err(cleanup_error) = cleanup().await {
@@ -411,7 +411,7 @@ fn record_sync_result(runtime: &Mutex<CloudsyncRuntimeState>, result: CloudsyncN
     if let Some(error) = runtime.last_sync.as_ref().and_then(embedded_sync_error) {
         runtime.consecutive_failures = runtime.consecutive_failures.saturating_add(1);
         runtime.last_error = Some(error);
-        runtime.last_error_kind = Some(hypr_cloudsync::ErrorKind::Fatal);
+        runtime.last_error_kind = Some(meetspace_cloudsync::ErrorKind::Fatal);
         return;
     }
 
@@ -470,7 +470,7 @@ mod tests {
     fn embedded_sync_failures_update_runtime_error_state() {
         let runtime = Mutex::new(CloudsyncRuntimeState::default());
         let result = CloudsyncNetworkResult {
-            send: Some(hypr_cloudsync::NetworkSendResult {
+            send: Some(meetspace_cloudsync::NetworkSendResult {
                 status: "failed".to_string(),
                 local_version: 4,
                 server_version: 3,
@@ -478,7 +478,7 @@ mod tests {
                 bytes: 1024,
                 last_failure: None,
             }),
-            receive: Some(hypr_cloudsync::NetworkReceiveResult {
+            receive: Some(meetspace_cloudsync::NetworkReceiveResult {
                 rows: 0,
                 tables: Vec::new(),
                 chunks: 0,
@@ -497,7 +497,7 @@ mod tests {
         assert_eq!(runtime.consecutive_failures, 1);
         assert_eq!(
             runtime.last_error_kind,
-            Some(hypr_cloudsync::ErrorKind::Fatal)
+            Some(meetspace_cloudsync::ErrorKind::Fatal)
         );
         assert!(
             runtime
@@ -512,7 +512,7 @@ mod tests {
     fn embedded_sync_in_progress_does_not_update_runtime_error_state() {
         let runtime = Mutex::new(CloudsyncRuntimeState::default());
         let result = CloudsyncNetworkResult {
-            send: Some(hypr_cloudsync::NetworkSendResult {
+            send: Some(meetspace_cloudsync::NetworkSendResult {
                 status: "syncing".to_string(),
                 local_version: 4,
                 server_version: 3,
@@ -552,13 +552,13 @@ mod tests {
 
         let error = authenticate_cloudsync_network(
             || async {
-                Err::<(), _>(hypr_cloudsync::Error::from(std::io::Error::other(
+                Err::<(), _>(meetspace_cloudsync::Error::from(std::io::Error::other(
                     "authentication rejected",
                 )))
             },
             || async {
                 cleanup_called.store(true, Ordering::SeqCst);
-                Ok::<(), hypr_cloudsync::Error>(())
+                Ok::<(), meetspace_cloudsync::Error>(())
             },
         )
         .await
@@ -727,7 +727,7 @@ mod tests {
             let mut runtime = db.cloudsync_runtime.lock().unwrap();
             runtime.running = false;
             runtime.last_error = Some("fatal sync failure".to_string());
-            runtime.last_error_kind = Some(hypr_cloudsync::ErrorKind::Fatal);
+            runtime.last_error_kind = Some(meetspace_cloudsync::ErrorKind::Fatal);
             runtime.task = Some(CloudsyncBackgroundTask {
                 shutdown_tx: Some(stale_shutdown_tx),
                 join_handle,
@@ -853,7 +853,7 @@ mod tests {
     }
 }
 
-fn record_sync_error(runtime: &Mutex<CloudsyncRuntimeState>, error: &hypr_cloudsync::Error) {
+fn record_sync_error(runtime: &Mutex<CloudsyncRuntimeState>, error: &meetspace_cloudsync::Error) {
     let mut runtime = runtime.lock().unwrap();
     runtime.consecutive_failures = runtime.consecutive_failures.saturating_add(1);
     runtime.last_error = Some(error.to_string());
@@ -918,7 +918,7 @@ async fn sync_cloudsync_with_retry(
     sync_hook: &Mutex<Option<Arc<dyn super::CloudsyncSyncHook>>>,
     config: CloudsyncLoopConfig,
     shutdown_rx: &mut oneshot::Receiver<()>,
-) -> Option<Result<CloudsyncNetworkResult, hypr_cloudsync::Error>> {
+) -> Option<Result<CloudsyncNetworkResult, meetspace_cloudsync::Error>> {
     let mut backoff = ExponentialBuilder::default()
         .with_min_delay(config.interval)
         .with_max_delay(Duration::from_secs(MAX_BACKOFF_SECS))
@@ -935,7 +935,7 @@ async fn sync_cloudsync_with_retry(
         )
         .await
         {
-            Err(error) if error.kind() == hypr_cloudsync::ErrorKind::Transient => {
+            Err(error) if error.kind() == meetspace_cloudsync::ErrorKind::Transient => {
                 let Some(retry_after) = backoff.next() else {
                     return Some(Err(error));
                 };
@@ -979,15 +979,18 @@ async fn sync_cloudsync_connection(
     sync_hook: &Mutex<Option<Arc<dyn super::CloudsyncSyncHook>>>,
     wait_ms: Option<i64>,
     max_retries: Option<i64>,
-) -> Result<CloudsyncNetworkResult, hypr_cloudsync::Error> {
+) -> Result<CloudsyncNetworkResult, meetspace_cloudsync::Error> {
     run_before_sync_hook(sync_hook, pool).await?;
     let mut connection = connection.lock().await;
     if connection.is_none() {
         *connection = Some(pool.acquire().await?);
     }
-    let result =
-        hypr_cloudsync::network_sync(&mut **connection.as_mut().unwrap(), wait_ms, max_retries)
-            .await;
+    let result = meetspace_cloudsync::network_sync(
+        &mut **connection.as_mut().unwrap(),
+        wait_ms,
+        max_retries,
+    )
+    .await;
     if pool.options().get_max_connections() == 1 {
         connection.take();
     }
@@ -999,7 +1002,7 @@ async fn sync_cloudsync_connection(
 async fn run_before_sync_hook(
     hook: &Mutex<Option<Arc<dyn super::CloudsyncSyncHook>>>,
     pool: &SqlitePool,
-) -> Result<(), hypr_cloudsync::Error> {
+) -> Result<(), meetspace_cloudsync::Error> {
     let hook = hook.lock().unwrap().clone();
     match hook {
         Some(hook) => hook.before_sync(pool).await,
@@ -1010,7 +1013,7 @@ async fn run_before_sync_hook(
 async fn run_after_sync_hook(
     hook: &Mutex<Option<Arc<dyn super::CloudsyncSyncHook>>>,
     pool: &SqlitePool,
-) -> Result<(), hypr_cloudsync::Error> {
+) -> Result<(), meetspace_cloudsync::Error> {
     let hook = hook.lock().unwrap().clone();
     match hook {
         Some(hook) => hook.after_sync(pool).await,

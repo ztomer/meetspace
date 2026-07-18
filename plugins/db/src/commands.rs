@@ -13,11 +13,11 @@ fn e2ee_recovery_key_name(account_user_id: &str) -> Result<String, String> {
 async fn load_e2ee_recovery_key<R: tauri::Runtime>(
     app: tauri::AppHandle<R>,
     account_user_id: &str,
-) -> Result<Option<hypr_e2ee::RecoveryKey>, String> {
+) -> Result<Option<meetspace_e2ee::RecoveryKey>, String> {
     let key = e2ee_recovery_key_name(account_user_id)?;
     tauri_plugin_store2::read_secret(app, E2EE_SECRET_SCOPE.to_string(), key)
         .await?
-        .map(|value| hypr_e2ee::RecoveryKey::parse(&value).map_err(|error| error.to_string()))
+        .map(|value| meetspace_e2ee::RecoveryKey::parse(&value).map_err(|error| error.to_string()))
         .transpose()
 }
 
@@ -170,7 +170,7 @@ pub(crate) fn inspect_e2ee_recovery_key(
     recovery_key: String,
 ) -> Result<crate::E2eeRecoveryKeyIdentity, String> {
     let recovery_key =
-        hypr_e2ee::RecoveryKey::parse(&recovery_key).map_err(|error| error.to_string())?;
+        meetspace_e2ee::RecoveryKey::parse(&recovery_key).map_err(|error| error.to_string())?;
     Ok(crate::E2eeRecoveryKeyIdentity {
         key_id: recovery_key.key_id(),
     })
@@ -190,7 +190,8 @@ pub(crate) async fn create_e2ee_identity<R: tauri::Runtime>(
         return Err("E2EE recovery key is already configured".to_string());
     }
 
-    let recovery_key = hypr_e2ee::RecoveryKey::generate().map_err(|error| error.to_string())?;
+    let recovery_key =
+        meetspace_e2ee::RecoveryKey::generate().map_err(|error| error.to_string())?;
     let recovery_code = recovery_key.expose_code();
     Ok(recovery_code.to_string())
 }
@@ -211,7 +212,7 @@ pub(crate) async fn import_e2ee_identity<R: tauri::Runtime>(
     }
 
     let recovery_key =
-        hypr_e2ee::RecoveryKey::parse(&recovery_key).map_err(|error| error.to_string())?;
+        meetspace_e2ee::RecoveryKey::parse(&recovery_key).map_err(|error| error.to_string())?;
     tauri_plugin_store2::write_secret(
         app,
         E2EE_SECRET_SCOPE.to_string(),

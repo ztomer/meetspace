@@ -2,20 +2,10 @@ import { emitTo, listen } from "@tauri-apps/api/event";
 import { getAllWebviewWindows } from "@tauri-apps/api/webviewWindow";
 import { useCallback, useEffect } from "react";
 
-import { getCurrentWebviewWindowLabel } from "@hypr/plugin-windows";
-import { sonnerToast } from "@hypr/ui/components/ui/toast";
+import { getCurrentWebviewWindowLabel } from "@meetspace/plugin-windows";
 
-import { useOptionalAuth } from "~/auth";
 import { useIgnoredEvents } from "~/calendar/ignored-events";
-import {
-  deleteSessionShareBySession,
-  ShareManagementError,
-} from "~/session-sharing/client";
 import { finalizeSessionDeletion, softDeleteSession } from "~/session/queries";
-import {
-  loadManagedSharedNoteForSession,
-  removeDurableSharedNoteCache,
-} from "~/shared-notes/cache";
 import { listenerStore } from "~/store/zustand/listener/instance";
 import { useTabs } from "~/store/zustand/tabs";
 import {
@@ -59,7 +49,6 @@ function isSessionDeletedForUndoPayload(
 }
 
 export function useDeleteSession() {
-  const auth = useOptionalAuth();
   const invalidateResource = useTabs((state) => state.invalidateResource);
   const addDeletion = useUndoDelete((state) => state.addDeletion);
   const { ignoreEvent } = useIgnoredEvents();
@@ -78,47 +67,9 @@ export function useDeleteSession() {
       }
 
       void (async () => {
-        let didDelete = false;
         try {
-          if (
-            auth?.session &&
-            auth.supabase &&
-            auth.session.user.is_anonymous !== true
-          ) {
-            const managedShare = await loadManagedSharedNoteForSession(
-              auth.session.user.id,
-              sessionId,
-            );
-            if (managedShare) {
-              const deletedShare = await deleteSessionShareBySession(
-                { session: auth.session, supabase: auth.supabase },
-                {
-                  workspaceId: managedShare.workspaceId,
-                  sessionId: managedShare.sessionId,
-                },
-              );
-              if (
-                deletedShare.shareId !== null &&
-                deletedShare.shareId !== managedShare.shareId
-              ) {
-                throw new ShareManagementError();
-              }
-              try {
-                await removeDurableSharedNoteCache(
-                  auth.session.user.id,
-                  managedShare.shareId,
-                );
-              } catch {
-                console.error(
-                  "[delete-session] failed to clear shared-note cache",
-                );
-              }
-            }
-          }
-
           const deletedData = await softDeleteSession(sessionId);
           if (!deletedData) return;
-          didDelete = true;
 
           if (trackingId) ignoreEvent(trackingId);
           invalidateResource("sessions", sessionId);
@@ -137,23 +88,14 @@ export function useDeleteSession() {
               data: deletedData,
             } satisfies SessionDeletedForUndoPayload);
           }
-        } catch {
-          console.error("[delete-session] failed to finish deletion");
-          sonnerToast.error("Could not delete this note. Please try again.");
+        } catch (error) {
+          console.error("[delete-session] failed to finish deletion", error);
         } finally {
-          if (didDelete) {
-            await closeSessionNoteWindows(sessionId);
-          }
+          await closeSessionNoteWindows(sessionId);
         }
       })();
     },
-    [
-      auth?.session,
-      auth?.supabase,
-      ignoreEvent,
-      invalidateResource,
-      addDeletion,
-    ],
+    [ignoreEvent, invalidateResource, addDeletion],
   );
 }
 
