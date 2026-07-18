@@ -239,8 +239,9 @@ def resolve():
     else:
         print_ok("All conflicts resolved!")
 
-    return True
+    return unresolved_count == 0
 
 
 if __name__ == "__main__":
-    resolve()
+    success = resolve()
+    sys.exit(0 if success else 1)

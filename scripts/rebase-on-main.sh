@@ -91,10 +91,29 @@ fi
 
 bold "==> Rebasing onto $TARGET_LABEL"
 if ! git rebase "$TARGET"; then
-  red "Rebase has conflicts."
-  yellow "Check docs/_REMOVED_AUTH.md — most conflicts are upstream resurrecting files we deleted."
-  yellow "Resolve them, then run: git rebase --continue"
-  exit 1
+  yellow "Rebase encountered conflicts. Attempting automatic resolution..."
+  
+  # Keep looping while rebase is in progress
+  while [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ] || [ -d "$(git rev-parse --git-dir 2>/dev/null)/rebase-merge" ] || [ -d "$(git rev-parse --git-dir 2>/dev/null)/rebase-apply" ]; do
+    yellow "Running auto-conflict-resolution script..."
+    if python3 scripts/resolve_conflicts.py; then
+      green "All conflicts in this step resolved. Continuing rebase..."
+      if ! git -c core.editor=true rebase --continue 2>&1 | tee /tmp/rebase_out; then
+        if grep -q "No changes - did you forget to use 'git add'?" /tmp/rebase_out || grep -q "nothing to commit" /tmp/rebase_out; then
+          yellow "Commit is empty. Skipping..."
+          git rebase --skip
+        else
+          # It failed because of next commit's conflicts, continue to next loop iteration
+          continue
+        fi
+      fi
+    else
+      red "Some conflicts could not be resolved automatically."
+      yellow "Please resolve the remaining conflicts manually, then run: git rebase --continue"
+      exit 1
+    fi
+  done
+  green "Rebase completed and resolved successfully!"
 fi
 
 bold "==> Re-removing files in docs/_REMOVED_AUTH.md that upstream may have reintroduced"
