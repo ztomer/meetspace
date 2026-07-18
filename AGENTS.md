@@ -96,3 +96,14 @@ Naming rules:
 ## Misc
 
 - Do not create summary docs or example code files unless requested.
+
+## Rebase & Build Optimizations
+
+### SQLite In-Memory Keepalive
+For SQLite in-memory databases (`DbStorage::Memory`), the connection string must be `"sqlite:file::memory:?cache=shared"` and the pool configured with `max_connections(1).min_connections(1)`. A persistent keepalive connection (`_memory_keepalive: Option<sqlx::SqliteConnection>`) must be stored in the `Db` struct for the application lifecycle to prevent SQLx from closing the last connection and discarding the database schema.
+
+### Cargo Dev Profile
+To keep dev builds fast and prevent target directory bloat (which can grow to 30-60GB), the workspace `Cargo.toml` must set `[profile.dev] debug = 1` (line-tables-only). This preserves line numbers for backtraces/crashes while reducing debug symbol bloat and link times.
+
+### Automated Rebase Conflict Resolution
+When rebasing on upstream changes, always use `./scripts/rebase-on-main.sh`. It automatically loops to resolve modify/delete conflicts (keeping files deleted) and rebranding conflicts via `resolve_conflicts.py`, and automatically skips empty commits.
