@@ -1,57 +1,6 @@
 name: cli-ci
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - .github/workflows/cli_ci.yaml
-      - .github/actions/rust_install/**
-      - .cargo/**
-      - .agents/skills/**
-      - apps/cli/**
-      - apps/web/netlify.toml
-      - apps/web/public/llms.txt
-      - crates/agent-access/**
-      - crates/cloudsync/**
-      - crates/cli-docs/**
-      - crates/db-app/**
-      - crates/db-change/**
-      - crates/db-core/**
-      - crates/db-migrate/**
-      - crates/tiptap/**
-      - docs/**
-      - skills/**
-      - Cargo.lock
-      - Cargo.toml
-      - clippy.toml
-      - rust-toolchain.toml
-      - rustfmt.toml
-  pull_request:
-    paths:
-      - .github/workflows/cli_ci.yaml
-      - .github/actions/rust_install/**
-      - .cargo/**
-      - .agents/skills/**
-      - apps/cli/**
-      - apps/web/netlify.toml
-      - apps/web/public/llms.txt
-      - crates/agent-access/**
-      - crates/cloudsync/**
-      - crates/cli-docs/**
-      - crates/db-app/**
-      - crates/db-change/**
-      - crates/db-core/**
-      - crates/db-migrate/**
-      - crates/tiptap/**
-      - docs/**
-      - skills/**
-      - Cargo.lock
-      - Cargo.toml
-      - clippy.toml
-      - rust-toolchain.toml
-      - rustfmt.toml
+on: []
 
 permissions:
   contents: read

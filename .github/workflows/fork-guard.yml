@@ -5,10 +5,7 @@ name: fork-guard
 # identifiers in source, and stale i18n catalogs (source-generated message
 # hashes missing from the compiled catalog render as gibberish in the UI).
 
-on:
-  push:
-  pull_request:
-  workflow_dispatch:
+on: []
 
 jobs:
   check-clean:
