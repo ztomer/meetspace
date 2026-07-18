@@ -41,7 +41,9 @@ const _PROVIDERS = [
     displayName: "Meetspace",
     badge: "Recommended",
     icon: <MeetspaceProviderIcon />,
-    baseUrl: new URL("/llm", env.VITE_API_URL).toString(),
+    baseUrl: env.VITE_API_URL
+      ? new URL("/llm", env.VITE_API_URL).toString()
+      : undefined,
     requirements: [
       { kind: "requires_auth" },
       { kind: "requires_entitlement", entitlement: "pro" },

@@ -21,7 +21,10 @@ export function installTauriMock() {
     "plugin:event|unlisten": noop,
     // db / store live queries: empty result sets
     "plugin:db|execute": [],
-    "plugin:db|subscribe": () => ++callbackId,
+    "plugin:db|subscribe": () => ({
+      id: `sub-${++callbackId}`,
+      analysis: { kind: "non_reactive", data: { reason: "mocked backend" } },
+    }),
     "plugin:store2|get": null,
     // filesystem: vault root + directory scans. Session files come from the
     // per-test seed (seedSessions) and only for the sessions dir, so other
