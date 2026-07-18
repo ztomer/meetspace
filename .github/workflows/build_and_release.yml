@@ -1,18 +1,6 @@
 name: Build & Release Artifacts
 
-on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
-  release:
-    types: [published]
-  workflow_dispatch:
-    inputs:
-      release_tag:
-        description: "Existing release tag to attach the built artifacts to (e.g. v1.0.32). Leave blank to only build artifacts."
-        required: false
-        default: ""
+on: []
 
 permissions:
   contents: write
