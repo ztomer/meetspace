@@ -81,7 +81,7 @@ impl Db {
     pub(crate) async fn cloudsync_init_enabled_tables(
         &self,
         tables: &[CloudsyncTableSpec],
-    ) -> Result<(), hypr_cloudsync::Error> {
+    ) -> Result<(), meetspace_cloudsync::Error> {
         if !tables.iter().any(|table| table.enabled) {
             return Ok(());
         }
@@ -204,7 +204,9 @@ impl Db {
         result
     }
 
-    pub(crate) async fn cloudsync_terminate_and_close(&self) -> Result<(), meetspace_cloudsync::Error> {
+    pub(crate) async fn cloudsync_terminate_and_close(
+        &self,
+    ) -> Result<(), meetspace_cloudsync::Error> {
         self.cloudsync_initializer.clear();
         let mut pinned = self.lock_cloudsync_connection().await?;
         let mut connections = Vec::new();
@@ -244,7 +246,9 @@ impl Db {
         close_result
     }
 
-    pub(crate) async fn cloudsync_close_connection(&self) -> Result<(), meetspace_cloudsync::Error> {
+    pub(crate) async fn cloudsync_close_connection(
+        &self,
+    ) -> Result<(), meetspace_cloudsync::Error> {
         let connection = self.cloudsync_connection.lock().await.take();
         match connection {
             Some(connection) => connection
@@ -349,9 +353,9 @@ impl Db {
 async fn init_enabled_tables(
     connection: &mut SqliteConnection,
     tables: &[CloudsyncTableSpec],
-) -> Result<(), hypr_cloudsync::Error> {
+) -> Result<(), meetspace_cloudsync::Error> {
     for table in tables.iter().filter(|table| table.enabled) {
-        hypr_cloudsync::init(
+        meetspace_cloudsync::init(
             &mut *connection,
             &table.table_name,
             table.crdt_algo.as_deref(),
@@ -395,7 +399,7 @@ where
 
 async fn close_pool_connections(
     connections: Vec<PoolConnection<Sqlite>>,
-) -> Result<(), hypr_cloudsync::Error> {
+) -> Result<(), meetspace_cloudsync::Error> {
     let mut first_error = None;
     for connection in connections {
         if let Err(error) = connection.close().await
