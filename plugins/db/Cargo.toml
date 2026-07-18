@@ -8,16 +8,16 @@ links = "tauri-plugin-db"
 description = ""
 
 [dependencies]
-hypr-agent-access = { workspace = true }
-hypr-db-app = { workspace = true }
-hypr-db-core = { workspace = true }
-hypr-db-execute = { workspace = true }
-hypr-db-migrate = { workspace = true }
-hypr-db-reactive = { workspace = true, features = ["specta"] }
-hypr-e2ee = { workspace = true }
-hypr-fs-sync-core = { workspace = true }
-hypr-storage = { workspace = true }
-hypr-tauri-utils = { workspace = true }
+meetspace-agent-access = { workspace = true }
+meetspace-db-app = { workspace = true }
+meetspace-db-core = { workspace = true }
+meetspace-db-execute = { workspace = true }
+meetspace-db-migrate = { workspace = true }
+meetspace-db-reactive = { workspace = true, features = ["specta"] }
+meetspace-e2ee = { workspace = true }
+meetspace-fs-sync-core = { workspace = true }
+meetspace-storage = { workspace = true }
+meetspace-tauri-utils = { workspace = true }
 
 futures-util = { workspace = true }
 reqwest = { workspace = true, features = ["json", "query", "stream"] }

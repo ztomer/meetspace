@@ -21,7 +21,7 @@ import {
   type NoteEditorProps,
   type NoteEditorRef,
   schema,
-} from "@hypr/editor/note";
+} from "@meetspace/editor/note";
 
 import {
   sharedPrimaryButtonClassName,
@@ -94,7 +94,7 @@ export function SharedNoteEditorSurface({
   if (!initialContentIsValid) {
     return (
       <EditorMessage
-        description="This note uses content the web editor can’t safely preserve yet. You can still view it here or edit it in the Anarlog app."
+        description="This note uses content the web editor can’t safely preserve yet. You can still view it here or edit it in the Meetspace app."
         onCancel={onCancel}
         title="This note isn’t ready for web editing"
       />

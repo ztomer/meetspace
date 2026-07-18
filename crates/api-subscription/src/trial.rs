@@ -122,7 +122,7 @@ impl ToAnalyticsPayload for TrialOutcome {
 #[cfg(test)]
 mod tests {
     use chrono::{TimeZone, Utc};
-    use hypr_analytics::ToAnalyticsPayload;
+    use meetspace_analytics::ToAnalyticsPayload;
     use serde_json::json;
 
     use super::{Interval, TrialOutcome, pro_trial_days, trial_end_date};

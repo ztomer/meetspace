@@ -10,7 +10,7 @@ use axum::{
 };
 use chrono::{SecondsFormat, TimeDelta, Utc};
 use hmac::{Hmac, KeyInit, Mac};
-use hypr_api_auth::AuthContext;
+use meetspace_api_auth::AuthContext;
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use serde_json::Value;
 use sha2::Sha256;
@@ -32,13 +32,13 @@ const MAX_HANDOFF_RESPONSE_BYTES: usize = 16 * 1024;
 const SHARED_ATTACHMENT_BUCKET: &str = "shared-note-attachments";
 const ATTACHMENT_DOWNLOAD_TTL_SECONDS: i64 = 60;
 const FLY_CLIENT_IP_HEADER: &str = "fly-client-ip";
-const HANDOFF_SOURCE_DOMAIN: &[u8] = b"anarlog:shared-note-handoff-source:v1\0";
+const HANDOFF_SOURCE_DOMAIN: &[u8] = b"meetspace:shared-note-handoff-source:v1\0";
 
 #[derive(Clone)]
 pub struct SharedNotesState {
     config: SharedNotesConfig,
     client: reqwest::Client,
-    storage: hypr_supabase_storage::SupabaseStorage,
+    storage: meetspace_supabase_storage::SupabaseStorage,
 }
 
 impl SharedNotesState {
@@ -48,7 +48,7 @@ impl SharedNotesState {
             .redirect(reqwest::redirect::Policy::none())
             .build()
             .expect("shared-note HTTP client must build");
-        let storage = hypr_supabase_storage::SupabaseStorage::new(
+        let storage = meetspace_supabase_storage::SupabaseStorage::new(
             client.clone(),
             &config.supabase_url,
             &config.supabase_service_role_key,

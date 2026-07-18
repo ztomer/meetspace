@@ -54,7 +54,7 @@ impl StartupSnapshot {
             return Ok(settings);
         }
 
-        let legacy_path = hypr_storage::vault::compute_settings_path(legacy_base);
+        let legacy_path = meetspace_storage::vault::compute_settings_path(legacy_base);
         if legacy_path == self.settings_path() {
             return Ok(serde_json::json!({}));
         }
@@ -112,8 +112,8 @@ mod tests {
         std::fs::create_dir_all(&vault_base).unwrap();
         std::fs::create_dir_all(&global_base).unwrap();
         std::fs::write(
-            hypr_storage::vault::compute_settings_path(&global_base),
-            r#"{"ai":{"current_llm_provider":"hyprnote"}}"#,
+            meetspace_storage::vault::compute_settings_path(&global_base),
+            r#"{"ai":{"current_llm_provider":"meetspace"}}"#,
         )
         .unwrap();
 
@@ -124,7 +124,7 @@ mod tests {
                 .load_with_legacy_fallback(&global_base)
                 .await
                 .unwrap(),
-            json!({"ai": {"current_llm_provider": "hyprnote"}}),
+            json!({"ai": {"current_llm_provider": "meetspace"}}),
         );
     }
 
@@ -136,12 +136,12 @@ mod tests {
         std::fs::create_dir_all(&vault_base).unwrap();
         std::fs::create_dir_all(&global_base).unwrap();
         std::fs::write(
-            hypr_storage::vault::compute_settings_path(&vault_base),
+            meetspace_storage::vault::compute_settings_path(&vault_base),
             "{}",
         )
         .unwrap();
         std::fs::write(
-            hypr_storage::vault::compute_settings_path(&global_base),
+            meetspace_storage::vault::compute_settings_path(&global_base),
             r#"{"general":{"theme":"light"}}"#,
         )
         .unwrap();
@@ -165,12 +165,12 @@ mod tests {
         std::fs::create_dir_all(&vault_base).unwrap();
         std::fs::create_dir_all(&global_base).unwrap();
         std::fs::write(
-            hypr_storage::vault::compute_settings_path(&vault_base),
+            meetspace_storage::vault::compute_settings_path(&vault_base),
             r#"{"general":{"theme":"dark"}}"#,
         )
         .unwrap();
         std::fs::write(
-            hypr_storage::vault::compute_settings_path(&global_base),
+            meetspace_storage::vault::compute_settings_path(&global_base),
             r#"{"general":{"theme":"light"}}"#,
         )
         .unwrap();

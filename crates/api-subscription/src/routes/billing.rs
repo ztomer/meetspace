@@ -3,8 +3,8 @@ use axum::{
     extract::{Query, State},
     response::{IntoResponse, Response},
 };
-use hypr_analytics::{AnalyticsClient, DeviceFingerprint, ToAnalyticsPayload};
-use hypr_api_auth::AuthContext;
+use meetspace_analytics::{AnalyticsClient, DeviceFingerprint, ToAnalyticsPayload};
+use meetspace_api_auth::AuthContext;
 use serde::Deserialize;
 use serde_json::json;
 
@@ -29,7 +29,7 @@ use crate::trial::{Interval, StartTrialQuery, StartTrialResponse, TrialOutcome};
 #[tracing::instrument(
     name = "subscription.start_trial",
     skip(state, query, auth, device_fingerprint),
-    fields(hyprnote.subsystem = "subscription")
+    fields(meetspace.subsystem = "subscription")
 )]
 pub async fn start_trial(
     State(state): State<AppState>,

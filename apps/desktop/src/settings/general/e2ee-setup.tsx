@@ -8,8 +8,8 @@ import {
   createE2eeIdentity,
   importE2eeIdentity,
   inspectE2eeRecoveryKey,
-} from "@hypr/plugin-db";
-import { Button } from "@hypr/ui/components/ui/button";
+} from "@meetspace/plugin-db";
+import { Button } from "@meetspace/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -17,8 +17,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@hypr/ui/components/ui/dialog";
-import { Input } from "@hypr/ui/components/ui/input";
+} from "@meetspace/ui/components/ui/dialog";
+import { Input } from "@meetspace/ui/components/ui/input";
 
 import { env } from "~/env";
 
@@ -133,7 +133,7 @@ export function E2eeSetupDialog({
           <DialogDescription className="text-foreground w-full text-center text-[13px] leading-[1.45]">
             <Trans>
               Your recovery key encrypts synced notes before they leave this
-              device. Anarlog cannot read or recover it.
+              device. Meetspace cannot read or recover it.
             </Trans>
           </DialogDescription>
         </DialogHeader>
@@ -167,7 +167,7 @@ export function E2eeSetupDialog({
             <div className="space-y-3">
               <p className="text-muted-foreground text-xs leading-5">
                 <Trans>
-                  Enter the recovery key from an existing Anarlog device.
+                  Enter the recovery key from an existing Meetspace device.
                 </Trans>
               </p>
               <importForm.Field name="recoveryKey">
@@ -176,7 +176,7 @@ export function E2eeSetupDialog({
                     aria-label="Recovery key"
                     value={field.state.value}
                     onChange={(event) => field.handleChange(event.target.value)}
-                    placeholder="anarlog-e2ee-v1:..."
+                    placeholder="meetspace-e2ee-v1:..."
                     autoComplete="off"
                     spellCheck={false}
                     className="font-mono text-xs"

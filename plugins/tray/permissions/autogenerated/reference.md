@@ -45,7 +45,7 @@ Denies the set_tray_icon_visible command without any pre-configured scope.
 <tr>
 <td>
 
-`hypr-tray:allow-set-tray-schedule`
+`meetspace-tray:allow-set-tray-schedule`
 
 </td>
 <td>
@@ -58,7 +58,7 @@ Enables the set_tray_schedule command without any pre-configured scope.
 <tr>
 <td>
 
-`hypr-tray:deny-set-tray-schedule`
+`meetspace-tray:deny-set-tray-schedule`
 
 </td>
 <td>

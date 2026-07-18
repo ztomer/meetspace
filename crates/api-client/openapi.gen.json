@@ -3521,14 +3521,6 @@
       "name": "nango"
     },
     {
-      "description": "CloudSync credential management",
-      "name": "sync"
-    },
-    {
-      "description": "Public shared-note delivery",
-      "name": "shared-notes"
-    },
-    {
       "description": "Subscription and trial management",
       "name": "subscription"
     },

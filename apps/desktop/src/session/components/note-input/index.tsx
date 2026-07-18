@@ -1,7 +1,5 @@
-import type { EditorView } from "prosemirror-view";
 import {
   forwardRef,
-  type MouseEventHandler,
   type UIEventHandler,
   useCallback,
   useDeferredValue,
@@ -21,10 +19,6 @@ import { SearchBar } from "./search/bar";
 import { useSearch } from "./search/context";
 import { Transcript } from "./transcript";
 
-import {
-  registerCanonicalSessionEditor,
-  unregisterCanonicalSessionEditor,
-} from "~/session-sharing/editor-activity";
 import { useCurrentNoteTab } from "~/session/components/shared";
 import { useScrollPreservation } from "~/shared/hooks/useScrollPreservation";
 import type { SessionMode } from "~/store/zustand/listener/general";
@@ -264,57 +258,13 @@ const NoteInputContent = forwardRef<
       search?.close();
     }, [currentTab]);
 
-    const handleContainerMouseDown: MouseEventHandler<HTMLDivElement> = (
-      event,
-    ) => {
+    const handleContainerClick = () => {
       if (!isEditableTab) {
         return;
       }
 
-      if (event.button !== 0) {
-        return;
-      }
-
-      const target = event.target;
-      if (!(target instanceof Element)) {
-        return;
-      }
-
-      if (target.closest(".ProseMirror") !== null) {
-        return;
-      }
-
-      if (
-        target.closest(
-          "button, a, input, textarea, select, [role='button'], [contenteditable='true']",
-        ) !== null
-      ) {
-        return;
-      }
-
-      if (event.currentTarget.querySelector(".ProseMirror") === null) {
-        return;
-      }
-
-      event.preventDefault();
-      internalEditorRef.current?.commands.focusAtTrailingEmptyLine();
+      internalEditorRef.current?.commands.focus();
     };
-
-    const handleSessionViewReady = useCallback(
-      (view: EditorView) =>
-        registerCanonicalSessionEditor(sessionId, view, () => {
-          const editor = internalEditorRef.current;
-          if (!editor || editor.view !== view) {
-            throw new Error("Canonical session editor changed");
-          }
-          editor.flushPendingChanges();
-        }),
-      [sessionId],
-    );
-    const handleSessionViewDisposed = useCallback(
-      (view: EditorView) => unregisterCanonicalSessionEditor(sessionId, view),
-      [sessionId],
-    );
 
     return (
       <div className="-mx-2 flex h-full flex-col">
@@ -339,7 +289,7 @@ const NoteInputContent = forwardRef<
         <div className="relative flex-1 overflow-hidden">
           <div
             ref={scrollRef}
-            onMouseDown={handleContainerMouseDown}
+            onClick={handleContainerClick}
             onScroll={onScroll}
             className={cn([
               "h-full px-3",
@@ -356,8 +306,6 @@ const NoteInputContent = forwardRef<
                 sessionTitle={sessionTitle}
                 enhancedNoteId={renderedCurrentTab.id}
                 onNavigateToTitle={onNavigateToTitle}
-                onViewReady={handleSessionViewReady}
-                onViewDisposed={handleSessionViewDisposed}
               />
             )}
             {renderedCurrentTab.type === "raw" && (
@@ -367,8 +315,6 @@ const NoteInputContent = forwardRef<
                 rawMd={rawMd}
                 sessionTitle={sessionTitle}
                 onNavigateToTitle={onNavigateToTitle}
-                onViewReady={handleSessionViewReady}
-                onViewDisposed={handleSessionViewDisposed}
               />
             )}
             {renderedCurrentTab.type === "transcript" && (

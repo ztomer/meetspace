@@ -35,11 +35,11 @@ vi.mock("@tauri-apps/api/window", () => ({
   }),
 }));
 
-vi.mock("@hypr/editor/markdown", () => ({
+vi.mock("@meetspace/editor/markdown", () => ({
   parseJsonContent: (value: string) => JSON.parse(value),
 }));
 
-vi.mock("@hypr/editor/note", () => ({
+vi.mock("@meetspace/editor/note", () => ({
   normalizePortableAttachmentUrls: (value: unknown) => value,
   NoteEditor: (props: Record<string, unknown>) => {
     hoisted.noteEditorProps.push(props);
@@ -48,13 +48,13 @@ vi.mock("@hypr/editor/note", () => ({
   },
 }));
 
-vi.mock("@hypr/plugin-analytics", () => ({
+vi.mock("@meetspace/plugin-analytics", () => ({
   commands: {
     event: vi.fn(),
   },
 }));
 
-vi.mock("@hypr/plugin-opener2", () => ({
+vi.mock("@meetspace/plugin-opener2", () => ({
   commands: { openUrl: vi.fn() },
 }));
 

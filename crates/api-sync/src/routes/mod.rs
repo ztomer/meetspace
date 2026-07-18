@@ -8,7 +8,7 @@ use axum::{
     routing::{post, put},
 };
 use chrono::{SecondsFormat, TimeDelta, Utc};
-use hypr_api_auth::AuthContext;
+use meetspace_api_auth::AuthContext;
 use reqwest::StatusCode as HttpStatusCode;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -1182,7 +1182,7 @@ fn encode_workspace_token_attributes(workspaces: &[CloudsyncWorkspace]) -> Resul
 #[cfg(test)]
 mod tests {
     use axum::{Extension, body::Body, body::to_bytes, http::Request, http::StatusCode};
-    use hypr_api_auth::{AuthContext, Claims};
+    use meetspace_api_auth::{AuthContext, Claims};
     use serde_json::{Value, json};
     use tower::ServiceExt;
     use wiremock::{
@@ -1340,7 +1340,7 @@ mod tests {
             .mount(&server)
             .await;
 
-        let response = test_router(&server, "issuer-key", &["hyprnote_pro"])
+        let response = test_router(&server, "issuer-key", &["meetspace_pro"])
             .oneshot(token_request())
             .await
             .unwrap();
@@ -1399,7 +1399,7 @@ mod tests {
         mock_workspace_projection(&server, json!([personal_workspace("user-123")])).await;
         mock_e2ee_key_claim(&server, "zyxwvutsrqponmlkjihgfe").await;
 
-        let response = test_router(&server, "issuer-key", &["hyprnote_pro"])
+        let response = test_router(&server, "issuer-key", &["meetspace_pro"])
             .oneshot(token_request())
             .await
             .unwrap();
@@ -1424,7 +1424,7 @@ mod tests {
         let server = MockServer::start().await;
         mock_e2ee_key_claim(&server, TEST_KEY_ID).await;
 
-        let response = test_router(&server, "issuer-key", &["hyprnote_pro"])
+        let response = test_router(&server, "issuer-key", &["meetspace_pro"])
             .oneshot(
                 Request::put("/e2ee/identity")
                     .header(header::CONTENT_TYPE, "application/json")
@@ -1455,7 +1455,7 @@ mod tests {
             let response = test_router_with_protocol(
                 &server,
                 "issuer-key",
-                &["hyprnote_pro"],
+                &["meetspace_pro"],
                 protocol_mode,
                 Some("legacy-database-id"),
             )
@@ -1488,7 +1488,7 @@ mod tests {
         let response = test_router_with_protocol(
             &server,
             "issuer-key",
-            &["hyprnote_pro"],
+            &["meetspace_pro"],
             CloudsyncProtocolMode::Dual,
             Some("legacy-database-id"),
         )
@@ -1521,7 +1521,7 @@ mod tests {
         let response = test_router_with_protocol(
             &server,
             "issuer-key",
-            &["hyprnote_pro"],
+            &["meetspace_pro"],
             CloudsyncProtocolMode::Dual,
             Some("legacy-database-id"),
         )
@@ -1573,7 +1573,7 @@ mod tests {
 
     #[tokio::test]
     async fn rejects_users_without_pro_entitlement() {
-        let cases: &[&[&str]] = &[&[], &["hyprnote_lite"]];
+        let cases: &[&[&str]] = &[&[], &["meetspace_lite"]];
 
         for entitlements in cases {
             let server = MockServer::start().await;
@@ -1723,7 +1723,7 @@ mod tests {
             let server = MockServer::start().await;
             mock_workspace_projection(&server, projection).await;
 
-            let response = test_router(&server, "issuer-key", &["hyprnote_pro"])
+            let response = test_router(&server, "issuer-key", &["meetspace_pro"])
                 .oneshot(token_request())
                 .await
                 .unwrap();
@@ -1744,7 +1744,7 @@ mod tests {
             .mount(&server)
             .await;
 
-        let response = test_router(&server, "issuer-key", &["hyprnote_pro"])
+        let response = test_router(&server, "issuer-key", &["meetspace_pro"])
             .oneshot(token_request())
             .await
             .unwrap();
@@ -1766,7 +1766,7 @@ mod tests {
             .mount(&server)
             .await;
 
-        let response = test_router(&server, "issuer-secret", &["hyprnote_pro"])
+        let response = test_router(&server, "issuer-secret", &["meetspace_pro"])
             .oneshot(token_request())
             .await
             .unwrap();
@@ -1853,7 +1853,7 @@ mod tests {
             .mount(&server)
             .await;
 
-        let response = test_router(&server, "issuer-key", &["hyprnote_pro"])
+        let response = test_router(&server, "issuer-key", &["meetspace_pro"])
             .oneshot(
                 Request::put(format!("/shares/{share_id}/snapshot"))
                     .header(header::CONTENT_TYPE, "application/json")
@@ -1917,7 +1917,7 @@ mod tests {
         assert!(!published.contains("private-attachment-id"));
         assert!(!published.contains("supabase-token"));
 
-        let explicit_empty_response = test_router(&server, "issuer-key", &["hyprnote_pro"])
+        let explicit_empty_response = test_router(&server, "issuer-key", &["meetspace_pro"])
             .oneshot(
                 Request::put(format!("/shares/{share_id}/snapshot"))
                     .header(header::CONTENT_TYPE, "application/json")
@@ -2001,7 +2001,7 @@ mod tests {
             .mount(&server)
             .await;
 
-        let response = test_router(&server, "issuer-key", &["hyprnote_pro"])
+        let response = test_router(&server, "issuer-key", &["meetspace_pro"])
             .oneshot(
                 Request::put(format!("/shares/{share_id}/snapshot"))
                     .header(header::CONTENT_TYPE, "application/json")
@@ -2074,7 +2074,7 @@ mod tests {
 
         for (path, payload) in cases {
             let server = MockServer::start().await;
-            let response = test_router(&server, "issuer-key", &["hyprnote_pro"])
+            let response = test_router(&server, "issuer-key", &["meetspace_pro"])
                 .oneshot(
                     Request::put(path)
                         .header(header::CONTENT_TYPE, "application/json")
@@ -2109,7 +2109,7 @@ mod tests {
 
         for payload in cases {
             let server = MockServer::start().await;
-            let response = test_router(&server, "issuer-key", &["hyprnote_pro"])
+            let response = test_router(&server, "issuer-key", &["meetspace_pro"])
                 .oneshot(
                     Request::put("/shares/11111111-1111-4111-8111-111111111111/snapshot")
                         .header(header::CONTENT_TYPE, "application/json")
@@ -2139,7 +2139,7 @@ mod tests {
             .mount(&server)
             .await;
 
-        let response = test_router(&server, "issuer-key", &["hyprnote_pro"])
+        let response = test_router(&server, "issuer-key", &["meetspace_pro"])
             .oneshot(
                 Request::put("/shares/11111111-1111-4111-8111-111111111111/snapshot")
                     .header(header::CONTENT_TYPE, "application/json")
@@ -2205,7 +2205,7 @@ mod tests {
             .mount(&server)
             .await;
 
-        let response = test_router(&server, "issuer-key", &["hyprnote_pro"])
+        let response = test_router(&server, "issuer-key", &["meetspace_pro"])
             .oneshot(
                 Request::put("/shares/11111111-1111-4111-8111-111111111111/snapshot")
                     .header(header::CONTENT_TYPE, "application/json")
@@ -2244,7 +2244,7 @@ mod tests {
             .mount(&server)
             .await;
 
-        let response = test_router(&server, "issuer-key", &["hyprnote_pro"])
+        let response = test_router(&server, "issuer-key", &["meetspace_pro"])
             .oneshot(
                 Request::put("/shares/11111111-1111-4111-8111-111111111111/snapshot")
                     .header(header::CONTENT_TYPE, "application/json")

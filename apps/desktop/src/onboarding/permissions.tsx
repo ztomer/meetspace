@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 import { useRef } from "react";
 
-import { type PermissionStatus } from "@hypr/plugin-permissions";
-import { cn } from "@hypr/utils";
+import { type PermissionStatus } from "@meetspace/plugin-permissions";
+import { cn } from "@meetspace/utils";
 
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 import { usePermission } from "~/shared/hooks/usePermissions";

@@ -23,7 +23,7 @@ export const commands = {
     try {
       return {
         status: "ok",
-        data: await TAURI_INVOKE("plugin:hypr-tray|set_tray_schedule", {
+        data: await TAURI_INVOKE("plugin:meetspace-tray|set_tray_schedule", {
           events,
         }),
       };

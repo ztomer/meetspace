@@ -66,9 +66,9 @@ impl Db {
         &self,
         table_name: &str,
         filter_expression: &str,
-    ) -> Result<(), hypr_cloudsync::Error> {
+    ) -> Result<(), meetspace_cloudsync::Error> {
         let mut connection = self.lock_cloudsync_connection().await?;
-        let result = hypr_cloudsync::set_filter(
+        let result = meetspace_cloudsync::set_filter(
             &mut **connection.as_mut().unwrap(),
             table_name,
             filter_expression,

@@ -10,12 +10,15 @@ const mocks = vi.hoisted(() => ({
   scrollDetection: {
     isAtTop: true,
     isAtBottom: true,
-    isNearBottom: true,
-    canScroll: false,
     autoScrollEnabled: true,
     scrollTarget: null as "top" | "bottom" | null,
   },
+  chatMode: "FloatingClosed" as
+    | "FloatingClosed"
+    | "FloatingOpen"
+    | "RightPanelOpen",
 }));
+
 vi.mock("react-hotkeys-hook", () => ({
   useHotkeys: vi.fn(),
 }));
@@ -83,10 +86,9 @@ describe("TranscriptViewer", () => {
     mocks.scrollToTop.mockReset();
     mocks.scrollDetection.isAtTop = true;
     mocks.scrollDetection.isAtBottom = true;
-    mocks.scrollDetection.isNearBottom = true;
-    mocks.scrollDetection.canScroll = false;
     mocks.scrollDetection.autoScrollEnabled = true;
     mocks.scrollDetection.scrollTarget = null;
+    mocks.chatMode = "FloatingClosed";
   });
 
   it("does not pin inactive transcript sessions to the bottom on open", () => {
@@ -107,25 +109,6 @@ describe("TranscriptViewer", () => {
   });
 
   it("keeps active transcript sessions pinned to the bottom", () => {
-    render(
-      <TranscriptViewer
-        transcriptIds={["transcript-1"]}
-        liveSegments={[]}
-        currentActive
-        scrollRef={createRef()}
-      />,
-    );
-
-    expect(
-      screen
-        .getByTestId("render-transcript")
-        .getAttribute("data-should-scroll-to-end"),
-    ).toBe("true");
-  });
-  it("keeps active transcript sessions pinned near the exact bottom edge", () => {
-    mocks.scrollDetection.isAtBottom = false;
-    mocks.scrollDetection.isNearBottom = true;
-
     render(
       <TranscriptViewer
         transcriptIds={["transcript-1"]}
@@ -168,7 +151,9 @@ describe("TranscriptViewer", () => {
     );
   });
 
-  it("does not show scroll controls when the transcript cannot scroll", () => {
+  it("does not show a scroll chip before scroll movement starts", () => {
+    mocks.scrollDetection.isAtBottom = false;
+
     render(
       <TranscriptViewer
         transcriptIds={["transcript-1"]}
@@ -178,16 +163,14 @@ describe("TranscriptViewer", () => {
       />,
     );
 
-    expect(screen.queryByRole("button", { name: "Scroll to top" })).toBeNull();
-    expect(
-      screen.queryByRole("button", { name: "Scroll to bottom" }),
-    ).toBeNull();
+    expect(screen.queryByRole("button", { name: "Go to bottom" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Go to top" })).toBeNull();
   });
 
-  it("renders right-side scroll controls when the transcript can scroll", () => {
+  it("does not show the bottom chip after upward scroll movement in active sessions", () => {
     mocks.scrollDetection.isAtTop = false;
     mocks.scrollDetection.isAtBottom = false;
-    mocks.scrollDetection.canScroll = true;
+    mocks.scrollDetection.scrollTarget = "bottom";
 
     render(
       <TranscriptViewer
@@ -198,98 +181,116 @@ describe("TranscriptViewer", () => {
       />,
     );
 
-    const controls = document.querySelector(
-      "[data-transcript-scroll-controls]",
-    );
-    const topButton = screen.getByRole("button", { name: "Scroll to top" });
-    const bottomButton = screen.getByRole("button", {
-      name: "Scroll to bottom",
-    });
-
-    topButton.click();
-    bottomButton.click();
-
-    expect(controls?.className).toContain("right-1");
-    expect(controls?.className).toContain("top-1/2");
-    expect(controls?.className).toContain("bg-muted/70");
-    expect(controls?.className).toContain("border-border/60");
-    expect((topButton as HTMLButtonElement).disabled).toBe(false);
-    expect((bottomButton as HTMLButtonElement).disabled).toBe(false);
-    expect(topButton.firstElementChild?.tagName.toLowerCase()).toBe("svg");
-    expect(bottomButton.firstElementChild?.tagName.toLowerCase()).toBe("svg");
-    expect(mocks.scrollToTop).toHaveBeenCalledTimes(1);
-    expect(mocks.scrollToBottom).toHaveBeenCalledTimes(1);
-  });
-
-  it("keeps scroll controls visible inside both edge thresholds", () => {
-    mocks.scrollDetection.canScroll = true;
-
-    render(
-      <TranscriptViewer
-        transcriptIds={["transcript-1"]}
-        liveSegments={[]}
-        currentActive
-        scrollRef={createRef()}
-      />,
-    );
-
-    expect(
-      screen.getByRole("button", { name: "Scroll to top" }),
-    ).not.toBeNull();
-    expect(
-      screen.getByRole("button", { name: "Scroll to bottom" }),
-    ).not.toBeNull();
-  });
-
-  it("disables the top control at the top", () => {
-    mocks.scrollDetection.isAtBottom = false;
-    mocks.scrollDetection.canScroll = true;
-
-    render(
-      <TranscriptViewer
-        transcriptIds={["transcript-1"]}
-        liveSegments={[]}
-        currentActive={false}
-        scrollRef={createRef()}
-      />,
-    );
-
-    const topButton = screen.getByRole("button", { name: "Scroll to top" });
-    const bottomButton = screen.getByRole("button", {
-      name: "Scroll to bottom",
-    });
-
-    bottomButton.click();
-
-    expect((topButton as HTMLButtonElement).disabled).toBe(true);
-    expect((bottomButton as HTMLButtonElement).disabled).toBe(false);
-    expect(mocks.scrollToTop).not.toHaveBeenCalled();
-    expect(mocks.scrollToBottom).toHaveBeenCalledTimes(1);
-  });
-
-  it("disables the bottom control at the bottom", () => {
-    mocks.scrollDetection.isAtTop = false;
-    mocks.scrollDetection.canScroll = true;
-
-    render(
-      <TranscriptViewer
-        transcriptIds={["transcript-1"]}
-        liveSegments={[]}
-        currentActive={false}
-        scrollRef={createRef()}
-      />,
-    );
-
-    const topButton = screen.getByRole("button", { name: "Scroll to top" });
-    const bottomButton = screen.getByRole("button", {
-      name: "Scroll to bottom",
-    });
-
-    topButton.click();
-
-    expect((topButton as HTMLButtonElement).disabled).toBe(false);
-    expect((bottomButton as HTMLButtonElement).disabled).toBe(true);
-    expect(mocks.scrollToTop).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole("button", { name: "Go to bottom" })).toBeNull();
     expect(mocks.scrollToBottom).not.toHaveBeenCalled();
+  });
+
+  it("shows the bottom chip after upward scroll movement in inactive sessions", () => {
+    mocks.scrollDetection.isAtTop = false;
+    mocks.scrollDetection.isAtBottom = false;
+    mocks.scrollDetection.scrollTarget = "bottom";
+
+    render(
+      <TranscriptViewer
+        transcriptIds={["transcript-1"]}
+        liveSegments={[]}
+        currentActive={false}
+        scrollRef={createRef()}
+      />,
+    );
+
+    const button = screen.getByRole("button", { name: "Go to bottom" });
+    button.click();
+
+    expect(button.firstElementChild?.tagName.toLowerCase()).toBe("svg");
+    expect(screen.queryByRole("button", { name: "Go to top" })).toBeNull();
+    expect(mocks.scrollToBottom).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not show the top chip after downward scroll movement in active sessions", () => {
+    mocks.scrollDetection.isAtTop = false;
+    mocks.scrollDetection.scrollTarget = "top";
+
+    render(
+      <TranscriptViewer
+        transcriptIds={["transcript-1"]}
+        liveSegments={[]}
+        currentActive
+        scrollRef={createRef()}
+      />,
+    );
+
+    expect(screen.queryByRole("button", { name: "Go to top" })).toBeNull();
+    expect(mocks.scrollToTop).not.toHaveBeenCalled();
+  });
+
+  it("shows the top chip after downward scroll movement in inactive sessions", () => {
+    mocks.scrollDetection.isAtTop = false;
+    mocks.scrollDetection.scrollTarget = "top";
+
+    render(
+      <TranscriptViewer
+        transcriptIds={["transcript-1"]}
+        liveSegments={[]}
+        currentActive={false}
+        scrollRef={createRef()}
+      />,
+    );
+
+    const button = screen.getByRole("button", { name: "Go to top" });
+    button.click();
+
+    expect(button.firstElementChild?.tagName.toLowerCase()).toBe("svg");
+    expect(button.className).not.toContain("bg-linear-to-t");
+    expect(button.className).not.toContain("shadow");
+    expect(button.className).not.toContain("scale");
+    expect(button.style.top).toBe(
+      "var(--transcript-scroll-chip-top, calc(1.5rem + env(safe-area-inset-top)))",
+    );
+    expect(button.style.bottom).toBe("");
+    expect(screen.queryByRole("button", { name: "Go to bottom" })).toBeNull();
+    expect(mocks.scrollToTop).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders the bottom chip near the bottom without translucent styling", () => {
+    mocks.scrollDetection.isAtTop = false;
+    mocks.scrollDetection.isAtBottom = false;
+    mocks.scrollDetection.scrollTarget = "bottom";
+
+    render(
+      <TranscriptViewer
+        transcriptIds={["transcript-1"]}
+        liveSegments={[]}
+        currentActive={false}
+        scrollRef={createRef()}
+      />,
+    );
+
+    const button = screen.getByRole("button", { name: "Go to bottom" });
+
+    expect(button.style.bottom).toBe(
+      "var(--transcript-scroll-chip-bottom, calc(1.5rem + env(safe-area-inset-bottom)))",
+    );
+    expect(button.style.top).toBe("");
+    expect(button.className).not.toContain("/85");
+    expect(button.className).not.toContain("/90");
+    expect(button.className).not.toContain("opacity");
+  });
+
+  it("hides the scroll chip while floating chat is expanded", () => {
+    mocks.scrollDetection.isAtTop = false;
+    mocks.scrollDetection.scrollTarget = "top";
+    mocks.chatMode = "FloatingOpen";
+
+    render(
+      <TranscriptViewer
+        transcriptIds={["transcript-1"]}
+        liveSegments={[]}
+        currentActive={false}
+        scrollRef={createRef()}
+      />,
+    );
+
+    expect(screen.queryByRole("button", { name: "Go to top" })).toBeNull();
   });
 });

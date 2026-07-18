@@ -4,7 +4,7 @@ use std::pin::Pin;
 use sqlx::SqlitePool;
 
 pub type CloudsyncHookFuture<'a> =
-    Pin<Box<dyn Future<Output = Result<(), hypr_cloudsync::Error>> + Send + 'a>>;
+    Pin<Box<dyn Future<Output = Result<(), meetspace_cloudsync::Error>> + Send + 'a>>;
 
 pub trait CloudsyncSyncHook: Send + Sync + 'static {
     fn before_sync<'a>(&'a self, pool: &'a SqlitePool) -> CloudsyncHookFuture<'a>;

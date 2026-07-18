@@ -74,14 +74,14 @@ vi.mock("./contexts", () => ({
   useListener: useListenerMock,
 }));
 
-vi.mock("@hypr/plugin-detect", () => ({
+vi.mock("@meetspace/plugin-detect", () => ({
   commands: {
     listMicUsingApplications: listMicUsingApplicationsMock,
     sendMeetingChatMessage: sendMeetingChatMessageMock,
   },
 }));
 
-vi.mock("@hypr/ui/components/ui/toast", () => ({
+vi.mock("@meetspace/ui/components/ui/toast", () => ({
   sonnerToast: { warning: sonnerToastWarningMock },
 }));
 
@@ -876,7 +876,7 @@ describe("useStartListening", () => {
     listMicUsingApplicationsMock.mockResolvedValue({
       status: "ok",
       data: [
-        { id: "com.hyprnote.dev", name: "Meetspace Dev" },
+        { id: "com.meetspace.dev", name: "Meetspace Dev" },
         { id: "com.tinyspeck.slackmacgap", name: "Slack" },
       ],
     });
@@ -891,7 +891,7 @@ describe("useStartListening", () => {
     await waitFor(() => {
       expect(sendMeetingChatMessageMock).toHaveBeenCalledWith(
         expect.stringContaining("https://meetspace.so"),
-        ["com.hyprnote.dev", "com.tinyspeck.slackmacgap"],
+        ["com.meetspace.dev", "com.tinyspeck.slackmacgap"],
       );
     });
   });

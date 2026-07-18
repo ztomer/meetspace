@@ -8,8 +8,8 @@ import {
   getCloudsyncStatus,
   getE2eeIdentityStatus,
   suspendCloudsync,
-} from "@hypr/plugin-db";
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
+} from "@meetspace/plugin-db";
+import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
 
 import {
   applyCloudsyncPreference,
@@ -29,7 +29,7 @@ vi.mock("./cloudsync-progress", () => ({
   stopCloudsyncInitialSyncProgress: vi.fn(),
 }));
 
-vi.mock("@hypr/plugin-fs-sync", () => ({
+vi.mock("@meetspace/plugin-fs-sync", () => ({
   commands: {
     deleteSessionFolder: vi.fn(() =>
       Promise.resolve({ status: "ok", data: null }),

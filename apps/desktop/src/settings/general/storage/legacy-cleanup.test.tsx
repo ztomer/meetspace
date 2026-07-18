@@ -79,7 +79,7 @@ describe("LegacyMigrationCleanupRow", () => {
       latestRun: {
         id: "run-1",
         importerVersion: 1,
-        sourceRoot: "/Users/test/Anarlog",
+        sourceRoot: "/Users/test/Meetspace",
         dryRun: false,
         status: "completed",
         discoveredCount: 12,
@@ -172,7 +172,7 @@ describe("LegacyMigrationCleanupRow", () => {
         alreadyCleaned: false,
         fileCount: 0,
         totalBytes: 0,
-        sourceRoot: "/Users/test/Anarlog",
+        sourceRoot: "/Users/test/Meetspace",
         blockingReason: "SQLite migration verification is incomplete",
       })
       .mockResolvedValue({
@@ -181,7 +181,7 @@ describe("LegacyMigrationCleanupRow", () => {
         alreadyCleaned: false,
         fileCount: 12,
         totalBytes: 2048,
-        sourceRoot: "/Users/test/Anarlog",
+        sourceRoot: "/Users/test/Meetspace",
         blockingReason: null,
       });
     mocks.getLegacyImportReport.mockResolvedValueOnce({
@@ -197,7 +197,7 @@ describe("LegacyMigrationCleanupRow", () => {
       latestRun: {
         id: "run-1",
         importerVersion: 1,
-        sourceRoot: "/Users/test/Anarlog",
+        sourceRoot: "/Users/test/Meetspace",
         dryRun: false,
         status: "completed_with_issues",
         discoveredCount: 12,

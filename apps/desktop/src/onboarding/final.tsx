@@ -1,4 +1,5 @@
 import { Icon } from "@iconify-icon/react";
+
 import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
 import { commands as openerCommands } from "@meetspace/plugin-opener2";
 

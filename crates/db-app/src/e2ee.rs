@@ -3,7 +3,7 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 
 use base64::Engine;
 use base64::engine::general_purpose::URL_SAFE_NO_PAD;
-use hypr_e2ee::{OpenedField, WorkspaceKey};
+use meetspace_e2ee::{OpenedField, WorkspaceKey};
 use serde_json::{Value, json};
 use sqlx::sqlite::SqliteRow;
 use sqlx::{Column, QueryBuilder, Row, Sqlite, SqlitePool, Transaction, TypeInfo, ValueRef};
@@ -26,7 +26,7 @@ pub enum E2eeReplicaError {
     #[error(transparent)]
     Sqlx(#[from] sqlx::Error),
     #[error(transparent)]
-    Crypto(#[from] hypr_e2ee::Error),
+    Crypto(#[from] meetspace_e2ee::Error),
     #[error("encrypted replica contains an invalid table or field")]
     InvalidField,
     #[error("encrypted replica contains an unsupported SQLite value")]
@@ -292,7 +292,7 @@ async fn apply_e2ee_replica_changes_inner(
             .push(DecryptedRecord {
                 record_id: record.id,
                 workspace_id: record.workspace_id,
-                payload_hash: hypr_e2ee::payload_hash(&record.payload),
+                payload_hash: meetspace_e2ee::payload_hash(&record.payload),
                 payload: record.payload,
                 field,
             });
@@ -753,7 +753,7 @@ fn validate_witness_payload(
     revision: i64,
     writer_id: &str,
 ) -> E2eeReplicaResult<()> {
-    if hypr_e2ee::payload_hash(payload) != payload_hash {
+    if meetspace_e2ee::payload_hash(payload) != payload_hash {
         return Err(E2eeReplicaError::RollbackDetected);
     }
     let field = key.open_field(workspace_id, record_id, payload)?;
@@ -770,7 +770,7 @@ fn validate_opened_witness_field(
     if !E2EE_DOMAIN_TABLES.contains(&field.table.as_str())
         || i64::try_from(field.revision).ok() != Some(revision)
         || field.writer_id != writer_id
-        || hypr_e2ee::payload_hash(payload) != payload_hash
+        || meetspace_e2ee::payload_hash(payload) != payload_hash
     {
         return Err(E2eeReplicaError::RollbackDetected);
     }
@@ -814,7 +814,7 @@ async fn encrypt_field_if_changed(
         deleted,
         value,
     )?;
-    let payload_hash = hypr_e2ee::payload_hash(&sealed.payload);
+    let payload_hash = meetspace_e2ee::payload_hash(&sealed.payload);
     sqlx::query(
         "INSERT INTO e2ee_records (id, workspace_id, payload)
          VALUES (?, ?, ?)
@@ -935,7 +935,9 @@ async fn restore_local_payload(
     transaction: &mut Transaction<'_, Sqlite>,
     state: &LocalState,
 ) -> E2eeReplicaResult<()> {
-    if state.payload.is_empty() || hypr_e2ee::payload_hash(&state.payload) != state.payload_hash {
+    if state.payload.is_empty()
+        || meetspace_e2ee::payload_hash(&state.payload) != state.payload_hash
+    {
         return Err(E2eeReplicaError::RollbackDetected);
     }
     sqlx::query(
@@ -1093,7 +1095,7 @@ fn sqlite_value(row: &SqliteRow, index: usize) -> E2eeReplicaResult<Value> {
         "REAL" => Ok(json!(row.try_get::<f64, _>(index)?)),
         "TEXT" => Ok(json!(row.try_get::<String, _>(index)?)),
         "BLOB" => Ok(json!({
-            "$anarlog_blob": URL_SAFE_NO_PAD.encode(row.try_get::<Vec<u8>, _>(index)?)
+            "$meetspace_blob": URL_SAFE_NO_PAD.encode(row.try_get::<Vec<u8>, _>(index)?)
         })),
         _ => Err(E2eeReplicaError::UnsupportedValue),
     }
@@ -1119,9 +1121,9 @@ fn push_json_bind(query: &mut QueryBuilder<Sqlite>, value: &Value) -> E2eeReplic
         Value::String(value) => {
             query.push_bind(value);
         }
-        Value::Object(value) if value.len() == 1 && value.contains_key("$anarlog_blob") => {
+        Value::Object(value) if value.len() == 1 && value.contains_key("$meetspace_blob") => {
             let bytes = value
-                .get("$anarlog_blob")
+                .get("$meetspace_blob")
                 .and_then(Value::as_str)
                 .ok_or(E2eeReplicaError::UnsupportedValue)
                 .and_then(|value| {
@@ -1141,17 +1143,17 @@ fn push_json_bind(query: &mut QueryBuilder<Sqlite>, value: &Value) -> E2eeReplic
 #[cfg(test)]
 mod tests {
     use super::*;
-    use hypr_e2ee::RecoveryKey;
+    use meetspace_e2ee::RecoveryKey;
 
-    async fn test_db() -> hypr_db_core::Db {
-        let db = hypr_db_core::Db::connect_memory_plain().await.unwrap();
+    async fn test_db() -> meetspace_db_core::Db {
+        let db = meetspace_db_core::Db::connect_memory_plain().await.unwrap();
         crate::prepare_schema(&db).await.unwrap();
         db
     }
 
     fn keys(workspace_id: &str) -> HashMap<String, WorkspaceKey> {
         let recovery =
-            RecoveryKey::parse("anarlog-e2ee-v1:BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc")
+            RecoveryKey::parse("meetspace-e2ee-v1:BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc")
                 .unwrap();
         HashMap::from([(
             workspace_id.to_string(),
@@ -1447,7 +1449,7 @@ mod tests {
         let mut wrong_keys = workspace_keys;
         wrong_keys.insert(
             "workspace-b".to_string(),
-            RecoveryKey::parse("anarlog-e2ee-v1:BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc")
+            RecoveryKey::parse("meetspace-e2ee-v1:BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc")
                 .unwrap()
                 .workspace_key("workspace-b")
                 .unwrap(),
@@ -1622,12 +1624,13 @@ mod tests {
                 json!("Clone B"),
             )
             .unwrap();
-        let (winner, winner_title, replay) =
-            if hypr_e2ee::payload_hash(&third.payload) > hypr_e2ee::payload_hash(&fourth.payload) {
-                (third, "Clone A", fourth)
-            } else {
-                (fourth, "Clone B", third)
-            };
+        let (winner, winner_title, replay) = if meetspace_e2ee::payload_hash(&third.payload)
+            > meetspace_e2ee::payload_hash(&fourth.payload)
+        {
+            (third, "Clone A", fourth)
+        } else {
+            (fourth, "Clone B", third)
+        };
 
         sqlx::query("UPDATE e2ee_records SET payload = ? WHERE id = ?")
             .bind(&winner.payload)
@@ -1757,7 +1760,7 @@ mod tests {
                 sequence: u64::try_from(index + 1).unwrap(),
                 record_id: record_id.clone(),
                 workspace_id: "workspace-a".to_string(),
-                payload_hash: hypr_e2ee::payload_hash(payload),
+                payload_hash: meetspace_e2ee::payload_hash(payload),
                 payload: payload.clone(),
             })
             .collect::<Vec<_>>();

@@ -14,26 +14,26 @@ export const handoffRequestIdSchema = z
     /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
   );
 export const sharedNoteDesktopSchemeSchema = z
-  .enum(["hyprnote", "hyprnote-staging"])
-  .catch("hyprnote")
-  .default("hyprnote");
+  .enum(["meetspace", "meetspace-staging"])
+  .catch("meetspace")
+  .default("meetspace");
 export type SharedNoteDesktopScheme = z.infer<
   typeof sharedNoteDesktopSchemeSchema
 >;
 
 export function buildSharedNoteWebPath(
   pathname: string,
-  scheme: SharedNoteDesktopScheme = "hyprnote",
+  scheme: SharedNoteDesktopScheme = "meetspace",
 ) {
   const parsedScheme = sharedNoteDesktopSchemeSchema.parse(scheme);
-  return parsedScheme === "hyprnote-staging"
-    ? `${pathname}?scheme=hyprnote-staging`
+  return parsedScheme === "meetspace-staging"
+    ? `${pathname}?scheme=meetspace-staging`
     : pathname;
 }
 
 export function buildAccountShareDeepLink(
   shareId: string,
-  scheme: SharedNoteDesktopScheme = "hyprnote",
+  scheme: SharedNoteDesktopScheme = "meetspace",
 ) {
   const parsedShareId = shareIdSchema.parse(shareId);
   const parsedScheme = sharedNoteDesktopSchemeSchema.parse(scheme);
@@ -42,7 +42,7 @@ export function buildAccountShareDeepLink(
 
 export function buildShareHandoffDeepLink(
   requestId: string,
-  scheme: SharedNoteDesktopScheme = "hyprnote",
+  scheme: SharedNoteDesktopScheme = "meetspace",
 ) {
   const parsedRequestId = handoffRequestIdSchema.parse(requestId);
   const parsedScheme = sharedNoteDesktopSchemeSchema.parse(scheme);

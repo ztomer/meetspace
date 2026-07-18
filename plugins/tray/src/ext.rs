@@ -291,7 +291,7 @@ impl<'a, M: tauri::Manager<tauri::Wry>> Tray<'a, tauri::Wry, M> {
         for (section_index, section) in agenda.iter().enumerate() {
             let heading = MenuItem::with_id(
                 app,
-                format!("hypr_tray_agenda_section_{section_index}"),
+                format!("meetspace_tray_agenda_section_{section_index}"),
                 &section.label,
                 false,
                 None::<&str>,

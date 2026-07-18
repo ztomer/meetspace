@@ -1,6 +1,6 @@
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 
-import type { CloudsyncWorkspaceProjection } from "@hypr/plugin-db";
+import type { CloudsyncWorkspaceProjection } from "@meetspace/plugin-db";
 import {
   bindCloudsyncAccount,
   configureCloudsyncToken,
@@ -8,8 +8,8 @@ import {
   getCloudsyncStatus,
   getE2eeIdentityStatus,
   suspendCloudsync,
-} from "@hypr/plugin-db";
-import { commands as fsSyncCommands } from "@hypr/plugin-fs-sync";
+} from "@meetspace/plugin-db";
+import { commands as fsSyncCommands } from "@meetspace/plugin-fs-sync";
 
 import {
   startCloudsyncInitialSyncProgress,

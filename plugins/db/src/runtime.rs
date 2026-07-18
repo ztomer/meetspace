@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use std::path::Path;
 
-use hypr_db_core::{Db, DbOpenError, DbOpenOptions, DbStorage};
-use hypr_db_execute::{DbExecutor, ProxyQueryMethod, ProxyQueryResult};
-use hypr_db_reactive::{LiveQueryRuntime, QueryEventSink, SubscriptionRegistration};
+use meetspace_db_core::{Db, DbOpenError, DbOpenOptions, DbStorage};
+use meetspace_db_execute::{DbExecutor, ProxyQueryMethod, ProxyQueryResult};
+use meetspace_db_reactive::{LiveQueryRuntime, QueryEventSink, SubscriptionRegistration};
 use tauri::ipc::Channel;
 
 use crate::{QueryEvent, Result, TransactionStatement};
@@ -14,7 +14,7 @@ const CLOUDSYNC_WRITE_FILTER: &str =
 
 #[derive(Default)]
 struct E2eeSyncHook {
-    keys: std::sync::RwLock<HashMap<String, hypr_e2ee::WorkspaceKey>>,
+    keys: std::sync::RwLock<HashMap<String, meetspace_e2ee::WorkspaceKey>>,
     witness: std::sync::RwLock<Option<crate::e2ee_witness::E2eeWitnessClient>>,
 }
 
@@ -22,8 +22,8 @@ impl E2eeSyncHook {
     fn set_personal_workspace(
         &self,
         workspace_id: &str,
-        recovery_key: &hypr_e2ee::RecoveryKey,
-    ) -> std::result::Result<(), hypr_e2ee::Error> {
+        recovery_key: &meetspace_e2ee::RecoveryKey,
+    ) -> std::result::Result<(), meetspace_e2ee::Error> {
         let key = recovery_key.workspace_key(workspace_id)?;
         *self.keys.write().unwrap() = HashMap::from([(workspace_id.to_string(), key)]);
         Ok(())
@@ -33,7 +33,7 @@ impl E2eeSyncHook {
         self.keys.read().unwrap().contains_key(workspace_id)
     }
 
-    fn workspace_key(&self, workspace_id: &str) -> Option<hypr_e2ee::WorkspaceKey> {
+    fn workspace_key(&self, workspace_id: &str) -> Option<meetspace_e2ee::WorkspaceKey> {
         self.keys.read().unwrap().get(workspace_id).cloned()
     }
 
@@ -42,7 +42,7 @@ impl E2eeSyncHook {
         *self.witness.write().unwrap() = None;
     }
 
-    fn snapshot(&self) -> HashMap<String, hypr_e2ee::WorkspaceKey> {
+    fn snapshot(&self) -> HashMap<String, meetspace_e2ee::WorkspaceKey> {
         self.keys.read().unwrap().clone()
     }
 
@@ -57,18 +57,18 @@ impl E2eeSyncHook {
     async fn prepare_local_snapshot(
         &self,
         pool: &sqlx::SqlitePool,
-    ) -> std::result::Result<(), hypr_db_app::E2eeReplicaError> {
-        hypr_db_app::encrypt_e2ee_replica_changes(pool, &self.snapshot())
+    ) -> std::result::Result<(), meetspace_db_app::E2eeReplicaError> {
+        meetspace_db_app::encrypt_e2ee_replica_changes(pool, &self.snapshot())
             .await
             .map(|_| ())
     }
 }
 
-impl hypr_db_core::CloudsyncSyncHook for E2eeSyncHook {
+impl meetspace_db_core::CloudsyncSyncHook for E2eeSyncHook {
     fn before_sync<'a>(
         &'a self,
         pool: &'a sqlx::SqlitePool,
-    ) -> hypr_db_core::CloudsyncHookFuture<'a> {
+    ) -> meetspace_db_core::CloudsyncHookFuture<'a> {
         let keys = self.snapshot();
         let witness = self.witness();
         Box::pin(async move {
@@ -77,7 +77,7 @@ impl hypr_db_core::CloudsyncSyncHook for E2eeSyncHook {
             let key = keys.get(witness.workspace_id()).ok_or_else(|| {
                 std::io::Error::other("E2EE freshness witness identity is not configured")
             })?;
-            let stats = hypr_db_app::encrypt_e2ee_replica_changes(pool, &keys)
+            let stats = meetspace_db_app::encrypt_e2ee_replica_changes(pool, &keys)
                 .await
                 .map_err(|error| {
                     std::io::Error::other(format!("E2EE pre-sync encryption failed: {error}"))
@@ -87,7 +87,7 @@ impl hypr_db_core::CloudsyncSyncHook for E2eeSyncHook {
                 "prepared encrypted CloudSync replica"
             );
             witness.publish_and_refresh(pool, key).await?;
-            let stats = hypr_db_app::apply_e2ee_replica_changes_with_witness(pool, &keys)
+            let stats = meetspace_db_app::apply_e2ee_replica_changes_with_witness(pool, &keys)
                 .await
                 .map_err(|error| {
                     std::io::Error::other(format!("E2EE pre-sync witness apply failed: {error}"))
@@ -104,7 +104,7 @@ impl hypr_db_core::CloudsyncSyncHook for E2eeSyncHook {
     fn after_sync<'a>(
         &'a self,
         pool: &'a sqlx::SqlitePool,
-    ) -> hypr_db_core::CloudsyncHookFuture<'a> {
+    ) -> meetspace_db_core::CloudsyncHookFuture<'a> {
         let keys = self.snapshot();
         let witness = self.witness();
         Box::pin(async move {
@@ -114,7 +114,7 @@ impl hypr_db_core::CloudsyncSyncHook for E2eeSyncHook {
                 std::io::Error::other("E2EE freshness witness identity is not configured")
             })?;
             witness.refresh(pool, key).await?;
-            let stats = hypr_db_app::apply_e2ee_replica_changes_with_witness(pool, &keys)
+            let stats = meetspace_db_app::apply_e2ee_replica_changes_with_witness(pool, &keys)
                 .await
                 .map_err(|error| {
                     std::io::Error::other(format!("E2EE post-sync decryption failed: {error}"))
@@ -180,7 +180,7 @@ impl PluginDbRuntime {
     pub fn set_e2ee_recovery_key(
         &self,
         workspace_id: &str,
-        recovery_key: &hypr_e2ee::RecoveryKey,
+        recovery_key: &meetspace_e2ee::RecoveryKey,
     ) -> Result<()> {
         self.e2ee_sync_hook
             .set_personal_workspace(workspace_id, recovery_key)
@@ -192,7 +192,7 @@ impl PluginDbRuntime {
         self.db.pool()
     }
 
-    pub fn workspace_key(&self, workspace_id: &str) -> Option<hypr_e2ee::WorkspaceKey> {
+    pub fn workspace_key(&self, workspace_id: &str) -> Option<meetspace_e2ee::WorkspaceKey> {
         self.e2ee_sync_hook.workspace_key(workspace_id)
     }
 
@@ -202,7 +202,7 @@ impl PluginDbRuntime {
 
     async fn ensure_app_schema(&self) -> Result<()> {
         self.schema_ready
-            .get_or_try_init(|| async { hypr_db_app::prepare_schema(self.db.as_ref()).await })
+            .get_or_try_init(|| async { meetspace_db_app::prepare_schema(self.db.as_ref()).await })
             .await?;
         Ok(())
     }
@@ -294,7 +294,7 @@ impl PluginDbRuntime {
         Ok(self.live_query_runtime.subscribe(sql, params, sink).await?)
     }
 
-    pub async fn unsubscribe(&self, subscription_id: &str) -> hypr_db_reactive::Result<()> {
+    pub async fn unsubscribe(&self, subscription_id: &str) -> meetspace_db_reactive::Result<()> {
         self.live_query_runtime.unsubscribe(subscription_id).await
     }
 
@@ -327,7 +327,7 @@ impl PluginDbRuntime {
         database_id: String,
         token: String,
         account_user_id: String,
-        workspace_projection: Option<hypr_db_app::CloudsyncWorkspaceProjection>,
+        workspace_projection: Option<meetspace_db_app::CloudsyncWorkspaceProjection>,
         e2ee_witness: crate::CloudsyncE2eeWitness,
     ) -> Result<crate::CloudsyncTokenConfigurationResult> {
         let result = self
@@ -356,7 +356,7 @@ impl PluginDbRuntime {
         database_id: String,
         token: String,
         account_user_id: String,
-        workspace_projection: Option<hypr_db_app::CloudsyncWorkspaceProjection>,
+        workspace_projection: Option<meetspace_db_app::CloudsyncWorkspaceProjection>,
         e2ee_witness: crate::CloudsyncE2eeWitness,
     ) -> Result<crate::CloudsyncTokenConfigurationResult> {
         let _reconciliation_guard = if workspace_projection.is_some() {
@@ -365,17 +365,19 @@ impl PluginDbRuntime {
             None
         };
         if !self.db.cloudsync_enabled() {
-            return Err(hypr_db_core::CloudsyncRuntimeError::Unavailable.into());
+            return Err(meetspace_db_core::CloudsyncRuntimeError::Unavailable.into());
         }
 
         if workspace_projection
             .as_ref()
             .is_some_and(|projection| projection.account_user_id != account_user_id)
         {
-            return Err(hypr_db_app::CloudsyncWorkspaceError::InvalidWorkspaceProjection.into());
+            return Err(
+                meetspace_db_app::CloudsyncWorkspaceError::InvalidWorkspaceProjection.into(),
+            );
         }
         if let Some(projection) = workspace_projection.as_ref() {
-            hypr_db_app::validate_cloudsync_workspace_projection(projection)?;
+            meetspace_db_app::validate_cloudsync_workspace_projection(projection)?;
         }
 
         self.ensure_legacy_migration_verified().await?;
@@ -412,12 +414,14 @@ impl PluginDbRuntime {
         self.e2ee_sync_hook.set_witness(witness);
 
         let write_filter_version_current = match workspace_projection.as_ref() {
-            Some(_) => hypr_db_app::cloudsync_write_filter_version_current(self.db.pool()).await?,
+            Some(_) => {
+                meetspace_db_app::cloudsync_write_filter_version_current(self.db.pool()).await?
+            }
             None => true,
         };
         let write_filter_installed = match workspace_projection.as_ref() {
             Some(projection) => {
-                hypr_db_app::cloudsync_write_filter_installed(
+                meetspace_db_app::cloudsync_write_filter_installed(
                     self.db.pool(),
                     &projection.personal_workspace_id,
                 )
@@ -435,15 +439,18 @@ impl PluginDbRuntime {
 
         let reconciliation = match workspace_projection.as_ref() {
             Some(projection) => Some(
-                hypr_db_app::stage_cloudsync_workspace_reconciliation(self.db.pool(), projection)
-                    .await?,
+                meetspace_db_app::stage_cloudsync_workspace_reconciliation(
+                    self.db.pool(),
+                    projection,
+                )
+                .await?,
             ),
             None => None,
         };
-        let config = hypr_db_core::CloudsyncRuntimeConfig {
+        let config = meetspace_db_core::CloudsyncRuntimeConfig {
             connection_string: database_id,
-            auth: hypr_db_core::CloudsyncAuth::Token { token },
-            tables: hypr_db_app::cloudsync_table_registry().to_vec(),
+            auth: meetspace_db_core::CloudsyncAuth::Token { token },
+            tables: meetspace_db_app::cloudsync_table_registry().to_vec(),
             sync_interval_ms: DEFAULT_CLOUDSYNC_INTERVAL_MS,
             wait_ms: Some(5_000),
             max_retries: Some(3),
@@ -460,7 +467,7 @@ impl PluginDbRuntime {
                 Ok(result) if cloudsync_send_completed(&result) => {}
                 Ok(_) => {
                     let _ = self.db.cloudsync_suspend().await;
-                    return Err(hypr_db_core::CloudsyncRuntimeError::UnsentChanges.into());
+                    return Err(meetspace_db_core::CloudsyncRuntimeError::UnsentChanges.into());
                 }
                 Err(error) => {
                     let _ = self.db.cloudsync_suspend().await;
@@ -476,7 +483,7 @@ impl PluginDbRuntime {
             };
             if status.has_unsent_changes != Some(false) {
                 let _ = self.db.cloudsync_suspend().await;
-                return Err(hypr_db_core::CloudsyncRuntimeError::UnsentChanges.into());
+                return Err(meetspace_db_core::CloudsyncRuntimeError::UnsentChanges.into());
             }
             if let Err(error) = self.db.cloudsync_logout(false).await {
                 let _ = self.db.cloudsync_suspend().await;
@@ -488,12 +495,12 @@ impl PluginDbRuntime {
         if let Some(projection) = workspace_projection.as_ref()
             && install_write_filter
         {
-            hypr_db_app::set_cloudsync_personal_write_scope(
+            meetspace_db_app::set_cloudsync_personal_write_scope(
                 self.db.pool(),
                 &projection.personal_workspace_id,
             )
             .await?;
-            for table in hypr_db_app::cloudsync_table_registry()
+            for table in meetspace_db_app::cloudsync_table_registry()
                 .iter()
                 .filter(|table| table.enabled)
             {
@@ -504,19 +511,19 @@ impl PluginDbRuntime {
                         table.init_flags,
                     )
                     .await
-                    .map_err(hypr_db_core::CloudsyncRuntimeError::from)?;
+                    .map_err(meetspace_db_core::CloudsyncRuntimeError::from)?;
                 self.db
                     .cloudsync_set_filter(&table.table_name, CLOUDSYNC_WRITE_FILTER)
                     .await
-                    .map_err(hypr_db_core::CloudsyncRuntimeError::from)?;
+                    .map_err(meetspace_db_core::CloudsyncRuntimeError::from)?;
             }
-            hypr_db_app::mark_cloudsync_write_filter_installed(self.db.pool()).await?;
+            meetspace_db_app::mark_cloudsync_write_filter_installed(self.db.pool()).await?;
         }
 
         if let (Some(projection), Some(reconciliation)) =
             (workspace_projection.as_ref(), reconciliation.as_ref())
         {
-            let _ = hypr_db_app::commit_cloudsync_workspace_projection(
+            let _ = meetspace_db_app::commit_cloudsync_workspace_projection(
                 self.db.pool(),
                 projection,
                 reconciliation.requires_full_resync() || install_write_filter,
@@ -526,11 +533,11 @@ impl PluginDbRuntime {
 
         self.apply_cloudsync_config_fail_closed(config).await?;
         if let Some(generation) =
-            hypr_db_app::cloudsync_full_resync_generation(self.db.pool()).await?
+            meetspace_db_app::cloudsync_full_resync_generation(self.db.pool()).await?
         {
             if let Err(error) = self.db.cloudsync_network_reset_sync_version().await {
                 let _ = self.db.cloudsync_suspend().await;
-                return Err(hypr_db_core::CloudsyncRuntimeError::from(error).into());
+                return Err(meetspace_db_core::CloudsyncRuntimeError::from(error).into());
             }
             self.schedule_cloudsync_full_resync(generation);
         }
@@ -540,9 +547,9 @@ impl PluginDbRuntime {
     pub async fn bind_cloudsync_account(&self, account_user_id: String) -> Result<bool> {
         let _write_guard = self.synced_write_barrier.write().await;
         self.ensure_app_schema().await?;
-        match hypr_db_app::bind_cloudsync_account(self.db.pool(), &account_user_id).await {
+        match meetspace_db_app::bind_cloudsync_account(self.db.pool(), &account_user_id).await {
             Ok(()) => Ok(true),
-            Err(hypr_db_app::CloudsyncWorkspaceError::AccountMismatch) => {
+            Err(meetspace_db_app::CloudsyncWorkspaceError::AccountMismatch) => {
                 self.db.cloudsync_suspend().await?;
                 Ok(false)
             }
@@ -555,7 +562,8 @@ impl PluginDbRuntime {
 
     async fn claim_cloudsync_workspace(&self, account_user_id: String) -> Result<bool> {
         self.ensure_app_schema().await?;
-        match hypr_db_app::cloudsync_workspace_is_claimed_by(self.db.pool(), &account_user_id).await
+        match meetspace_db_app::cloudsync_workspace_is_claimed_by(self.db.pool(), &account_user_id)
+            .await
         {
             Ok(true) => return Ok(true),
             Ok(false) => {}
@@ -569,7 +577,7 @@ impl PluginDbRuntime {
         }
 
         self.db.cloudsync_suspend().await?;
-        match hypr_db_app::claim_cloudsync_workspace(self.db.pool(), &account_user_id).await {
+        match meetspace_db_app::claim_cloudsync_workspace(self.db.pool(), &account_user_id).await {
             Ok(()) => Ok(true),
             Err(error) if is_permanent_cloudsync_workspace_rejection(&error) => Ok(false),
             Err(error) => Err(error.into()),
@@ -578,7 +586,7 @@ impl PluginDbRuntime {
 
     async fn apply_cloudsync_config_fail_closed(
         &self,
-        config: hypr_db_core::CloudsyncRuntimeConfig,
+        config: meetspace_db_core::CloudsyncRuntimeConfig,
     ) -> Result<()> {
         let result = async {
             self.db.cloudsync_reconfigure(config).await?;
@@ -600,15 +608,15 @@ impl PluginDbRuntime {
             .await
             .map_err(|error| std::io::Error::other(error.to_string()))?;
 
-        for table_name in hypr_db_app::E2EE_DOMAIN_TABLES {
-            if hypr_db_core::cloudsync_is_enabled_on(self.db.pool(), table_name)
+        for table_name in meetspace_db_app::E2EE_DOMAIN_TABLES {
+            if meetspace_db_core::cloudsync_is_enabled_on(self.db.pool(), table_name)
                 .await
-                .map_err(hypr_db_core::CloudsyncRuntimeError::from)?
+                .map_err(meetspace_db_core::CloudsyncRuntimeError::from)?
             {
                 self.db
                     .cloudsync_cleanup(table_name)
                     .await
-                    .map_err(hypr_db_core::CloudsyncRuntimeError::from)?;
+                    .map_err(meetspace_db_core::CloudsyncRuntimeError::from)?;
             }
         }
         Ok(())
@@ -620,9 +628,11 @@ impl PluginDbRuntime {
             for attempt in 0..3 {
                 match db.cloudsync_trigger_sync().await {
                     Ok(result) if cloudsync_snapshot_completed(&result) => {
-                        if let Err(error) =
-                            hypr_db_app::clear_cloudsync_full_resync_pending(db.pool(), &generation)
-                                .await
+                        if let Err(error) = meetspace_db_app::clear_cloudsync_full_resync_pending(
+                            db.pool(),
+                            &generation,
+                        )
+                        .await
                         {
                             tracing::warn!(%error, "failed to clear CloudSync full resync marker");
                         }
@@ -644,13 +654,13 @@ impl PluginDbRuntime {
     }
 
     async fn cloudsync_has_initialized_tables(&self) -> Result<bool> {
-        for table in hypr_db_app::cloudsync_table_registry()
+        for table in meetspace_db_app::cloudsync_table_registry()
             .iter()
             .filter(|table| table.enabled)
         {
-            if hypr_db_core::cloudsync_is_enabled_on(self.db.pool(), &table.table_name)
+            if meetspace_db_core::cloudsync_is_enabled_on(self.db.pool(), &table.table_name)
                 .await
-                .map_err(hypr_db_core::CloudsyncRuntimeError::from)?
+                .map_err(meetspace_db_core::CloudsyncRuntimeError::from)?
             {
                 return Ok(true);
             }
@@ -671,7 +681,7 @@ impl PluginDbRuntime {
             return Ok(false);
         }
 
-        for table in hypr_db_app::cloudsync_table_registry()
+        for table in meetspace_db_app::cloudsync_table_registry()
             .iter()
             .filter(|table| table.enabled)
         {
@@ -732,7 +742,7 @@ impl PluginDbRuntime {
     }
 }
 
-fn cloudsync_send_completed(result: &hypr_db_core::CloudsyncNetworkResult) -> bool {
+fn cloudsync_send_completed(result: &meetspace_db_core::CloudsyncNetworkResult) -> bool {
     let Some(send) = result.send.as_ref() else {
         return false;
     };
@@ -742,7 +752,7 @@ fn cloudsync_send_completed(result: &hypr_db_core::CloudsyncNetworkResult) -> bo
     send.status == "synced" && send.last_failure.is_none() && receive_completed
 }
 
-fn cloudsync_snapshot_completed(result: &hypr_db_core::CloudsyncNetworkResult) -> bool {
+fn cloudsync_snapshot_completed(result: &meetspace_db_core::CloudsyncNetworkResult) -> bool {
     let Some(receive) = result.receive.as_ref() else {
         return false;
     };
@@ -753,14 +763,14 @@ fn cloudsync_snapshot_completed(result: &hypr_db_core::CloudsyncNetworkResult) -
 }
 
 fn is_permanent_cloudsync_workspace_rejection(
-    error: &hypr_db_app::CloudsyncWorkspaceError,
+    error: &meetspace_db_app::CloudsyncWorkspaceError,
 ) -> bool {
     matches!(
         error,
-        hypr_db_app::CloudsyncWorkspaceError::InvalidWorkspaceId
-            | hypr_db_app::CloudsyncWorkspaceError::InvalidBinding
-            | hypr_db_app::CloudsyncWorkspaceError::AccountMismatch
-            | hypr_db_app::CloudsyncWorkspaceError::ForeignWorkspace { .. }
+        meetspace_db_app::CloudsyncWorkspaceError::InvalidWorkspaceId
+            | meetspace_db_app::CloudsyncWorkspaceError::InvalidBinding
+            | meetspace_db_app::CloudsyncWorkspaceError::AccountMismatch
+            | meetspace_db_app::CloudsyncWorkspaceError::ForeignWorkspace { .. }
     )
 }
 
@@ -795,7 +805,7 @@ pub async fn open_app_db(db_path: Option<&Path>) -> Result<Db> {
 
     match Db::open(app_db_open_options(storage, true)).await {
         Ok(db) => {
-            hypr_db_app::prepare_schema(&db).await?;
+            meetspace_db_app::prepare_schema(&db).await?;
             Ok(db)
         }
         Err(cloudsync_error) => {
@@ -840,7 +850,7 @@ async fn open_app_db_without_cloudsync(
         return Err(cloudsync_error.into());
     }
 
-    if let Err(error) = hypr_db_app::prepare_schema(&db).await {
+    if let Err(error) = meetspace_db_app::prepare_schema(&db).await {
         db.pool().close().await;
         return Err(error.into());
     }
@@ -872,7 +882,7 @@ mod tests {
 
     #[test]
     fn cloudsync_completion_requires_confirmed_send_and_receive() {
-        let completed: hypr_db_core::CloudsyncNetworkResult =
+        let completed: meetspace_db_core::CloudsyncNetworkResult =
             serde_json::from_value(serde_json::json!({
                 "send": {
                     "status": "synced",
@@ -886,7 +896,7 @@ mod tests {
                 }
             }))
             .unwrap();
-        let unconfirmed_send: hypr_db_core::CloudsyncNetworkResult =
+        let unconfirmed_send: meetspace_db_core::CloudsyncNetworkResult =
             serde_json::from_value(serde_json::json!({
                 "send": {
                     "status": "syncing",
@@ -895,7 +905,7 @@ mod tests {
                 }
             }))
             .unwrap();
-        let incomplete_receive: hypr_db_core::CloudsyncNetworkResult =
+        let incomplete_receive: meetspace_db_core::CloudsyncNetworkResult =
             serde_json::from_value(serde_json::json!({
                 "send": {
                     "status": "synced",
@@ -909,7 +919,7 @@ mod tests {
                 }
             }))
             .unwrap();
-        let send_only: hypr_db_core::CloudsyncNetworkResult =
+        let send_only: meetspace_db_core::CloudsyncNetworkResult =
             serde_json::from_value(serde_json::json!({
                 "send": {
                     "status": "synced",
@@ -928,7 +938,7 @@ mod tests {
         assert!(cloudsync_send_completed(&send_only));
         assert!(!cloudsync_snapshot_completed(&send_only));
         assert!(!cloudsync_send_completed(
-            &hypr_db_core::CloudsyncNetworkResult::default()
+            &meetspace_db_core::CloudsyncNetworkResult::default()
         ));
     }
 
@@ -1114,7 +1124,7 @@ mod tests {
         let db = Db::open(app_db_open_options(DbStorage::Local(&db_path), false))
             .await
             .unwrap();
-        hypr_db_app::prepare_schema(&db).await.unwrap();
+        meetspace_db_app::prepare_schema(&db).await.unwrap();
         sqlx::query(
             "UPDATE app_settings
              SET value_json = 'not-json'
@@ -1136,8 +1146,8 @@ mod tests {
 
         assert!(matches!(
             error,
-            crate::Error::AppSchema(hypr_db_app::AppSchemaError::CloudsyncWorkspace(
-                hypr_db_app::CloudsyncWorkspaceError::InvalidBinding
+            crate::Error::AppSchema(meetspace_db_app::AppSchemaError::CloudsyncWorkspace(
+                meetspace_db_app::CloudsyncWorkspaceError::InvalidBinding
             ))
         ));
     }
@@ -1155,16 +1165,16 @@ mod tests {
         })
         .await
         .unwrap();
-        hypr_db_app::prepare_schema(&db).await.unwrap();
+        meetspace_db_app::prepare_schema(&db).await.unwrap();
         let runtime = PluginDbRuntime::new(std::sync::Arc::new(db));
 
         runtime
-            .apply_cloudsync_config_fail_closed(hypr_db_core::CloudsyncRuntimeConfig {
+            .apply_cloudsync_config_fail_closed(meetspace_db_core::CloudsyncRuntimeConfig {
                 connection_string: "managed-database-id".to_string(),
-                auth: hypr_db_core::CloudsyncAuth::Token {
+                auth: meetspace_db_core::CloudsyncAuth::Token {
                     token: "secret-token".to_string(),
                 },
-                tables: vec![hypr_db_core::CloudsyncTableSpec {
+                tables: vec![meetspace_db_core::CloudsyncTableSpec {
                     table_name: "missing_table".to_string(),
                     crdt_algo: None,
                     init_flags: None,

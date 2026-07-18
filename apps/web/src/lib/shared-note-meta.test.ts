@@ -52,7 +52,7 @@ test("available public notes receive canonical indexable metadata", () => {
   assert.deepEqual(head.links, [
     {
       rel: "canonical",
-      href: "https://anarlog.so/share/public/s_0123456789abcdef0123456789abcdef/",
+      href: "https://meetspace.so/share/public/s_0123456789abcdef0123456789abcdef/",
     },
   ]);
   assert.ok(

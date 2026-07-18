@@ -164,7 +164,7 @@ test("retains capability tokens across trailing-slash normalization", () => {
     const location = {
       hash: `#token=${TOKEN}`,
       pathname,
-      search: "?scheme=hyprnote-staging",
+      search: "?scheme=meetspace-staging",
     };
     const storage = new Map<string, string>();
     let replacedUrl = "";

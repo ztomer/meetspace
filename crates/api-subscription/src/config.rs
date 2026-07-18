@@ -100,7 +100,7 @@ impl CloudsyncCleanupConfig {
                 .bytes()
                 .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'_' | b'-'))
         {
-            return Err("ANARLOG_CLOUDSYNC_E2EE_DATABASE_ID is invalid".to_string());
+            return Err("MEETSPACE_CLOUDSYNC_E2EE_DATABASE_ID is invalid".to_string());
         }
 
         Ok(Self {

@@ -17,7 +17,7 @@ const mocks = vi.hoisted(() => ({
   writeClipboard: vi.fn(),
 }));
 
-vi.mock("@hypr/plugin-db", () => ({
+vi.mock("@meetspace/plugin-db", () => ({
   createE2eeIdentity: mocks.create,
   importE2eeIdentity: mocks.import,
   inspectE2eeRecoveryKey: mocks.inspect,
@@ -84,13 +84,13 @@ describe("E2eeSetupDialog", () => {
   it("requires the generated recovery key to be acknowledged before enabling sync", async () => {
     const onReady = vi.fn();
     mocks.create.mockResolvedValue(
-      "anarlog-e2ee-v1:abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG",
+      "meetspace-e2ee-v1:abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG",
     );
     mocks.import.mockResolvedValue(undefined);
     renderDialog(onReady);
 
     fireEvent.click(screen.getByText("Create a recovery key"));
-    expect(await screen.findByText(/anarlog-e2ee-v1:/)).toBeTruthy();
+    expect(await screen.findByText(/meetspace-e2ee-v1:/)).toBeTruthy();
     expect(onReady).not.toHaveBeenCalled();
 
     fireEvent.click(screen.getByText("I saved it"));
@@ -104,14 +104,14 @@ describe("E2eeSetupDialog", () => {
 
     fireEvent.click(screen.getByText("Use an existing key"));
     fireEvent.change(screen.getByLabelText("Recovery key"), {
-      target: { value: "anarlog-e2ee-v1:existing" },
+      target: { value: "meetspace-e2ee-v1:existing" },
     });
     fireEvent.click(screen.getByText("Unlock sync"));
 
     await waitFor(() =>
       expect(mocks.import).toHaveBeenCalledWith(
         "11111111-1111-4111-8111-111111111111",
-        "anarlog-e2ee-v1:existing",
+        "meetspace-e2ee-v1:existing",
       ),
     );
     expect(onReady).toHaveBeenCalledTimes(1);
@@ -119,7 +119,7 @@ describe("E2eeSetupDialog", () => {
 
   it("clears a copied recovery key after one minute when it is still on the clipboard", async () => {
     const recoveryKey =
-      "anarlog-e2ee-v1:abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
+      "meetspace-e2ee-v1:abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
     mocks.create.mockResolvedValue(recoveryKey);
     renderDialog();
 
@@ -140,7 +140,7 @@ describe("E2eeSetupDialog", () => {
 
   it("preserves clipboard content copied after the recovery key", async () => {
     const recoveryKey =
-      "anarlog-e2ee-v1:abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
+      "meetspace-e2ee-v1:abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
     mocks.create.mockResolvedValue(recoveryKey);
     renderDialog();
 
@@ -182,7 +182,7 @@ describe("E2eeSetupDialog", () => {
 
     fireEvent.click(screen.getByText("Use an existing key"));
     fireEvent.change(screen.getByLabelText("Recovery key"), {
-      target: { value: "anarlog-e2ee-v1:wrong" },
+      target: { value: "meetspace-e2ee-v1:wrong" },
     });
     fireEvent.click(screen.getByText("Unlock sync"));
 

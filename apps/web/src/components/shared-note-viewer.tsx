@@ -5,9 +5,9 @@ import {
   UsersRoundIcon,
 } from "lucide-react";
 
-import { cn } from "@hypr/utils";
+import { cn } from "@meetspace/utils";
 
-import { AnarlogLogo } from "@/components/anarlog-logo";
+import { MeetspaceLogo } from "@/components/meetspace-logo";
 import {
   type SharedAttachmentResolver,
   SharedNoteDocument,
@@ -97,7 +97,7 @@ export function SharedNoteViewer({
               Keep this note close
             </h2>
             <p className="text-color-muted mt-1 text-sm leading-6">
-              Open it in Anarlog, or try the local-first desktop app.
+              Open it in Meetspace, or try the local-first desktop app.
             </p>
           </div>
           <div className="mt-4 flex flex-wrap gap-3 sm:mt-0">{actions}</div>
@@ -141,7 +141,7 @@ export function SharedNoteTransientError({ retry }: { retry?: () => void }) {
     <SharedNotePrompt
       icon={<AlertCircleIcon className="size-6" aria-hidden="true" />}
       title="We couldn’t load this shared note"
-      description="Anarlog had a temporary problem loading the note. Please try again."
+      description="Meetspace had a temporary problem loading the note. Please try again."
       actions={
         <button
           type="button"
@@ -194,11 +194,11 @@ function SharedNoteShell({ children }: { children: React.ReactNode }) {
     <main className="bg-page text-color min-h-screen px-4 py-5 sm:px-6 sm:py-8">
       <div className="mx-auto w-full max-w-[760px]">
         <header className="mb-8 flex items-center justify-between gap-4 px-1">
-          <a href="/" aria-label="Anarlog home">
-            <AnarlogLogo className="h-8 w-auto" />
+          <a href="/" aria-label="Meetspace home">
+            <MeetspaceLogo className="h-8 w-auto" />
           </a>
           <span className="text-color-muted font-mono text-xs">
-            Shared with Anarlog
+            Shared with Meetspace
           </span>
         </header>
         {children}

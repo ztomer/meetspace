@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import type { MeetingCapturedChatMessage } from "@hypr/plugin-detect";
+import type { MeetingCapturedChatMessage } from "@meetspace/plugin-detect";
 
 import { startMeetingChatCapture } from "./meeting-chat-capture";
 
@@ -18,7 +18,7 @@ const {
   captureSettingState: { value: true },
 }));
 
-vi.mock("@hypr/plugin-detect", () => ({
+vi.mock("@meetspace/plugin-detect", () => ({
   commands: {
     captureMeetingChatMessages: captureMeetingChatMessagesMock,
     listMicUsingApplications: listMicUsingApplicationsMock,
@@ -29,7 +29,7 @@ vi.mock("~/stt/meeting-chat-records", () => ({
   persistMeetingChatRecords: persistMeetingChatRecordsMock,
 }));
 
-vi.mock("@hypr/ui/components/ui/toast", () => ({
+vi.mock("@meetspace/ui/components/ui/toast", () => ({
   sonnerToast: { warning: sonnerToastWarningMock },
 }));
 
@@ -300,7 +300,7 @@ describe("startMeetingChatCapture", () => {
   });
 
   test("excludes the generated disclosure while retaining participant chat", async () => {
-    const disclosure = "Anarlog disclosure https://anarlog.so";
+    const disclosure = "Meetspace disclosure https://meetspace.so";
     captureMeetingChatMessagesMock.mockResolvedValue(captureResult([]));
     const stop = startMeetingChatCapture({
       sessionId: "session-1",
@@ -316,7 +316,7 @@ describe("startMeetingChatCapture", () => {
           id: "disclosure",
           direction: "outgoing",
           text: `  ${disclosure.replace(" ", "\n")}  `,
-          links: ["https://anarlog.so"],
+          links: ["https://meetspace.so"],
         },
         capturedMessage,
       ]),

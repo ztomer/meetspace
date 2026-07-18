@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { deriveBillingInfo } from "@hypr/supabase/billing";
+import { deriveBillingInfo } from "@meetspace/supabase/billing";
 
 const secondsFromNow = (seconds: number) =>
   Math.floor(Date.now() / 1000) + seconds;
@@ -19,7 +19,7 @@ test("an unexpired trial grants Pro access without a paid entitlement", () => {
 
 test("an expired trial no longer grants Pro access", () => {
   const billing = deriveBillingInfo({
-    entitlements: ["hyprnote_pro"],
+    entitlements: ["meetspace_pro"],
     subscription_status: "trialing",
     trial_end: secondsFromNow(-60),
   });
@@ -32,7 +32,7 @@ test("an expired trial no longer grants Pro access", () => {
 
 test("a trial without an end date fails closed", () => {
   const billing = deriveBillingInfo({
-    entitlements: ["hyprnote_pro"],
+    entitlements: ["meetspace_pro"],
     subscription_status: "trialing",
     trial_end: null,
   });
@@ -44,7 +44,7 @@ test("a trial without an end date fails closed", () => {
 
 test("Lite remains paid without being treated as Pro", () => {
   const billing = deriveBillingInfo({
-    entitlements: ["hyprnote_lite"],
+    entitlements: ["meetspace_lite"],
     subscription_status: "active",
   });
 

@@ -45,7 +45,7 @@ impl Claims {
     }
 
     pub fn has_entitlement(&self, entitlement: &str) -> bool {
-        if entitlement == "hyprnote_pro"
+        if entitlement == "meetspace_pro"
             && matches!(self.subscription_status, Some(SubscriptionStatus::Trialing))
         {
             return self.has_active_trial();
@@ -55,11 +55,11 @@ impl Claims {
     }
 
     pub fn is_pro(&self) -> bool {
-        self.has_entitlement("hyprnote_pro")
+        self.has_entitlement("meetspace_pro")
     }
 
     pub fn is_lite(&self) -> bool {
-        self.has_entitlement("hyprnote_lite")
+        self.has_entitlement("meetspace_lite")
     }
 
     pub fn is_paid(&self) -> bool {
@@ -100,7 +100,7 @@ mod tests {
         let payload = r#"{
             "sub": "user-123",
             "email": "test@example.com",
-            "entitlements": ["hyprnote_pro"],
+            "entitlements": ["meetspace_pro"],
             "subscription_status": "trialing",
             "trial_end": 1771406553,
             "has_payment_method": true
@@ -110,7 +110,7 @@ mod tests {
         let claims = Claims::decode_insecure(&token).unwrap();
         assert_eq!(claims.sub, "user-123");
         assert_eq!(claims.email, Some("test@example.com".to_string()));
-        assert_eq!(claims.entitlements, vec!["hyprnote_pro"]);
+        assert_eq!(claims.entitlements, vec!["meetspace_pro"]);
         assert!(matches!(
             claims.subscription_status,
             Some(SubscriptionStatus::Trialing)
@@ -137,7 +137,7 @@ mod tests {
     fn test_decode_claims_lite() {
         let payload = r#"{
             "sub": "user-789",
-            "entitlements": ["hyprnote_lite"],
+            "entitlements": ["meetspace_lite"],
             "subscription_status": "active"
         }"#;
         let token = make_test_token(payload);
@@ -152,7 +152,7 @@ mod tests {
     fn test_is_paid_with_pro() {
         let payload = r#"{
             "sub": "user-100",
-            "entitlements": ["hyprnote_pro"]
+            "entitlements": ["meetspace_pro"]
         }"#;
         let token = make_test_token(payload);
 
@@ -199,7 +199,7 @@ mod tests {
         };
 
         assert!(claims.has_active_trial());
-        assert!(claims.has_entitlement("hyprnote_pro"));
+        assert!(claims.has_entitlement("meetspace_pro"));
         assert!(claims.is_pro());
         assert!(claims.is_paid());
     }
@@ -209,7 +209,7 @@ mod tests {
         let mut claims = Claims {
             sub: "trial-user".to_string(),
             email: None,
-            entitlements: vec!["hyprnote_pro".to_string()],
+            entitlements: vec!["meetspace_pro".to_string()],
             subscription_status: Some(SubscriptionStatus::Trialing),
             trial_end: Some(Utc::now() - Duration::minutes(5)),
             has_payment_method: Some(false),
