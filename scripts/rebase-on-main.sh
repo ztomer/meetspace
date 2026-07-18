@@ -89,6 +89,9 @@ if git merge-base --is-ancestor "$TARGET" HEAD 2>/dev/null; then
   exit 0
 fi
 
+# Copy resolve_conflicts.py to /tmp so it's always available during early rebase commits
+cp scripts/resolve_conflicts.py /tmp/resolve_conflicts.py
+
 bold "==> Rebasing onto $TARGET_LABEL"
 if ! git rebase "$TARGET"; then
   yellow "Rebase encountered conflicts. Attempting automatic resolution..."
@@ -96,7 +99,7 @@ if ! git rebase "$TARGET"; then
   # Keep looping while rebase is in progress
   while [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ] || [ -d "$(git rev-parse --git-dir 2>/dev/null)/rebase-merge" ] || [ -d "$(git rev-parse --git-dir 2>/dev/null)/rebase-apply" ]; do
     yellow "Running auto-conflict-resolution script..."
-    if python3 scripts/resolve_conflicts.py; then
+    if python3 /tmp/resolve_conflicts.py; then
       green "All conflicts in this step resolved. Continuing rebase..."
       if ! git -c core.editor=true rebase --continue 2>&1 | tee /tmp/rebase_out; then
         if grep -q "No changes - did you forget to use 'git add'?" /tmp/rebase_out || grep -q "nothing to commit" /tmp/rebase_out; then
