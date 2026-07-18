@@ -150,13 +150,22 @@ impl Db {
     }
 
     pub async fn connect_memory() -> Result<Self, meetspace_cloudsync::Error> {
-        let options =
-            apply_internal_connect_policy(SqliteConnectOptions::from_str("sqlite::memory:")?);
+        let options = apply_internal_connect_policy(SqliteConnectOptions::from_str(
+            "sqlite:file::memory:?cache=shared",
+        )?);
         let (options, cloudsync_path) = meetspace_cloudsync::apply(options)?;
         let (change_notifier, pool_options) = meetspace_db_change::ChangeNotifier::disabled();
         let pool = pool_options
             .max_connections(1)
+            .min_connections(1)
             .connect_with(options)
+            .await
+            .map_err(meetspace_cloudsync::Error::from)?;
+
+        use sqlx::Connection;
+        let mut opt = SqliteConnectOptions::from_str("sqlite:file::memory:?cache=shared")?;
+        opt = apply_internal_connect_policy(opt);
+        let memory_keepalive = sqlx::SqliteConnection::connect_with(&opt)
             .await
             .map_err(meetspace_cloudsync::Error::from)?;
 
@@ -170,7 +179,7 @@ impl Db {
             cloudsync_sync_hook: Arc::new(Mutex::new(None)),
             pool,
             change_notifier,
-            _memory_keepalive: None,
+            _memory_keepalive: Some(memory_keepalive),
         })
     }
 
@@ -223,14 +232,22 @@ impl Db {
     }
 
     pub async fn connect_memory_plain() -> Result<Self, sqlx::Error> {
-        let options =
-            apply_internal_connect_policy(SqliteConnectOptions::from_str("sqlite::memory:")?)
-                .pragma("foreign_keys", "ON");
+        let options = apply_internal_connect_policy(SqliteConnectOptions::from_str(
+            "sqlite:file::memory:?cache=shared",
+        )?)
+        .pragma("foreign_keys", "ON");
         let (change_notifier, pool_options) = meetspace_db_change::ChangeNotifier::new();
         let pool = pool_options
             .max_connections(1)
+            .min_connections(1)
             .connect_with(options)
             .await?;
+
+        use sqlx::Connection;
+        let mut opt = SqliteConnectOptions::from_str("sqlite:file::memory:?cache=shared")?;
+        opt = opt.pragma("foreign_keys", "ON");
+        opt = apply_internal_connect_policy(opt);
+        let memory_keepalive = sqlx::SqliteConnection::connect_with(&opt).await?;
 
         Ok(Self {
             cloudsync_enabled: false,
@@ -242,7 +259,7 @@ impl Db {
             cloudsync_sync_hook: Arc::new(Mutex::new(None)),
             pool,
             change_notifier,
-            _memory_keepalive: None,
+            _memory_keepalive: Some(memory_keepalive),
         })
     }
 
