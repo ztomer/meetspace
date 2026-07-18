@@ -47,7 +47,10 @@ export async function openShell(page: Page) {
 export async function openSettings(page: Page, section: string) {
   await openShell(page);
   await page.getByText("Settings", { exact: true }).first().click();
-  await page.getByText("Appearance").first().waitFor({ timeout: 15_000 });
+  await page
+    .getByRole("button", { name: "App", exact: true })
+    .first()
+    .waitFor({ timeout: 15_000 });
   if (section !== "App") {
     await page
       .getByRole("button", { name: section, exact: true })

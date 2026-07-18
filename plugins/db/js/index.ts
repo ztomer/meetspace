@@ -273,7 +273,7 @@ export async function subscribe<T = Record<string, unknown>>(
     },
   );
 
-  if (registration.analysis.kind === "non_reactive") {
+  if (registration.analysis?.kind === "non_reactive") {
     console.warn(
       `[plugin-db] live query subscription is non-reactive for SQL "${sql}": ${registration.analysis.data.reason}`,
     );
