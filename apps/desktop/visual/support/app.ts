@@ -13,26 +13,26 @@ export async function mockCommands(
   }, overrides);
 }
 
-// Seed the session store with fake sessions so the timeline renders populated.
-// Feeds the session persister's scan_and_read with synthetic _meta.json files.
+// Seed the timeline with fake sessions so it renders populated. Sessions live
+// in SQLite now, read through a `plugin:db|subscribe` live query
+// (SELECT ... FROM sessions). The mock (tauri-mock.ts) delivers these rows on
+// the channel for the timeline sessions subscription specifically.
 export async function seedSessions(
   page: Page,
   sessions: { id: string; title: string; createdAt: string }[],
 ) {
-  const sessionFiles: Record<string, string> = {};
-  for (const s of sessions) {
-    sessionFiles[`${s.id}/_meta.json`] = JSON.stringify({
-      user_id: "local-user",
-      created_at: s.createdAt,
-      title: s.title,
-      participants: [],
-    });
-  }
-  await page.addInitScript((files) => {
+  const sessionRows = sessions.map((s) => ({
+    id: s.id,
+    title: s.title,
+    created_at: s.createdAt,
+    event_json: null,
+    folder_id: null,
+  }));
+  await page.addInitScript((rows) => {
     (window as unknown as Record<string, unknown>).__VISUAL_SEED__ = {
-      sessionFiles: files,
+      sessionRows: rows,
     };
-  }, sessionFiles);
+  }, sessionRows);
 }
 
 // Boot to the main shell (empty state).
