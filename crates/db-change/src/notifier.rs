@@ -20,7 +20,7 @@ impl ChangeNotifier {
     }
 
     pub fn new_with_cloudsync(
-        initializer: hypr_cloudsync::CloudsyncConnectionInitializer,
+        initializer: meetspace_cloudsync::CloudsyncConnectionInitializer,
     ) -> (Self, SqlitePoolOptions) {
         Self::build(Some(true), Some(initializer))
     }
@@ -31,7 +31,7 @@ impl ChangeNotifier {
 
     fn build(
         cloudsync_enabled: Option<bool>,
-        cloudsync_initializer: Option<hypr_cloudsync::CloudsyncConnectionInitializer>,
+        cloudsync_initializer: Option<meetspace_cloudsync::CloudsyncConnectionInitializer>,
     ) -> (Self, SqlitePoolOptions) {
         let (table_change_tx, _) = broadcast::channel(256);
         let change_tracker = Arc::new(ChangeTracker::default());

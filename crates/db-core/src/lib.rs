@@ -48,7 +48,7 @@ const SQLITE_BUSY_TIMEOUT: Duration = Duration::from_secs(5);
 pub struct Db {
     pub(crate) cloudsync_enabled: bool,
     pub(crate) cloudsync_path: Option<PathBuf>,
-    pub(crate) cloudsync_initializer: hypr_cloudsync::CloudsyncConnectionInitializer,
+    pub(crate) cloudsync_initializer: meetspace_cloudsync::CloudsyncConnectionInitializer,
     pub(crate) cloudsync_connection: Arc<tokio::sync::Mutex<Option<PoolConnection<Sqlite>>>>,
     pub(crate) cloudsync_lifecycle: Arc<tokio::sync::Mutex<()>>,
     pub(crate) cloudsync_runtime: Arc<Mutex<CloudsyncRuntimeState>>,
@@ -98,9 +98,9 @@ impl Db {
 
         let cloudsync_initializer = meetspace_cloudsync::CloudsyncConnectionInitializer::default();
         let (change_notifier, pool_options) = match (options.cloudsync_enabled, options.storage) {
-            (true, DbStorage::Local(_)) => {
-                meetspace_db_change::ChangeNotifier::new_with_cloudsync(cloudsync_initializer.clone())
-            }
+            (true, DbStorage::Local(_)) => meetspace_db_change::ChangeNotifier::new_with_cloudsync(
+                cloudsync_initializer.clone(),
+            ),
             (true, DbStorage::Memory) => meetspace_db_change::ChangeNotifier::disabled(),
             (false, _) => meetspace_db_change::ChangeNotifier::new(),
         };
@@ -188,7 +188,7 @@ impl Db {
         Ok(Self {
             cloudsync_enabled: false,
             cloudsync_path: None,
-            cloudsync_initializer: hypr_cloudsync::CloudsyncConnectionInitializer::default(),
+            cloudsync_initializer: meetspace_cloudsync::CloudsyncConnectionInitializer::default(),
             cloudsync_connection: Arc::new(tokio::sync::Mutex::new(None)),
             cloudsync_lifecycle: Arc::new(tokio::sync::Mutex::new(())),
             cloudsync_runtime: Arc::new(Mutex::new(CloudsyncRuntimeState::default())),
@@ -211,7 +211,7 @@ impl Db {
         Ok(Self {
             cloudsync_enabled: false,
             cloudsync_path: None,
-            cloudsync_initializer: hypr_cloudsync::CloudsyncConnectionInitializer::default(),
+            cloudsync_initializer: meetspace_cloudsync::CloudsyncConnectionInitializer::default(),
             cloudsync_connection: Arc::new(tokio::sync::Mutex::new(None)),
             cloudsync_lifecycle: Arc::new(tokio::sync::Mutex::new(())),
             cloudsync_runtime: Arc::new(Mutex::new(CloudsyncRuntimeState::default())),
@@ -235,7 +235,7 @@ impl Db {
         Ok(Self {
             cloudsync_enabled: false,
             cloudsync_path: None,
-            cloudsync_initializer: hypr_cloudsync::CloudsyncConnectionInitializer::default(),
+            cloudsync_initializer: meetspace_cloudsync::CloudsyncConnectionInitializer::default(),
             cloudsync_connection: Arc::new(tokio::sync::Mutex::new(None)),
             cloudsync_lifecycle: Arc::new(tokio::sync::Mutex::new(())),
             cloudsync_runtime: Arc::new(Mutex::new(CloudsyncRuntimeState::default())),
