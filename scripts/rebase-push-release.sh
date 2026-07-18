@@ -199,3 +199,8 @@ green "==> All steps completed successfully!"
 bold "Artifact generated in:"
 find target/release/bundle apps/desktop/src-tauri/target/release/bundle \
   -maxdepth 3 -type f -name '*.dmg' 2>/dev/null || true
+
+if command -v cargo-sweep &> /dev/null; then
+  bold "==> Pruning build artifacts older than 30 days"
+  cargo sweep --time 30
+fi
