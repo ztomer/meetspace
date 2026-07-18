@@ -180,7 +180,7 @@ mod tests {
         skipped_count: i64,
         conflict_count: i64,
     ) -> String {
-        hypr_db_app::begin_legacy_import_run(pool, run_id, "/vault", false)
+        meetspace_db_app::begin_legacy_import_run(pool, run_id, "/vault", false)
             .await
             .unwrap();
         sqlx::query(
@@ -199,7 +199,7 @@ mod tests {
         .await
         .unwrap();
 
-        hypr_db_app::finish_legacy_import_run(pool, run_id)
+        meetspace_db_app::finish_legacy_import_run(pool, run_id)
             .await
             .unwrap()
     }
@@ -261,8 +261,8 @@ mod tests {
 
     #[tokio::test]
     async fn conflict_only_import_allows_startup_without_verifying_parity() {
-        let db = hypr_db_core::Db::connect_memory_plain().await.unwrap();
-        hypr_db_app::prepare_schema(&db).await.unwrap();
+        let db = meetspace_db_core::Db::connect_memory_plain().await.unwrap();
+        meetspace_db_app::prepare_schema(&db).await.unwrap();
 
         assert_eq!(
             finish_issue_run(db.pool(), "conflict-run", "conflict", 0, 1).await,
@@ -289,8 +289,8 @@ mod tests {
 
     #[tokio::test]
     async fn legacy_completed_with_issues_conflicts_remain_retryable() {
-        let db = hypr_db_core::Db::connect_memory_plain().await.unwrap();
-        hypr_db_app::prepare_schema(&db).await.unwrap();
+        let db = meetspace_db_core::Db::connect_memory_plain().await.unwrap();
+        meetspace_db_app::prepare_schema(&db).await.unwrap();
         finish_issue_run(db.pool(), "legacy-conflict-run", "conflict", 0, 1).await;
         sqlx::query(
             "UPDATE migration_import_runs SET status = 'completed_with_issues' WHERE id = ?",
@@ -310,8 +310,8 @@ mod tests {
 
     #[tokio::test]
     async fn legacy_conflict_only_run_is_retried_once_and_then_allows_startup() {
-        let db = hypr_db_core::Db::connect_memory_plain().await.unwrap();
-        hypr_db_app::prepare_schema(&db).await.unwrap();
+        let db = meetspace_db_core::Db::connect_memory_plain().await.unwrap();
+        meetspace_db_app::prepare_schema(&db).await.unwrap();
         let sqlite_document = r#"{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"SQLite note"}]}]}"#;
         let sqlite_words =
             r#"[{"id":"sqlite-word","text":"SQLite words","start_ms":0,"end_ms":10,"channel":0}]"#;
@@ -482,8 +482,8 @@ mod tests {
         for (run_id, item_status, skipped_count) in
             [("skipped-run", "partial", 1), ("error-run", "error", 0)]
         {
-            let db = hypr_db_core::Db::connect_memory_plain().await.unwrap();
-            hypr_db_app::prepare_schema(&db).await.unwrap();
+            let db = meetspace_db_core::Db::connect_memory_plain().await.unwrap();
+            meetspace_db_app::prepare_schema(&db).await.unwrap();
 
             assert_eq!(
                 finish_issue_run(db.pool(), run_id, item_status, skipped_count, 0).await,
@@ -500,8 +500,8 @@ mod tests {
 
     #[tokio::test]
     async fn orphaned_session_children_remain_blocking_and_retryable() {
-        let db = hypr_db_core::Db::connect_memory_plain().await.unwrap();
-        hypr_db_app::prepare_schema(&db).await.unwrap();
+        let db = meetspace_db_core::Db::connect_memory_plain().await.unwrap();
+        meetspace_db_app::prepare_schema(&db).await.unwrap();
         let vault = tempfile::tempdir().unwrap();
         let session_dir = vault.path().join("sessions/missing-session");
         std::fs::create_dir_all(&session_dir).unwrap();
@@ -543,8 +543,8 @@ mod tests {
 
     #[tokio::test]
     async fn document_and_transcript_conflicts_preserve_both_stores_and_allow_startup() {
-        let db = hypr_db_core::Db::connect_memory_plain().await.unwrap();
-        hypr_db_app::prepare_schema(&db).await.unwrap();
+        let db = meetspace_db_core::Db::connect_memory_plain().await.unwrap();
+        meetspace_db_app::prepare_schema(&db).await.unwrap();
         let sqlite_document = r#"{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"SQLite note"}]}]}"#;
         let sqlite_words =
             r#"[{"id":"sqlite-word","text":"SQLite words","start_ms":0,"end_ms":10,"channel":0}]"#;
@@ -797,7 +797,7 @@ mod tests {
         assert_eq!(run_status, "completed");
         assert_eq!(state_before.0, run_id);
         assert!(state_before.1);
-        assert_eq!(state_before.2, hypr_db_app::LEGACY_IMPORTER_VERSION);
+        assert_eq!(state_before.2, meetspace_db_app::LEGACY_IMPORTER_VERSION);
         assert!(!legacy_import_required(db.pool()).await.unwrap());
 
         db.pool().close().await;
