@@ -39,6 +39,7 @@ SKIP_PUSH=0
 USE_STABLE=0
 CLEAN_CACHE=0
 DO_RELEASE=0
+DO_LOCAL=0
 BUMP_VERSION=""
 
 # Consume the first argument as the branch name only if it is not a flag.
@@ -54,6 +55,7 @@ while [[ $# -gt 0 ]]; do
     --stable|stable) USE_STABLE=1 ;;
     --clean)     CLEAN_CACHE=1 ;;
     --release)   DO_RELEASE=1 ;;
+    --local)     DO_LOCAL=1 ;;
     --version)   BUMP_VERSION="${2:-}"; shift ;;
     --version=*) BUMP_VERSION="${1#*=}" ;;
     -h|--help)
@@ -67,7 +69,11 @@ Usage: $0 [branch_name] [--no-rebase] [--no-push] [--stable] [--clean]
   --stable           Build the production stable release (Meetspace.dmg) instead of Meetspace Dev
   --clean            Wipe stale Tauri and cargo build caches before packaging
   --release          Cut a GitHub release (tag + release) instead of a local DMG.
-                     Triggers CI to build the stable DMG and auto-update Homebrew.
+                     Delegates to push_release.sh, which triggers CI to build the
+                     stable DMG and auto-update Homebrew.
+  --local            Local-first release: build the stable DMG locally (no CI),
+                     then create the tag + GitHub release and upload the DMG
+                     asset. Use this fork's path — CI is disabled by design.
   --version <ver>    Bump the release version (e.g. 1.1.16-meet1) before releasing.
 EOF
       exit 0
@@ -154,6 +160,54 @@ if [ "$DO_RELEASE" = "1" ]; then
   RELEASE_VER=$(grep -o 'version "[^"]*"' scripts/brew/meetspace.rb | cut -d'"' -f2)
   green "Release version: $RELEASE_VER (from scripts/brew/meetspace.rb)"
   exec ./scripts/push_release.sh
+fi
+
+# --local: local-first release. CI is disabled in this fork, so we build the
+# stable DMG on this machine and upload it to the GitHub release directly.
+if [ "$DO_LOCAL" = "1" ]; then
+  if [ -n "$BUMP_VERSION" ]; then
+    bump_version "$BUMP_VERSION"
+  fi
+
+  RELEASE_VER=$(grep -o 'version "[^"]*"' scripts/brew/meetspace.rb | cut -d'"' -f2)
+  TAG="v$RELEASE_VER"
+  green "==> Local release: $RELEASE_VER (tag: $TAG)"
+
+  if [ "$SKIP_PUSH" = "0" ]; then
+    bold "==> Pushing branch to meetspace remote"
+    git push meetspace "$BRANCH_NAME" --force
+  fi
+
+  bold "==> Building stable DMG locally"
+  if ! ./scripts/package.sh stable dmg; then
+    red "Error: local DMG build failed."
+    exit 1
+  fi
+
+  DMG=$(find target/release/bundle apps/desktop/src-tauri/target/release/bundle \
+    -maxdepth 3 -type f -name '*.dmg' 2>/dev/null | head -1)
+  if [ -z "$DMG" ]; then
+    red "Error: no DMG artifact found after build."
+    exit 1
+  fi
+  green "==> DMG built: $DMG"
+
+  bold "==> Creating tag $TAG"
+  git tag -d "$TAG" 2>/dev/null || true
+  env GITHUB_TOKEN="" git push meetspace ":refs/tags/$TAG" 2>/dev/null || true
+  git tag "$TAG"
+  env GITHUB_TOKEN="" git push meetspace "$TAG"
+
+  bold "==> Creating/updating GitHub release $TAG"
+  env GITHUB_TOKEN="" gh release delete "$TAG" --yes 2>/dev/null || true
+  env GITHUB_TOKEN="" gh release create "$TAG" \
+    --title "$TAG" \
+    --target "$BRANCH_NAME" \
+    --notes "Release $TAG" \
+    "$DMG"
+
+  green "==> Local release $TAG complete (DMG uploaded)."
+  exit 0
 fi
 
 if [ "$SKIP_PUSH" = "0" ]; then
