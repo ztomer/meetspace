@@ -90,6 +90,20 @@ function languageSupportProvider(provider: string) {
   return provider === "custom" ? "deepgram" : provider;
 }
 
+export async function isSupportedLanguagesBatch(
+  provider: string,
+  model: string | null | undefined,
+  languages: readonly string[],
+) {
+  const result = await listenerCommands.isSupportedLanguagesBatch(
+    languageSupportProvider(provider),
+    model ?? null,
+    [...languages],
+  );
+
+  return result.status === "ok" ? result.data : true;
+}
+
 async function isSupportedLanguagesLive(
   provider: string,
   model: string | null | undefined,

@@ -20,11 +20,6 @@ import type { EnhanceImageContext } from "./enhance-images";
 import { createEnhanceValidator } from "./enhance-validator";
 
 import { deterministicGenerationSettings } from "~/ai/model-settings";
-import {
-  hasSummaryTemplateToken,
-  isDefaultSummaryPrompt,
-  renderSummaryPrompt,
-} from "~/shared/summary-prompt";
 import { normalizeBulletPoints } from "~/store/zustand/ai-task/shared/transform_impl";
 import { withEarlyValidationRetry } from "~/store/zustand/ai-task/shared/validate";
 import { assertCanonicalTemplateSections } from "~/templates/codec";
@@ -54,7 +49,7 @@ async function* executeWorkflow(params: {
 }) {
   const { model, args, onProgress, signal } = params;
 
-  const usesTemplate = hasSummaryTemplateToken(args.customInstructions);
+  const usesTemplate = args.promptOverride.includes("{{");
   const sections = usesTemplate
     ? await generateTemplateIfNeeded({
         model,
@@ -95,10 +90,7 @@ async function getSystemPrompt(args: TaskArgsMapTransformed["enhance"]) {
   const result = await templateCommands.render({
     enhanceSystem: {
       language: args.language,
-      customInstructions: renderSummaryPrompt(
-        args.customInstructions,
-        args.template,
-      ),
+      promptOverride: args.promptOverride,
     },
   });
 
@@ -268,9 +260,7 @@ async function* generateSummary(params: {
   onProgress({ type: "generating" });
 
   const validator = createEnhanceValidator(args.template, {
-    overrideTemplateFormatting: !isDefaultSummaryPrompt(
-      args.customInstructions,
-    ),
+    overrideTemplateFormatting: !!args.promptOverride,
   });
 
   yield* withEarlyValidationRetry(

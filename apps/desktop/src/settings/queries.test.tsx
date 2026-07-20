@@ -24,7 +24,7 @@ vi.mock("@meetspace/plugin-detect", () => ({
   },
 }));
 
-vi.mock("@hypr/plugin-template", () => ({
+vi.mock("@meetspace/plugin-template", () => ({
   commands: {
     getTemplateSource: mocks.getTemplateSource,
   },

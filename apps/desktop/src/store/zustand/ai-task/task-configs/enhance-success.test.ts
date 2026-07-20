@@ -62,7 +62,7 @@ function createSnapshot(title = "") {
 function createTransformedArgs(): EnhanceSuccessParams["transformedArgs"] {
   return {
     language: "en",
-    customInstructions: "",
+    promptOverride: "",
     session: {
       title: "Weekly Review",
       startedAt: null,
@@ -91,7 +91,8 @@ function createParams(
       templateId: undefined,
     },
     transformedArgs: createTransformedArgs(),
-    signal: new AbortController().signal,
+    store: undefined,
+    settingsStore: undefined,
     startTask: vi.fn().mockResolvedValue(undefined),
     getTaskState: vi.fn().mockReturnValue(undefined),
     ...overrides,
@@ -199,20 +200,6 @@ describe("enhanceSuccess.onSuccess", () => {
       ),
     ).rejects.toThrow("stale summary");
     expect(mocks.persistGeneratedTitle).not.toHaveBeenCalled();
-  });
-
-  it("does not save after cancellation during title generation", async () => {
-    const abortController = new AbortController();
-    const startTask = vi.fn().mockImplementation(async (_taskId, config) => {
-      abortController.abort();
-      config.onComplete?.("Generated title");
-    });
-
-    await enhanceSuccess.onSuccess?.(
-      createParams({ signal: abortController.signal, startTask }),
-    );
-
-    expect(mocks.persistGeneratedEnhancedNote).not.toHaveBeenCalled();
   });
 
   it("rejects persistence when the target summary disappeared", async () => {

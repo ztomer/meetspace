@@ -108,6 +108,7 @@ describe("enhanceTransform.transformArgs", () => {
         templateId: "template-1",
       },
       settingsValues,
+      undefined,
     );
 
     expect(result.template).toEqual({
@@ -127,6 +128,7 @@ describe("enhanceTransform.transformArgs", () => {
         ...settingsValues,
         auto_summary_prompt: "  Start with decisions.  ",
       },
+      undefined,
     );
 
     expect(result.promptOverride).toBe("  Start with decisions.  ");
@@ -143,6 +145,7 @@ describe("enhanceTransform.transformArgs", () => {
         ...settingsValues,
         auto_summary_prompt: "Start with decisions.",
       },
+      undefined,
     );
 
     expect(result.promptOverride).toBe("");
@@ -152,6 +155,7 @@ describe("enhanceTransform.transformArgs", () => {
     const result = await enhanceTransform.transformArgs(
       { sessionId: "session-1", enhancedNoteId: "note-1" },
       settingsValues,
+      undefined,
     );
 
     expect(result.promptOverride).toBe("");
@@ -167,6 +171,7 @@ describe("enhanceTransform.transformArgs", () => {
         templateId: "template-1",
       },
       settingsValues,
+      undefined,
     );
 
     expect(result.template).toBeNull();
@@ -189,6 +194,7 @@ describe("enhanceTransform.transformArgs", () => {
         current_llm_model: "gpt-4o",
         ai_language: "en",
       },
+      undefined,
     );
 
     expect(mocks.collectEnhanceImageContext).toHaveBeenCalledWith("session-1", [
@@ -205,6 +211,7 @@ describe("enhanceTransform.transformArgs", () => {
     await enhanceTransform.transformArgs(
       { sessionId: "session-1", enhancedNoteId: "note-1" },
       settingsValues,
+      undefined,
     );
 
     expect(mocks.loadHumansByIds).toHaveBeenCalledWith([
@@ -233,6 +240,7 @@ describe("enhanceTransform.transformArgs", () => {
     const result = await enhanceTransform.transformArgs(
       { sessionId: "session-1", enhancedNoteId: "note-1" },
       settingsValues,
+      undefined,
     );
 
     expect(result.postMeetingMemo).toBe(
@@ -247,6 +255,7 @@ describe("enhanceTransform.transformArgs", () => {
       enhanceTransform.transformArgs(
         { sessionId: "missing", enhancedNoteId: "note-1" },
         settingsValues,
+        undefined,
       ),
     ).rejects.toThrow("Session missing no longer exists");
   });

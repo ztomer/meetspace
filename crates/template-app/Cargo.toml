@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 askama = { workspace = true }
-hypr-askama-utils = { workspace = true }
+meetspace-askama-utils = { workspace = true }
 minijinja = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 specta = { workspace = true, features = ["derive"] }

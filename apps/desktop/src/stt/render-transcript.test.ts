@@ -154,9 +154,9 @@ describe("buildRenderTranscriptRequestFromStore", () => {
 
     expect(request).not.toBeNull();
     expect(
-      request?.transcripts.map((transcript) => ({
+      request?.transcripts.map((transcript: any) => ({
         started_at: transcript.started_at,
-        word_ids: transcript.words.map((word) => word.id),
+        word_ids: transcript.words.map((word: any) => word.id),
       })),
     ).toEqual([
       {
@@ -332,11 +332,11 @@ describe("getRenderTranscriptRequestKey", () => {
     );
     const changedRequest = {
       ...request!,
-      transcripts: request!.transcripts.map((transcript, index) =>
+      transcripts: request!.transcripts.map((transcript: any, index: number) =>
         index === 0
           ? {
               ...transcript,
-              words: transcript.words.map((word, wordIndex) =>
+              words: transcript.words.map((word: any, wordIndex: number) =>
                 wordIndex === 0 ? { ...word, text: " changed" } : word,
               ),
             }
@@ -356,7 +356,7 @@ describe("getRenderTranscriptRequestKey", () => {
     );
     const changedRequest = {
       ...request!,
-      transcripts: request!.transcripts.map((transcript, index) =>
+      transcripts: request!.transcripts.map((transcript: any, index: number) =>
         index === 0
           ? {
               ...transcript,

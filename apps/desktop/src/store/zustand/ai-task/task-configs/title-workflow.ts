@@ -4,8 +4,6 @@ import { commands as templateCommands } from "@meetspace/plugin-template";
 
 import type { TaskArgsMapTransformed, TaskConfig } from ".";
 
-import type { Store } from "~/store/tinybase/store/main";
-
 const AI_GENERATION_MAX_RETRIES = 4;
 const TITLE_MAX_OUTPUT_TOKENS = 128;
 
@@ -22,7 +20,7 @@ async function* executeWorkflow(params: {
   args: TaskArgsMapTransformed["title"];
   onProgress: (step: any) => void;
   signal: AbortSignal;
-  store: Store;
+  store: any;
 }) {
   const { model, args, onProgress, signal, store } = params;
 
@@ -67,7 +65,7 @@ async function getSystemPrompt(args: TaskArgsMapTransformed["title"]) {
 
 async function getUserPrompt(
   args: TaskArgsMapTransformed["title"],
-  _store: Store,
+  _store: any,
 ) {
   const { enhancedNote } = args;
 

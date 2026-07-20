@@ -99,7 +99,7 @@ export function SettingsNav() {
         { id: "transcription", label: t`Transcription`, icon: AudioLinesIcon },
         { id: "intelligence", label: t`Intelligence`, icon: SparklesIcon },
         {
-          id: "personalization",
+          id: "dictionary",
           label: t`Personalization`,
           icon: SlidersHorizontalIcon,
         },

@@ -1,12 +1,12 @@
 import { disable, enable } from "@tauri-apps/plugin-autostart";
 import { useCallback } from "react";
 
-import { commands as analyticsCommands } from "@hypr/plugin-analytics";
-import { commands as detectCommands } from "@hypr/plugin-detect";
-import { commands as localSttCommands } from "@hypr/plugin-local-stt";
-import { commands as templateCommands } from "@hypr/plugin-template";
-import { commands as trayCommands } from "@hypr/plugin-tray";
-import { commands as windowsCommands } from "@hypr/plugin-windows";
+import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
+import { commands as detectCommands } from "@meetspace/plugin-detect";
+import { commands as localSttCommands } from "@meetspace/plugin-local-stt";
+import { commands as templateCommands } from "@meetspace/plugin-template";
+import { commands as trayCommands } from "@meetspace/plugin-tray";
+import { commands as windowsCommands } from "@meetspace/plugin-windows";
 
 import { executeTransaction, liveQueryClient, useLiveQuery } from "~/db";
 import { enqueueDatabaseWrite } from "~/db/write-queue";
@@ -449,7 +449,7 @@ async function syncLocalSttServer(): Promise<void> {
   let model = values.current_stt_model;
 
   if (
-    provider === "hyprnote" &&
+    provider === "meetspace" &&
     model &&
     !isConfiguredSttModel(provider, model)
   ) {

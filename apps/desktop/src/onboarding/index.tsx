@@ -1,9 +1,9 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { platform } from "@tauri-apps/plugin-os";
+import { motion } from "motion/react";
 import { useCallback, useEffect, useState } from "react";
 
 import { commands as analyticsCommands } from "@meetspace/plugin-analytics";
-import { cn } from "@meetspace/utils";
 
 import { CalendarSection } from "./calendar";
 import {
@@ -17,8 +17,8 @@ import { FolderLocationSection } from "./folder-location";
 import { PermissionsSection } from "./permissions";
 import { OnboardingSection } from "./shared";
 
-import { useAuth } from "~/auth";
 import { StandardContentWrapper } from "~/shared/main";
+import { type TabItem, TabItemBase } from "~/shared/tabs";
 import { StandaloneWindowShell } from "~/shared/window-shell";
 import { type Tab, useTabs } from "~/store/zustand/tabs";
 
@@ -104,8 +104,8 @@ export function StandaloneOnboardingScreen({
 
 function OnboardingScreenContent({
   onFinish,
-  headerClassName,
-  headerDragRegion = false,
+  headerClassName: _headerClassName,
+  headerDragRegion: _headerDragRegion = false,
 }: {
   onFinish: (sessionId?: string) => void;
   headerClassName: string;
@@ -150,61 +150,61 @@ function OnboardingScreenContent({
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 2, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
-        >
-          <h1 className="text-foreground font-sans text-3xl font-semibold">
-            Welcome to Meetspace
-          </h1>
-        </div>
+          >
+            <h1 className="text-foreground font-sans text-3xl font-semibold">
+              Welcome to Meetspace
+            </h1>
+          </motion.div>
 
-        <div className="relative z-10 flex-1 overflow-y-auto">
-          <div className="flex flex-col gap-4 px-12 pb-16">
-            <OnboardingSection
-              title="Start with permissions"
-              completedTitle="Permissions granted"
-              description="Meetspace needs access to your microphone and system audio to record and transcribe your meetings"
-              status={getStepStatus("permissions", currentStep)}
-              skippable={false}
-              onBack={goBack}
-              onNext={goNext}
-            >
-              <PermissionsSection onContinue={goNext} />
-            </OnboardingSection>
+          <div className="relative z-10 flex-1 overflow-y-auto">
+            <div className="flex flex-col gap-4 px-12 pb-16">
+              <OnboardingSection
+                title="Start with permissions"
+                completedTitle="Permissions granted"
+                description="Meetspace needs access to your microphone and system audio to record and transcribe your meetings"
+                status={getStepStatus("permissions", currentStep)}
+                skippable={false}
+                onBack={goBack}
+                onNext={goNext}
+              >
+                <PermissionsSection onContinue={goNext} />
+              </OnboardingSection>
 
-            <OnboardingSection
-              title="Connect calendar"
-              description="Meetspace will sync your calendar to get meeting reminders"
-              completedTitle="Calendar connected"
-              status={getStepStatus("calendar", currentStep)}
-              onBack={goBack}
-              onNext={goNext}
-            >
-              <CalendarSection onContinue={goNext} />
-            </OnboardingSection>
+              <OnboardingSection
+                title="Connect calendar"
+                description="Meetspace will sync your calendar to get meeting reminders"
+                completedTitle="Calendar connected"
+                status={getStepStatus("calendar", currentStep)}
+                onBack={goBack}
+                onNext={goNext}
+              >
+                <CalendarSection onContinue={goNext} />
+              </OnboardingSection>
 
-            <OnboardingSection
-              title="Storage"
-              description="Where your notes and recordings are stored"
-              completedTitle="Storage configured"
-              status={getStepStatus("folder-location", currentStep)}
-              onBack={goBack}
-              onNext={goNext}
-            >
-              <FolderLocationSection onContinue={goNext} />
-            </OnboardingSection>
+              <OnboardingSection
+                title="Storage"
+                description="Where your notes and recordings are stored"
+                completedTitle="Storage configured"
+                status={getStepStatus("folder-location", currentStep)}
+                onBack={goBack}
+                onNext={goNext}
+              >
+                <FolderLocationSection onContinue={goNext} />
+              </OnboardingSection>
 
-            <OnboardingSection
-              title="Ready to go"
-              status={getStepStatus("final", currentStep)}
-              skippable={false}
-              onBack={goBack}
-              onNext={() => void finishOnboarding(handleFinish)}
-            >
-              <FinalSection onContinue={handleFinish} />
-            </OnboardingSection>
+              <OnboardingSection
+                title="Ready to go"
+                status={getStepStatus("final", currentStep)}
+                skippable={false}
+                onBack={goBack}
+                onNext={() => void finishOnboarding(handleFinish)}
+              >
+                <FinalSection onContinue={handleFinish} />
+              </OnboardingSection>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </StandardContentWrapper>
+    </StandardContentWrapper>
   );
 }

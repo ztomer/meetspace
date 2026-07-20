@@ -109,12 +109,52 @@ export function applyLiveTranscriptDelta(
   updateTranscriptHints(store, transcriptId, nextHints);
 }
 
+class TranscriptAccumulator {
+  constructor(
+    private store: TranscriptStore,
+    private transcriptId: string,
+  ) {}
+
+  appendWordsAndHints(
+    words: WordWithId[],
+    hints: SpeakerHintWithId[],
+    options?: { mode?: "append" | "replace" },
+  ) {
+    if (options?.mode === "replace") {
+      updateTranscriptWords(this.store, this.transcriptId, words);
+      updateTranscriptHints(this.store, this.transcriptId, hints);
+      return;
+    }
+
+    const existingWords = parseTranscriptWords(this.store, this.transcriptId);
+    const existingHints = parseTranscriptHints(this.store, this.transcriptId);
+    updateTranscriptWords(this.store, this.transcriptId, [
+      ...existingWords,
+      ...words,
+    ]);
+    updateTranscriptHints(this.store, this.transcriptId, [
+      ...existingHints,
+      ...hints,
+    ]);
+  }
+
+  dispose() {}
+}
+
+export function createTranscriptAccumulator(
+  store: TranscriptStore,
+  transcriptId: string,
+): TranscriptAccumulator {
+  return new TranscriptAccumulator(store, transcriptId);
+}
+
 export function upsertSpeakerAssignment(
   store: TranscriptStore,
   transcriptId: string,
   segmentKey: SegmentKey,
   humanId: string,
   anchorWordId: string,
+  _options?: { mode?: string; wordIds?: string[] },
 ): void {
   const hints = parseTranscriptHints(store, transcriptId);
   const words = parseTranscriptWords(store, transcriptId);

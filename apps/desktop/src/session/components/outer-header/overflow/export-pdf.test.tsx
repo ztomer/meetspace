@@ -4,22 +4,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ExportPDF } from "./export-pdf";
 
-const {
-  useMutationMock,
-  useTranscriptExportSegmentsMock,
-  useStoreMock,
-  useQueriesMock,
-  useCellMock,
-  useSliceRowIdsMock,
-  useSessionEventMock,
-} = vi.hoisted(() => ({
+const { useMutationMock, useTranscriptExportSegmentsMock } = vi.hoisted(() => ({
   useMutationMock: vi.fn(),
   useTranscriptExportSegmentsMock: vi.fn(),
-  useStoreMock: vi.fn(),
-  useQueriesMock: vi.fn(),
-  useCellMock: vi.fn(),
-  useSliceRowIdsMock: vi.fn(),
-  useSessionEventMock: vi.fn(),
 }));
 
 vi.mock("@tanstack/react-query", () => ({
@@ -81,26 +68,6 @@ vi.mock("~/session/components/note-input/transcript/export-data", () => ({
   useTranscriptExportSegments: useTranscriptExportSegmentsMock,
 }));
 
-vi.mock("~/store/tinybase/hooks", () => ({
-  useSessionEvent: useSessionEventMock,
-}));
-
-vi.mock("~/store/tinybase/store/main", () => ({
-  STORE_ID: "main",
-  INDEXES: {
-    transcriptBySession: "transcriptBySession",
-  },
-  QUERIES: {
-    sessionParticipantsWithDetails: "sessionParticipantsWithDetails",
-  },
-  UI: {
-    useStore: useStoreMock,
-    useQueries: useQueriesMock,
-    useCell: useCellMock,
-    useSliceRowIds: useSliceRowIdsMock,
-  },
-}));
-
 describe("ExportPDF", () => {
   afterEach(() => {
     cleanup();
@@ -115,11 +82,6 @@ describe("ExportPDF", () => {
       data: [],
       isLoading: true,
     });
-    useStoreMock.mockReturnValue(null);
-    useQueriesMock.mockReturnValue(null);
-    useCellMock.mockReturnValue(undefined);
-    useSliceRowIdsMock.mockReturnValue([]);
-    useSessionEventMock.mockReturnValue(null);
   });
 
   it("does not block non-transcript PDF export on transcript loading", () => {

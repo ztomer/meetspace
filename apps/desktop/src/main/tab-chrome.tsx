@@ -27,9 +27,7 @@ import { cn } from "@meetspace/utils";
 import { useNotifications } from "~/contexts/notifications";
 import { useShell } from "~/contexts/shell";
 import { ClassicMainTabItem } from "~/main/tab-item";
-import { useClassicMainTabsShortcuts } from "~/main/useTabsShortcuts";
 import { useNativeContextMenu } from "~/shared/hooks/useNativeContextMenu";
-import { useScrollActiveTabIntoView } from "~/shared/main";
 import { NotificationBadge } from "~/shared/ui/notification-badge";
 import { TrafficLights } from "~/shared/ui/traffic-lights";
 import { useNewNote, useNewNoteAndListen } from "~/shared/useNewNote";
@@ -124,8 +122,6 @@ export function ClassicMainTabChrome({ tabs }: { tabs: Tab[] }) {
   ]);
 
   const tabsScrollContainerRef = useRef<HTMLDivElement>(null);
-  const setTabRef = useScrollActiveTabIntoView(regularTabs);
-  useClassicMainTabsShortcuts();
 
   return (
     <div
@@ -259,7 +255,6 @@ export function ClassicMainTabChrome({ tabs }: { tabs: Tab[] }) {
                   key={uniqueIdfromTab(tab)}
                   value={tab}
                   as="div"
-                  ref={(el) => setTabRef(tab, el)}
                   style={{ position: "relative" }}
                   className="z-10 flex h-full items-center"
                   transition={{ layout: { duration: 0.15 } }}

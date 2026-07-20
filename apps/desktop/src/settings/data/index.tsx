@@ -10,13 +10,9 @@ import {
   type ImportStats,
 } from "@meetspace/plugin-importer";
 
-import { ImportPreview } from "./import-preview";
 import { SourceItem } from "./source-item";
 
 import { StyledStreamdown } from "~/settings/ai/shared";
-import { importData } from "~/store/tinybase/store/importer";
-import * as main from "~/store/tinybase/store/main";
-import { save } from "~/store/tinybase/store/save";
 
 type DryRunResult = {
   source: ImportSourceKind;
@@ -27,8 +23,6 @@ export function Data() {
   const [dryRunResult, setDryRunResult] = useState<DryRunResult | null>(null);
   const [successfulSource, setSuccessfulSource] =
     useState<ImportSourceKind | null>(null);
-  const store = main.UI.useStore(main.STORE_ID);
-  const { user_id } = main.UI.useValues(main.STORE_ID);
 
   const { data: sources } = useQuery({
     queryKey: ["import-sources"],
@@ -43,22 +37,9 @@ export function Data() {
 
   const importMutation = useMutation({
     mutationFn: async (source: ImportSourceKind) => {
-      const result = await commands.runImport(source, user_id ?? "");
+      const result = await commands.runImport(source, "");
       if (result.status === "error") {
         throw new Error(result.error);
-      }
-
-      if (!store) {
-        throw new Error("Store not available");
-      }
-
-      const importResult = await importData(
-        store as main.Store,
-        result.data.data,
-        save,
-      );
-      if (importResult.status === "error") {
-        throw new Error(importResult.error);
       }
 
       return result.data.stats;
@@ -89,13 +70,6 @@ export function Data() {
     },
   });
 
-  const handleCancel = () => {
-    setDryRunResult(null);
-    dryImportMutation.reset();
-    importMutation.reset();
-    setSuccessfulSource(null);
-  };
-
   const isPending = importMutation.isPending || dryImportMutation.isPending;
 
   return (
@@ -107,42 +81,27 @@ export function Data() {
       </StyledStreamdown>
 
       <div className="mt-4 flex flex-col gap-3">
-        {dryRunResult ? (
-          <ImportPreview
-            stats={dryRunResult.stats}
-            sourceName={
-              sources?.find((s) => s.kind === dryRunResult.source)?.name ??
-              "Unknown"
-            }
-            onConfirm={() => importMutation.mutate(dryRunResult.source)}
-            onCancel={handleCancel}
-            isPending={importMutation.isPending}
-          />
-        ) : (
-          sources
-            ?.filter(
-              (
-                source,
-              ): source is ImportSourceInfo & { kind: ImportSourceKind } =>
-                source.kind !== null,
-            )
-            .map((source) => (
-              <SourceItem
-                key={source.kind}
-                source={source}
-                onScan={() => {
-                  setSuccessfulSource(null);
-                  dryImportMutation.mutate(source.kind);
-                }}
-                disabled={isPending}
-                isScanning={
-                  dryImportMutation.isPending &&
-                  dryImportMutation.variables === source.kind
-                }
-                isSuccess={successfulSource === source.kind}
-              />
-            ))
-        )}
+        {sources
+          ?.filter(
+            (source): source is ImportSourceInfo & { kind: ImportSourceKind } =>
+              source.kind !== null,
+          )
+          .map((source) => (
+            <SourceItem
+              key={source.kind}
+              source={source}
+              onScan={() => {
+                setSuccessfulSource(null);
+                dryImportMutation.mutate(source.kind);
+              }}
+              disabled={isPending}
+              isScanning={
+                dryImportMutation.isPending &&
+                dryImportMutation.variables === source.kind
+              }
+              isSuccess={successfulSource === source.kind}
+            />
+          ))}
 
         {(importMutation.isError || dryImportMutation.isError) && (
           <div className="text-destructive flex items-center gap-2 text-xs">

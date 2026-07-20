@@ -209,14 +209,21 @@ bold "==> Automatically rebranding legacy names and imports to Meetspace"
 python3 scripts/rebrand_sweep.py
 
 bold "==> Regenerating i18n catalogs (extract from rebranded source, then compile)"
-# Must extract BEFORE compile: after the rebrand sweep, source-generated message
-# hashes change, so compiling the stale .po alone leaves those hashes unmapped and
-# the UI renders raw hashes as gibberish. Extract --clean picks up the current
-# (rebranded) source strings, then compile regenerates the .ts catalogs.
-if pnpm -F desktop i18n:extract --clean && pnpm -F desktop i18n:compile; then
-  green "  i18n catalogs regenerated."
+# Extract WITHOUT --clean: --clean wipes every translation and re-extracts from
+# current source, but this repo's extractor drops ~125 messages on a clean pass
+# (leaving a 404-entry `en` and raw-hash gibberish in the UI — see
+# docs/bugs/i18n-garbage-placeholders.md). Incremental extract keeps the existing
+# 529-entry `en` and only adds the new (post-rebrand) hashes, so the compiled
+# catalog can never shrink. Compile regenerates the .ts catalogs from the .po.
+if pnpm -F desktop i18n:extract && pnpm -F desktop i18n:compile; then
+  en_msgs=$(grep -c '^msgid ' apps/desktop/src/i18n/locales/en/messages.po 2>/dev/null || echo 0)
+  if [ "$en_msgs" -lt 400 ]; then
+    yellow "  WARNING: en catalog shrank to $en_msgs messages (expected ~529). i18n may be broken — run 'pnpm -F desktop i18n:extract && pnpm -F desktop i18n:compile' and inspect apps/desktop/src/i18n/locales/en."
+  else
+    green "  i18n catalogs regenerated ($en_msgs en messages)."
+  fi
 else
-  yellow "i18n regeneration failed; run 'pnpm -F desktop i18n:extract --clean && pnpm -F desktop i18n:compile' manually before release"
+  yellow "i18n regeneration failed; run 'pnpm -F desktop i18n:extract && pnpm -F desktop i18n:compile' manually before release"
 fi
 
 bold "==> Formatting codebase with dprint"
@@ -235,6 +242,9 @@ bold "==> cargo check"
 cargo check
 
 bold "==> Fork hygiene guard (conflict markers + un-rebranded names)"
+# scripts/check-clean.py scans for leftover git conflict markers and any
+# hyprnote/anarlog branding the rebrand sweep should have renamed, while exempting
+# S3 bucket hostnames (hyprnote.s3.*) which are external infra, not product branding.
 python3 scripts/check-clean.py
 
 if command -v cargo-sweep &> /dev/null; then

@@ -8,11 +8,11 @@ import {
   PromptEditor,
   type PromptEditorHandle,
   type PromptTokenDefinition,
-} from "@hypr/editor/prompt";
-import { commands as templateCommands } from "@hypr/plugin-template";
-import { Badge } from "@hypr/ui/components/ui/badge";
-import { Button } from "@hypr/ui/components/ui/button";
-import { cn } from "@hypr/utils";
+} from "@meetspace/editor/prompt";
+import { commands as templateCommands } from "@meetspace/plugin-template";
+import { Badge } from "@meetspace/ui/components/ui/badge";
+import { Button } from "@meetspace/ui/components/ui/button";
+import { cn } from "@meetspace/utils";
 
 import { setSettingValue } from "~/settings/queries";
 import { useConfigValue } from "~/shared/config";
@@ -207,7 +207,7 @@ export function AutoPromptForm({
             </p>
             <p className="text-muted-foreground mt-1 text-sm">
               <Trans>
-                Anarlog sends these separately, so editing the prompt cannot
+                Meetspace sends these separately, so editing the prompt cannot
                 remove the meeting source material.
               </Trans>
             </p>
@@ -248,7 +248,7 @@ export function AutoPromptForm({
                     void resetToDefault().catch(() => {});
                   }}
                 >
-                  <Trans>Reset to Anarlog default</Trans>
+                  <Trans>Reset to Meetspace default</Trans>
                 </Button>
               )}
             </form.Subscribe>

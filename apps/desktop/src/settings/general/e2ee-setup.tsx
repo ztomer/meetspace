@@ -15,6 +15,8 @@ import {
   importE2eeIdentity,
   inspectE2eeRecoveryKey,
 } from "@meetspace/plugin-db";
+import { commands as fs2Commands } from "@meetspace/plugin-fs2";
+import { commands as openerCommands } from "@meetspace/plugin-opener2";
 import { Button } from "@meetspace/ui/components/ui/button";
 import {
   Dialog,
@@ -112,7 +114,7 @@ export function E2eeSetupDialog({
       const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
       const path = await join(
         downloadsPath,
-        `anarlog-recovery-key_${timestamp}.txt`,
+        `meetspace-recovery-key_${timestamp}.txt`,
       );
       const result = await fs2Commands.writeTextFile(path, `${recoveryKey}\n`);
       if (result.status === "error") {

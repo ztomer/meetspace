@@ -31,7 +31,8 @@
     "**/tests/*.sql",
     "**/charts/**",
     "**/schema.json",
-    "**/netlify/edge-functions"
+    "**/netlify/edge-functions",
+    "**/*.mdx"
   ],
   "exec": {
     "cwd": "${configDir}",
@@ -55,12 +56,7 @@
           "rust-toolchain.toml"
         ]
       },
-      {
-        "command": "swift format",
-        "exts": [
-          "swift"
-        ]
-      },
+
       {
         "command": "pnpm exec oxfmt --stdin-filepath {{file_path}}",
         "exts": [

@@ -19,6 +19,17 @@ describe("local-provider visibility", () => {
     }
   });
 
+  it("LLM providers include the fork's local providers (osure, ollama, lmstudio, custom)", () => {
+    const shownIds = LLM_PROVIDERS.map((p) => p.id);
+    for (const id of LOCAL_LLM_PROVIDER_IDS) {
+      expect(shownIds).toContain(id);
+    }
+    // No cloud providers leak through.
+    expect(shownIds).not.toContain("openai");
+    expect(shownIds).not.toContain("anthropic");
+    expect(shownIds).not.toContain("openrouter");
+  });
+
   it("STT providers shown are all local-allowlisted", () => {
     for (const p of STT_PROVIDERS) {
       expect(LOCAL_STT_PROVIDER_IDS).toContain(p.id);

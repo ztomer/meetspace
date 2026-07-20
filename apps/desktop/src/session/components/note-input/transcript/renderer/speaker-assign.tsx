@@ -8,9 +8,11 @@ import {
 import { AppFloatingPanel } from "@meetspace/ui/components/ui/popover";
 import { cn } from "@meetspace/utils";
 
-import * as main from "~/store/tinybase/store/main";
+import { useHumans } from "~/contacts/queries";
+import { executeTransaction } from "~/db";
+import { useSessionParticipants } from "~/session/queries";
 import type { Segment } from "~/stt/live-segment";
-import { upsertSpeakerAssignment } from "~/stt/utils";
+import { useSessionParticipantHumanIds, useTranscript } from "~/stt/queries";
 
 export function SpeakerAssignPopover({
   segment,
@@ -24,31 +26,25 @@ export function SpeakerAssignPopover({
   label: string;
 }) {
   const [open, setOpen] = useState(false);
-  const store = main.UI.useStore(main.STORE_ID);
   const isSelf = segment.key.channel === "DirectMic";
-
-  const sessionId = main.UI.useCell(
-    "transcripts",
-    transcriptId,
-    "session_id",
-    main.STORE_ID,
-  ) as string | undefined;
+  const transcript = useTranscript(transcriptId);
+  const sessionId = transcript?.sessionId;
 
   const handleAssign = useCallback(
-    (humanId: string) => {
-      if (!store || segment.words.length === 0) return;
+    async (humanId: string) => {
+      if (!transcript || segment.words.length === 0) return;
       const anchorWordId = getAssignmentAnchorWordId(segment);
       if (!anchorWordId) return;
-      upsertSpeakerAssignment(
-        store,
+      const { assignTranscriptSpeaker } = await import("~/stt/queries");
+      await assignTranscriptSpeaker({
         transcriptId,
-        segment.key,
+        segmentKey: segment.key,
         humanId,
         anchorWordId,
-      );
+      });
       setOpen(false);
     },
-    [store, transcriptId, segment.key, segment.words],
+    [transcript, segment.key, segment.words, transcriptId],
   );
 
   if (isSelf) {
@@ -178,72 +174,48 @@ function ParticipantList({
   sessionId: string | undefined;
   onSelect: (humanId: string) => void;
 }) {
-  const queries = main.UI.useQueries(main.STORE_ID);
-  const store = main.UI.useStore(main.STORE_ID);
-  const userId = main.UI.useValue("user_id", main.STORE_ID) as
-    | string
-    | undefined;
-  const allHumanIds = main.UI.useRowIds("humans", main.STORE_ID) as string[];
-
-  const mappingIds = main.UI.useSliceRowIds(
-    main.INDEXES.sessionParticipantsBySession,
-    sessionId ?? "",
-    main.STORE_ID,
-  ) as string[];
+  const allHumans = useHumans();
+  const sessionParticipants = useSessionParticipants(sessionId ?? "");
+  const participantHumanIds = useSessionParticipantHumanIds(sessionId ?? "");
 
   const [query, setQuery] = useState("");
 
-  const participants = useMemo(() => {
-    if (!queries) return [];
-    return mappingIds
-      .map((mappingId): SpeakerParticipantOption | null => {
-        const result = queries.getResultRow(
-          main.QUERIES.sessionParticipantsWithDetails,
-          mappingId,
-        );
-        if (!result?.human_id) return null;
-        const name = ((result.human_name as string | undefined) || "").trim();
-        const email = ((result.human_email as string | undefined) || "").trim();
-        return {
-          id: result.human_id as string,
-          name: name || email || "Unknown",
-          email: email || undefined,
-          isSessionParticipant: true,
-        };
-      })
-      .filter((p): p is SpeakerParticipantOption => p !== null);
-  }, [mappingIds, queries]);
-
   const participantIds = useMemo(
-    () => new Set(participants.map((participant) => participant.id)),
-    [participants],
+    () => new Set(participantHumanIds),
+    [participantHumanIds],
+  );
+
+  const participants = useMemo(
+    () =>
+      sessionParticipants.map(
+        (p): SpeakerParticipantOption => ({
+          id: p.humanId,
+          name: p.name || p.email || "Unknown",
+          email: p.email || undefined,
+          isSessionParticipant: true,
+        }),
+      ),
+    [sessionParticipants],
   );
 
   const contacts = useMemo(() => {
-    if (!store) return [];
-
-    return allHumanIds
-      .map((humanId): SpeakerParticipantOption | null => {
-        const human = store.getRow("humans", humanId);
-        if (!human) {
-          return null;
-        }
-
-        const name = ((human.name as string | undefined) || "").trim();
-        const email = ((human.email as string | undefined) || "").trim();
+    return allHumans
+      .map((human): SpeakerParticipantOption | null => {
+        const name = (human.name || "").trim();
+        const email = (human.email || "").trim();
         if (!name && !email) {
           return null;
         }
 
         return {
-          id: humanId,
+          id: human.id,
           name: name || email,
           email: email || undefined,
           isSessionParticipant: false,
         };
       })
       .filter((p): p is SpeakerParticipantOption => p !== null);
-  }, [allHumanIds, store]);
+  }, [allHumans]);
 
   const groups = useMemo(
     () =>
@@ -265,54 +237,87 @@ function ParticipantList({
   );
 
   const linkHumanToSession = useCallback(
-    (humanId: string) => {
-      if (!store || !sessionId || !userId || participantIds.has(humanId)) {
+    async (humanId: string) => {
+      if (!sessionId || participantIds.has(humanId)) {
         return;
       }
 
-      store.setRow("mapping_session_participant", crypto.randomUUID(), {
-        user_id: userId,
-        session_id: sessionId,
-        human_id: humanId,
-        source: "manual",
-      });
+      const now = new Date().toISOString();
+      await executeTransaction([
+        {
+          sql: `
+            INSERT INTO session_participants (
+              id, workspace_id, owner_user_id, session_id, human_id,
+              display_name, email, role, source, metadata_json, created_at,
+              updated_at, deleted_at
+            )
+            SELECT ?, session.workspace_id, session.owner_user_id, session.id, ?,
+              human.name, human.email, '', 'manual', '{}', ?, ?, NULL
+            FROM sessions AS session
+            JOIN humans AS human ON human.id = ? AND human.deleted_at IS NULL
+            WHERE session.id = ?
+              AND session.deleted_at IS NULL
+              AND NOT EXISTS (
+                SELECT 1
+                FROM session_participants AS existing
+                WHERE existing.session_id = session.id
+                  AND existing.human_id = ?
+                  AND existing.deleted_at IS NULL
+              )
+          `,
+          params: [
+            crypto.randomUUID(),
+            humanId,
+            now,
+            now,
+            humanId,
+            sessionId,
+            humanId,
+          ],
+        },
+      ]);
     },
-    [participantIds, sessionId, store, userId],
+    [participantIds, sessionId],
   );
 
   const createHuman = useCallback(
-    (name: string) => {
-      if (!store || !userId) {
-        return null;
-      }
-
+    async (name: string) => {
       const humanId = crypto.randomUUID();
-      store.setRow("humans", humanId, {
-        user_id: userId,
-        created_at: new Date().toISOString(),
-        name,
-        email: "",
-        phone: "",
-        org_id: "",
-        job_title: "",
-        linkedin_username: "",
-        memo: "",
-        pinned: false,
-        pin_order: 0,
-      });
+      const now = new Date().toISOString();
+      await executeTransaction([
+        {
+          sql: `
+            INSERT INTO humans (
+              id, workspace_id, owner_user_id, name, email, phone,
+              job_title, linkedin_username, organization_id, memo,
+              pinned, pin_order, created_at, updated_at, deleted_at
+            )
+            SELECT ?, session.workspace_id, session.owner_user_id, ?, '', '',
+              '', '', '', '', false, 0, ?, ?, NULL
+            FROM sessions AS session
+            WHERE session.id = ? AND session.deleted_at IS NULL
+              AND NOT EXISTS (
+                SELECT 1
+                FROM humans
+                WHERE id = ?
+              )
+          `,
+          params: [humanId, name, now, now, sessionId, humanId],
+        },
+      ]);
       return humanId;
     },
-    [store, userId],
+    [sessionId],
   );
 
   const handleSelect = useCallback(
-    (option: SpeakerParticipantOption) => {
-      const humanId = option.isNew ? createHuman(option.name) : option.id;
+    async (option: SpeakerParticipantOption) => {
+      const humanId = option.isNew ? await createHuman(option.name) : option.id;
       if (!humanId) {
         return;
       }
 
-      linkHumanToSession(humanId);
+      await linkHumanToSession(humanId);
       onSelect(humanId);
     },
     [createHuman, linkHumanToSession, onSelect],

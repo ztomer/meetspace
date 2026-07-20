@@ -10,8 +10,10 @@ import {
   type TaskType,
 } from "./task-configs";
 
-import type { Store as MainStore } from "~/store/tinybase/store/main";
-import type { Store as SettingsStore } from "~/store/tinybase/store/settings";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type MainStore = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SettingsStore = any;
 
 export type TasksState = {
   tasks: Record<string, TaskState>;

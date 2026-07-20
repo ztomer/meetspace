@@ -117,7 +117,6 @@ describe("TranscriptViewer", () => {
     ).toBe("true");
   });
 
-
   it("renders live segments before a transcript row exists", () => {
     render(
       <TranscriptViewer

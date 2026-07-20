@@ -7,7 +7,6 @@ import { streamdownComponents } from "../../streamdown";
 
 import { useAITaskTask } from "~/ai/hooks";
 import { createTaskId } from "~/store/zustand/ai-task/task-configs";
-import { getPersistableGeneratedTitle } from "~/store/zustand/ai-task/task-configs/title-success";
 
 function SummaryTitleSpace({ title }: { title: string }) {
   return (
@@ -45,7 +44,7 @@ export function StreamingView({
   const titleTaskId = createTaskId(sessionId, "title");
   const { streamedText: streamedTitle } = useAITaskTask(titleTaskId, "title");
   const title = sessionTitle.trim();
-  const generatedTitle = getPersistableGeneratedTitle(streamedTitle);
+  const generatedTitle = streamedTitle.trim();
   const visibleTitle = title || generatedTitle;
 
   if (streamedText.trim().length === 0) {

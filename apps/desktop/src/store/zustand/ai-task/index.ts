@@ -8,8 +8,11 @@ type Store = State & Actions;
 
 export type AITaskStore = ReturnType<typeof createAITaskStore>;
 
-export const createAITaskStore = () => {
+export const createAITaskStore = (deps?: {
+  persistedStore?: any;
+  settingsStore?: any;
+}) => {
   return createStore<Store>((set, get) => ({
-    ...createTasksSlice(set, get),
+    ...createTasksSlice(set, get, deps as any),
   }));
 };

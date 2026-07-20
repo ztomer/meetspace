@@ -41,6 +41,7 @@ export type RuntimeSpeakerHint = {
 export type RenderLabelContext = {
   getSelfHumanId: () => string | undefined;
   getHumanName: (id: string) => string | undefined;
+  getParticipantHumanIds?: () => readonly string[];
 };
 
 export type SegmentKey = BoundSegmentKey;

@@ -49,22 +49,6 @@ export type SettingsTab =
   | "integrations"
   | "todo";
 
-const isSettingsTab = (tab: string | null | undefined): tab is SettingsTab => {
-  switch (tab) {
-    case "app":
-    case "notifications":
-    case "developers":
-    case "permissions":
-    case "dictionary":
-    case "transcription":
-    case "intelligence":
-    case "integrations":
-    case "todo":
-      return true;
-    default:
-      return false;
-  }
-};
 export const normalizeSettingsTab = (
   tab: string | null | undefined,
 ): SettingsTab => {
@@ -211,7 +195,7 @@ export const getDefaultState = (tab: TabInput): Tab => {
         ...base,
         type: "settings",
         state: {
-          tab: subtab === "account" ? "account" : normalizeSettingsTab(subtab),
+          tab: normalizeSettingsTab(subtab === "account" ? "app" : subtab),
         },
       };
     }

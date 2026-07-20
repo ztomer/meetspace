@@ -50,6 +50,7 @@ export const enhanceTransform: Pick<TaskConfig<"enhance">, "transformArgs"> = {
 async function transformArgs(
   args: TaskArgsMap["enhance"],
   settingsValues: SettingValues,
+  _store?: unknown,
 ): Promise<TaskArgsMapTransformed["enhance"]> {
   const { sessionId, templateId } = args;
   const snapshot = await loadSessionContentSnapshot(sessionId);

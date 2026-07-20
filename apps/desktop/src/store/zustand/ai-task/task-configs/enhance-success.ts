@@ -5,10 +5,6 @@ import {
   appendTagLineToMarkdown,
   extractEnhanceTagNames,
 } from "./summary-tags";
-import {
-  getPersistableGeneratedTitle,
-  persistGeneratedTitle,
-} from "./title-success";
 
 import { persistGeneratedEnhancedNote } from "~/session/content-mutations";
 import { loadSessionContentSnapshot } from "~/session/content-queries";
@@ -22,7 +18,7 @@ const onSuccess: NonNullable<TaskConfig<"enhance">["onSuccess"]> = async ({
   model,
   startTask,
   getTaskState,
-  signal,
+  store,
 }) => {
   if (!text) {
     return;
@@ -44,24 +40,18 @@ const onSuccess: NonNullable<TaskConfig<"enhance">["onSuccess"]> = async ({
     const titleTask = getTaskState(titleTaskId);
 
     if (titleTask?.status === "success" || titleTask?.status === "generating") {
-      generatedTitle = getPersistableGeneratedTitle(titleTask.streamedText);
+      generatedTitle = titleTask.streamedText.trim();
     } else {
       await startTask(titleTaskId, {
         model,
         taskType: "title",
         args: {
           sessionId: args.sessionId,
-          enhancedNote: textWithTags,
-          skipPersist: true,
         },
         onComplete: (title) => {
-          generatedTitle = getPersistableGeneratedTitle(title);
+          generatedTitle = title.trim();
         },
       });
-    }
-
-    if (signal.aborted) {
-      return;
     }
   }
 
@@ -100,10 +90,7 @@ const onSuccess: NonNullable<TaskConfig<"enhance">["onSuccess"]> = async ({
   });
 
   if (shouldPersistGeneratedTitle) {
-    await persistGeneratedTitle({
-      text: generatedTitle,
-      args: { sessionId: args.sessionId },
-    });
+    store.setPartialRow("sessions", args.sessionId, { title: generatedTitle });
   }
 };
 

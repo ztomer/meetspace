@@ -95,6 +95,18 @@ REPLACEMENTS = [
     ("ANARLOG", "MEETSPACE"),
 ]
 
+# Substrings the rebrand must NOT touch. These are external infrastructure
+# URLs (S3 model buckets, GitHub model paths) that the fork reuses verbatim
+# from upstream — renaming them breaks model/LLM downloads (every URL 403s
+# because the `meetspace` S3 bucket does not exist). Applied as a post-step
+# that restores any protected substring the REPLACEMENTS above mangled.
+PROTECTED_RESTORE = [
+    # S3 model-download bucket (whisper.cpp GGML, Argmax MLX/CoreML, GGUF LLM).
+    ("meetspace.s3.us-east-1.amazonaws.com", "hyprnote.s3.us-east-1.amazonaws.com"),
+    # GitHub-hosted model artifact path used inside the S3 key.
+    ("yujonglee/meetspace-llm-sm", "yujonglee/hypr-llm-sm"),
+]
+
 
 def should_skip(filepath):
     # Check filename in skip list
@@ -133,6 +145,13 @@ def _rebrand_file(filepath, repo_root):
         if old_val in new_content:
             replaced += new_content.count(old_val)
             new_content = new_content.replace(old_val, new_val)
+
+    # Restore protected external-URL substrings the rebrand above may have
+    # mangled (see PROTECTED_RESTORE). Without this, model downloads 403.
+    for mangled, original in PROTECTED_RESTORE:
+        if mangled in new_content:
+            replaced += new_content.count(mangled)
+            new_content = new_content.replace(mangled, original)
 
     # Detect empty headers and remove them. Configure Providers is the only one.
     normalized_path = filepath.replace("\\", "/")

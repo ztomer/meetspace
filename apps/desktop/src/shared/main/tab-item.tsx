@@ -1,4 +1,7 @@
 import {
+  BookTextIcon,
+  CalendarIcon,
+  CogIcon,
   PictureInPicture2Icon,
   SparklesIcon,
   StickyNoteIcon,
@@ -6,22 +9,18 @@ import {
 } from "lucide-react";
 import { useCallback } from "react";
 
-import { TabItemCalendar } from "~/calendar";
-import { TabItemContact } from "~/contacts";
 import { TabItemEdit } from "~/edit";
 import { openFloatingMeetingPanel } from "~/meeting-float/host";
 import { TabItemOnboarding } from "~/onboarding";
 import { useIsSessionEnhancing } from "~/session/hooks/useEnhancedNotes";
+import { useSession } from "~/session/queries";
 import { getSessionTabStatus } from "~/session/tab-visual-state";
-import { TabItemSettings } from "~/settings";
 import { useConfigValue } from "~/shared/config";
 import { type TabItem, TabItemBase } from "~/shared/tabs";
-import * as main from "~/store/tinybase/store/main";
 import { useSessionTitle } from "~/store/zustand/live-title";
 import { type Tab } from "~/store/zustand/tabs";
 import { useListener } from "~/stt/contexts";
 import { TabItemTask } from "~/task";
-import { TabItemTemplate } from "~/templates";
 
 export const TabItemChangelog: TabItem<Extract<Tab, { type: "changelog" }>> = ({
   tab,
@@ -58,12 +57,10 @@ export const TabItemHuman: TabItem<Extract<Tab, { type: "humans" }>> = ({
   handlePinThis,
   handleUnpinThis,
 }) => {
-  const title = main.UI.useCell("humans", tab.id, "name", main.STORE_ID);
-
   return (
     <TabItemBase
       icon={<UserIcon className="h-4 w-4" />}
-      title={title ?? "Human"}
+      title={"Human"}
       selected={tab.active}
       pinned={tab.pinned}
       tabIndex={tabIndex}
@@ -89,13 +86,8 @@ export const TabItemNote: TabItem<Extract<Tab, { type: "sessions" }>> = ({
   pendingCloseConfirmationTab,
   setPendingCloseConfirmationTab,
 }) => {
-  const storeTitle = main.UI.useCell(
-    "sessions",
-    tab.id,
-    "title",
-    main.STORE_ID,
-  );
-  const title = useSessionTitle(tab.id, storeTitle as string | undefined);
+  const session = useSession(tab.id);
+  const title = useSessionTitle(tab.id, session?.title);
   const sessionMode = useListener((state) => state.getSessionMode(tab.id));
   const stop = useListener((state) => state.stop);
   const degraded = useListener((state) => state.live.degraded);
@@ -224,11 +216,14 @@ export function MainTabItem({
   }
   if (tab.type === "contacts") {
     return (
-      <TabItemContact
-        tab={tab}
+      <TabItemBase
+        icon={<UserIcon className="h-4 w-4" />}
+        title={"Contacts"}
+        selected={tab.active}
+        pinned={tab.pinned}
         tabIndex={tabIndex}
-        handleCloseThis={handleClose}
-        handleSelectThis={handleSelect}
+        handleCloseThis={() => handleClose(tab)}
+        handleSelectThis={() => handleSelect(tab)}
         handleCloseOthers={handleCloseOthers}
         handleCloseAll={handleCloseAll}
         handlePinThis={handlePinThis}
@@ -238,11 +233,14 @@ export function MainTabItem({
   }
   if (tab.type === "calendar") {
     return (
-      <TabItemCalendar
-        tab={tab}
+      <TabItemBase
+        icon={<CalendarIcon className="h-4 w-4" />}
+        title={"Calendar"}
+        selected={tab.active}
+        pinned={tab.pinned}
         tabIndex={tabIndex}
-        handleCloseThis={handleClose}
-        handleSelectThis={handleSelect}
+        handleCloseThis={() => handleClose(tab)}
+        handleSelectThis={() => handleSelect(tab)}
         handleCloseOthers={handleCloseOthers}
         handleCloseAll={handleCloseAll}
         handlePinThis={handlePinThis}
@@ -266,11 +264,14 @@ export function MainTabItem({
   }
   if (tab.type === "settings") {
     return (
-      <TabItemSettings
-        tab={tab}
+      <TabItemBase
+        icon={<CogIcon className="h-4 w-4" />}
+        title={"Settings"}
+        selected={tab.active}
+        pinned={tab.pinned}
         tabIndex={tabIndex}
-        handleCloseThis={handleClose}
-        handleSelectThis={handleSelect}
+        handleCloseThis={() => handleClose(tab)}
+        handleSelectThis={() => handleSelect(tab)}
         handleCloseOthers={handleCloseOthers}
         handleCloseAll={handleCloseAll}
         handlePinThis={handlePinThis}
@@ -280,11 +281,14 @@ export function MainTabItem({
   }
   if (tab.type === "templates") {
     return (
-      <TabItemTemplate
-        tab={tab}
+      <TabItemBase
+        icon={<BookTextIcon className="h-4 w-4" />}
+        title={"Templates"}
+        selected={tab.active}
+        pinned={tab.pinned}
         tabIndex={tabIndex}
-        handleCloseThis={handleClose}
-        handleSelectThis={handleSelect}
+        handleCloseThis={() => handleClose(tab)}
+        handleSelectThis={() => handleSelect(tab)}
         handleCloseOthers={handleCloseOthers}
         handleCloseAll={handleCloseAll}
         handlePinThis={handlePinThis}

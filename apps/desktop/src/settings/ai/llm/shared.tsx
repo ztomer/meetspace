@@ -9,6 +9,7 @@ import {
   OpenAI,
   OpenRouter,
 } from "@lobehub/icons";
+import { Bot } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { env } from "~/env";
@@ -18,6 +19,10 @@ import {
   checkLMStudioAvailability,
   checkOllamaAvailability,
 } from "~/settings/ai/shared/local-provider-availability";
+import {
+  keepLocalProviders,
+  LOCAL_LLM_PROVIDER_IDS,
+} from "~/settings/ai/shared/local-providers";
 import { sortProviders } from "~/settings/ai/shared/sort-providers";
 
 export type Provider = {
@@ -48,6 +53,28 @@ const _PROVIDERS = [
       { kind: "requires_auth" },
       { kind: "requires_entitlement", entitlement: "pro" },
     ],
+  },
+  {
+    id: "osaurus",
+    displayName: "Osaurus",
+    badge: "Recommended",
+    icon: <Bot size={16} />,
+    baseUrl: "http://localhost:1337/v1",
+    requirements: [],
+    checkAvailability: async () => {
+      try {
+        const res = await fetch("http://localhost:1337/v1/models");
+        return res.ok;
+      } catch {
+        return false;
+      }
+    },
+    links: {
+      setup: {
+        label: "Setup guide",
+        url: "https://docs.meetspace.so/ai-setup#osaurus",
+      },
+    },
   },
   {
     id: "lmstudio",
@@ -181,5 +208,8 @@ const _PROVIDERS = [
   },
 ] as const satisfies readonly Provider[];
 
-export const PROVIDERS = sortProviders(_PROVIDERS);
+// Hide cloud providers: only the local-provider allowlist reaches the UI.
+export const PROVIDERS = sortProviders(
+  keepLocalProviders(_PROVIDERS, LOCAL_LLM_PROVIDER_IDS),
+);
 export type ProviderId = (typeof _PROVIDERS)[number]["id"];

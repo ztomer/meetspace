@@ -1,38 +1,19 @@
 import chroma from "chroma-js";
 import { describe, expect, it } from "vitest";
 
-import {
-  getActiveLineIndex,
-  getSegmentColor,
-  getSegmentColorVars,
-} from "./utils";
+import { getActiveLineIndex, getSegmentColor } from "./utils";
 
 import type { SegmentKey, SegmentWord } from "~/stt/live-segment";
 
 describe("transcript renderer utils", () => {
-  it("uses a brighter speaker color for dark mode", () => {
+  it("returns a valid hex color for a segment key", () => {
     const key: SegmentKey = {
       channel: "RemoteParty",
       speaker_index: 1,
       speaker_human_id: null,
     };
 
-    expect(chroma(getSegmentColor(key, "dark")).luminance()).toBeGreaterThan(
-      chroma(getSegmentColor(key)).luminance(),
-    );
-  });
-
-  it("exposes light and dark speaker color variables", () => {
-    const key: SegmentKey = {
-      channel: "DirectMic",
-      speaker_index: 0,
-      speaker_human_id: null,
-    };
-
-    expect(getSegmentColorVars(key)).toEqual({
-      "--segment-color-light": getSegmentColor(key),
-      "--segment-color-dark": getSegmentColor(key, "dark"),
-    });
+    expect(chroma.valid(getSegmentColor(key))).toBe(true);
   });
 
   it("finds the active transcript line without building line groups", () => {

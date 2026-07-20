@@ -139,6 +139,73 @@ export function getRenderTranscriptRequestKey(
   ].join(":");
 }
 
+export function buildRenderTranscriptRequestFromStore(
+  store: {
+    getCell: (tableId: string, rowId: string, cellId: string) => unknown;
+    forEachRow: (tableId: string, callback: (rowId: string) => void) => void;
+    getValue: (valueId: string) => unknown;
+  },
+  transcriptIds: string[],
+): RenderTranscriptRequest | null {
+  const transcripts: TranscriptRow[] = [];
+
+  for (const id of transcriptIds) {
+    const wordsJson = store.getCell("transcripts", id, "words");
+    const speakerHintsJson = store.getCell("transcripts", id, "speaker_hints");
+    const startedAt = store.getCell("transcripts", id, "started_at");
+    const words =
+      typeof wordsJson === "string" ? safeJsonParse(wordsJson) : null;
+    const speakerHints =
+      typeof speakerHintsJson === "string"
+        ? safeJsonParse(speakerHintsJson)
+        : null;
+    transcripts.push({
+      started_at: typeof startedAt === "number" ? startedAt : null,
+      words: Array.isArray(words) ? words : null,
+      speaker_hints: Array.isArray(speakerHints) ? speakerHints : null,
+    });
+  }
+
+  const participantHumanIds: string[] = [];
+  store.forEachRow("mapping_session_participant", (rowId) => {
+    const humanId = store.getCell(
+      "mapping_session_participant",
+      rowId,
+      "human_id",
+    );
+    if (typeof humanId === "string" && humanId) {
+      participantHumanIds.push(humanId);
+    }
+  });
+
+  const selfHumanId =
+    typeof store.getValue("user_id") === "string"
+      ? (store.getValue("user_id") as string)
+      : undefined;
+
+  const humans: RenderTranscriptHuman[] = [];
+  store.forEachRow("humans", (rowId) => {
+    const name = store.getCell("humans", rowId, "name");
+    if (typeof name === "string") {
+      humans.push({ human_id: rowId, name });
+    }
+  });
+
+  return buildRenderTranscriptRequest(
+    transcripts,
+    { selfHumanId, humans },
+    participantHumanIds,
+  );
+}
+
+function safeJsonParse(value: string): unknown {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+}
+
 export function buildRenderTranscriptRequestFromRows(
   transcripts: TranscriptRow[],
   humans?: RenderTranscriptRequestHumans,

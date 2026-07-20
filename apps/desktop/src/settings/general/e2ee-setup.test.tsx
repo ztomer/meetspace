@@ -32,11 +32,11 @@ vi.mock("@tauri-apps/api/path", () => ({
   join: mocks.join,
 }));
 
-vi.mock("@hypr/plugin-fs2", () => ({
+vi.mock("@meetspace/plugin-fs2", () => ({
   commands: { writeTextFile: mocks.writeTextFile },
 }));
 
-vi.mock("@hypr/plugin-opener2", () => ({
+vi.mock("@meetspace/plugin-opener2", () => ({
   commands: { revealItemInDir: mocks.revealItemInDir },
 }));
 
@@ -183,7 +183,7 @@ describe("E2eeSetupDialog", () => {
 
   it("downloads the recovery key as a reusable text file", async () => {
     const recoveryKey =
-      "anarlog-e2ee-v1:abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
+      "meetspace-e2ee-v1:abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
     mocks.create.mockResolvedValue(recoveryKey);
     renderDialog();
 
@@ -194,7 +194,7 @@ describe("E2eeSetupDialog", () => {
     await waitFor(() => expect(mocks.writeTextFile).toHaveBeenCalledTimes(1));
     const [path, content] = mocks.writeTextFile.mock.calls[0];
     expect(path).toMatch(
-      /^\/Downloads\/anarlog-recovery-key_\d{4}-\d{2}-\d{2}T.*Z\.txt$/,
+      /^\/Downloads\/meetspace-recovery-key_\d{4}-\d{2}-\d{2}T.*Z\.txt$/,
     );
     expect(content).toBe(`${recoveryKey}\n`);
     await waitFor(() =>
@@ -204,7 +204,7 @@ describe("E2eeSetupDialog", () => {
 
   it("clears download errors when the dialog is dismissed", async () => {
     const recoveryKey =
-      "anarlog-e2ee-v1:abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
+      "meetspace-e2ee-v1:abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
     mocks.create.mockResolvedValue(recoveryKey);
     renderDialog();
 

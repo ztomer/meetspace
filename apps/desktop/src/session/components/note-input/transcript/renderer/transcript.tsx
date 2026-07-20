@@ -7,22 +7,21 @@ import {
   useTranscriptOffset,
 } from "./data-hooks";
 import { SegmentRenderer } from "./segment";
+import { EMPTY_TRANSCRIPT_SEARCH } from "./segment";
 import {
   createSegmentKey,
   segmentsShallowEqual,
   useStableSegments,
 } from "./segment-hooks";
 
-import * as main from "~/store/tinybase/store/main";
-import {
-  mergeRenderedAndLiveSegments,
-  type Segment,
-  type SegmentWord,
+import type {
+  RenderLabelContext,
+  Segment,
+  SegmentWord,
 } from "~/stt/live-segment";
-import {
-  defaultRenderLabelContext,
-  SpeakerLabelManager,
-} from "~/stt/segment/shared";
+import { mergeRenderedAndLiveSegments } from "~/stt/live-segment";
+import { useTranscriptLabelContext } from "~/stt/queries";
+import { SpeakerLabelManager } from "~/stt/segment/shared";
 import { isTranscriptWordSeekable } from "~/stt/timing";
 
 export function RenderTranscript({
@@ -53,6 +52,7 @@ export function RenderTranscript({
   );
   const segments = useStableSegments(mergedSegments);
   const offsetMs = useTranscriptOffset(transcriptId);
+  const labelContext = useTranscriptLabelContext(transcriptId);
 
   if (segments.length === 0) {
     return null;
@@ -69,6 +69,7 @@ export function RenderTranscript({
       seek={seek}
       startPlayback={startPlayback}
       audioExists={audioExists}
+      labelContext={labelContext}
     />
   );
 }
@@ -84,6 +85,7 @@ const SegmentsList = memo(
     seek,
     startPlayback,
     audioExists,
+    labelContext,
   }: {
     segments: Segment[];
     scrollElement: HTMLDivElement | null;
@@ -94,15 +96,11 @@ const SegmentsList = memo(
     seek: (sec: number) => void;
     startPlayback: () => void;
     audioExists: boolean;
+    labelContext?: RenderLabelContext;
   }) => {
-    const store = main.UI.useStore(main.STORE_ID);
     const speakerLabelManager = useMemo(() => {
-      if (!store) {
-        return new SpeakerLabelManager();
-      }
-      const ctx = defaultRenderLabelContext(store);
-      return SpeakerLabelManager.fromSegments(segments, ctx);
-    }, [segments, store]);
+      return SpeakerLabelManager.fromSegments(segments, labelContext);
+    }, [segments, labelContext]);
 
     const seekAndPlay = useCallback(
       (word: SegmentWord) => {
@@ -142,6 +140,7 @@ const SegmentsList = memo(
               currentMs={currentMs}
               seekAndPlay={seekAndPlay}
               audioExists={audioExists}
+              search={EMPTY_TRANSCRIPT_SEARCH}
             />
           </div>
         ))}
@@ -156,6 +155,7 @@ const SegmentsList = memo(
       prevProps.shouldScrollToEnd === nextProps.shouldScrollToEnd &&
       prevProps.currentMs === nextProps.currentMs &&
       prevProps.audioExists === nextProps.audioExists &&
+      prevProps.labelContext === nextProps.labelContext &&
       prevProps.seek === nextProps.seek &&
       prevProps.startPlayback === nextProps.startPlayback &&
       segmentsShallowEqual(prevProps.segments, nextProps.segments)

@@ -3,12 +3,11 @@ import { useMemo } from "react";
 import { cn } from "@meetspace/utils";
 
 import { SpeakerAssignPopover } from "./speaker-assign";
-import { getTimestampRange, useSegmentColor } from "./utils";
+import { useSegmentColor } from "./utils";
 
-import * as main from "~/store/tinybase/store/main";
-import type { Segment } from "~/stt/live-segment";
+import type { RenderLabelContext, Segment } from "~/stt/live-segment";
 import { SegmentKeyUtils, SpeakerLabelManager } from "~/stt/live-segment";
-import { defaultRenderLabelContext } from "~/stt/segment/shared";
+import { useTranscriptLabelContext } from "~/stt/queries";
 
 export function SegmentHeader({
   segment,
@@ -20,8 +19,9 @@ export function SegmentHeader({
   speakerLabelManager?: SpeakerLabelManager;
 }) {
   const color = useSegmentColor(segment.key);
-  const label = useSpeakerLabel(segment.key, speakerLabelManager);
-  const timestamp = getTimestampRange(segment);
+  const labelContext = useTranscriptLabelContext(transcriptId);
+  const label = useSpeakerLabel(segment.key, speakerLabelManager, labelContext);
+  const timestamp = "";
   const headerClassName = cn([
     "bg-muted sticky top-0 z-20",
     "-mx-3 px-3 py-1",
@@ -42,14 +42,12 @@ export function SegmentHeader({
   );
 }
 
-function useSpeakerLabel(key: Segment["key"], manager?: SpeakerLabelManager) {
-  const store = main.UI.useStore(main.STORE_ID);
-
+function useSpeakerLabel(
+  key: Segment["key"],
+  manager?: SpeakerLabelManager,
+  labelContext?: RenderLabelContext,
+) {
   return useMemo(() => {
-    if (!store) {
-      return SegmentKeyUtils.renderLabel(key, undefined, manager);
-    }
-    const ctx = defaultRenderLabelContext(store);
-    return SegmentKeyUtils.renderLabel(key, ctx, manager);
-  }, [key, manager, store]);
+    return SegmentKeyUtils.renderLabel(key, labelContext, manager);
+  }, [key, manager, labelContext]);
 }
