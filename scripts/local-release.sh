@@ -84,8 +84,7 @@ fi
 VERSION=$(grep -o 'version "[^"]*"' scripts/brew/meetspace.rb | cut -d'"' -f2)
 TAG="v$VERSION"
 CASK_VERSION="${VERSION//-/_}"   # 1.3.1-meet2 -> 1.3.1_meet2
-DMG_NAME="Meetspace_${CASK_VERSION}_aarch64.dmg"
-green "==> Releasing $VERSION (tag: $TAG, dmg: $DMG_NAME)"
+green "==> Releasing $VERSION (tag: $TAG)"
 
 # --- 3. push branch + tag --------------------------------------------------
 if [ "$SKIP_PUSH" = "0" ]; then
@@ -134,12 +133,15 @@ fi
 
 DMG=""
 if [ "$SKIP_DMG" = "0" ]; then
+  # Tauri names the bundle from its own (hyphen) version, which differs from the
+  # cask (underscore) version, so glob rather than reconstructing the exact name.
   DMG=$(find target/release/bundle apps/desktop/src-tauri/target/release/bundle \
-    -maxdepth 3 -type f -name "$DMG_NAME" 2>/dev/null | head -1)
+    -maxdepth 4 -type f -name "Meetspace_*_aarch64.dmg" 2>/dev/null | head -1)
   if [ -z "$DMG" ]; then
-    red "Error: $DMG_NAME not found after build."
+    red "Error: Meetspace DMG not found after build."
     exit 1
   fi
+  DMG_NAME=$(basename "$DMG")
   green "==> DMG ready: $DMG ($(du -h "$DMG" | cut -f1))"
 fi
 
