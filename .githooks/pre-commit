@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Runs the running-app smoke test as a commit gate for app-code changes.
+# Enabled via scripts/setup-fork-git.sh (sets core.hooksPath=.githooks).
+# Bypass once with: git commit --no-verify  (or SKIP_SMOKE=1).
+set -euo pipefail
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+exec "$REPO_ROOT/scripts/smoke-gate.sh"
