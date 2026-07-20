@@ -39,6 +39,12 @@ REMOVED_DIRS = [
     "crates/cactus-model",
     "crates/llm-cactus",
     "crates/transcribe-cactus",
+    # libsql-backed legacy DB carriers. They statically link a second copy of
+    # sqlite (libsql_ffi) colliding with sqlx's libsqlite3-sys at release link
+    # time. The importer now uses rusqlite (shares sqlx's libsqlite3-sys 0.35),
+    # so these must stay deleted on every rebase.
+    "legacy/db-core",
+    "legacy/db-user",
 ]
 
 REMOVED_FILES = [
