@@ -164,50 +164,18 @@ fi
 
 # --local: local-first release. CI is disabled in this fork, so we build the
 # stable DMG on this machine and upload it to the GitHub release directly.
+# --local: delegate the whole local-first release (build + tag + release via
+# REST API + Homebrew tap update) to scripts/local-release.sh, which is the
+# single source of truth for the no-CI pipeline. It reads the version from
+# scripts/brew/meetspace.rb, so bump here first if requested.
 if [ "$DO_LOCAL" = "1" ]; then
   if [ -n "$BUMP_VERSION" ]; then
     bump_version "$BUMP_VERSION"
   fi
 
-  RELEASE_VER=$(grep -o 'version "[^"]*"' scripts/brew/meetspace.rb | cut -d'"' -f2)
-  TAG="v$RELEASE_VER"
-  green "==> Local release: $RELEASE_VER (tag: $TAG)"
-
-  if [ "$SKIP_PUSH" = "0" ]; then
-    bold "==> Pushing branch to meetspace remote"
-    git push meetspace "$BRANCH_NAME" --force
-  fi
-
-  bold "==> Building stable DMG locally"
-  if ! ./scripts/package.sh stable dmg; then
-    red "Error: local DMG build failed."
-    exit 1
-  fi
-
-  DMG=$(find target/release/bundle apps/desktop/src-tauri/target/release/bundle \
-    -maxdepth 3 -type f -name '*.dmg' 2>/dev/null | head -1)
-  if [ -z "$DMG" ]; then
-    red "Error: no DMG artifact found after build."
-    exit 1
-  fi
-  green "==> DMG built: $DMG"
-
-  bold "==> Creating tag $TAG"
-  git tag -d "$TAG" 2>/dev/null || true
-  env GITHUB_TOKEN="" git push meetspace ":refs/tags/$TAG" 2>/dev/null || true
-  git tag "$TAG"
-  env GITHUB_TOKEN="" git push meetspace "$TAG"
-
-  bold "==> Creating/updating GitHub release $TAG"
-  env GITHUB_TOKEN="" gh release delete "$TAG" --yes 2>/dev/null || true
-  env GITHUB_TOKEN="" gh release create "$TAG" \
-    --title "$TAG" \
-    --target "$BRANCH_NAME" \
-    --notes "Release $TAG" \
-    "$DMG"
-
-  green "==> Local release $TAG complete (DMG uploaded)."
-  exit 0
+  LOCAL_ARGS=()
+  [ "$SKIP_PUSH" = "1" ] && LOCAL_ARGS+=(--no-push)
+  exec ./scripts/local-release.sh "${LOCAL_ARGS[@]}"
 fi
 
 if [ "$SKIP_PUSH" = "0" ]; then
