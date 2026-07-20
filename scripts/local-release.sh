@@ -110,13 +110,16 @@ else
   yellow "==> --no-dmg: skipping DMG build."
 fi
 
-DMG=$(find target/release/bundle apps/desktop/src-tauri/target/release/bundle \
-  -maxdepth 3 -type f -name "$DMG_NAME" 2>/dev/null | head -1)
-if [ -z "$DMG" ]; then
-  red "Error: $DMG_NAME not found after build."
-  exit 1
+DMG=""
+if [ "$SKIP_DMG" = "0" ]; then
+  DMG=$(find target/release/bundle apps/desktop/src-tauri/target/release/bundle \
+    -maxdepth 3 -type f -name "$DMG_NAME" 2>/dev/null | head -1)
+  if [ -z "$DMG" ]; then
+    red "Error: $DMG_NAME not found after build."
+    exit 1
+  fi
+  green "==> DMG ready: $DMG ($(du -h "$DMG" | cut -f1))"
 fi
-green "==> DMG ready: $DMG ($(du -h "$DMG" | cut -f1))"
 
 # --- 5. create GitHub release + upload via gh api --------------------------
 # `gh release create` requires the `workflow` OAuth scope, which this fork's
@@ -145,10 +148,14 @@ if [ "$SKIP_PUSH" = "0" ]; then
   fi
 
   bold "==> Uploading DMG asset"
-  gh api --method POST "${UPLOAD_URL}?name=${DMG_NAME}&label=${DMG_NAME}" \
-    -H "Content-Type: application/octet-stream" \
-    --input "$DMG" >/dev/null 2>&1 || { red "Error: asset upload failed."; exit 1; }
-  green "==> Release + asset uploaded."
+  if [ "$SKIP_DMG" = "0" ] && [ -n "$DMG" ]; then
+    gh api --method POST "${UPLOAD_URL}?name=${DMG_NAME}&label=${DMG_NAME}" \
+      -H "Content-Type: application/octet-stream" \
+      --input "$DMG" >/dev/null 2>&1 || { red "Error: asset upload failed."; exit 1; }
+    green "==> Release + asset uploaded."
+  else
+    yellow "==> --no-dmg: created release without a DMG asset."
+  fi
 else
   yellow "==> --no-push: skipping GitHub release creation."
 fi
@@ -190,10 +197,14 @@ fi
 bold "==> Verifying release"
 if [ "$SKIP_PUSH" = "0" ]; then
   API_VER=$(gh api "repos/ztomer/meetspace/releases/tags/$TAG" --jq '.assets[].name' 2>/dev/null || true)
-  if printf '%s' "$API_VER" | grep -q "$DMG_NAME"; then
-    green "  release asset present: $DMG_NAME"
+  if [ "$SKIP_DMG" = "0" ]; then
+    if printf '%s' "$API_VER" | grep -q "$DMG_NAME"; then
+      green "  release asset present: $DMG_NAME"
+    else
+      red "  release asset missing from $TAG!"
+    fi
   else
-    red "  release asset missing from $TAG!"
+    yellow "  --no-dmg: skipped release-asset check."
   fi
 
   TAP_VER=$(curl -fsL "https://raw.githubusercontent.com/ztomer/homebrew-tap/main/Casks/meetspace.rb" \
