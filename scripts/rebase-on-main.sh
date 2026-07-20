@@ -136,6 +136,13 @@ REMOVED_DIRS=(
   ".github/scripts"
   ".github/reports"
   "scripts/s3"
+  # Release-link fix: upstream's libsql-backed legacy DB carriers statically
+  # link a second copy of sqlite and collide with sqlx's libsqlite3-sys at
+  # release link time (duplicate symbol '_sqlite3_*'). The importer was
+  # repointed at rusqlite (db-parser), so these libsql carriers must stay
+  # deleted on every rebase.
+  "legacy/db-core"
+  "legacy/db-user"
 )
 
 # Individual files that should stay deleted.

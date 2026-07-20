@@ -13,6 +13,7 @@ tauri-plugin = { workspace = true, features = ["build"] }
 [dev-dependencies]
 dirs = { workspace = true }
 specta-typescript = { workspace = true }
+tempfile = { workspace = true }
 
 [dependencies]
 legacy-db-parser = { workspace = true }
@@ -29,6 +30,7 @@ tauri-specta = { workspace = true, features = ["derive", "typescript"] }
 
 chrono = { workspace = true }
 dirs = { workspace = true }
+log = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["rt-multi-thread", "macros", "time"] }
 uuid = { workspace = true, features = ["v4", "v5"] }

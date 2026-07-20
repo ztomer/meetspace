@@ -1,6 +1,7 @@
 use crate::types::*;
+use crate::v0::session::SessionRow;
 
-pub(super) fn session_to_transcript(session: &legacy_db_user::Session) -> Transcript {
+pub(super) fn session_to_transcript(session: &SessionRow) -> Transcript {
     let record_start_ms = session
         .record_start
         .map(|dt| dt.timestamp_millis() as u64)
@@ -46,7 +47,7 @@ pub(super) fn session_to_transcript(session: &legacy_db_user::Session) -> Transc
     Transcript {
         id: session.id.clone(),
         user_id: String::new(),
-        created_at: session.created_at.to_rfc3339(),
+        created_at: session.created_at.clone(),
         session_id: session.id.clone(),
         title: session.title.clone(),
         started_at,

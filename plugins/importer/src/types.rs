@@ -12,6 +12,7 @@ pub enum TransformKind {
     MeetspaceV0,
     Granola,
     AsIs,
+    GoogleDrive,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, specta::Type, PartialEq, Eq, Hash)]
@@ -21,6 +22,7 @@ pub enum ImportSourceKind {
     MeetspaceV0Stable,
     MeetspaceV0Nightly,
     AsIs,
+    GoogleDrive,
 }
 
 #[derive(Debug, Clone)]
@@ -75,6 +77,15 @@ impl ImportSource {
         })
     }
 
+    pub fn google_drive(path: PathBuf) -> Self {
+        Self {
+            kind: Some(ImportSourceKind::GoogleDrive),
+            transform: TransformKind::GoogleDrive,
+            path,
+            name: "Google Drive (Takeout export)".to_string(),
+        }
+    }
+
     pub fn is_available(&self) -> bool {
         self.path.exists()
     }
@@ -118,6 +129,12 @@ impl From<ImportSourceKind> for ImportSource {
                 transform: TransformKind::AsIs,
                 path: PathBuf::new(),
                 name: "JSON Import".to_string(),
+            },
+            ImportSourceKind::GoogleDrive => Self {
+                kind: Some(ImportSourceKind::GoogleDrive),
+                transform: TransformKind::GoogleDrive,
+                path: PathBuf::new(),
+                name: "Google Drive (Takeout export)".to_string(),
             },
         }
     }

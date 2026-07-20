@@ -4,10 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-legacy-db-core = { workspace = true }
-legacy-db-user = { workspace = true }
 meetspace-importer-core = { workspace = true }
 owhisper-interface = { workspace = true }
+
+chrono = { version = "0.4", features = ["serde"] }
+rusqlite = { workspace = true }
 
 serde = { workspace = true }
 serde_json = { workspace = true }

@@ -12,20 +12,20 @@ mod tests {
 
     macro_rules! inspect {
         (v0, $name:ident, $path:expr) => {
-            #[tokio::test]
+            #[test]
             #[ignore]
-            async fn $name() {
+            fn $name() {
                 let path = $path;
-                let collection = v0::parse_from_sqlite(&path).await.unwrap();
+                let collection = v0::parse_from_sqlite(&path).unwrap();
                 println!("\n=== {} ===\n{}", path.display(), collection);
             }
         };
         (v1, $name:ident, $path:expr) => {
-            #[tokio::test]
+            #[test]
             #[ignore]
-            async fn $name() {
+            fn $name() {
                 let path = $path;
-                let collection = v1::parse_from_sqlite(&path).await.unwrap();
+                let collection = v1::parse_from_sqlite(&path).unwrap();
                 println!("\n=== {} ===\n{}", path.display(), collection);
             }
         };
@@ -33,19 +33,19 @@ mod tests {
 
     macro_rules! validate {
         (v0, $name:ident, $path:expr) => {
-            #[tokio::test]
+            #[test]
             #[ignore]
-            async fn $name() {
+            fn $name() {
                 let path = $path;
-                v0::validate(&path).await.unwrap();
+                v0::validate(&path).unwrap();
             }
         };
         (v1, $name:ident, $path:expr) => {
-            #[tokio::test]
+            #[test]
             #[ignore]
-            async fn $name() {
+            fn $name() {
                 let path = $path;
-                v1::validate(&path).await.unwrap();
+                v1::validate(&path).unwrap();
             }
         };
     }
@@ -104,17 +104,17 @@ mod tests {
         dirs::download_dir().unwrap().join("dbs/db-v1-e.sqlite")
     );
 
-    #[tokio::test]
+    #[test]
     #[ignore]
-    async fn v0_rejects_v1_db() {
+    fn v0_rejects_v1_db() {
         let path = dirs::download_dir().unwrap().join("dbs/db-v1-a.sqlite");
-        assert!(v0::validate(&path).await.is_err());
+        assert!(v0::validate(&path).is_err());
     }
 
-    #[tokio::test]
+    #[test]
     #[ignore]
-    async fn v1_rejects_v0_db() {
+    fn v1_rejects_v0_db() {
         let path = dirs::download_dir().unwrap().join("dbs/db-v0-b.sqlite");
-        assert!(v1::validate(&path).await.is_err());
+        assert!(v1::validate(&path).is_err());
     }
 }

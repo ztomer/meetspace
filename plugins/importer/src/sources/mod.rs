@@ -1,4 +1,5 @@
 mod as_is;
+mod gdrive;
 mod granola;
 mod meetspace;
 
@@ -11,6 +12,7 @@ pub async fn import_all(source: &ImportSource) -> Result<Collection, crate::Erro
         TransformKind::MeetspaceV0 => meetspace::v0::import_all_from_path(&source.path).await,
         TransformKind::Granola => granola::import_all_from_path(&source.path).await,
         TransformKind::AsIs => as_is::load_data(&source.path),
+        TransformKind::GoogleDrive => gdrive::import_all_from_path(&source.path),
     }
 }
 
@@ -21,6 +23,7 @@ pub async fn import_stats(source: &ImportSource) -> Result<ImportStats, crate::E
             let data = import_all(source).await?;
             Ok(ImportStats::from_data(&data))
         }
+        TransformKind::GoogleDrive => gdrive::import_stats_from_path(&source.path),
     }
 }
 

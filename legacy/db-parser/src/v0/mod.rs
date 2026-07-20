@@ -1,14 +1,17 @@
 mod convert;
+mod session;
 
-use legacy_db_core::libsql;
-use legacy_db_user::UserDatabase;
-use meetspace_importer_core::ir::CollectionStats;
 use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
+
+use chrono::{DateTime, Utc};
+use rusqlite::Connection;
+use serde_json::Value;
 
 use crate::types::*;
 use crate::{Error, Result};
 use convert::{html_to_markdown, session_to_transcript};
+use session::{SessionRow, is_session_content_empty};
 
 const EXPECTED_TABLES: &[&str] = &["sessions", "humans", "organizations", "templates", "tags"];
 
@@ -65,21 +68,17 @@ fn sidecar_file_name(file_name: &OsStr, suffix: &str) -> std::ffi::OsString {
     name
 }
 
-pub async fn validate(path: &Path) -> Result<()> {
-    let db = libsql::Builder::new_local(path).build().await?;
-    let conn = db.connect()?;
+fn open(path: &Path) -> Result<Connection> {
+    Ok(Connection::open(path)?)
+}
 
-    let mut rows = conn
-        .query(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
-            (),
-        )
-        .await?;
+pub fn validate(path: &Path) -> Result<()> {
+    let conn = open(path)?;
 
-    let mut tables = Vec::new();
-    while let Some(row) = rows.next().await? {
-        tables.push(row.get::<String>(0)?);
-    }
+    let tables: Vec<String> = conn
+        .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")?
+        .query_map([], |row| row.get::<_, String>(0))?
+        .collect::<rusqlite::Result<Vec<_>>>()?;
 
     for expected in EXPECTED_TABLES {
         if !tables.iter().any(|t| t == *expected) {
@@ -100,64 +99,65 @@ pub async fn validate(path: &Path) -> Result<()> {
     Ok(())
 }
 
-pub async fn parse_from_sqlite(path: &Path) -> Result<Collection> {
+pub fn parse_from_sqlite(path: &Path) -> Result<Collection> {
     let snapshot = SqliteSnapshot::create(path)?;
-    parse_from_snapshot(snapshot.path()).await
+    parse_from_snapshot(snapshot.path())
 }
 
-pub async fn parse_stats_from_sqlite(path: &Path) -> Result<CollectionStats> {
+pub fn parse_stats_from_sqlite(path: &Path) -> Result<CollectionStats> {
     let snapshot = SqliteSnapshot::create(path)?;
-    validate(snapshot.path()).await?;
+    validate(snapshot.path())?;
 
-    let db = libsql::Builder::new_local(snapshot.path()).build().await?;
-    let conn = db.connect()?;
-    normalize_empty_words(&conn).await?;
-    let (sessions_count, transcripts_count) = count_session_rows(&conn).await?;
+    let conn = open(snapshot.path())?;
+    normalize_empty_words(&conn)?;
+    let (sessions_count, transcripts_count) = count_session_rows(&conn)?;
+
+    let humans_count = count_rows(&conn, "SELECT COUNT(*) FROM humans")?;
+    let organizations_count = count_rows(&conn, "SELECT COUNT(*) FROM organizations")?;
+    let participants_count = count_rows(
+        &conn,
+        "SELECT COUNT(*)
+         FROM session_participants sp
+         JOIN sessions s ON s.id = sp.session_id
+         JOIN humans h ON h.id = sp.human_id
+         WHERE sp.deleted = FALSE OR sp.deleted IS NULL",
+    )?;
+    let templates_count = count_rows(&conn, "SELECT COUNT(*) FROM templates")?;
+    let enhanced_notes_count = count_rows(
+        &conn,
+        "SELECT COUNT(*) FROM sessions WHERE COALESCE(enhanced_memo_html, '') <> ''",
+    )?;
 
     Ok(CollectionStats {
         sessions_count,
         transcripts_count,
-        humans_count: count_rows(&conn, "SELECT COUNT(*) FROM humans").await?,
-        organizations_count: count_rows(&conn, "SELECT COUNT(*) FROM organizations").await?,
-        participants_count: count_rows(
-            &conn,
-            "SELECT COUNT(*)
-             FROM session_participants sp
-             JOIN sessions s ON s.id = sp.session_id
-             JOIN humans h ON h.id = sp.human_id
-             WHERE sp.deleted = FALSE OR sp.deleted IS NULL",
-        )
-        .await?,
-        templates_count: count_rows(&conn, "SELECT COUNT(*) FROM templates").await?,
-        enhanced_notes_count: count_rows(
-            &conn,
-            "SELECT COUNT(*) FROM sessions WHERE COALESCE(enhanced_memo_html, '') <> ''",
-        )
-        .await?,
+        humans_count,
+        organizations_count,
+        participants_count,
+        templates_count,
+        enhanced_notes_count,
     })
 }
 
-async fn count_session_rows(conn: &libsql::Connection) -> Result<(usize, usize)> {
-    let mut rows = conn
-        .query(
-            "SELECT raw_memo_html, enhanced_memo_html, words FROM sessions",
-            (),
-        )
-        .await?;
-    let mut sessions_count = 0;
-    let mut transcripts_count = 0;
-
-    while let Some(row) = rows.next().await? {
+fn count_session_rows(conn: &Connection) -> Result<(usize, usize)> {
+    let mut stmt = conn.prepare("SELECT raw_memo_html, enhanced_memo_html, words FROM sessions")?;
+    let rows = stmt.query_map([], |row| {
         let raw_memo_html: String = row.get(0)?;
         let enhanced_memo_html: Option<String> = row.get(1)?;
         let words_json: String = row.get(2)?;
-        let words: Vec<owhisper_interface::Word2> = serde_json::from_str(&words_json)?;
+        let words: Vec<owhisper_interface::Word2> =
+            serde_json::from_str(&words_json).unwrap_or_default();
+        Ok((raw_memo_html, enhanced_memo_html, words))
+    })?;
 
+    let mut sessions_count = 0;
+    let mut transcripts_count = 0;
+    for row in rows {
+        let (raw_memo_html, enhanced_memo_html, words) = row?;
         if !words.is_empty() {
             transcripts_count += 1;
         }
-
-        if !legacy_db_user::is_session_content_empty(
+        if !is_session_content_empty(
             &raw_memo_html,
             enhanced_memo_html.as_deref(),
             words.is_empty(),
@@ -169,29 +169,28 @@ async fn count_session_rows(conn: &libsql::Connection) -> Result<(usize, usize)>
     Ok((sessions_count, transcripts_count))
 }
 
-async fn count_rows(conn: &libsql::Connection, sql: &str) -> Result<usize> {
-    let mut rows = conn.query(sql, ()).await?;
-    let row = rows
-        .next()
-        .await?
-        .ok_or_else(|| Error::InvalidData("count query returned no rows".to_string()))?;
-    let count: i64 = row.get(0)?;
+fn count_rows(conn: &Connection, sql: &str) -> Result<usize> {
+    let count: i64 = conn.query_row(sql, [], |row| row.get(0))?;
     Ok(count.max(0) as usize)
 }
 
-async fn parse_from_snapshot(path: &Path) -> Result<Collection> {
-    validate(path).await?;
+fn normalize_empty_words(conn: &Connection) -> Result<()> {
+    // Older Char DBs can have `sessions.words` as NULL/empty, but the importer
+    // expects a non-null JSON string.
+    conn.execute(
+        "UPDATE sessions SET words = '[]' WHERE words IS NULL OR words = ''",
+        [],
+    )?;
+    Ok(())
+}
 
-    let db = legacy_db_core::DatabaseBuilder::default()
-        .local(path)
-        .build()
-        .await?;
-    let db = UserDatabase::from(db);
+fn parse_from_snapshot(path: &Path) -> Result<Collection> {
+    validate(path)?;
 
-    let conn = db.conn()?;
-    normalize_empty_words(&conn).await?;
+    let conn = open(path)?;
+    normalize_empty_words(&conn)?;
 
-    let sessions_raw = db.list_sessions(None).await?;
+    let sessions_raw = list_sessions(&conn)?;
 
     let mut sessions = Vec::new();
     let mut transcripts = Vec::new();
@@ -201,7 +200,7 @@ async fn parse_from_snapshot(path: &Path) -> Result<Collection> {
     let mut tag_mappings = Vec::new();
 
     for session in sessions_raw {
-        let session_participants = db.session_list_participants(&session.id).await?;
+        let session_participants = list_session_participants(&conn, &session.id)?;
         for human in session_participants {
             participants.push(SessionParticipant {
                 id: format!("{}-{}", session.id, human.id),
@@ -230,7 +229,7 @@ async fn parse_from_snapshot(path: &Path) -> Result<Collection> {
             }
         }
 
-        let session_tags = db.list_session_tags(&session.id).await?;
+        let session_tags = list_session_tags(&conn, &session.id)?;
         for tag in session_tags {
             let tag_id = tag.id.clone();
             if !tags.iter().any(|t: &Tag| t.id == tag_id) {
@@ -264,7 +263,7 @@ async fn parse_from_snapshot(path: &Path) -> Result<Collection> {
             sessions.push(Session {
                 id: session.id.clone(),
                 user_id: String::new(),
-                created_at: session.created_at.to_rfc3339(),
+                created_at: session.created_at.clone(),
                 title: session.title,
                 raw_md,
                 enhanced_content,
@@ -274,9 +273,7 @@ async fn parse_from_snapshot(path: &Path) -> Result<Collection> {
         }
     }
 
-    let humans = db
-        .list_humans(None)
-        .await?
+    let humans = list_humans(&conn)?
         .into_iter()
         .map(|h| Human {
             id: h.id,
@@ -290,9 +287,7 @@ async fn parse_from_snapshot(path: &Path) -> Result<Collection> {
         })
         .collect();
 
-    let organizations = db
-        .list_organizations(None)
-        .await?
+    let organizations = list_organizations(&conn)?
         .into_iter()
         .map(|o| Organization {
             id: o.id,
@@ -303,9 +298,7 @@ async fn parse_from_snapshot(path: &Path) -> Result<Collection> {
         })
         .collect();
 
-    let templates = db
-        .list_templates("")
-        .await?
+    let templates = list_templates(&conn)?
         .into_iter()
         .map(|t| Template {
             id: t.id,
@@ -338,197 +331,300 @@ async fn parse_from_snapshot(path: &Path) -> Result<Collection> {
     })
 }
 
-async fn normalize_empty_words(conn: &libsql::Connection) -> Result<()> {
-    // Older Char DBs can have `sessions.words` as NULL/empty, but db-user's
-    // `Session::from_row` expects a non-null JSON string.
-    conn.execute(
-        "UPDATE sessions SET words = '[]' WHERE words IS NULL OR words = ''",
-        (),
-    )
-    .await?;
-    Ok(())
+// --- Direct SQL replacements for the legacy libsql ORM ---
+
+struct Participant {
+    id: String,
+}
+
+fn list_session_participants(conn: &Connection, session_id: &str) -> Result<Vec<Participant>> {
+    let mut stmt = conn.prepare(
+        "SELECT h.id FROM session_participants sp
+         JOIN humans h ON h.id = sp.human_id
+         WHERE sp.session_id = ? AND (sp.deleted = FALSE OR sp.deleted IS NULL)",
+    )?;
+    let rows = stmt.query_map([session_id], |row| Ok(Participant { id: row.get(0)? }))?;
+    Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
+}
+
+struct TagRow {
+    id: String,
+    name: String,
+}
+
+fn list_session_tags(conn: &Connection, session_id: &str) -> Result<Vec<TagRow>> {
+    let mut stmt = conn.prepare(
+        "SELECT t.id, t.name FROM tags_sessions ts
+         JOIN tags t ON t.id = ts.tag_id
+         WHERE ts.session_id = ?",
+    )?;
+    let rows = stmt.query_map([session_id], |row| {
+        Ok(TagRow {
+            id: row.get(0)?,
+            name: row.get(1)?,
+        })
+    })?;
+    Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
+}
+
+struct HumanRow {
+    id: String,
+    full_name: Option<String>,
+    email: Option<String>,
+    organization_id: Option<String>,
+    job_title: Option<String>,
+    linkedin_username: Option<String>,
+}
+
+fn list_humans(conn: &Connection) -> Result<Vec<HumanRow>> {
+    let mut stmt = conn.prepare(
+        "SELECT id, full_name, email, organization_id, job_title, linkedin_username FROM humans",
+    )?;
+    let rows = stmt.query_map([], |row| {
+        Ok(HumanRow {
+            id: row.get(0)?,
+            full_name: row.get(1)?,
+            email: row.get(2)?,
+            organization_id: row.get(3)?,
+            job_title: row.get(4)?,
+            linkedin_username: row.get(5)?,
+        })
+    })?;
+    Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
+}
+
+struct OrgRow {
+    id: String,
+    name: String,
+    description: Option<String>,
+}
+
+fn list_organizations(conn: &Connection) -> Result<Vec<OrgRow>> {
+    let mut stmt = conn.prepare("SELECT id, name, description FROM organizations")?;
+    let rows = stmt.query_map([], |row| {
+        Ok(OrgRow {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            description: row.get(2)?,
+        })
+    })?;
+    Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
+}
+
+struct TemplateRow {
+    id: String,
+    title: String,
+    description: String,
+    sections: Vec<TemplateSection>,
+    tags: Vec<String>,
+    context_option: Option<String>,
+}
+
+fn parse_json_string_array(v: Value) -> Vec<String> {
+    match v {
+        Value::Array(items) => items
+            .into_iter()
+            .filter_map(|i| i.as_str().map(|s| s.to_string()))
+            .collect(),
+        _ => Vec::new(),
+    }
+}
+
+fn list_templates(conn: &Connection) -> Result<Vec<TemplateRow>> {
+    let mut stmt = conn
+        .prepare("SELECT id, title, description, sections, tags, context_option FROM templates")?;
+    let rows = stmt.query_map([], |row| {
+        let sections_value: Value = row
+            .get::<_, String>(3)
+            .ok()
+            .and_then(|s| serde_json::from_str(&s).ok())
+            .unwrap_or(Value::Array(vec![]));
+        let sections: Vec<TemplateSection> = match sections_value {
+            Value::Array(items) => items
+                .into_iter()
+                .filter_map(|i| serde_json::from_value(i).ok())
+                .collect(),
+            _ => Vec::new(),
+        };
+        let tags_value: Value = row
+            .get::<_, String>(4)
+            .ok()
+            .and_then(|s| serde_json::from_str(&s).ok())
+            .unwrap_or(Value::Array(vec![]));
+        let context_value: Option<Value> = row
+            .get::<_, String>(5)
+            .ok()
+            .and_then(|s| serde_json::from_str(&s).ok());
+        Ok(TemplateRow {
+            id: row.get(0)?,
+            title: row.get(1)?,
+            description: row.get::<_, Option<String>>(2)?.unwrap_or_default(),
+            sections,
+            tags: parse_json_string_array(tags_value),
+            context_option: context_value.and_then(|v| match v {
+                Value::String(s) => Some(s),
+                other => serde_json::to_string(&other).ok(),
+            }),
+        })
+    })?;
+    Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
+}
+
+fn list_sessions(conn: &Connection) -> Result<Vec<SessionRow>> {
+    let mut stmt = conn.prepare(
+        "SELECT id, created_at, title, raw_memo_html, enhanced_memo_html, words, calendar_event_id, record_start, record_end
+         FROM sessions",
+    )?;
+    let rows = stmt.query_map([], |row| {
+        let words_json: String = row.get(5)?;
+        let words: Vec<owhisper_interface::Word2> =
+            serde_json::from_str(&words_json).unwrap_or_default();
+        let parse_dt = |s: Option<String>| {
+            s.and_then(|s| DateTime::parse_from_rfc3339(&s).ok())
+                .map(|dt| dt.with_timezone(&Utc))
+        };
+        Ok(SessionRow {
+            id: row.get(0)?,
+            created_at: row.get(1)?,
+            title: row.get(2)?,
+            raw_memo_html: row.get(3)?,
+            enhanced_memo_html: row.get(4)?,
+            words,
+            calendar_event_id: row.get(6)?,
+            record_start: parse_dt(row.get(7)?),
+            record_end: parse_dt(row.get(8)?),
+        })
+    })?;
+    Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use legacy_db_core::DatabaseBuilder;
-    use legacy_db_user::{UserDatabase, migrate};
 
-    async fn setup_db(path: &Path) -> UserDatabase {
-        let db = DatabaseBuilder::default()
-            .local(path)
-            .build()
-            .await
-            .unwrap();
-        let db = UserDatabase::from(db);
-        migrate(&db).await.unwrap();
-        db
+    fn setup_db(path: &Path) -> Connection {
+        let conn = Connection::open(path).unwrap();
+        conn.execute_batch(
+            r#"
+            CREATE TABLE organizations (id TEXT PRIMARY KEY, name TEXT, description TEXT);
+            CREATE TABLE humans (
+                id TEXT PRIMARY KEY,
+                organization_id TEXT,
+                is_user BOOLEAN,
+                full_name TEXT,
+                email TEXT,
+                job_title TEXT,
+                linkedin_username TEXT
+            );
+            CREATE TABLE sessions (
+                id TEXT PRIMARY KEY,
+                created_at TEXT,
+                visited_at TEXT,
+                user_id TEXT,
+                title TEXT,
+                raw_memo_html TEXT,
+                enhanced_memo_html TEXT,
+                conversations TEXT,
+                words TEXT,
+                calendar_event_id TEXT,
+                record_start TEXT,
+                record_end TEXT,
+                pre_meeting_memo_html TEXT
+            );
+            CREATE TABLE session_participants (session_id TEXT, human_id TEXT, deleted BOOLEAN);
+            CREATE TABLE templates (
+                id TEXT PRIMARY KEY, user_id TEXT, title TEXT, description TEXT,
+                sections TEXT, tags TEXT, context_option TEXT
+            );
+            CREATE TABLE tags (id TEXT PRIMARY KEY, name TEXT);
+            CREATE TABLE tags_sessions (tag_id TEXT, session_id TEXT);
+            "#,
+        )
+        .unwrap();
+        conn
     }
 
-    async fn seed_rows(db: &UserDatabase) {
-        let conn = db.conn().unwrap();
+    fn seed_rows(conn: &Connection) {
         conn.execute(
-            r#"
-            INSERT INTO organizations (id, name, description)
-            VALUES ('org-1', 'Acme', 'Customer')
-            "#,
-            (),
+            "INSERT INTO organizations (id, name, description) VALUES ('org-1', 'Acme', 'Customer')",
+            [],
         )
-        .await
         .unwrap();
         conn.execute(
-            r#"
-            INSERT INTO humans (
-                id,
-                organization_id,
-                is_user,
-                full_name,
-                email,
-                job_title,
-                linkedin_username
-            ) VALUES (
-                'human-1',
-                'org-1',
-                FALSE,
-                'Ada Lovelace',
-                'ada@example.com',
-                'Engineer',
-                'ada'
-            )
-            "#,
-            (),
+            "INSERT INTO humans (id, organization_id, is_user, full_name, email, job_title, linkedin_username)
+             VALUES ('human-1', 'org-1', FALSE, 'Ada Lovelace', 'ada@example.com', 'Engineer', 'ada')",
+            [],
         )
-        .await
         .unwrap();
         conn.execute(
             r#"
             INSERT INTO sessions (
-                id,
-                created_at,
-                visited_at,
-                user_id,
-                title,
-                raw_memo_html,
-                enhanced_memo_html,
-                conversations,
-                words
+                id, created_at, visited_at, user_id, title, raw_memo_html, enhanced_memo_html, conversations, words
             ) VALUES (
-                'session-1',
-                '2026-01-01T00:00:00Z',
-                '2026-01-01T00:00:00Z',
-                'human-1',
-                'Legacy meeting',
-                '<p>Notes</p>',
-                '<p>Summary</p>',
-                '[]',
+                'session-1', '2026-01-01T00:00:00Z', '2026-01-01T00:00:00Z', 'human-1', 'Legacy meeting',
+                '<p>Notes</p>', '<p>Summary</p>', '[]',
                 '[{"text":"Hello","speaker":null,"confidence":1,"start_ms":1000,"end_ms":1500}]'
             )
             "#,
-            (),
+            [],
         )
-        .await
         .unwrap();
         conn.execute(
-            r#"
-            INSERT INTO session_participants (session_id, human_id, deleted)
-            VALUES ('session-1', 'human-1', FALSE)
-            "#,
-            (),
+            "INSERT INTO session_participants (session_id, human_id, deleted) VALUES ('session-1', 'human-1', FALSE)",
+            [],
         )
-        .await
         .unwrap();
         conn.execute(
-            r#"
-            INSERT INTO templates (
-                id,
-                user_id,
-                title,
-                description,
-                sections,
-                tags,
-                context_option
-            ) VALUES (
-                'template-1',
-                'human-1',
-                'Template',
-                'Description',
-                '[]',
-                '[]',
-                NULL
-            )
-            "#,
-            (),
+            "INSERT INTO templates (id, user_id, title, description, sections, tags, context_option)
+             VALUES ('template-1', 'human-1', 'Template', 'Description', '[]', '[]', NULL)",
+            [],
         )
-        .await
         .unwrap();
         conn.execute(
             "INSERT INTO tags (id, name) VALUES ('tag-1', 'Important')",
-            (),
+            [],
         )
-        .await
         .unwrap();
         conn.execute(
             "INSERT INTO tags_sessions (tag_id, session_id) VALUES ('tag-1', 'session-1')",
-            (),
+            [],
         )
-        .await
         .unwrap();
     }
 
-    async fn insert_session_candidate(
-        db: &UserDatabase,
+    fn insert_session_candidate(
+        conn: &Connection,
         id: &str,
         title: &str,
         raw_memo_html: &str,
         enhanced_memo_html: Option<&str>,
         words: &str,
     ) {
-        let conn = db.conn().unwrap();
         conn.execute(
             r#"
             INSERT INTO sessions (
+                id, created_at, visited_at, user_id, title, raw_memo_html, enhanced_memo_html, conversations, words
+            ) VALUES (?1, '2026-01-01T00:00:00Z', '2026-01-01T00:00:00Z', 'human-1', ?2, ?3, ?4, '[]', ?5)
+            "#,
+            (
                 id,
-                created_at,
-                visited_at,
-                user_id,
                 title,
                 raw_memo_html,
                 enhanced_memo_html,
-                conversations,
-                words
-            ) VALUES (
-                :id,
-                '2026-01-01T00:00:00Z',
-                '2026-01-01T00:00:00Z',
-                'human-1',
-                :title,
-                :raw_memo_html,
-                :enhanced_memo_html,
-                '[]',
-                :words
-            )
-            "#,
-            legacy_db_core::libsql::named_params! {
-                ":id": id,
-                ":title": title,
-                ":raw_memo_html": raw_memo_html,
-                ":enhanced_memo_html": enhanced_memo_html,
-                ":words": words,
-            },
+                words,
+            ),
         )
-        .await
         .unwrap();
     }
 
-    #[tokio::test]
-    async fn parse_stats_from_sqlite_counts_rows_without_full_import() {
+    #[test]
+    fn parse_stats_from_sqlite_counts_rows_without_full_import() {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("db.sqlite");
-        let db = setup_db(&path).await;
-        seed_rows(&db).await;
+        let conn = setup_db(&path);
+        seed_rows(&conn);
 
-        let stats = parse_stats_from_sqlite(&path).await.unwrap();
+        let stats = parse_stats_from_sqlite(&path).unwrap();
 
         assert_eq!(stats.sessions_count, 1);
         assert_eq!(stats.transcripts_count, 1);
@@ -539,18 +635,19 @@ mod tests {
         assert_eq!(stats.enhanced_notes_count, 1);
     }
 
-    #[tokio::test]
-    async fn parse_stats_from_sqlite_uses_import_empty_session_filter() {
+    #[test]
+    fn parse_stats_from_sqlite_uses_import_empty_session_filter() {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("db.sqlite");
-        let db = setup_db(&path).await;
-        seed_rows(&db).await;
-        insert_session_candidate(&db, "title-only", "Title only", "", None, "[]").await;
-        insert_session_candidate(&db, "raw-empty-html", "", "<p></p>", None, "[]").await;
-        insert_session_candidate(&db, "enhanced-empty-html", "", "", Some("<p></p>"), "[]").await;
+        let conn = setup_db(&path);
+        seed_rows(&conn);
+        insert_session_candidate(&conn, "title-only", "Title only", "", None, "[]").unwrap();
+        insert_session_candidate(&conn, "raw-empty-html", "", "<p></p>", None, "[]").unwrap();
+        insert_session_candidate(&conn, "enhanced-empty-html", "", "", Some("<p></p>"), "[]")
+            .unwrap();
 
-        let stats = parse_stats_from_sqlite(&path).await.unwrap();
-        let collection = parse_from_sqlite(&path).await.unwrap();
+        let stats = parse_stats_from_sqlite(&path).unwrap();
+        let collection = parse_from_sqlite(&path).unwrap();
 
         assert_eq!(stats.sessions_count, collection.sessions.len());
         assert_eq!(stats.sessions_count, 1);
@@ -558,52 +655,46 @@ mod tests {
         assert_eq!(stats.transcripts_count, 1);
     }
 
-    #[tokio::test]
-    async fn parse_stats_from_sqlite_counts_only_joined_participants() {
+    #[test]
+    fn parse_stats_from_sqlite_counts_only_joined_participants() {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("db.sqlite");
-        let db = setup_db(&path).await;
-        seed_rows(&db).await;
+        let conn = setup_db(&path);
+        seed_rows(&conn);
 
-        let conn = db.conn().unwrap();
-        conn.execute("PRAGMA foreign_keys = OFF", ()).await.unwrap();
+        conn.execute("PRAGMA foreign_keys = OFF", []).unwrap();
         conn.execute(
-            r#"
-            INSERT INTO session_participants (session_id, human_id, deleted)
-            VALUES ('session-1', 'missing-human', FALSE)
-            "#,
-            (),
+            "INSERT INTO session_participants (session_id, human_id, deleted) VALUES ('session-1', 'missing-human', FALSE)",
+            [],
         )
-        .await
         .unwrap();
 
-        let stats = parse_stats_from_sqlite(&path).await.unwrap();
-        let collection = parse_from_sqlite(&path).await.unwrap();
+        let stats = parse_stats_from_sqlite(&path).unwrap();
+        let collection = parse_from_sqlite(&path).unwrap();
 
         assert_eq!(stats.participants_count, collection.participants.len());
         assert_eq!(stats.participants_count, 1);
     }
 
-    #[tokio::test]
-    async fn parse_from_sqlite_does_not_mutate_source_empty_words() {
+    #[test]
+    fn parse_from_sqlite_does_not_mutate_source_empty_words() {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("db.sqlite");
-        let db = setup_db(&path).await;
-        seed_rows(&db).await;
+        let conn = setup_db(&path);
+        seed_rows(&conn);
 
-        let conn = db.conn().unwrap();
-        conn.execute("UPDATE sessions SET words = '' WHERE id = 'session-1'", ())
-            .await
+        conn.execute("UPDATE sessions SET words = '' WHERE id = 'session-1'", [])
             .unwrap();
 
-        parse_from_sqlite(&path).await.unwrap();
+        parse_from_sqlite(&path).unwrap();
 
-        let mut rows = conn
-            .query("SELECT words FROM sessions WHERE id = 'session-1'", ())
-            .await
+        let words: String = conn
+            .query_row(
+                "SELECT words FROM sessions WHERE id = 'session-1'",
+                [],
+                |row| row.get(0),
+            )
             .unwrap();
-        let row = rows.next().await.unwrap().unwrap();
-        let words: String = row.get(0).unwrap();
         assert_eq!(words, "");
     }
 }

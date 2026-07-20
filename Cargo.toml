@@ -24,9 +24,7 @@ exclude = [
 
 [workspace.dependencies]
 keyring = "4.1.4"
-legacy-db-core = { path = "legacy/db-core", package = "legacy-db-core" }
 legacy-db-parser = { path = "legacy/db-parser", package = "db-parser" }
-legacy-db-user = { path = "legacy/db-user", package = "db-user" }
 meetspace-aec = { path = "crates/aec", package = "aec" }
 meetspace-afconvert = { path = "crates/afconvert", package = "afconvert" }
 meetspace-agc = { path = "crates/agc", package = "agc" }
@@ -190,6 +188,7 @@ meetspace-ws-client = { path = "crates/ws-client", package = "ws-client" }
 meetspace-ws-utils = { path = "crates/ws-utils", package = "ws-utils" }
 posthog-rs = "0.5"
 progenitor-client = "0.13"
+rusqlite = "0.37"
 
 openai-transcription = { path = "crates/openai-transcription", package = "openai-transcription" }
 owhisper-client = { path = "crates/owhisper-client", package = "owhisper-client" }
@@ -402,7 +401,6 @@ vorbis_rs = "0.5.5"
 deepgram = { version = "0.7", default-features = false }
 hf-hub = { git = "https://github.com/huggingface/hf-hub", rev = "5510260", default-features = false, features = ["tokio"] }
 hidapi = { version = "2.6.5", features = ["macos-shared-device"] }
-libsql = "0.9.24"
 
 block2 = "0.6"
 core-foundation = "0.10"

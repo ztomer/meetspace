@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::path::Path;
 
-use legacy_db_core::libsql;
+use rusqlite::Connection;
 use serde_json::Value;
 
 use crate::types::*;
@@ -15,21 +15,13 @@ use cell::is_tombstone;
 use parsers::*;
 use types::{SpeakerHintRaw, TranscriptRaw, WordWithTranscript};
 
-pub async fn validate(path: &Path) -> Result<()> {
-    let db = libsql::Builder::new_local(path).build().await?;
-    let conn = db.connect()?;
+pub fn validate(path: &Path) -> Result<()> {
+    let conn = Connection::open(path)?;
 
-    let mut rows = conn
-        .query(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
-            (),
-        )
-        .await?;
-
-    let mut tables = Vec::new();
-    while let Some(row) = rows.next().await? {
-        tables.push(row.get::<String>(0)?);
-    }
+    let tables: Vec<String> = conn
+        .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")?
+        .query_map([], |row| row.get::<_, String>(0))?
+        .collect::<rusqlite::Result<Vec<_>>>()?;
 
     if tables.len() != 1 || tables[0] != "main" {
         return Err(Error::InvalidData(format!(
@@ -41,22 +33,14 @@ pub async fn validate(path: &Path) -> Result<()> {
     Ok(())
 }
 
-pub async fn parse_from_sqlite(path: &Path) -> Result<Collection> {
-    validate(path).await?;
+pub fn parse_from_sqlite(path: &Path) -> Result<Collection> {
+    validate(path)?;
 
-    let db = libsql::Builder::new_local(path).build().await?;
-    let conn = db.connect()?;
-
-    let mut rows = conn
-        .query("SELECT store FROM main WHERE id = '_'", ())
-        .await?;
-
-    let row = rows
-        .next()
-        .await?
-        .ok_or_else(|| Error::InvalidData("No store data found".to_string()))?;
-
-    let store_json: String = row.get(0)?;
+    let conn = Connection::open(path)?;
+    let store_json: String =
+        conn.query_row("SELECT store FROM main WHERE id = '_'", [], |row| {
+            row.get(0)
+        })?;
     let store: Value = serde_json::from_str(&store_json)?;
 
     parse_store(&store)

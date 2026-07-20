@@ -1,0 +1,20 @@
+# Fork ownership record for meetspace (local-first fork of Anarlog/Char).
+# Drives rebase-on-main.sh / resolve_conflicts.py: entries listed under
+# [delete] are kept deleted on every rebase onto an upstream tag.
+
+[delete]
+# libsql-backed legacy DB carriers. They statically link a SECOND copy of
+# sqlite (libsql_ffi) that collides with sqlx's libsqlite3-sys at release
+# link time (duplicate symbol '_sqlite3_*'). The importer was repointed at
+# rusqlite (legacy/db-parser -> db-parser) which shares sqlx's single
+# libsqlite3-sys 0.35, so these libsql carriers must never return.
+dirs = [
+  "legacy/db-core",
+  "legacy/db-user",
+]
+
+# Google Drive import is ADDITIVE (plugins/importer/src/sources/gdrive.rs +
+# TransformKind::GoogleDrive + UI in apps/desktop/src/settings/data). It is
+# never in the delete list. On rebase, re-add the match arm in
+# plugins/importer/src/sources/mod.rs if upstream drops it, and re-run the
+# importer's export_types test to refresh js/bindings.gen.ts.

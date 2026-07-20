@@ -10,7 +10,7 @@ import {
   type ImportStats,
 } from "@meetspace/plugin-importer";
 
-import { SourceItem } from "./source-item";
+import { GoogleDriveItem, SourceItem } from "./source-item";
 
 import { StyledStreamdown } from "~/settings/ai/shared";
 
@@ -23,6 +23,8 @@ export function Data() {
   const [dryRunResult, setDryRunResult] = useState<DryRunResult | null>(null);
   const [successfulSource, setSuccessfulSource] =
     useState<ImportSourceKind | null>(null);
+  const [googleDrivePath, setGoogleDrivePath] = useState<string | null>(null);
+  const [googleDriveSuccess, setGoogleDriveSuccess] = useState(false);
 
   const { data: sources } = useQuery({
     queryKey: ["import-sources"],
@@ -70,7 +72,23 @@ export function Data() {
     },
   });
 
-  const isPending = importMutation.isPending || dryImportMutation.isPending;
+  const googleDriveMutation = useMutation({
+    mutationFn: async (path: string) => {
+      const result = await commands.runImportWithPath("google_drive", path, "");
+      if (result.status === "error") {
+        throw new Error(result.error);
+      }
+      return result.data.stats;
+    },
+    onSuccess: () => {
+      setGoogleDriveSuccess(true);
+    },
+  });
+
+  const isPending =
+    importMutation.isPending ||
+    dryImportMutation.isPending ||
+    googleDriveMutation.isPending;
 
   return (
     <div>
@@ -103,13 +121,34 @@ export function Data() {
             />
           ))}
 
-        {(importMutation.isError || dryImportMutation.isError) && (
+        <GoogleDriveItem
+          selectedPath={googleDrivePath}
+          onSelectPath={(path) => {
+            setGoogleDriveSuccess(false);
+            setGoogleDrivePath(path);
+          }}
+          onImport={() => {
+            if (googleDrivePath) {
+              setGoogleDriveSuccess(false);
+              googleDriveMutation.mutate(googleDrivePath);
+            }
+          }}
+          disabled={isPending}
+          isImporting={googleDriveMutation.isPending}
+          isSuccess={googleDriveSuccess}
+        />
+
+        {(importMutation.isError ||
+          dryImportMutation.isError ||
+          googleDriveMutation.isError) && (
           <div className="text-destructive flex items-center gap-2 text-xs">
             <XCircleIcon size={14} />
             <span>
               {importMutation.isError
                 ? `Import failed: ${importMutation.error.message}`
-                : `Scan failed: ${dryImportMutation.error?.message}`}
+                : dryImportMutation.isError
+                  ? `Scan failed: ${dryImportMutation.error.message}`
+                  : `Google Drive import failed: ${googleDriveMutation.error?.message}`}
             </span>
           </div>
         )}
