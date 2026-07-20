@@ -135,8 +135,8 @@ DMG=""
 if [ "$SKIP_DMG" = "0" ]; then
   # Tauri names the bundle from its own (hyphen) version, which differs from the
   # cask (underscore) version, so glob rather than reconstructing the exact name.
-  DMG=$(find target/release/bundle apps/desktop/src-tauri/target/release/bundle \
-    -maxdepth 4 -type f -name "Meetspace_*_aarch64.dmg" 2>/dev/null | head -1)
+  DMG=$(find target/release/bundle \
+    -maxdepth 4 -type f -name "Meetspace_*_aarch64.dmg" 2>/dev/null | head -1 || true)
   if [ -z "$DMG" ]; then
     red "Error: Meetspace DMG not found after build."
     exit 1
