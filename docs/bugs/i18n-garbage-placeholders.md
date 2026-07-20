@@ -39,14 +39,26 @@ fallbackLocales})` attempt — v6 has no such props and already falls back to th
 ## Durable guard
 - `src/i18n/catalogs.test.ts` asserts `createI18n("de")._("m_W9gE", {trialDaysRemaining:3})`
   returns `"3 day left"`, not the raw hash.
-- Add an `i18n:check` CI gate (already wired in `package.json`) so a future partial
-  compile fails the build instead of shipping.
-- **Script-level fix:** `rebase-on-main.sh` no longer runs `i18n:extract --clean`
-  (the `--clean` pass drops ~125 messages and reproduces this exact bug). It now runs
-  incremental `i18n:extract` (keeps the committed 529-entry `en`, only adds new
-  post-rebrand hashes) followed by `i18n:compile`, and warns if `en/messages.po`
-  drops below 400 messages. `sync-upstream.sh` already used the safe incremental
-  extract.
+- `i18n:check` (wired in `package.json` as `lingui extract --clean && lingui compile
+  --strict && git diff --exit-code`) is the CI gate: it fails if the committed
+  catalogs drift from source. After the regeneration below, the committed catalogs
+  are source-derived (~400 `en` msgids) and `i18n:check` passes clean.
+- **Second incident — stale-Anarlog compile.** A later failure shipped an `en`
+  catalog containing "Anarlog" strings (and missing the fork-added
+  Integrations/Personalization sections → raw-hash UI). Root cause: the committed
+  `.po` files still carry stale upstream "Anarlog" msgids, and `lingui compile`
+  compiles OBSOLETE (`#~`) entries too, so any `i18n:compile` regenerates an
+  Anarlog-laced `en.ts`. Fix: `i18n:extract` now runs `lingui extract --clean`
+  (strips the obsolete entries before compile), and all three release/sync scripts
+  guard the `en` catalog — they abort/warn if it still contains "Anarlog" or is
+  missing a fork key (`nbfdhU VrNltZ iDNBZe LMUw1U Gzw2pq 9cDpsw`):
+  - `local-release.sh` — hard abort before building.
+  - `rebase-on-main.sh` / `sync-upstream.sh` — warn on missing fork keys / shrink.
+- **Catalogs are regenerated, not reverted.** The earlier fix reverted to the
+  committed 529-entry `en`; the current catalogs are regenerated from source via
+  `extract --clean` + `compile`, which also added the fork-added sections and
+  removed dead/obsolete entries. Keep `i18n:extract` as `--clean`; do NOT switch it
+  back to incremental, or the Anarlog trap returns on the next compile.
 
 ## Verification
 - `pnpm -F desktop test src/i18n/catalogs.test.ts` → pass.

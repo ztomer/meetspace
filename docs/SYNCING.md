@@ -169,6 +169,7 @@ When a sync touches plugins or strings, check for:
 | Launch panic `Event X not found in registry` | upstream reordered/added a plugin whose setup `listen`s an event; fork's `lib.rs` registers plugins in the old order (listener before the emitter mounts) | match upstream's plugin-registration order in `lib.rs` (e.g. `updater2` **before** `tray`) |
 | Build error `Permission X:default not found` | upstream renamed a plugin package (`tauri-plugin-tray` → `meetspace-tray` → `meetspace-tray`), changing its permission prefix; fork capability still names the old prefix | update `apps/desktop/src-tauri/capabilities/default.json` to the new prefix |
 | UI shows lingui hashes (`saL1iI`, `XDmqQW`) | taking upstream's catalogs dropped fork strings; only `i18n:compile` ran | run `i18n:extract` **then** `compile` (sync-upstream.sh does this) |
+| UI shows "Anarlog" text or raw hashes after a build | a bare `i18n:compile` compiled OBSOLETE stale-Anarlog msgids from the `.po` (compile includes `#~` entries), or the catalog drifted from source | `i18n:extract` must run `--clean` (strips obsolete) before `compile`; `i18n:check` + the `local-release.sh` guard fail fast on "Anarlog" / missing fork keys |
 | Workspace won't load / missing dep | upstream `Cargo.toml`/`package.json` re-added deleted members or dropped fork deps | `reconcile-cargo.py` / `reconcile-package.py` (sync-upstream.sh runs both) |
 
 Diff `lib.rs` and `capabilities/` against the upstream tag after a sync — those

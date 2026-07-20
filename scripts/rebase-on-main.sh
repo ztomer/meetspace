@@ -216,16 +216,24 @@ bold "==> Automatically rebranding legacy names and imports to Meetspace"
 python3 scripts/rebrand_sweep.py
 
 bold "==> Regenerating i18n catalogs (extract from rebranded source, then compile)"
-# Extract WITHOUT --clean: --clean wipes every translation and re-extracts from
-# current source, but this repo's extractor drops ~125 messages on a clean pass
-# (leaving a 404-entry `en` and raw-hash gibberish in the UI — see
-# docs/bugs/i18n-garbage-placeholders.md). Incremental extract keeps the existing
-# 529-entry `en` and only adds the new (post-rebrand) hashes, so the compiled
-# catalog can never shrink. Compile regenerates the .ts catalogs from the .po.
+# `i18n:extract` runs `lingui extract --clean`. The --clean pass is REQUIRED:
+# the committed .po files still carry stale upstream "Anarlog" msgids, and
+# `lingui compile` compiles OBSOLETE (#~) entries too, so a bare compile would
+# regenerate an `en` catalog containing "Anarlog" strings. --clean drops the
+# obsolete entries first. (An earlier incident DID drop ~125 live messages on a
+# --clean pass, but that was a stale-state extraction failure; the current tree
+# extracts cleanly and `i18n:check` keeps the committed catalogs in sync with
+# source. The guard below catches any future message-drop regression.)
 if pnpm -F desktop i18n:extract && pnpm -F desktop i18n:compile; then
   en_msgs=$(grep -c '^msgid ' apps/desktop/src/i18n/locales/en/messages.po 2>/dev/null || echo 0)
-  if [ "$en_msgs" -lt 400 ]; then
-    yellow "  WARNING: en catalog shrank to $en_msgs messages (expected ~529). i18n may be broken — run 'pnpm -F desktop i18n:extract && pnpm -F desktop i18n:compile' and inspect apps/desktop/src/i18n/locales/en."
+  EN_TS="apps/desktop/src/i18n/locales/en/messages.ts"
+  missing=""
+  for key in nbfdhU VrNltZ iDNBZe LMUw1U Gzw2pq 9cDpsw; do
+    grep -q "$key" "$EN_TS" || missing="$missing $key"
+  done
+  if [ "$en_msgs" -lt 380 ] || [ -n "$missing" ]; then
+    yellow "  WARNING: en catalog may be broken (msgs=$en_msgs, missing keys:$missing)."
+    yellow "  Inspect apps/desktop/src/i18n/locales/en and the source before releasing."
   else
     green "  i18n catalogs regenerated ($en_msgs en messages)."
   fi

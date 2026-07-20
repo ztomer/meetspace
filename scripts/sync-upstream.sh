@@ -87,10 +87,21 @@ echo "==> Rebrand sweep + format + install + regenerate"
 python3 scripts/rebrand_sweep.py
 pnpm exec dprint fmt >/dev/null 2>&1 || true
 pnpm install
-# extract BEFORE compile: taking upstream's catalogs drops fork-added message
-# IDs, so without a re-extract the fork's strings render as raw lingui hashes.
+# extract BEFORE compile (and extract runs --clean to drop obsolete stale
+# "Anarlog" msgids — lingui compile includes obsolete entries, which would
+# otherwise re-introduce "Anarlog" into the catalog). Taking upstream's catalogs
+# also drops fork-added message IDs, so without a re-extract the fork's strings
+# render as raw lingui hashes.
 pnpm -F desktop i18n:extract || echo "(i18n:extract failed — run manually)"
 pnpm -F desktop i18n:compile || echo "(run i18n:compile manually)"
+EN_TS="apps/desktop/src/i18n/locales/en/messages.ts"
+missing=""
+for key in nbfdhU VrNltZ iDNBZe LMUw1U Gzw2pq 9cDpsw; do
+  grep -q "$key" "$EN_TS" || missing="$missing $key"
+done
+if [ -n "$missing" ]; then
+  yellow "  WARNING: en catalog missing fork keys:$missing — i18n drift, raw hashes in UI likely."
+fi
 pnpm -F @meetspace/ui build || true
 
 echo "==> Verify"
