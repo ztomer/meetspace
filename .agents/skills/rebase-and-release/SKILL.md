@@ -60,6 +60,58 @@ hood `--release` delegates to `scripts/push_release.sh`, which pushes `MIT_BACK`
 recreates the tag, creates the GitHub release, watches the CI build, and polls
 the Homebrew tap to confirm the cask moved.
 
+### Cutting a Local Release (CI disabled)
+
+This fork has **all GitHub Actions workflows set to `on: []` by design** (no CI
+build). The `--release` path above therefore hangs waiting on a CI run that
+never starts. Use `--local` instead: it builds the stable DMG on this machine
+and uploads it to the GitHub release directly.
+
+```bash
+# Bump to a new meet version, then build + upload the DMG locally:
+./scripts/rebase-push-release.sh --local --version 1.3.1-meet2
+
+# Or build + upload for the version already in scripts/brew/meetspace.rb:
+./scripts/rebase-push-release.sh --local --no-rebase
+```
+
+`--local` pushes the branch, runs `package.sh stable dmg`, creates/deletes the
+tag, and `gh release create` + uploads the `.dmg`. Prefer `--local` over
+`--release` in this repo.
+
+### Release-Link Verification (CRITICAL)
+
+`cargo check`, `pnpm -r typecheck`, and the **debug** smoke test (`pnpm smoke`)
+all PASS even when the **release** build is broken. The release link is the
+only gate that catches certain classes of failure:
+
+- **Duplicate native symbol collisions** — e.g. two SQLite implementations
+  statically linked into one binary (`libsql`'s `libsql_ffi` vs sqlx's
+  `libsqlite3-sys`) produce `duplicate symbol '_sqlite3_*'` at **release link
+  time only**. Debug builds demote this to a warning, so it ships silently.
+- **Fix pattern:** unify on ONE native backend. Here, repoint the importer's
+  `legacy/db-parser` from `libsql` onto `rusqlite` whose `libsqlite3-sys`
+  version matches sqlx's (rusqlite `0.37` → `libsqlite3-sys ^0.35`; sqlx here
+  is `0.35.0`). Then delete the libsql carriers (`legacy/db-core`,
+  `legacy/db-user`). Do NOT "fix" by removing the *obvious* cloud feature
+  (e.g. cloudsync) — cloudsync uses sqlx's `libsqlite3-sys` too, so it is a
+  **red herring**; verify the actual duplicate with a release build before
+  assuming which crate is at fault.
+- **Verify before declaring a round complete:** run a real
+  `cargo build --release` (or `package.sh stable dmg`) and confirm it links
+  with zero `duplicate symbol` errors. This is the gate the debug smoke
+  missed.
+
+### Keeping the Fix Across Rebases
+
+The rusqlite-only sqlite link must survive upstream rebases. Record fork-owned
+deletions so `rebase-on-main.sh` and `resolve_conflicts.py` auto-strip them:
+- `legacy/db-core` and `legacy/db-user` are listed in both scripts'
+  `REMOVED_DIRS` and in `.agents/fork-ownership.toml`.
+- After any rebase, if `cargo build --release` regresses with
+  `duplicate symbol '_sqlite3_*'`, check that upstream didn't resurrect a
+  libsql carrier, and re-add it to `REMOVED_DIRS`.
+
 ### Troubleshooting Rebase Conflicts
 
 If `./scripts/rebase-on-main.sh` (called by the wrapper script) pauses or exits due to rebase conflicts:
