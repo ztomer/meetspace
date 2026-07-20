@@ -8,6 +8,7 @@ product branding, and must keep their original name so model downloads work.
 
 Exits non-zero if any hygiene violation is found.
 """
+
 import os
 import re
 import sys
@@ -17,8 +18,20 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SEARCH_ROOTS = ["apps", "crates", "packages", "plugins"]
 SKIP_DIRS = {"target", "node_modules", ".git", ".next", "dist"}
 TEXT_EXT = {
-    ".rs", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".toml", ".json", ".md",
-    ".yaml", ".yml", ".css", ".html", ".snap",
+    ".rs",
+    ".ts",
+    ".tsx",
+    ".js",
+    ".jsx",
+    ".mjs",
+    ".toml",
+    ".json",
+    ".md",
+    ".yaml",
+    ".yml",
+    ".css",
+    ".html",
+    ".snap",
 }
 # Files produced by lingui; their msgid/msgstr legitimately contain source text.
 SKIP_FILES = {"messages.po"}
@@ -74,7 +87,9 @@ def main():
                 continue
             m = BRAND_RE.search(line)
             if m and not S3_HOST_RE.search(line):
-                print(f"[ Err ] un-rebranded '{m.group(1)}' in {rel}:{i}: {line.rstrip()}")
+                print(
+                    f"[ Err ] un-rebranded '{m.group(1)}' in {rel}:{i}: {line.rstrip()}"
+                )
                 violations += 1
 
     if violations:
