@@ -14,6 +14,7 @@
 set -uo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
+source "$REPO_ROOT/scripts/i18n-guard.sh"
 TAG="${1:?usage: sync-upstream.sh <upstream-ref, e.g. desktop_v1.0.46>}"
 FORK_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 ORIG_FORK="$(git rev-parse "$FORK_BRANCH")"   # pre-rebase fork tip (enforcement source)
@@ -91,17 +92,11 @@ pnpm install
 # "Anarlog" msgids — lingui compile includes obsolete entries, which would
 # otherwise re-introduce "Anarlog" into the catalog). Taking upstream's catalogs
 # also drops fork-added message IDs, so without a re-extract the fork's strings
-# render as raw lingui hashes.
+# render as raw lingui hashes. After compile, the shared guard (i18n-guard.sh)
+# warns on missing fork keys.
 pnpm -F desktop i18n:extract || echo "(i18n:extract failed — run manually)"
 pnpm -F desktop i18n:compile || echo "(run i18n:compile manually)"
-EN_TS="apps/desktop/src/i18n/locales/en/messages.ts"
-missing=""
-for key in nbfdhU VrNltZ iDNBZe LMUw1U Gzw2pq 9cDpsw; do
-  grep -q "$key" "$EN_TS" || missing="$missing $key"
-done
-if [ -n "$missing" ]; then
-  yellow "  WARNING: en catalog missing fork keys:$missing — i18n drift, raw hashes in UI likely."
-fi
+i18n_guard warn
 pnpm -F @meetspace/ui build || true
 
 echo "==> Verify"

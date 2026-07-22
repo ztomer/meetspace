@@ -49,11 +49,13 @@ fallbackLocales})` attempt — v6 has no such props and already falls back to th
   `.po` files still carry stale upstream "Anarlog" msgids, and `lingui compile`
   compiles OBSOLETE (`#~`) entries too, so any `i18n:compile` regenerates an
   Anarlog-laced `en.ts`. Fix: `i18n:extract` now runs `lingui extract --clean`
-  (strips the obsolete entries before compile), and all three release/sync scripts
-  guard the `en` catalog — they abort/warn if it still contains "Anarlog" or is
-  missing a fork key (`nbfdhU VrNltZ iDNBZe LMUw1U Gzw2pq 9cDpsw`):
-  - `local-release.sh` — hard abort before building.
-  - `rebase-on-main.sh` / `sync-upstream.sh` — warn on missing fork keys / shrink.
+   (strips the obsolete entries before compile), and all three release/sync scripts
+   guard the `en` catalog via the shared `scripts/i18n-guard.sh` helper — it
+   aborts/warns if the catalog still contains "Anarlog" or is missing a fork key
+   (`nbfdhU VrNltZ iDNBZe LMUw1U Gzw2pq 9cDpsw`; the single source of truth for this
+   list — append a new fork section's ID there once):
+   - `local-release.sh` — `i18n_guard abort` (hard abort before building).
+   - `rebase-on-main.sh` / `sync-upstream.sh` — `i18n_guard warn` (warn on drift).
 - **Catalogs are regenerated, not reverted.** The earlier fix reverted to the
   committed 529-entry `en`; the current catalogs are regenerated from source via
   `extract --clean` + `compile`, which also added the fork-added sections and

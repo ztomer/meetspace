@@ -28,6 +28,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
+source "$REPO_ROOT/scripts/i18n-guard.sh"
 
 red()    { printf '\033[31m%s\033[0m\n' "$*" >&2; }
 green()  { printf '\033[32m%s\033[0m\n' "$*"; }
@@ -99,26 +100,10 @@ else
 fi
 
 # --- 3.5 i18n guard: never ship a corrupted (Anarlog / incomplete) catalog --
-# The build compiles catalogs from the committed en/messages.ts. A stray
-# `i18n:compile` run regenerates that file from the stale upstream .po, which
-# still carries Anarlog msgids (even marked obsolete, lingui compile includes
-# them). That produced a shipped DMG whose English UI showed raw hash keys and
-# "Anarlog" strings. Abort here if the committed catalog is not clean.
+# Uses the shared guard in scripts/i18n-guard.sh. Aborts if en/messages.ts
+# carries stale "Anarlog" text or is missing any fork-added settings section.
 bold "==> Verifying i18n catalog branding + completeness"
-EN_TS="apps/desktop/src/i18n/locales/en/messages.ts"
-if grep -q "Anarlog" "$EN_TS"; then
-  red "Error: en catalog still contains 'Anarlog' (stale upstream .po compiled in)."
-  red "Fix: pnpm -F @meetspace/desktop i18n:extract && pnpm -F @meetspace/desktop i18n:compile, then commit."
-  exit 1
-fi
-for key in nbfdhU VrNltZ iDNBZe LMUw1U Gzw2pq 9cDpsw; do
-  if ! grep -q "$key" "$EN_TS"; then
-    red "Error: en catalog missing fork key '$key' (i18n drift -> raw hash strings in UI)."
-    red "Fix: regenerate i18n from source and commit, then re-run."
-    exit 1
-  fi
-done
-green "==> i18n catalog clean (Meetspace-branded, complete)."
+i18n_guard abort && green "==> i18n catalog clean (Meetspace-branded, complete)."
 
 # --- 4. build DMG ----------------------------------------------------------
 if [ "$SKIP_DMG" = "0" ]; then
