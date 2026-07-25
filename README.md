@@ -1,3 +1,7 @@
+# The Meetspace fork is no longer necessary. I recommend using [StenoAI](https://github.com/ruzin/stenoai)
+
+
+
 > **Note:** The team is now building **[char](https://char.com)**. **anarlog** remains open-source, MIT-licensed, and maintained as the local-first meeting notetaker in this repo.
 
 ![anarlog](https://repository-images.githubusercontent.com/900550981/a4267a9f-414b-4c36-965c-419313ce2417)
