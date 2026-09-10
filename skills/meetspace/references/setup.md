@@ -34,6 +34,6 @@ cargo install --locked --path apps/cli
 meetspace --version
 ```
 
-Run the Meetspace desktop app at least once so its local database exists. Homebrew, desktop-bundled, and Windows binary distribution are planned but not yet available.
+Run the Meetspace desktop app at least once so its local database exists. Get the app from the DMG attached to the latest GitHub release — there is no Homebrew cask. Desktop-bundled and Windows binary distribution are planned but not yet available.
 
 Use `--db-path FILE` or `MEETSPACE_DB_PATH` only when the database is outside Meetspace's default application-data location.

@@ -176,17 +176,15 @@ are the fork-owned files most likely to need a manual reconcile.
 
 ### Cutting the release
 
-1. Bump the version in `apps/desktop/src-tauri/Cargo.toml`, `Cargo.lock`
-   (`cargo update -p desktop --precise <ver>`), and `scripts/brew/meetspace.rb`
-   (scheme: `1.0.47-meet1` cargo/dmg, `1.0.47_meet1` tag/cask). Commit, push.
+1. Bump the version in `apps/desktop/src-tauri/Cargo.toml` and `Cargo.lock`
+   (`cargo update -p desktop --precise <ver>`, scheme: `1.0.47-meet1` cargo/dmg,
+   `1.0.47_meet1` tag). Commit, push.
 2. `gh release create v1.0.47_meet1 --target MIT_BACK …` → the
    `Build & Release Artifacts` workflow builds the **aarch64** DMG (Apple Silicon
-   only — `depends_on arch: :arm64`; there is no Intel build), attaches it, and —
-   given the `HOMEBREW_TAP_TOKEN` secret — **auto-updates `ztomer/homebrew-tap`**
-   from `scripts/brew/meetspace.rb`. No manual tap push.
+   only; there is no Intel build) and attaches it to the release. Distribution
+   is the DMG on the GitHub release page — there is no Homebrew cask.
 3. A release created from a commit that *predates* a workflow change runs the old
-   workflow, and a secret added mid-run isn't seen by that run — so verify the
-   tap actually moved; push it by hand only if the auto-step skipped.
+   workflow — so verify the DMG actually attached before announcing anything.
 
 ## Why syncs are expensive — and the long-term fix
 

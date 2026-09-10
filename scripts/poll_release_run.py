@@ -43,29 +43,9 @@ def fetch_actions_runs():
         return []
 
 
-def fetch_cask_version():
-    url = (
-        "https://raw.githubusercontent.com/ztomer/homebrew-tap/main/Casks/meetspace.rb"
-    )
-    try:
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req) as response:
-            content = response.read().decode()
-            for line in content.splitlines():
-                if "version " in line:
-                    # extract value inside quotes
-                    parts = line.split('"')
-                    if len(parts) >= 3:
-                        return parts[1]
-    except Exception as e:
-        print_wrn(f"Failed to fetch Homebrew tap version: {e}")
-    return None
-
-
 def main():
     head_sha = get_head_sha()
     tag_name = sys.argv[1] if len(sys.argv) > 1 else "v1.0.36_meet2"
-    expected_cask_version = tag_name.lstrip("v")
 
     print_info(f"Target Release Tag: {tag_name}")
     print_info(f"Latest Git Head SHA: {head_sha}")
@@ -141,33 +121,7 @@ def main():
 
         time.sleep(30)
 
-    # Step 3: Verify Homebrew tap update
-    print_info("Waiting for Homebrew Tap Cask to update to new version...")
-    start_time = time.time()
-    while True:
-        current_version = fetch_cask_version()
-        if current_version == expected_cask_version:
-            print_ok(
-                f"Homebrew Tap Cask successfully updated to version: {current_version}!"
-            )
-            break
-
-        elapsed = int(time.time() - start_time)
-        if elapsed > 300:  # 5 minutes timeout
-            print_wrn(
-                f"Timeout waiting for Homebrew update. Current version is still: {current_version}"
-            )
-            print_info(
-                "You can verify the Cask manually at: https://github.com/ztomer/homebrew-tap"
-            )
-            break
-
-        print_info(
-            f"Checking Cask version... (current: '{current_version}', expected: '{expected_cask_version}')"
-        )
-        time.sleep(20)
-
-    print_ok("All done! Release push and Homebrew update verified successfully.")
+    print_ok("All done! Release push verified successfully.")
 
 
 if __name__ == "__main__":

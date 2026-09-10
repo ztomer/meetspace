@@ -18,8 +18,9 @@ if [ "$CURRENT_BRANCH" != "MIT_BACK" ]; then
   exit 1
 fi
 
-# Extract version from meetspace.rb
-VERSION=$(grep -o 'version "[^"]*"' scripts/brew/meetspace.rb | cut -d'"' -f2)
+# Extract version from the Tauri manifest (cask scheme uses underscores:
+# cargo `1.1.11-meet1` == tag/cask `1.1.11_meet1`).
+VERSION=$(grep -m1 '^version = ' apps/desktop/src-tauri/Cargo.toml | cut -d'"' -f2 | tr '-' '_')
 TAG="v$VERSION"
 echo "Starting release workflow for version: $VERSION (tag: $TAG)"
 
@@ -72,38 +73,4 @@ env GITHUB_TOKEN="" gh run watch -R ztomer/meetspace "$RUN_ID" --exit-status
 
 echo "GitHub Actions build completed successfully!"
 
-# 7. Poll Homebrew tap Cask to verify version update
-cask_url="https://raw.githubusercontent.com/ztomer/homebrew-tap/main/Casks/meetspace.rb"
-echo "Polling Homebrew tap for version update..."
-TAP_UPDATED=false
-for i in {1..24}; do
-  current_ver=$(curl -fsL "$cask_url" | grep -o 'version "[^"]*"' | cut -d'"' -f2 || true)
-  if [ "$current_ver" = "$VERSION" ]; then
-    echo "Homebrew tap updated successfully to $VERSION!"
-    TAP_UPDATED=true
-    break
-  fi
-  echo "Waiting for Homebrew tap to update (current: $current_ver, expected: $VERSION)... [Attempt $i/24]"
-  sleep 10
-done
-
-if [ "$TAP_UPDATED" = false ]; then
-  echo "Homebrew tap auto-update timed out. Falling back to manual push..."
-  
-  tmp_dir=$(mktemp -d -t meetspace-tap.XXXXXX)
-  echo "Cloning ztomer/homebrew-tap to $tmp_dir..."
-  env GITHUB_TOKEN="" gh repo clone ztomer/homebrew-tap "$tmp_dir"
-  
-  mkdir -p "$tmp_dir/Casks"
-  cp scripts/brew/meetspace.rb "$tmp_dir/Casks/meetspace.rb"
-  
-  cd "$tmp_dir"
-  git add Casks/meetspace.rb
-  git commit -m "Update meetspace to $VERSION"
-  env GITHUB_TOKEN="" git push origin main
-  cd -
-  rm -rf "$tmp_dir"
-  echo "Homebrew tap updated manually successfully!"
-fi
-
-echo "Release $TAG complete!"
+echo "Release $TAG complete! DMG is attached to the GitHub release."

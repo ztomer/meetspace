@@ -101,34 +101,3 @@ jobs:
           gh release upload "$TAG" "$DMG_PATH" --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update Homebrew Cask in Tap
-        if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
-        env:
-          TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
-        run: |
-          if [ -z "$TAP_TOKEN" ]; then
-            echo "HOMEBREW_TAP_TOKEN secret is not set, skipping cask tap automation."
-            exit 0
-          fi
-
-          CLEAN_VERSION="${VERSION#v}"
-
-          git clone "https://${TAP_TOKEN}@github.com/ztomer/homebrew-tap.git" /tmp/homebrew-tap
-
-          # Sync the cask FROM the in-repo source formula (propagates structural
-          # changes — arch constraints, zap paths, etc. — not just the version),
-          # then pin the version to this release.
-          cp "$GITHUB_WORKSPACE/scripts/brew/meetspace.rb" /tmp/homebrew-tap/Casks/meetspace.rb
-          perl -pi -e "s/version \".*\"/version \"$CLEAN_VERSION\"/" /tmp/homebrew-tap/Casks/meetspace.rb
-
-          cd /tmp/homebrew-tap
-          if git diff --quiet -- Casks/meetspace.rb; then
-            echo "Cask already up to date; nothing to push."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Casks/meetspace.rb
-          git commit -m "Update Meetspace cask to version $CLEAN_VERSION"
-          git push origin main
